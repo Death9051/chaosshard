@@ -1,0 +1,8 @@
+{
+ "parent": "block/cube_bottom_top",
+ "textures": {
+  "top": "chaosshard:blocks/breach_altar_top",
+  "bottom": "chaosshard:blocks/chaos_stone",
+  "side": "chaosshard:blocks/breach_altar_side"
+ }
+}

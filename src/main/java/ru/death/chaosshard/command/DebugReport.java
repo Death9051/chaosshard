@@ -162,7 +162,10 @@ public final class DebugReport {
     private void flags(EntityPlayerMP player) {
         NBTTagCompound persisted = player.getEntityData().getCompoundTag(EntityPlayer.PERSISTED_NBT_TAG);
         line("chaosshard_arrived = " + persisted.getBoolean("chaosshard_arrived")
-                + ", chaosshard_grimoire_given = " + persisted.getBoolean("chaosshard_grimoire_given"));
+                + ", chaosshard_grimoire_given = " + persisted.getBoolean("chaosshard_grimoire_given")
+                + ", прорыв = " + persisted.getBoolean("chaosshard_breached"));
+        line("config breach: нить >= " + ChaosConfig.breach.threadLevel + ", осколок Завесы " + ChaosConfig.breach.veilShardChance
+                + ", обрывок памяти " + ChaosConfig.breach.memoryFragmentChance);
         boolean hasGrimoire = false;
         for (int i = 0; i < player.inventory.getSizeInventory(); i++) {
             if (player.inventory.getStackInSlot(i).getItem() == ModItems.GRIMOIRE) {

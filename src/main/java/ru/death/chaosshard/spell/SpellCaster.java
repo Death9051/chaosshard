@@ -79,11 +79,11 @@ public final class SpellCaster {
                 ok = true;
                 break;
             case RECALL:
-                if (AntechamberDimension.is(player.world)) {
-                    ChaosTeleporter.toWorldSpawn(player, 0);
-                } else {
-                    ChaosTeleporter.toAntechamber(player);
+                if (AntechamberDimension.is(player.world) && !ru.death.chaosshard.breach.Breach.hasBreached(player)) {
+                    status(player, new TextComponentTranslation("chaosshard.spell.recall.sealed"));
+                    return;
                 }
+                ru.death.chaosshard.breach.Breach.travel(player);
                 ok = true;
                 break;
             default:

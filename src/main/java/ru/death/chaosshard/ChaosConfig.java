@@ -25,6 +25,10 @@ public final class ChaosConfig {
     @Config.LangKey("chaosshard.config.stars")
     public static final StarsCfg stars = new StarsCfg();
 
+    @Config.Comment("Прорыв сквозь Завесу")
+    @Config.LangKey("chaosshard.config.breach")
+    public static final BreachCfg breach = new BreachCfg();
+
     @Config.Comment("Перки Astral Sorcery и Нить")
     @Config.LangKey("chaosshard.config.perks")
     public static final PerksCfg perks = new PerksCfg();
@@ -97,6 +101,26 @@ public final class ChaosConfig {
         @Config.Comment("Добавить на небо дополнительные места для созвездий (в Astral их всего 15)")
         @Config.RequiresMcRestart
         public boolean extraSkyPositions = true;
+    }
+
+    public static final class BreachCfg {
+        @Config.Comment("Уровень Нити, нужный для ритуала Прорыва")
+        @Config.RangeInt(min = 0, max = 10)
+        public int threadLevel = 2;
+
+        @Config.Comment("Сколько очков Нити даёт первый Прорыв")
+        public int threadReward = 100;
+
+        @Config.Comment("Этап Game Stages, который выдаётся после первого Прорыва (пусто — не выдавать)")
+        public String stage = "proryv";
+
+        @Config.Comment("Шанс Осколка Завесы из корки Преддверия")
+        @Config.RangeDouble(min = 0, max = 1)
+        public double veilShardChance = 0.08;
+
+        @Config.Comment("Шанс Обрывка памяти с монстра в чужих мирах (Кладовки и пр.)")
+        @Config.RangeDouble(min = 0, max = 1)
+        public double memoryFragmentChance = 0.10;
     }
 
     public static final class PerksCfg {

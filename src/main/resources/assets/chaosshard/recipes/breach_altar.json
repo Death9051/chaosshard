@@ -1,0 +1,26 @@
+{
+ "type": "minecraft:crafting_shaped",
+ "pattern": [
+  "VCV",
+  "SFS",
+  "SSS"
+ ],
+ "key": {
+  "V": {
+   "item": "chaosshard:veil_shard"
+  },
+  "C": {
+   "item": "chaosshard:chaos_crust"
+  },
+  "S": {
+   "item": "chaosshard:chaos_stone"
+  },
+  "F": {
+   "item": "chaosshard:memory_fragment"
+  }
+ },
+ "result": {
+  "item": "chaosshard:breach_altar",
+  "count": 1
+ }
+}

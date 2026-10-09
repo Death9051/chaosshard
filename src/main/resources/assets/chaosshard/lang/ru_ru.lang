@@ -18,7 +18,7 @@ chaosshard.hud.thread=Нить %s · %s/%s
 chaosshard.hud.thread.max=Нить %s · предел
 
 # Команды
-chaosshard.command.usage=/chaosshard <nit|tp|sky> ...
+chaosshard.command.usage=/chaosshard <nit|tp|sky|grimoire|breach|debug> ...
 chaosshard.command.nit.usage=/chaosshard nit <get [игрок]|set <игрок> <очки>|add <игрок> <очки>|resync [игрок]>
 chaosshard.command.nit.get=Нить %s: уровень %s, очков %s
 chaosshard.command.nit.changed=Нить %s: уровень %s, очков %s
@@ -85,3 +85,31 @@ chaosshard.spell.starsight=Звёздный взор
 chaosshard.spell.starsight.desc=ПКМ — ночное зрение на 3 минуты (Нить 2)
 chaosshard.spell.recall=Зов Нити
 chaosshard.spell.recall.desc=ПКМ — в Преддверие и обратно в Лучезарию (Нить 3)
+
+# Прорыв
+tile.chaosshard.breach_altar.name=Алтарь Прорыва
+item.chaosshard.veil_shard.name=Осколок Завесы
+item.chaosshard.memory_fragment.name=Обрывок памяти
+item.chaosshard.memory_page.name=Страница памяти: «Прорыв»
+item.chaosshard.breach_book.name=Книга Прорыва
+chaosshard.veil_shard.lore=Кусочек барьера, которым Лучезария закрылась от Хаоса. Звенит, если поднести к уху.
+chaosshard.memory_fragment.lore=Клочок памяти Лорда, застрявший в чужом мире. Тёплый на ощупь.
+chaosshard.memory_page.lore=Восстановленное воспоминание: как проскользнуть сквозь Завесу.
+chaosshard.breach_book.lore=Путь сквозь Завесу, записанный рукой Лорда.
+chaosshard.breach_book.use1=Первый раз — ПКМ по Алтарю Прорыва
+chaosshard.breach_book.use2=Потом ПКМ — между Преддверием и Лучезарией
+chaosshard.breach_book.sealed=Книга молчит. Сначала проведи ритуал на Алтаре Прорыва.
+chaosshard.breach.need_book=Алтарю нужна Книга Прорыва в руке
+chaosshard.breach.not_here=Гримуар: Прорыв возможен только из Преддверия. Здесь Завеса слишком далеко.
+chaosshard.breach.thin=Гримуар: Нить слишком тонкая — Лорд не дотянется. Нужен уровень %s.
+chaosshard.breach.no_sky=Гримуар: Над алтарём должно быть открытое небо. Завесу надо видеть, иначе как в неё целиться?
+chaosshard.breach.no_pillars=Гримуар: Не хватает опор. По диагоналям от алтаря, через клетку, — четыре столба: хаосит внизу, корка сверху.
+chaosshard.breach.start=Гримуар: Начинаем. Стой рядом и не дёргайся — если оборвёшь ритуал, начнём с начала.
+chaosshard.breach.step1=Гримуар: Чувствуешь, как натянулась Нить? Это Лорд тянется к Завесе. Твоими руками.
+chaosshard.breach.step2=Гримуар: Завеса заметила нас. Ей не нравится. Нам — нравится.
+chaosshard.breach.lord=Death: Иди, мой Осколок. Этот мир будет моим.
+chaosshard.breach.broken=Гримуар: Ритуал оборван. Ну вот. Начинай заново.
+chaosshard.breach.lord_done=Death: Ты прошёл. Возьми этот мир.
+chaosshard.breach.done=Гримуар: Мы в Лучезарии! Солнце, трава, селяне… фу. Книга теперь открыта: ПКМ — и ты дома, в Преддверии, и обратно.
+chaosshard.spell.recall.sealed=Завеса закрыта. Сначала Прорыв.
+chaosshard.config.breach=Прорыв

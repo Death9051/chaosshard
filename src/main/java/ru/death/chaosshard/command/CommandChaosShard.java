@@ -28,6 +28,7 @@ import java.util.List;
  *   tp world <id> [игрок]       — к точке появления измерения
  *   sky                         — какие правила неба действуют здесь (отладка)
  *   grimoire [игрок]            — выдать Гримуар
+ *   breach [on|off] [игрок]     — отметить Прорыв пройденным / сбросить
  *   debug [report|reset|kit]    — отчёт в chaosshard-debug.txt / сброс «первого входа» / набор для теста
  */
 public class CommandChaosShard extends CommandBase {
@@ -70,6 +71,14 @@ public class CommandChaosShard extends CommandBase {
             case "debug":
                 debug(server, sender, args);
                 break;
+            case "breach": {
+                // /oh breach [on|off] [игрок] — отметить Прорыв пройденным или сбросить
+                boolean on = args.length < 2 || !"off".equals(args[1]);
+                EntityPlayerMP player = args.length >= 3 ? getPlayer(server, sender, args[2]) : getCommandSenderAsPlayer(sender);
+                ru.death.chaosshard.breach.Breach.setBreached(player, on);
+                sender.sendMessage(new net.minecraft.util.text.TextComponentString("Прорыв для " + player.getName() + ": " + (on ? "пройден" : "сброшен")));
+                break;
+            }
             case "grimoire": {
                 EntityPlayerMP player = args.length >= 2 ? getPlayer(server, sender, args[1]) : getCommandSenderAsPlayer(sender);
                 ru.death.chaosshard.antechamber.AntechamberEvents.giveGrimoire(player);
@@ -160,6 +169,8 @@ public class CommandChaosShard extends CommandBase {
                         .getCompoundTag(net.minecraft.entity.player.EntityPlayer.PERSISTED_NBT_TAG);
                 persisted.removeTag("chaosshard_arrived");
                 persisted.removeTag("chaosshard_grimoire_given");
+                persisted.removeTag("chaosshard_breached");
+                persisted.removeTag("chaosshard_luch_return");
                 ru.death.chaosshard.thread.IThread thread = ru.death.chaosshard.thread.ThreadCapability.get(player);
                 if (thread != null) {
                     for (int l = ThreadManager.maxLevel(); l >= 0; l--) {
@@ -177,6 +188,7 @@ public class CommandChaosShard extends CommandBase {
             case "kit": {
                 String[] kit = {
                         "chaosshard:grimoire", "chaosshard:chaos_stone 64", "chaosshard:chaos_crust 64",
+                        "chaosshard:breach_altar", "chaosshard:breach_book", "chaosshard:memory_fragment 8", "chaosshard:veil_shard 8",
                         "astralsorcery:itemjournal", "astralsorcery:itemwand", "astralsorcery:itemhandtelescope",
                         "astralsorcery:blockaltar 1 0", "astralsorcery:blockwell", "astralsorcery:itemrockcrystalsimple 4",
                         "astralsorcery:itemcraftingcomponent 32 0", "astralsorcery:blockmarble 64 0"
@@ -205,7 +217,7 @@ public class CommandChaosShard extends CommandBase {
     @Override
     public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos targetPos) {
         if (args.length == 1) {
-            return getListOfStringsMatchingLastWord(args, "nit", "tp", "sky", "grimoire", "debug");
+            return getListOfStringsMatchingLastWord(args, "nit", "tp", "sky", "grimoire", "debug", "breach");
         }
         if (args.length == 2 && "nit".equals(args[0])) {
             return getListOfStringsMatchingLastWord(args, "get", "set", "add", "resync");

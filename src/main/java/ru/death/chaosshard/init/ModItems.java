@@ -19,6 +19,15 @@ public final class ModItems {
     /** Гримуар — артефакт Лорда для Осколков; открывает книгу квестов. */
     public static Item GRIMOIRE;
 
+    /** Осколок Завесы — выпадает из корки Преддверия. */
+    public static Item VEIL_SHARD;
+    /** Обрывок памяти — выпадает из тварей в Кладовках и чужих мирах. */
+    public static Item MEMORY_FRAGMENT;
+    /** Страница памяти «Прорыв». */
+    public static Item MEMORY_PAGE;
+    /** Книга Прорыва. */
+    public static Item BREACH_BOOK;
+
     public static final List<Item> ALL = new ArrayList<>();
 
     @SubscribeEvent
@@ -27,9 +36,20 @@ public final class ModItems {
         GRIMOIRE.setRegistryName(Tags.MOD_ID, "grimoire");
         GRIMOIRE.setTranslationKey(Tags.MOD_ID + ".grimoire");
         ALL.add(GRIMOIRE);
+        VEIL_SHARD = add(new ru.death.chaosshard.item.ItemLore("chaosshard.veil_shard.lore", false), "veil_shard");
+        MEMORY_FRAGMENT = add(new ru.death.chaosshard.item.ItemLore("chaosshard.memory_fragment.lore", false), "memory_fragment");
+        MEMORY_PAGE = add(new ru.death.chaosshard.item.ItemLore("chaosshard.memory_page.lore", true).setMaxStackSize(1), "memory_page");
+        BREACH_BOOK = add(new ru.death.chaosshard.item.ItemBreachBook(), "breach_book");
         for (Item item : ALL) {
             event.getRegistry().register(item);
         }
+    }
+
+    private static Item add(Item item, String name) {
+        item.setRegistryName(Tags.MOD_ID, name);
+        item.setTranslationKey(Tags.MOD_ID + "." + name);
+        ALL.add(item);
+        return item;
     }
 
     private ModItems() {

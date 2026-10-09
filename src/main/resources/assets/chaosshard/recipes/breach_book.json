@@ -1,0 +1,25 @@
+{
+ "type": "forge:ore_shapeless",
+ "ingredients": [
+  {
+   "item": "chaosshard:memory_page"
+  },
+  {
+   "item": "minecraft:book"
+  },
+  {
+   "item": "chaosshard:veil_shard"
+  },
+  {
+   "item": "chaosshard:veil_shard"
+  },
+  {
+   "type": "forge:ore_dict",
+   "ore": "dyeBlack"
+  }
+ ],
+ "result": {
+  "item": "chaosshard:breach_book",
+  "count": 1
+ }
+}

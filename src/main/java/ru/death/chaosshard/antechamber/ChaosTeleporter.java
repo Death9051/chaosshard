@@ -68,6 +68,16 @@ public class ChaosTeleporter implements ITeleporter {
         }
     }
 
+    /** Перенести игрока в точку (pos.y <= 0 — на поверхность). */
+    public static void toPos(EntityPlayerMP player, int dimension, BlockPos pos) {
+        if (player.dimension == dimension) {
+            BlockPos p = pos.getY() > 0 ? pos : player.world.getTopSolidOrLiquidBlock(new BlockPos(pos.getX(), 0, pos.getZ()));
+            player.connection.setPlayerLocation(p.getX() + 0.5, p.getY(), p.getZ() + 0.5, player.rotationYaw, player.rotationPitch);
+        } else {
+            player.changeDimension(dimension, new ChaosTeleporter(pos));
+        }
+    }
+
     /** Перенести игрока в указанное измерение к точке появления этого мира. */
     public static void toWorldSpawn(EntityPlayerMP player, int dimension) {
         if (AntechamberDimension.is(dimension)) {

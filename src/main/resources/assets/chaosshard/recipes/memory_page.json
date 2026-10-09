@@ -1,0 +1,23 @@
+{
+ "type": "minecraft:crafting_shaped",
+ "pattern": [
+  "FVF",
+  "VGV",
+  "FVF"
+ ],
+ "key": {
+  "F": {
+   "item": "chaosshard:memory_fragment"
+  },
+  "V": {
+   "item": "chaosshard:veil_shard"
+  },
+  "G": {
+   "item": "chaosshard:grimoire"
+  }
+ },
+ "result": {
+  "item": "chaosshard:memory_page",
+  "count": 1
+ }
+}
