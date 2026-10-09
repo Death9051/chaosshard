@@ -55,7 +55,7 @@
 ## Сборка jar
 
 ### У себя
-1. Поставить JDK 21 (например, Liberica или Temurin).
+1. Поставить JDK 25 (например, Liberica или Temurin): этого требует шаблон сборки.
 2. В папке проекта выполнить `gradlew.bat build` (Windows) или `./gradlew build`.
 3. Первый запуск качает Minecraft, Forge и маппинги, это несколько минут.
 4. Готовый файл: `build/libs/chaosshard-0.1.0.jar`.
