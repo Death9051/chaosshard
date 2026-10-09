@@ -40,6 +40,7 @@ jobs:
         run: |
           [ -f build.log ] || echo "build.log не создан" > build.log
           mkdir -p /tmp/ci && cp build.log /tmp/ci/build.log
+          cp build/libs/*.jar /tmp/ci/ 2>/dev/null || true
           echo "${{ job.status }} ${{ github.sha }}" > /tmp/ci/status.txt
           git config user.name "ci-bot"
           git config user.email "ci-bot@users.noreply.github.com"
@@ -52,7 +53,7 @@ jobs:
             git rm -rf . >/dev/null 2>&1 || true
           fi
           find . -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
-          cp /tmp/ci/build.log /tmp/ci/status.txt .
-          git add build.log status.txt
+          cp /tmp/ci/* .
+          git add -A
           git commit -m "Журнал сборки ${{ github.sha }}" || true
           git push origin ci-logs
