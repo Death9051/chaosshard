@@ -9,7 +9,8 @@
     "MixinWorldSkyHandler",
     "MixinConstellationSkyHandler",
     "MixinSkyCollectionHelper",
-    "MixinPlayerAttributeMap"
+    "MixinPlayerAttributeMap",
+    "MixinPerkLevelManager"
   ],
   "client": [
     "MixinSkyCollectionHelperClient"

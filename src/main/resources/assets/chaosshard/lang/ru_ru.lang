@@ -53,7 +53,7 @@ knowledge.astralsorcery.fragment.constellation.chaos.showup.description=Созв
 # Гримуар
 item.chaosshard.grimoire.name=Гримуар
 item.chaosshard.grimoire.lore=Артефакт Лорда Death, созданный для его Осколков
-item.chaosshard.grimoire.use=ПКМ — открыть записи
+item.chaosshard.grimoire.use=ПКМ — открыть записи или прочитать заклинание
 item.chaosshard.grimoire.craft=В верстаке — Преобразование: хаосит и корка становятся тем, что нужно. Сам Гримуар не тратится.
 chaosshard.grimoire.no_bq=Гримуар молчит: не установлен Better Questing.
 
@@ -62,3 +62,26 @@ chaosshard.command.debug.written=Отчёт записан: %s (проблем: 
 chaosshard.command.debug.failed=Не удалось записать отчёт: %s
 chaosshard.command.debug.reset=Сброшено: флаги первого входа, Гримуар, Нить и этапы. Перезайдите в мир.
 chaosshard.command.debug.usage=/oh debug [report|reset|kit]
+
+# Заклинания Гримуара
+item.chaosshard.grimoire.current=Заклинание: %s
+item.chaosshard.grimoire.cycle=Shift+ПКМ — сменить заклинание
+chaosshard.spell.selected=Гримуар раскрыт на странице: %s
+chaosshard.spell.need_block=Это заклинание нужно направить на блок
+chaosshard.spell.locked=Нить пока слишком тонкая для этого (нужен уровень %s)
+chaosshard.spell.hungry=Ты слишком голоден — магия берёт силы из тела
+chaosshard.spell.cooldown=Гримуар ещё не остыл: %s с.
+chaosshard.spell.fizzle=Не вышло — здесь это не сработает
+chaosshard.spell.book=Записи
+chaosshard.spell.sprout=Росток
+chaosshard.spell.sprout.desc=ПКМ по корке — трава, по хаоситу — земля
+chaosshard.spell.bridge=Мост пустоты
+chaosshard.spell.bridge.desc=ПКМ по блоку — до 8 блоков хаосита вперёд по взгляду
+chaosshard.spell.spring=Источник
+chaosshard.spell.spring.desc=ПКМ по блоку — водный источник (Нить 1)
+chaosshard.spell.rift=Разлом
+chaosshard.spell.rift.desc=ПКМ по блоку — дробит хаосит и корку в кубе 3×3×3 (Нить 2)
+chaosshard.spell.starsight=Звёздный взор
+chaosshard.spell.starsight.desc=ПКМ — ночное зрение на 3 минуты (Нить 2)
+chaosshard.spell.recall=Зов Нити
+chaosshard.spell.recall.desc=ПКМ — в Преддверие и обратно в Лучезарию (Нить 3)

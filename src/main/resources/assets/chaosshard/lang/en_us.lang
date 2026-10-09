@@ -47,7 +47,7 @@ knowledge.astralsorcery.fragment.constellation.chaos.showup.description=The Chao
 # Гримуар
 item.chaosshard.grimoire.name=Grimoire
 item.chaosshard.grimoire.lore=An artifact Lord Death made for his Shards
-item.chaosshard.grimoire.use=Right-click to open the records
+item.chaosshard.grimoire.use=RMB — open records or cast the spell
 item.chaosshard.grimoire.craft=In a crafting grid — Transmutation: chaos stone and crust become what you need. The Grimoire is not consumed.
 chaosshard.grimoire.no_bq=The Grimoire is silent: Better Questing is not installed.
 
@@ -56,3 +56,26 @@ chaosshard.command.debug.written=Report written: %s (problems: %s). Send this fi
 chaosshard.command.debug.failed=Could not write the report: %s
 chaosshard.command.debug.reset=Reset: first-join flags, Grimoire, Thread and stages. Rejoin the world.
 chaosshard.command.debug.usage=/oh debug [report|reset|kit]
+
+# Grimoire spells
+item.chaosshard.grimoire.current=Spell: %s
+item.chaosshard.grimoire.cycle=Shift+RMB — switch spell
+chaosshard.spell.selected=The Grimoire opens to: %s
+chaosshard.spell.need_block=This spell must be aimed at a block
+chaosshard.spell.locked=Your Thread is too thin for this yet (level %s needed)
+chaosshard.spell.hungry=You are too hungry — magic draws on the body
+chaosshard.spell.cooldown=The Grimoire is still cooling: %s s
+chaosshard.spell.fizzle=Nothing happens — it won't work here
+chaosshard.spell.book=Records
+chaosshard.spell.sprout=Sprout
+chaosshard.spell.sprout.desc=RMB on crust — grass, on chaos stone — dirt
+chaosshard.spell.bridge=Void Bridge
+chaosshard.spell.bridge.desc=RMB on a block — up to 8 chaos stone blocks ahead
+chaosshard.spell.spring=Spring
+chaosshard.spell.spring.desc=RMB on a block — water source (Thread 1)
+chaosshard.spell.rift=Rift
+chaosshard.spell.rift.desc=RMB on a block — shatters chaos stone and crust in a 3x3x3 cube (Thread 2)
+chaosshard.spell.starsight=Starsight
+chaosshard.spell.starsight.desc=RMB — night vision for 3 minutes (Thread 2)
+chaosshard.spell.recall=Call of the Thread
+chaosshard.spell.recall.desc=RMB — to the Antechamber and back to Luchezaria (Thread 3)

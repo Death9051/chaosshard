@@ -96,22 +96,28 @@ public final class ChaosConfig {
     }
 
     public static final class PerksCfg {
-        @Config.Comment({"Нить даёт свободные очки перков, чтобы на максимальной Нити можно было взять всё древо.",
-                "Очки приходят постепенно, с каждым уровнем Нити."})
-        public boolean allPerksAtMaxThread = true;
+        @Config.Comment({"Потолок уровня перков Astral Sorcery (в самом Astral не больше 100).",
+                "320 хватает на всё древо. 0 — оставить значение из конфига Astral.",
+                "Потолок для каждого уровня Нити задаётся в scripts/chaosshard_stars.zs."})
+        @Config.RangeInt(min = 0, max = 1000)
+        @Config.RequiresMcRestart
+        public int levelCap = 320;
 
-        @Config.Comment({"Сколько уровней перков игрок, по расчёту, наберёт опытом.",
-                "Нить доплачивает остальное: (все перки - корни) - это число."})
-        @Config.RangeInt(min = 0, max = 100)
-        public int levelsFromExp = 20;
+        @Config.Comment({"Кривая опыта: уровень N стоит (база + шаг × N) опыта.",
+                "В Astral было 150 + 2^(N/2+3) — к 30-му уровню это ~790 000 опыта."})
+        @Config.RangeInt(min = 1, max = 100000)
+        public int expCurveBase = 100;
+
+        @Config.RangeInt(min = 0, max = 100000)
+        public int expCurveStep = 5;
 
         @Config.Comment("Усиление всех перков за уровень Нити (0.05 = +5% за уровень, на 5-м уровне +25%)")
         @Config.RangeDouble(min = 0, max = 1)
         public double perkEffectPerLevel = 0.05;
 
-        @Config.Comment("Прибавка опыта перков за уровень Нити (0.10 = +10% за уровень)")
-        @Config.RangeDouble(min = 0, max = 2)
-        public double expGainPerLevel = 0.10;
+        @Config.Comment("Прибавка опыта перков за уровень Нити (0.5 = +50% за уровень, на 5-м уровне x3.5)")
+        @Config.RangeDouble(min = 0, max = 5)
+        public double expGainPerLevel = 0.5;
     }
 
     @SubscribeEvent
