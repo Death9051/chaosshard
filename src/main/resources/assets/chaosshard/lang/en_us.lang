@@ -1,0 +1,44 @@
+# Chaos Shard — English
+
+tile.chaosshard.chaos_stone.name=Chaosite
+tile.chaosshard.chaos_crust.name=Antechamber Crust
+
+chaosshard.antechamber.first_arrival=Grimoire: Acceptance inspection started. Shard, you are in the Antechamber. Do not approach the edge: there is nothing beyond it. Nothing at all.
+chaosshard.antechamber.reassembled=Grimoire: The Shard's body has been reassembled. The cost has been billed against your future victories.
+
+chaosshard.thread.levelup.1=Grimoire: The Thread is taut (level %s). Lord Death hears you. Do not flatter yourself — he only hears.
+chaosshard.thread.levelup.2=Grimoire: The Thread grows stronger (level %s). The Lord has deigned to notice your existence. Recorded.
+chaosshard.thread.levelup.3=Grimoire: The link is stable (level %s). You may now do more than befits a unit of your class.
+chaosshard.thread.levelup.4=Grimoire: The Thread sings (level %s). The Lord is pleased. I reservedly do not object.
+chaosshard.thread.levelup.5=Grimoire: The Thread is at full strength (level %s). You are an extension of Lord Death's will. Behave accordingly.
+chaosshard.hud.thread=Thread %s · %s/%s
+chaosshard.hud.thread.max=Thread %s · max
+
+chaosshard.command.usage=/chaosshard <nit|tp|sky> ...
+chaosshard.command.nit.usage=/chaosshard nit <get [player]|set <player> <points>|add <player> <points>|resync [player]>
+chaosshard.command.nit.get=Thread of %s: level %s, %s points
+chaosshard.command.nit.changed=Thread of %s: level %s, %s points
+chaosshard.command.nit.resynced=Thread stages re-granted for %s
+chaosshard.command.tp.usage=/chaosshard tp <antechamber [player]|world <id> [player]>
+chaosshard.command.tp.nodim=Dimension %s is not registered
+chaosshard.command.sky=Dimension %s (%s): %s
+chaosshard.command.sky.active=Active constellations: %s
+chaosshard.sky.kind.antechamber=Antechamber — all constellations, maximum starlight
+chaosshard.sky.kind.luchezariya=Radiance — regular Astral Sorcery sky
+chaosshard.sky.kind.chaos_only=other world — Chaos constellation only
+chaosshard.sky.no_handler=Astral Sorcery has not computed this sky yet
+chaosshard.sky.empty=none
+
+chaosshard.config.antechamber=Antechamber
+chaosshard.config.thread=Thread
+chaosshard.config.stars=Stars
+
+astralsorcery.constellation.chaos=Chaos
+astralsorcery.constellation.chaos.info=The Lord's Mark
+astralsorcery.constellation.chaos.effect=An eight-pointed star visible in the sky of any world. Not a constellation of these heavens, but a mark Lord Death leaves wherever his Shards arrive.
+astralsorcery.constellation.chaos.enchantments=The properties of this light are not yet known.
+astralsorcery.constellation.chaos.ritual=The Chaos ritual is not yet revealed. The Grimoire promises "in due time".
+astralsorcery.constellation.chaos.capeeffect=A mantle attuned to Chaos stays silent for now.
+knowledge.astralsorcery.fragment.constellation.chaos.showup.name=The Lord's Mark
+knowledge.astralsorcery.fragment.constellation.chaos.showup.bookmark=Appearance
+knowledge.astralsorcery.fragment.constellation.chaos.showup.description=The Chaos constellation shows every night, in any world that has a sky. Above the Antechamber it burns together with every other constellation at once.

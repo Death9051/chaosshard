@@ -1,0 +1,20 @@
+{
+  "package": "ru.death.chaosshard.mixin.astral",
+  "required": true,
+  "refmap": "mixins.chaosshard.refmap.json",
+  "target": "@env(DEFAULT)",
+  "minVersion": "0.8",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "MixinWorldSkyHandler",
+    "MixinConstellationSkyHandler",
+    "MixinSkyCollectionHelper"
+  ],
+  "client": [
+    "MixinSkyCollectionHelperClient"
+  ],
+  "server": [],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

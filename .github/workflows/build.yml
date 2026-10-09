@@ -1,0 +1,29 @@
+name: Сборка мода
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Java 21 для Gradle
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Сборка
+        run: |
+          chmod +x gradlew
+          ./gradlew --no-daemon build
+
+      - name: Готовый jar
+        uses: actions/upload-artifact@v4
+        with:
+          name: chaosshard-jar
+          path: build/libs/*.jar

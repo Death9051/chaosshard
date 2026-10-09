@@ -1,0 +1,50 @@
+# Осколок Хаоса — русский язык
+
+# Блоки
+tile.chaosshard.chaos_stone.name=Хаосит
+tile.chaosshard.chaos_crust.name=Корка Преддверия
+
+# Преддверие
+chaosshard.antechamber.first_arrival=Гримуар: Приёмка изделия начата. Осколок, вы в Преддверии. К краю острова не подходите: за ним ничего нет. Совсем ничего.
+chaosshard.antechamber.reassembled=Гримуар: Тело Осколка собрано заново. Стоимость сборки внесена в счёт ваших будущих побед.
+
+# Нить
+chaosshard.thread.levelup.1=Гримуар: Нить натянулась (уровень %s). Лорд Death вас слышит. Не обольщайтесь — пока только слышит.
+chaosshard.thread.levelup.2=Гримуар: Нить окрепла (уровень %s). Владыка снизошёл до того, чтобы заметить ваше существование. Занесено в протокол.
+chaosshard.thread.levelup.3=Гримуар: Связь устойчива (уровень %s). Вам открыто больше, чем подобает изделию вашего класса.
+chaosshard.thread.levelup.4=Гримуар: Нить поёт (уровень %s). Лорд доволен. Я сдержанно не возражаю.
+chaosshard.thread.levelup.5=Гримуар: Нить в полную силу (уровень %s). Вы — продолжение воли Лорда Death. Ведите себя соответственно.
+chaosshard.hud.thread=Нить %s · %s/%s
+chaosshard.hud.thread.max=Нить %s · предел
+
+# Команды
+chaosshard.command.usage=/chaosshard <nit|tp|sky> ...
+chaosshard.command.nit.usage=/chaosshard nit <get [игрок]|set <игрок> <очки>|add <игрок> <очки>|resync [игрок]>
+chaosshard.command.nit.get=Нить %s: уровень %s, очков %s
+chaosshard.command.nit.changed=Нить %s: уровень %s, очков %s
+chaosshard.command.nit.resynced=Этапы Нити для %s выданы заново
+chaosshard.command.tp.usage=/chaosshard tp <antechamber [игрок]|world <id> [игрок]>
+chaosshard.command.tp.nodim=Измерение %s не зарегистрировано
+chaosshard.command.sky=Измерение %s (%s): %s
+chaosshard.command.sky.active=Созвездия сейчас: %s
+chaosshard.sky.kind.antechamber=Преддверие — все созвездия, максимум света
+chaosshard.sky.kind.luchezariya=Лучезария — обычное небо Astral Sorcery
+chaosshard.sky.kind.chaos_only=прочий мир — только созвездие Хаоса
+chaosshard.sky.no_handler=небо этого мира Astral Sorcery ещё не рассчитал
+chaosshard.sky.empty=ни одного
+
+# Конфиг
+chaosshard.config.antechamber=Преддверие
+chaosshard.config.thread=Нить
+chaosshard.config.stars=Звёзды
+
+# Созвездие Хаоса (Astral Sorcery)
+astralsorcery.constellation.chaos=Хаос
+astralsorcery.constellation.chaos.info=Метка Лорда
+astralsorcery.constellation.chaos.effect=Восьмилучевая звезда, которую видно в небе любого мира. Это не созвездие здешних небес, а метка, которую Лорд Death оставляет там, куда пришли его Осколки.
+astralsorcery.constellation.chaos.enchantments=Свойства этого света ещё не изучены.
+astralsorcery.constellation.chaos.ritual=Ритуал Хаоса ещё не открыт. Гримуар обещает, что «в своё время».
+astralsorcery.constellation.chaos.capeeffect=Мантия, настроенная на Хаос, пока молчит.
+knowledge.astralsorcery.fragment.constellation.chaos.showup.name=Метка Лорда
+knowledge.astralsorcery.fragment.constellation.chaos.showup.bookmark=Появление
+knowledge.astralsorcery.fragment.constellation.chaos.showup.description=Созвездие Хаоса видно каждую ночь, в любом мире, где есть небо. Над Преддверием оно горит вместе со всеми созвездиями сразу.
