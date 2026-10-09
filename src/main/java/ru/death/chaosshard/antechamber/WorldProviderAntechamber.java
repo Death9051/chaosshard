@@ -40,6 +40,22 @@ public class WorldProviderAntechamber extends WorldProvider {
         return 0.5F;
     }
 
+    /**
+     * Свет Преддверия. Небо — вечная ночь со звёздами, но земля освещена, как днём:
+     * будто остров подсвечен невидимыми источниками. Для света блоков (рост растений, спавн мобов)
+     * мир считается дневным, а для отрисовки — освещённым почти полностью.
+     */
+    @Override
+    public float getSunBrightnessFactor(float partialTicks) {
+        return ru.death.chaosshard.ChaosConfig.antechamber.ambientLight ? 1.0F : super.getSunBrightnessFactor(partialTicks);
+    }
+
+    @Override
+    @net.minecraftforge.fml.relauncher.SideOnly(net.minecraftforge.fml.relauncher.Side.CLIENT)
+    public float getSunBrightness(float partialTicks) {
+        return ru.death.chaosshard.ChaosConfig.antechamber.ambientLight ? 0.85F : super.getSunBrightness(partialTicks);
+    }
+
     @Override
     public boolean isSurfaceWorld() {
         return true;

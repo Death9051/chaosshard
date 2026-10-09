@@ -47,6 +47,10 @@ public final class ChaosConfig {
         @Config.Comment("При первом входе в мир переносить игрока в Преддверие")
         public boolean teleportOnFirstJoin = true;
 
+        @Config.Comment({"Освещение Преддверия: небо ночное, но земля освещена как днём",
+                "(растения растут, мобы на поверхности не появляются)."})
+        public boolean ambientLight = true;
+
         @Config.Comment("Если у игрока нет кровати, после смерти тело Осколка собирается заново в Преддверии")
         public boolean respawnInAntechamber = true;
     }

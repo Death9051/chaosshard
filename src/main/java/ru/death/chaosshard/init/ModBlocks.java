@@ -29,8 +29,8 @@ public final class ModBlocks {
 
     @SubscribeEvent
     public static void registerBlocks(RegistryEvent.Register<Block> event) {
-        CHAOS_STONE = add(new SimpleBlock(Material.ROCK, SoundType.STONE, 2.0F, 12.0F, 0.0F), "chaos_stone");
-        CHAOS_CRUST = add(new SimpleBlock(Material.ROCK, SoundType.STONE, 1.5F, 8.0F, 0.2F), "chaos_crust");
+        CHAOS_STONE = add(new SimpleBlock(Material.GROUND, SoundType.STONE, 1.2F, 12.0F, 0.0F), "chaos_stone");
+        CHAOS_CRUST = add(new SimpleBlock(Material.GROUND, SoundType.STONE, 0.8F, 8.0F, 0.2F), "chaos_crust");
         for (Block block : ALL) {
             event.getRegistry().register(block);
         }
@@ -60,7 +60,8 @@ public final class ModBlocks {
             setHardness(hardness);
             setResistance(resistance);
             setLightLevel(light);
-            setHarvestLevel("pickaxe", 1);
+            // Ломается рукой (материал не требует инструмента), кирка — быстрее
+            setHarvestLevel("pickaxe", 0);
         }
     }
 

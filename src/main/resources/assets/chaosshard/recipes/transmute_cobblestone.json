@@ -14,6 +14,7 @@
  ],
  "result": {
   "item": "minecraft:cobblestone",
-  "count": 4
+  "count": 4,
+  "data": 0
  }
 }

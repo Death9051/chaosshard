@@ -17,6 +17,7 @@
  ],
  "result": {
   "item": "minecraft:sand",
-  "count": 3
+  "count": 3,
+  "data": 0
  }
 }
