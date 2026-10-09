@@ -28,6 +28,7 @@ import java.util.List;
  *   tp world <id> [игрок]       — к точке появления измерения
  *   sky                         — какие правила неба действуют здесь (отладка)
  *   grimoire [игрок]            — выдать Гримуар
+ *   debug [report|reset|kit]    — отчёт в chaosshard-debug.txt / сброс «первого входа» / набор для теста
  */
 public class CommandChaosShard extends CommandBase {
 
@@ -65,6 +66,9 @@ public class CommandChaosShard extends CommandBase {
                 break;
             case "sky":
                 sky(sender);
+                break;
+            case "debug":
+                debug(server, sender, args);
                 break;
             case "grimoire": {
                 EntityPlayerMP player = args.length >= 2 ? getPlayer(server, sender, args[1]) : getCommandSenderAsPlayer(sender);
@@ -136,6 +140,57 @@ public class CommandChaosShard extends CommandBase {
         }
     }
 
+    private void debug(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
+        String mode = args.length >= 2 ? args[1] : "report";
+        EntityPlayerMP player = getCommandSenderAsPlayer(sender);
+        switch (mode) {
+            case "report": {
+                DebugReport report = DebugReport.build(server, player);
+                try {
+                    java.io.File file = report.write();
+                    sender.sendMessage(new TextComponentTranslation("chaosshard.command.debug.written", file.getPath(), report.problems()));
+                } catch (Exception e) {
+                    throw new CommandException("chaosshard.command.debug.failed", e.toString());
+                }
+                break;
+            }
+            case "reset": {
+                // Как будто игрок впервые зашёл: флаги, Нить и этапы сбрасываются
+                net.minecraft.nbt.NBTTagCompound persisted = player.getEntityData()
+                        .getCompoundTag(net.minecraft.entity.player.EntityPlayer.PERSISTED_NBT_TAG);
+                persisted.removeTag("chaosshard_arrived");
+                persisted.removeTag("chaosshard_grimoire_given");
+                ru.death.chaosshard.thread.IThread thread = ru.death.chaosshard.thread.ThreadCapability.get(player);
+                if (thread != null) {
+                    for (int l = ThreadManager.maxLevel(); l >= 0; l--) {
+                        server.getCommandManager().executeCommand(server, ru.death.chaosshard.ChaosConfig.thread.stageRemoveCommand
+                                .replace("{player}", player.getName())
+                                .replace("{stage}", ru.death.chaosshard.ChaosConfig.thread.stagePrefix + l));
+                    }
+                    thread.setPoints(0);
+                    thread.setAnnouncedLevel(-1);
+                    ThreadManager.sync(player);
+                }
+                sender.sendMessage(new TextComponentTranslation("chaosshard.command.debug.reset"));
+                break;
+            }
+            case "kit": {
+                String[] kit = {
+                        "chaosshard:grimoire", "chaosshard:chaos_stone 64", "chaosshard:chaos_crust 64",
+                        "astralsorcery:itemjournal", "astralsorcery:itemwand", "astralsorcery:itemhandtelescope",
+                        "astralsorcery:blockaltar 1 0", "astralsorcery:blockwell", "astralsorcery:itemrockcrystalsimple 4",
+                        "astralsorcery:itemcraftingcomponent 32 0", "astralsorcery:blockmarble 64 0"
+                };
+                for (String item : kit) {
+                    server.getCommandManager().executeCommand(server, "give " + player.getName() + " " + item);
+                }
+                break;
+            }
+            default:
+                throw new WrongUsageException("chaosshard.command.debug.usage");
+        }
+    }
+
     private void sky(ICommandSender sender) {
         World world = sender.getEntityWorld();
         SkyRules.Kind kind = SkyRules.classify(world);
@@ -150,10 +205,13 @@ public class CommandChaosShard extends CommandBase {
     @Override
     public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos targetPos) {
         if (args.length == 1) {
-            return getListOfStringsMatchingLastWord(args, "nit", "tp", "sky", "grimoire");
+            return getListOfStringsMatchingLastWord(args, "nit", "tp", "sky", "grimoire", "debug");
         }
         if (args.length == 2 && "nit".equals(args[0])) {
             return getListOfStringsMatchingLastWord(args, "get", "set", "add", "resync");
+        }
+        if (args.length == 2 && "debug".equals(args[0])) {
+            return getListOfStringsMatchingLastWord(args, "report", "reset", "kit");
         }
         if (args.length == 2 && "tp".equals(args[0])) {
             return getListOfStringsMatchingLastWord(args, "antechamber", "world");

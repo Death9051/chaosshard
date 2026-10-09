@@ -54,3 +54,9 @@ item.chaosshard.grimoire.name=Гримуар
 item.chaosshard.grimoire.lore=Артефакт Лорда Death, созданный для его Осколков
 item.chaosshard.grimoire.use=ПКМ — открыть записи
 chaosshard.grimoire.no_bq=Гримуар молчит: не установлен Better Questing.
+
+# Отладка
+chaosshard.command.debug.written=Отчёт записан: %s (проблем: %s). Пришлите этот файл.
+chaosshard.command.debug.failed=Не удалось записать отчёт: %s
+chaosshard.command.debug.reset=Сброшено: флаги первого входа, Гримуар, Нить и этапы. Перезайдите в мир.
+chaosshard.command.debug.usage=/oh debug [report|reset|kit]

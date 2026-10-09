@@ -75,6 +75,43 @@ public final class AstralCompat {
         return out;
     }
 
+    /** Состояние неба Astral Sorcery для отладочного отчёта. */
+    public static String debugSky(net.minecraft.entity.player.EntityPlayerMP player) {
+        StringBuilder b = new StringBuilder();
+        World world = player.world;
+        int dim = world.provider.getDimension();
+        ConstellationSkyHandler sky = ConstellationSkyHandler.getInstance();
+        WorldSkyHandler handler = sky.getWorldHandler(world);
+        b.append("Обработчик неба мира: ").append(handler == null ? "НЕТ (небо ещё не посчитано)" : "есть").append('\n');
+        if (handler != null) {
+            b.append("День неба: ").append(handler.lastRecordedDay).append(", активных созвездий: ")
+                    .append(handler.getActiveConstellations().size()).append('\n');
+            for (IConstellation c : handler.getActiveConstellations()) {
+                b.append("  ").append(c.getUnlocalizedName()).append(" = ")
+                        .append(handler.getCurrentDistribution(c, f -> f)).append('\n');
+            }
+        }
+        b.append("Ночность (getCurrentDaytimeDistribution): ").append(sky.getCurrentDaytimeDistribution(world)).append('\n');
+        b.append("Шум неба у игрока: ").append(hellfirepvp.astralsorcery.common.util.SkyCollectionHelper
+                .getSkyNoiseDistribution(world, player.getPosition())).append('\n');
+        b.append("Список неба Astral содержит это измерение: ")
+                .append(hellfirepvp.astralsorcery.common.data.config.Config.constellationSkyDimWhitelist.contains(dim))
+                .append(", «слабое небо»: ")
+                .append(hellfirepvp.astralsorcery.common.data.config.Config.weakSkyRendersWhitelist.contains(dim)).append('\n');
+        b.append("Эффект ритуала Хаоса: ").append(CHAOS != null
+                && hellfirepvp.astralsorcery.common.constellation.effect.ConstellationEffectRegistry.clientRenderInstance(CHAOS) != null
+                ? "зарегистрирован" : "НЕТ").append('\n');
+        b.append("Потолок уровня перков: ").append(hellfirepvp.astralsorcery.common.constellation.perk.PerkLevelManager
+                .getLevelCapFor(player)).append('\n');
+        try {
+            b.append("Мест для созвездий на небе: ").append(hellfirepvp.astralsorcery.client.util.mappings
+                    .ClientConstellationPositionMapping.availablePositions.size());
+        } catch (Throwable t) {
+            b.append("Мест для созвездий на небе: недоступно на сервере");
+        }
+        return b.toString();
+    }
+
     public static boolean isChaos(IConstellation constellation) {
         return CHAOS != null && CHAOS == constellation;
     }
