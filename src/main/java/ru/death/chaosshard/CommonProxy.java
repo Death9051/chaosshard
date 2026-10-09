@@ -18,4 +18,8 @@ public class CommonProxy {
     /** Пакет синхронизации Нити пришёл на клиент. На сервере ничего не делает. */
     public void handleThreadSync(int points) {
     }
+
+    /** Открыть книгу квестов (только клиент). */
+    public void openGrimoire() {
+    }
 }

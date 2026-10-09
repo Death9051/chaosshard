@@ -42,3 +42,9 @@ astralsorcery.constellation.chaos.capeeffect=A mantle attuned to Chaos stays sil
 knowledge.astralsorcery.fragment.constellation.chaos.showup.name=The Lord's Mark
 knowledge.astralsorcery.fragment.constellation.chaos.showup.bookmark=Appearance
 knowledge.astralsorcery.fragment.constellation.chaos.showup.description=The Chaos constellation shows every night, in any world that has a sky. Above the Antechamber it burns together with every other constellation at once.
+
+# Гримуар
+item.chaosshard.grimoire.name=Grimoire
+item.chaosshard.grimoire.lore=An artifact Lord Death made for his Shards
+item.chaosshard.grimoire.use=Right-click to open the records
+chaosshard.grimoire.no_bq=The Grimoire is silent: Better Questing is not installed.

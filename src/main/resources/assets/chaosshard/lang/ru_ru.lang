@@ -48,3 +48,9 @@ astralsorcery.constellation.chaos.capeeffect=Мантия, настроенна�
 knowledge.astralsorcery.fragment.constellation.chaos.showup.name=Метка Лорда
 knowledge.astralsorcery.fragment.constellation.chaos.showup.bookmark=Появление
 knowledge.astralsorcery.fragment.constellation.chaos.showup.description=Созвездие Хаоса видно каждую ночь, в любом мире, где есть небо. Над Преддверием оно горит вместе со всеми созвездиями сразу.
+
+# Гримуар
+item.chaosshard.grimoire.name=Гримуар
+item.chaosshard.grimoire.lore=Артефакт Лорда Death, созданный для его Осколков
+item.chaosshard.grimoire.use=ПКМ — открыть записи
+chaosshard.grimoire.no_bq=Гримуар молчит: не установлен Better Questing.

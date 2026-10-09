@@ -27,6 +27,7 @@ import java.util.List;
  *   tp antechamber [игрок]      — в Преддверие
  *   tp world <id> [игрок]       — к точке появления измерения
  *   sky                         — какие правила неба действуют здесь (отладка)
+ *   grimoire [игрок]            — выдать Гримуар
  */
 public class CommandChaosShard extends CommandBase {
 
@@ -65,6 +66,11 @@ public class CommandChaosShard extends CommandBase {
             case "sky":
                 sky(sender);
                 break;
+            case "grimoire": {
+                EntityPlayerMP player = args.length >= 2 ? getPlayer(server, sender, args[1]) : getCommandSenderAsPlayer(sender);
+                ru.death.chaosshard.antechamber.AntechamberEvents.giveGrimoire(player);
+                break;
+            }
             default:
                 throw new WrongUsageException(getUsage(sender));
         }
@@ -144,7 +150,7 @@ public class CommandChaosShard extends CommandBase {
     @Override
     public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos targetPos) {
         if (args.length == 1) {
-            return getListOfStringsMatchingLastWord(args, "nit", "tp", "sky");
+            return getListOfStringsMatchingLastWord(args, "nit", "tp", "sky", "grimoire");
         }
         if (args.length == 2 && "nit".equals(args[0])) {
             return getListOfStringsMatchingLastWord(args, "get", "set", "add", "resync");

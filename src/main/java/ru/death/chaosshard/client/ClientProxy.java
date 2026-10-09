@@ -34,6 +34,11 @@ public class ClientProxy extends CommonProxy {
     }
 
     @Override
+    public void openGrimoire() {
+        ru.death.chaosshard.compat.BetterQuestingCompat.openQuestBook();
+    }
+
+    @Override
     public void handleThreadSync(int points) {
         Minecraft.getMinecraft().addScheduledTask(() -> ClientThreadCache.update(points));
     }
