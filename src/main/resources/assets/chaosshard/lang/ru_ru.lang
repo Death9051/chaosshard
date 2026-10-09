@@ -5,15 +5,15 @@ tile.chaosshard.chaos_stone.name=Хаосит
 tile.chaosshard.chaos_crust.name=Корка Преддверия
 
 # Преддверие
-chaosshard.antechamber.first_arrival=Гримуар: Приёмка изделия начата. Осколок, вы в Преддверии. К краю острова не подходите: за ним ничего нет. Совсем ничего.
-chaosshard.antechamber.reassembled=Гримуар: Тело Осколка собрано заново. Стоимость сборки внесена в счёт ваших будущих побед.
+chaosshard.antechamber.first_arrival=Гримуар: О, очнулся. Добро пожаловать в Преддверие, Осколок. Осмотрись, только к краю не подходи — там пустота, и она голодная.
+chaosshard.antechamber.reassembled=Гримуар: Ну вот, опять собирать тебя по кусочкам. Ничего, Лорд терпелив. Я — чуть меньше.
 
 # Нить
-chaosshard.thread.levelup.1=Гримуар: Нить натянулась (уровень %s). Лорд Death вас слышит. Не обольщайтесь — пока только слышит.
-chaosshard.thread.levelup.2=Гримуар: Нить окрепла (уровень %s). Владыка снизошёл до того, чтобы заметить ваше существование. Занесено в протокол.
-chaosshard.thread.levelup.3=Гримуар: Связь устойчива (уровень %s). Вам открыто больше, чем подобает изделию вашего класса.
-chaosshard.thread.levelup.4=Гримуар: Нить поёт (уровень %s). Лорд доволен. Я сдержанно не возражаю.
-chaosshard.thread.levelup.5=Гримуар: Нить в полную силу (уровень %s). Вы — продолжение воли Лорда Death. Ведите себя соответственно.
+chaosshard.thread.levelup.1=Гримуар: Чувствуешь? Нить натянулась (уровень %s). Лорд тебя услышал. Звёзды, кстати, тоже — загляни в древо перков.
+chaosshard.thread.levelup.2=Гримуар: Нить крепнет (уровень %s). Владыка тебя заметил. Не зазнавайся, но можешь немного гордиться.
+chaosshard.thread.levelup.3=Гримуар: Нить держит ровно (уровень %s). Тебе открывается больше, чем я ожидал. Приятно ошибаться.
+chaosshard.thread.levelup.4=Гримуар: Нить поёт (уровень %s). Лорд доволен — а это, поверь, редкость. Перки звёзд горят ярче.
+chaosshard.thread.levelup.5=Гримуар: Нить в полную силу (уровень %s). Теперь ты — голос и рука Лорда Death. Всё звёздное древо твоё. Не подведи.
 chaosshard.hud.thread=Нить %s · %s/%s
 chaosshard.hud.thread.max=Нить %s · предел
 
@@ -37,6 +37,7 @@ chaosshard.sky.empty=ни одного
 chaosshard.config.antechamber=Преддверие
 chaosshard.config.thread=Нить
 chaosshard.config.stars=Звёзды
+chaosshard.config.perks=Перки
 
 # Созвездие Хаоса (Astral Sorcery)
 astralsorcery.constellation.chaos=Хаос

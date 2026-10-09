@@ -19,6 +19,11 @@ public class CommonProxy {
     public void handleThreadSync(int points) {
     }
 
+    /** Уровень Нити, известный клиенту. На сервере 0. */
+    public int clientThreadLevel() {
+        return 0;
+    }
+
     /** Открыть книгу квестов (только клиент). */
     public void openGrimoire() {
     }

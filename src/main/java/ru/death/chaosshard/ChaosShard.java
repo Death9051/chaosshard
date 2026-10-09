@@ -60,6 +60,9 @@ public class ChaosShard {
         AntechamberDimension.register();
         MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.thread.ThreadEvents());
         MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.antechamber.AntechamberEvents());
+        if (astralLoaded) {
+            MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.stars.PerkBridge());
+        }
         proxy.preInit(event);
         if (astralLoaded && !Loader.isModLoaded("mixinbooter")) {
             LOG.error("Astral Sorcery есть, а MixinBooter нет: правила неба Преддверия и Кладовок работать не будут.");

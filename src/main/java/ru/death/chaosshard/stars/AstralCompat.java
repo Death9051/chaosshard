@@ -109,6 +109,7 @@ public final class AstralCompat {
         } catch (Throwable t) {
             b.append("Мест для созвездий на небе: недоступно на сервере");
         }
+        b.append('\n').append(PerkBridge.debug(player));
         return b.toString();
     }
 

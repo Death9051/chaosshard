@@ -25,6 +25,10 @@ public final class ChaosConfig {
     @Config.LangKey("chaosshard.config.stars")
     public static final StarsCfg stars = new StarsCfg();
 
+    @Config.Comment("Перки Astral Sorcery и Нить")
+    @Config.LangKey("chaosshard.config.perks")
+    public static final PerksCfg perks = new PerksCfg();
+
     public static final class AntechamberCfg {
         @Config.Comment("ID измерения Преддверия. Меняйте только на новом мире.")
         @Config.RequiresMcRestart
@@ -89,6 +93,25 @@ public final class ChaosConfig {
         @Config.Comment("Добавить на небо дополнительные места для созвездий (в Astral их всего 15)")
         @Config.RequiresMcRestart
         public boolean extraSkyPositions = true;
+    }
+
+    public static final class PerksCfg {
+        @Config.Comment({"Нить даёт свободные очки перков, чтобы на максимальной Нити можно было взять всё древо.",
+                "Очки приходят постепенно, с каждым уровнем Нити."})
+        public boolean allPerksAtMaxThread = true;
+
+        @Config.Comment({"Сколько уровней перков игрок, по расчёту, наберёт опытом.",
+                "Нить доплачивает остальное: (все перки - корни) - это число."})
+        @Config.RangeInt(min = 0, max = 100)
+        public int levelsFromExp = 20;
+
+        @Config.Comment("Усиление всех перков за уровень Нити (0.05 = +5% за уровень, на 5-м уровне +25%)")
+        @Config.RangeDouble(min = 0, max = 1)
+        public double perkEffectPerLevel = 0.05;
+
+        @Config.Comment("Прибавка опыта перков за уровень Нити (0.10 = +10% за уровень)")
+        @Config.RangeDouble(min = 0, max = 2)
+        public double expGainPerLevel = 0.10;
     }
 
     @SubscribeEvent

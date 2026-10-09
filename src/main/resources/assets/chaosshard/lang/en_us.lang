@@ -3,14 +3,14 @@
 tile.chaosshard.chaos_stone.name=Chaosite
 tile.chaosshard.chaos_crust.name=Antechamber Crust
 
-chaosshard.antechamber.first_arrival=Grimoire: Acceptance inspection started. Shard, you are in the Antechamber. Do not approach the edge: there is nothing beyond it. Nothing at all.
-chaosshard.antechamber.reassembled=Grimoire: The Shard's body has been reassembled. The cost has been billed against your future victories.
+chaosshard.antechamber.first_arrival=Grimoire: Oh, you're awake. Welcome to the Antechamber, Shard. Look around — just stay away from the edge. The void out there is hungry.
+chaosshard.antechamber.reassembled=Grimoire: Piecing you back together again. The Lord is patient. I am slightly less so.
 
-chaosshard.thread.levelup.1=Grimoire: The Thread is taut (level %s). Lord Death hears you. Do not flatter yourself — he only hears.
-chaosshard.thread.levelup.2=Grimoire: The Thread grows stronger (level %s). The Lord has deigned to notice your existence. Recorded.
-chaosshard.thread.levelup.3=Grimoire: The link is stable (level %s). You may now do more than befits a unit of your class.
-chaosshard.thread.levelup.4=Grimoire: The Thread sings (level %s). The Lord is pleased. I reservedly do not object.
-chaosshard.thread.levelup.5=Grimoire: The Thread is at full strength (level %s). You are an extension of Lord Death's will. Behave accordingly.
+chaosshard.thread.levelup.1=Grimoire: Feel that? The Thread is taut (level %s). The Lord heard you. So did the stars — check your perk tree.
+chaosshard.thread.levelup.2=Grimoire: The Thread grows stronger (level %s). The Lord has noticed you. Don't get cocky, but a little pride is allowed.
+chaosshard.thread.levelup.3=Grimoire: The Thread holds steady (level %s). More is open to you than I expected. I like being wrong this way.
+chaosshard.thread.levelup.4=Grimoire: The Thread sings (level %s). The Lord is pleased — rarer than you think. Your star perks burn brighter.
+chaosshard.thread.levelup.5=Grimoire: The Thread is at full strength (level %s). You are Lord Death's voice and hand now. The whole star tree is yours. Don't fail him.
 chaosshard.hud.thread=Thread %s · %s/%s
 chaosshard.hud.thread.max=Thread %s · max
 
@@ -32,6 +32,7 @@ chaosshard.sky.empty=none
 chaosshard.config.antechamber=Antechamber
 chaosshard.config.thread=Thread
 chaosshard.config.stars=Stars
+chaosshard.config.perks=Perks
 
 astralsorcery.constellation.chaos=Chaos
 astralsorcery.constellation.chaos.info=The Lord's Mark

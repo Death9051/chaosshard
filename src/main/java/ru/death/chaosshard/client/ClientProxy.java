@@ -39,6 +39,11 @@ public class ClientProxy extends CommonProxy {
     }
 
     @Override
+    public int clientThreadLevel() {
+        return ru.death.chaosshard.thread.ThreadManager.levelFor(ClientThreadCache.points());
+    }
+
+    @Override
     public void handleThreadSync(int points) {
         Minecraft.getMinecraft().addScheduledTask(() -> ClientThreadCache.update(points));
     }
