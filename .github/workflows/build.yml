@@ -43,9 +43,10 @@ jobs:
           echo "${{ job.status }} ${{ github.sha }}" > /tmp/ci/status.txt
           git config user.name "ci-bot"
           git config user.email "ci-bot@users.noreply.github.com"
-          git fetch origin ci-logs || true
+          rm -f build.log
+          git fetch origin ci-logs:refs/remotes/origin/ci-logs || true
           if git rev-parse --verify origin/ci-logs >/dev/null 2>&1; then
-            git checkout -B ci-logs origin/ci-logs
+            git checkout -f -B ci-logs origin/ci-logs
           else
             git checkout --orphan ci-logs
             git rm -rf . >/dev/null 2>&1 || true
