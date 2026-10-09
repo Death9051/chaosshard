@@ -48,6 +48,7 @@ knowledge.astralsorcery.fragment.constellation.chaos.showup.description=The Chao
 item.chaosshard.grimoire.name=Grimoire
 item.chaosshard.grimoire.lore=An artifact Lord Death made for his Shards
 item.chaosshard.grimoire.use=Right-click to open the records
+item.chaosshard.grimoire.craft=In a crafting grid — Transmutation: chaos stone and crust become what you need. The Grimoire is not consumed.
 chaosshard.grimoire.no_bq=The Grimoire is silent: Better Questing is not installed.
 
 # Отладка

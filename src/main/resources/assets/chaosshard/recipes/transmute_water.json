@@ -1,0 +1,19 @@
+{
+ "type": "minecraft:crafting_shapeless",
+ "group": "chaosshard:transmute",
+ "ingredients": [
+  {
+   "item": "chaosshard:grimoire"
+  },
+  {
+   "item": "chaosshard:chaos_crust"
+  },
+  {
+   "item": "minecraft:bucket"
+  }
+ ],
+ "result": {
+  "item": "minecraft:water_bucket",
+  "count": 1
+ }
+}

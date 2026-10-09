@@ -44,6 +44,17 @@ public class ItemGrimoire extends Item {
         return new ActionResult<>(EnumActionResult.SUCCESS, stack);
     }
 
+    /** Гримуар — катализатор Преобразования: в верстаке он не тратится. */
+    @Override
+    public boolean hasContainerItem(ItemStack stack) {
+        return true;
+    }
+
+    @Override
+    public ItemStack getContainerItem(ItemStack stack) {
+        return stack.copy();
+    }
+
     @Override
     public EnumRarity getRarity(ItemStack stack) {
         return EnumRarity.EPIC;
@@ -59,5 +70,6 @@ public class ItemGrimoire extends Item {
     public void addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, ITooltipFlag flag) {
         tooltip.add(TextFormatting.DARK_PURPLE + "" + TextFormatting.ITALIC + I18n.format("item.chaosshard.grimoire.lore"));
         tooltip.add(TextFormatting.GRAY + I18n.format("item.chaosshard.grimoire.use"));
+        tooltip.add(TextFormatting.GRAY + I18n.format("item.chaosshard.grimoire.craft"));
     }
 }

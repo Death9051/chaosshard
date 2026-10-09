@@ -1,0 +1,19 @@
+{
+ "type": "minecraft:crafting_shapeless",
+ "group": "chaosshard:transmute",
+ "ingredients": [
+  {
+   "item": "chaosshard:grimoire"
+  },
+  {
+   "item": "chaosshard:chaos_crust"
+  },
+  {
+   "item": "chaosshard:chaos_crust"
+  }
+ ],
+ "result": {
+  "item": "minecraft:dirt",
+  "count": 2
+ }
+}

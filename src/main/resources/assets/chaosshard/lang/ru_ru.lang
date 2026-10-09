@@ -54,6 +54,7 @@ knowledge.astralsorcery.fragment.constellation.chaos.showup.description=Созв
 item.chaosshard.grimoire.name=Гримуар
 item.chaosshard.grimoire.lore=Артефакт Лорда Death, созданный для его Осколков
 item.chaosshard.grimoire.use=ПКМ — открыть записи
+item.chaosshard.grimoire.craft=В верстаке — Преобразование: хаосит и корка становятся тем, что нужно. Сам Гримуар не тратится.
 chaosshard.grimoire.no_bq=Гримуар молчит: не установлен Better Questing.
 
 # Отладка

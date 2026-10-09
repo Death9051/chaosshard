@@ -1,0 +1,22 @@
+{
+ "type": "minecraft:crafting_shapeless",
+ "group": "chaosshard:transmute",
+ "ingredients": [
+  {
+   "item": "chaosshard:grimoire"
+  },
+  {
+   "item": "chaosshard:chaos_stone"
+  },
+  {
+   "item": "chaosshard:chaos_stone"
+  },
+  {
+   "item": "chaosshard:chaos_crust"
+  }
+ ],
+ "result": {
+  "item": "minecraft:log",
+  "count": 2
+ }
+}

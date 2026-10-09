@@ -1,0 +1,37 @@
+{
+ "type": "minecraft:crafting_shapeless",
+ "group": "chaosshard:transmute",
+ "ingredients": [
+  {
+   "item": "chaosshard:grimoire"
+  },
+  {
+   "item": "chaosshard:chaos_stone"
+  },
+  {
+   "item": "chaosshard:chaos_stone"
+  },
+  {
+   "item": "chaosshard:chaos_stone"
+  },
+  {
+   "item": "chaosshard:chaos_stone"
+  },
+  {
+   "item": "chaosshard:chaos_stone"
+  },
+  {
+   "item": "chaosshard:chaos_stone"
+  },
+  {
+   "item": "chaosshard:chaos_stone"
+  },
+  {
+   "item": "chaosshard:chaos_stone"
+  }
+ ],
+ "result": {
+  "item": "minecraft:iron_nugget",
+  "count": 3
+ }
+}

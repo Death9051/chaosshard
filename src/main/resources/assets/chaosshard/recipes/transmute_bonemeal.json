@@ -1,0 +1,17 @@
+{
+ "type": "minecraft:crafting_shapeless",
+ "group": "chaosshard:transmute",
+ "ingredients": [
+  {
+   "item": "chaosshard:grimoire"
+  },
+  {
+   "item": "chaosshard:chaos_crust"
+  }
+ ],
+ "result": {
+  "item": "minecraft:dye",
+  "count": 3,
+  "data": 15
+ }
+}
