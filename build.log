@@ -33,7 +33,6 @@ Download https://piston-meta.mojang.com/v1/packages/832d95b9f40699d4961394dcf6cf
 > Task :processApiResources NO-SOURCE
 > Task :injectTags
 > Task :compileInjectedTagsJava
-> Task :extractNatives2
 
 > Task :downloadVanillaJars
 Download https://piston-data.mojang.com/v1/objects/0f275bc1547d01fa5f56ba34bdc87d981ee12daf/client.jar
@@ -51,18 +50,18 @@ Cleaning up generated debuginfo
 > Task :decompileSrgJar
 Didn't find cached decompiled jar, decompiling and saving to /home/runner/.gradle/caches/retro_futura_gradle/fernflower-cache/1.0.342-3bcc7ff2caa3c44ef8a4ae34bd7503f35aae66fe83874c4549de26a264180930.jar
 Decompiling the srg jar with fernflower
-  Decompiling took 96299 ms
+  Decompiling took 100150 ms
 
 > Task :cleanupDecompSrgJar
 Fixup stage 1 - applying FF patches
-  Stage 1 took 846 ms
+  Stage 1 took 677 ms
 Fixup stage 2 - applying MCP patches
-  Stage 2 took 309 ms
+  Stage 2 took 334 ms
 Fixup stage 3 - applying MCP cleanup
-  Stage 3 took 6237 ms
+  Stage 3 took 9177 ms
 Fixup stage 4 - injecting package-info
   Injected 119 package-infos
-  Stage 4 took 4 ms
+  Stage 4 took 3 ms
 Saving the fixed-up jar
 
 > Task :patchDecompiledJar
@@ -87,6 +86,7 @@ Note: Recompile with -Xlint:unchecked for details.
 > Task :patchedMcClasses
 > Task :compileApiJava NO-SOURCE
 > Task :apiClasses UP-TO-DATE
+> Task :extractNatives2
 > Task :createMcLauncherFiles
 > Task :compileMcLauncherJava
 > Task :processInjectedTagsResources NO-SOURCE
@@ -129,6 +129,6 @@ You can use '--warning-mode all' to show the individual deprecation warnings and
 
 For more on this, please refer to https://docs.gradle.org/9.7.0/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
 
-BUILD SUCCESSFUL in 4m 28s
+BUILD SUCCESSFUL in 4m 25s
 24 actionable tasks: 24 executed
 Consider enabling configuration cache to speed up this build: https://docs.gradle.org/9.7.0/userguide/configuration_cache_enabling.html
