@@ -28,7 +28,7 @@ import ru.death.chaosshard.thread.ThreadCapability;
         name = Tags.MOD_NAME,
         version = Tags.VERSION,
         acceptedMinecraftVersions = "[1.12.2]",
-        dependencies = "required-after:forge@[14.23.5.2847,);after:mixinbooter;after:astralsorcery;after:gamestages"
+        dependencies = "required-after:forge@[14.23.5.2847,);after:mixinbooter;after:astralsorcery;after:gamestages;after:tconstruct"
 )
 public class ChaosShard {
 
@@ -65,6 +65,9 @@ public class ChaosShard {
         if (astralLoaded) {
             MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.stars.PerkBridge());
         }
+        if (Loader.isModLoaded("tconstruct") && ChaosConfig.compat.tinkers) {
+            ru.death.chaosshard.compat.tinkers.TinkersCompat.preInit();
+        }
         proxy.preInit(event);
         if (astralLoaded && !Loader.isModLoaded("mixinbooter")) {
             LOG.error("Astral Sorcery есть, а MixinBooter нет: правила неба Преддверия и Кладовок работать не будут.");
@@ -74,6 +77,9 @@ public class ChaosShard {
 
     @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
+        if (Loader.isModLoaded("tconstruct") && ChaosConfig.compat.tinkers) {
+            ru.death.chaosshard.compat.tinkers.TinkersCompat.init();
+        }
         proxy.init(event);
     }
 

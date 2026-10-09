@@ -29,6 +29,10 @@ public final class ChaosConfig {
     @Config.LangKey("chaosshard.config.breach")
     public static final BreachCfg breach = new BreachCfg();
 
+    @Config.Comment("Связки с другими модами")
+    @Config.LangKey("chaosshard.config.compat")
+    public static final CompatCfg compat = new CompatCfg();
+
     @Config.Comment("Перки Astral Sorcery и Нить")
     @Config.LangKey("chaosshard.config.perks")
     public static final PerksCfg perks = new PerksCfg();
@@ -101,6 +105,12 @@ public final class ChaosConfig {
         @Config.Comment("Добавить на небо дополнительные места для созвездий (в Astral их всего 15)")
         @Config.RequiresMcRestart
         public boolean extraSkyPositions = true;
+    }
+
+    public static final class CompatCfg {
+        @Config.Comment("Tinkers' Construct: материал «Хаосит» со свойством «Нить Хаоса»")
+        @Config.RequiresMcRestart
+        public boolean tinkers = true;
     }
 
     public static final class BreachCfg {

@@ -113,3 +113,9 @@ chaosshard.breach.lord_done=Death: Ты прошёл. Возьми этот ми
 chaosshard.breach.done=Гримуар: Мы в Лучезарии! Солнце, трава, селяне… фу. Книга теперь открыта: ПКМ — и ты дома, в Преддверии, и обратно.
 chaosshard.spell.recall.sealed=Завеса закрыта. Сначала Прорыв.
 chaosshard.config.breach=Прорыв
+
+# Tinkers
+material.chaosshard_chaos.name=Хаосит
+modifier.chaosshard_thread.name=Нить Хаоса
+modifier.chaosshard_thread.desc=§oЛорд направляет удар.§r\nУрон растёт на 0,5 за каждый уровень Нити владельца.
+chaosshard.config.compat=Связки с модами

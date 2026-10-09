@@ -102,3 +102,8 @@ tasks.shadowJar {
     archiveClassifier = 'uberdev'
     configurations = [ project.configurations.shade ]
 }
+
+// Tinkers' Construct и Mantle — только для компиляции связки (jar'ы из сборки, в libs/)
+dependencies {
+    compileOnly files('libs/TConstruct-1.12.2-2.13.0.183.jar', 'libs/Mantle-1.12-1.3.3.55.jar')
+}

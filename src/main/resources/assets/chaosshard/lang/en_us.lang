@@ -107,3 +107,9 @@ chaosshard.breach.lord_done=Death: You are through. Take this world.
 chaosshard.breach.done=Grimoire: We're in Luchezaria! Sun, grass, villagers... ugh. The book is open now: RMB takes you home to the Antechamber and back.
 chaosshard.spell.recall.sealed=The Veil is closed. Breach it first.
 chaosshard.config.breach=Breach
+
+# Tinkers
+material.chaosshard_chaos.name=Chaos Stone
+modifier.chaosshard_thread.name=Chaos Thread
+modifier.chaosshard_thread.desc=§oThe Lord guides the blow.§r\nDeals +0.5 damage per level of the wielder's Thread.
+chaosshard.config.compat=Mod integrations
