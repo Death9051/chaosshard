@@ -115,6 +115,9 @@ public final class ChaosConfig {
         @Config.Comment("Ставить Сердце Острова в Преддверии")
         public boolean enabled = true;
 
+        @Config.Comment("Наросты при добыче выпадают блоком руды (как с «Шёлковым касанием»), а не осколками")
+        public boolean dropOreBlocks = true;
+
         @Config.Comment({"Что нарастает на каждой ступени (ступень включает и все предыдущие).",
                 "Формат: ore:<оредикт>*вес или modid:блок[:мета]*вес, через запятую. Несуществующее пропускается."})
         public String[] tierOres = {

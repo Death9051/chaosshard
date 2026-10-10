@@ -1,0 +1,33 @@
+{
+ "conditions": [
+  {
+   "type": "forge:mod_loaded",
+   "modid": "mystcraft"
+  }
+ ],
+ "type": "forge:ore_shapeless",
+ "group": "chaosshard:resource_pages",
+ "ingredients": [
+  {
+   "item": "minecraft:paper"
+  },
+  {
+   "item": "mystcraft:vial"
+  },
+  {
+   "item": "minecraft:coal",
+   "data": 0
+  },
+  {
+   "item": "minecraft:coal",
+   "data": 0
+  }
+ ],
+ "result": {
+  "item": "mystcraft:page",
+  "count": 1,
+  "nbt": {
+   "symbol": "mystcraft:modmat_coal_ore_0"
+  }
+ }
+}

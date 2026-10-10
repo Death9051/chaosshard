@@ -1,0 +1,33 @@
+{
+ "conditions": [
+  {
+   "type": "forge:mod_loaded",
+   "modid": "mystcraft"
+  }
+ ],
+ "type": "forge:ore_shapeless",
+ "group": "chaosshard:resource_pages",
+ "ingredients": [
+  {
+   "item": "minecraft:paper"
+  },
+  {
+   "item": "mystcraft:vial"
+  },
+  {
+   "type": "forge:ore_dict",
+   "ore": "gemLapis"
+  },
+  {
+   "type": "forge:ore_dict",
+   "ore": "gemLapis"
+  }
+ ],
+ "result": {
+  "item": "mystcraft:page",
+  "count": 1,
+  "nbt": {
+   "symbol": "mystcraft:modmat_lapis_ore_0"
+  }
+ }
+}
