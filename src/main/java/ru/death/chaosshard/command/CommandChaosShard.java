@@ -30,6 +30,7 @@ import java.util.List;
  *   grimoire [игрок]            — выдать Гримуар
  *   breach [on|off] [игрок]     — отметить Прорыв пройденным / сбросить
  *   heart [place|grow [n]|tier N] — Сердце Острова
+ *   quests complete|reset|edit [игрок] — выполнить все квесты / сбросить / режим редактора BQ
  *   debug [report|reset|kit]    — отчёт в chaosshard-debug.txt / сброс «первого входа» / набор для теста
  */
 public class CommandChaosShard extends CommandBase {
@@ -72,6 +73,31 @@ public class CommandChaosShard extends CommandBase {
             case "debug":
                 debug(server, sender, args);
                 break;
+            case "quests": {
+                // /oh quests <complete|reset|edit> [игрок] — через команды Better Questing
+                if (!net.minecraftforge.fml.common.Loader.isModLoaded("betterquesting")) {
+                    throw new CommandException("chaosshard.grimoire.no_bq");
+                }
+                String sub = args.length >= 2 ? args[1] : "";
+                EntityPlayerMP player = args.length >= 3 ? getPlayer(server, sender, args[2]) : getCommandSenderAsPlayer(sender);
+                net.minecraft.command.ICommandManager cm = server.getCommandManager();
+                if ("complete".equals(sub)) {
+                    int count = questCount();
+                    for (int id = 0; id < count; id++) {
+                        cm.executeCommand(server, "bq_admin complete " + id + " " + player.getName());
+                    }
+                    sender.sendMessage(new net.minecraft.util.text.TextComponentTranslation("chaosshard.command.quests.completed", count, player.getName()));
+                } else if ("reset".equals(sub)) {
+                    cm.executeCommand(server, "bq_admin reset all " + player.getName());
+                    sender.sendMessage(new net.minecraft.util.text.TextComponentTranslation("chaosshard.command.quests.reset", player.getName()));
+                } else if ("edit".equals(sub)) {
+                    cm.executeCommand(server, "bq_admin edit");
+                    sender.sendMessage(new net.minecraft.util.text.TextComponentTranslation("chaosshard.command.quests.edit"));
+                } else {
+                    throw new WrongUsageException("chaosshard.command.quests.usage");
+                }
+                break;
+            }
             case "heart": {
                 // /oh heart [place|grow|tier <N>] — Сердце Острова
                 net.minecraft.world.World ante = server.getWorld(ru.death.chaosshard.antechamber.AntechamberDimension.id());
@@ -230,6 +256,16 @@ public class CommandChaosShard extends CommandBase {
         }
     }
 
+    /** Число квестов в базе Better Questing (через отражение, чтобы не зависеть от BQ при компиляции). */
+    private static int questCount() throws CommandException {
+        try {
+            Object db = Class.forName("betterquesting.questing.QuestDatabase").getField("INSTANCE").get(null);
+            return (Integer) db.getClass().getMethod("size").invoke(db);
+        } catch (Exception e) {
+            throw new CommandException("chaosshard.command.debug.failed", e.toString());
+        }
+    }
+
     private void sky(ICommandSender sender) {
         World world = sender.getEntityWorld();
         SkyRules.Kind kind = SkyRules.classify(world);
@@ -244,10 +280,16 @@ public class CommandChaosShard extends CommandBase {
     @Override
     public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos targetPos) {
         if (args.length == 1) {
-            return getListOfStringsMatchingLastWord(args, "nit", "tp", "sky", "grimoire", "debug", "breach", "heart");
+            return getListOfStringsMatchingLastWord(args, "nit", "tp", "sky", "grimoire", "debug", "breach", "heart", "quests");
         }
         if (args.length == 2 && "nit".equals(args[0])) {
             return getListOfStringsMatchingLastWord(args, "get", "set", "add", "resync");
+        }
+        if (args.length == 2 && "quests".equals(args[0])) {
+            return getListOfStringsMatchingLastWord(args, "complete", "reset", "edit");
+        }
+        if (args.length == 3 && "quests".equals(args[0])) {
+            return getListOfStringsMatchingLastWord(args, server.getOnlinePlayerNames());
         }
         if (args.length == 2 && "heart".equals(args[0])) {
             return getListOfStringsMatchingLastWord(args, "info", "place", "grow", "tier");

@@ -18,7 +18,7 @@ chaosshard.hud.thread=Нить %s · %s/%s
 chaosshard.hud.thread.max=Нить %s · предел
 
 # Команды
-chaosshard.command.usage=/chaosshard <nit|tp|sky|grimoire|breach|debug> ...
+chaosshard.command.usage=/chaosshard <nit|tp|sky|grimoire|breach|heart|quests|debug> ...
 chaosshard.command.nit.usage=/chaosshard nit <get [игрок]|set <игрок> <очки>|add <игрок> <очки>|resync [игрок]>
 chaosshard.command.nit.get=Нить %s: уровень %s, очков %s
 chaosshard.command.nit.changed=Нить %s: уровень %s, очков %s
@@ -154,3 +154,8 @@ chaosshard.heart_module.capacity.desc=+6 наростов одновременн
 chaosshard.heart_module.rich.desc=Редкие руды растут чаще
 chaosshard.heart_module.fertile.desc=25% шанс вырастить сразу два нароста
 chaosshard.heart_module.hint=Вставляется в гнездо Сердца Острова. Модули складываются.
+
+chaosshard.command.quests.usage=/oh quests <complete|reset|edit> [игрок]
+chaosshard.command.quests.completed=Выполнено квестов: %s (игрок %s). Награды можно забрать в Гримуаре.
+chaosshard.command.quests.reset=Прогресс квестов %s сброшен.
+chaosshard.command.quests.edit=Режим редактора Better Questing переключён: в нём видны все квесты.
