@@ -1,7 +1,105 @@
 {
- "variants": {
-  "normal": {
-   "model": "chaosshard:island_heart"
+ "multipart": [
+  {
+   "apply": {
+    "model": "chaosshard:heart/base"
+   }
+  },
+  {
+   "when": {
+    "tier": "1"
+   },
+   "apply": {
+    "model": "chaosshard:heart/core_t1"
+   }
+  },
+  {
+   "when": {
+    "tier": "2"
+   },
+   "apply": {
+    "model": "chaosshard:heart/core_t2"
+   }
+  },
+  {
+   "when": {
+    "tier": "3"
+   },
+   "apply": {
+    "model": "chaosshard:heart/core_t3"
+   }
+  },
+  {
+   "when": {
+    "tier": "4"
+   },
+   "apply": {
+    "model": "chaosshard:heart/core_t4"
+   }
+  },
+  {
+   "when": {
+    "pulse": "true"
+   },
+   "apply": {
+    "model": "chaosshard:heart/gem_pulse_on"
+   }
+  },
+  {
+   "when": {
+    "pulse": "false"
+   },
+   "apply": {
+    "model": "chaosshard:heart/gem_pulse_off"
+   }
+  },
+  {
+   "when": {
+    "capacity": "true"
+   },
+   "apply": {
+    "model": "chaosshard:heart/gem_capacity_on"
+   }
+  },
+  {
+   "when": {
+    "capacity": "false"
+   },
+   "apply": {
+    "model": "chaosshard:heart/gem_capacity_off"
+   }
+  },
+  {
+   "when": {
+    "rich": "true"
+   },
+   "apply": {
+    "model": "chaosshard:heart/gem_rich_on"
+   }
+  },
+  {
+   "when": {
+    "rich": "false"
+   },
+   "apply": {
+    "model": "chaosshard:heart/gem_rich_off"
+   }
+  },
+  {
+   "when": {
+    "fertile": "true"
+   },
+   "apply": {
+    "model": "chaosshard:heart/gem_fertile_on"
+   }
+  },
+  {
+   "when": {
+    "fertile": "false"
+   },
+   "apply": {
+    "model": "chaosshard:heart/gem_fertile_off"
+   }
   }
- }
+ ]
 }

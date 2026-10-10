@@ -1,6 +1,13 @@
 package ru.death.chaosshard.heart;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.properties.PropertyBool;
+import net.minecraft.block.properties.PropertyInteger;
+import net.minecraft.block.state.BlockFaceShape;
+import net.minecraft.block.state.BlockStateContainer;
+import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -23,6 +30,13 @@ import java.util.Random;
  */
 public class BlockHeart extends Block {
 
+    public static final PropertyInteger TIER = PropertyInteger.create("tier", 1, 4);
+    public static final PropertyBool PULSE = PropertyBool.create("pulse");
+    public static final PropertyBool CAPACITY = PropertyBool.create("capacity");
+    public static final PropertyBool RICH = PropertyBool.create("rich");
+    public static final PropertyBool FERTILE = PropertyBool.create("fertile");
+    private static final AxisAlignedBB BOX = new AxisAlignedBB(0.1875, 0, 0.1875, 0.8125, 0.875, 0.8125);
+
     public BlockHeart() {
         super(Material.ROCK);
         setSoundType(SoundType.GLASS);
@@ -30,6 +44,71 @@ public class BlockHeart extends Block {
         setResistance(6000000.0F);
         setLightLevel(0.8F);
         setCreativeTab(CreativeTabs.MISC);
+        setDefaultState(blockState.getBaseState().withProperty(TIER, 1).withProperty(PULSE, false)
+                .withProperty(CAPACITY, false).withProperty(RICH, false).withProperty(FERTILE, false));
+    }
+
+    // ------------------------------------------------------------------ вид: ступень и модули
+
+    @Override
+    protected BlockStateContainer createBlockState() {
+        return new BlockStateContainer(this, TIER, PULSE, CAPACITY, RICH, FERTILE);
+    }
+
+    @Override
+    public int getMetaFromState(IBlockState state) {
+        return 0;
+    }
+
+    @Override
+    public IBlockState getStateFromMeta(int meta) {
+        return getDefaultState();
+    }
+
+    @Override
+    public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
+        TileEntity te = world.getTileEntity(pos);
+        if (!(te instanceof TileHeart)) {
+            return state;
+        }
+        TileHeart h = (TileHeart) te;
+        return state.withProperty(TIER, Math.max(1, Math.min(4, h.getTier())))
+                .withProperty(PULSE, h.count(ItemHeartModule.Type.PULSE) > 0)
+                .withProperty(CAPACITY, h.count(ItemHeartModule.Type.CAPACITY) > 0)
+                .withProperty(RICH, h.count(ItemHeartModule.Type.RICH) > 0)
+                .withProperty(FERTILE, h.count(ItemHeartModule.Type.FERTILE) > 0);
+    }
+
+    @Override
+    public int getLightValue(IBlockState state, IBlockAccess world, BlockPos pos) {
+        TileEntity te = world.getTileEntity(pos);
+        return te instanceof TileHeart ? 8 + 2 * Math.min(3, ((TileHeart) te).getTier() - 1) : 10;
+    }
+
+    @Override
+    public boolean isOpaqueCube(IBlockState state) {
+        return false;
+    }
+
+    @Override
+    public boolean isFullCube(IBlockState state) {
+        return false;
+    }
+
+    @Override
+    public BlockFaceShape getBlockFaceShape(IBlockAccess world, IBlockState state, BlockPos pos, EnumFacing face) {
+        return face == EnumFacing.DOWN ? BlockFaceShape.SOLID : BlockFaceShape.UNDEFINED;
+    }
+
+    @Override
+    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
+        return BOX;
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public BlockRenderLayer getRenderLayer() {
+        return BlockRenderLayer.CUTOUT;
     }
 
     @Override

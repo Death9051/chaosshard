@@ -54,6 +54,7 @@ public class TileHeart extends TileEntity implements ITickable {
         @Override
         protected void onContentsChanged(int slot) {
             markDirty();
+            sync();
         }
     };
 
@@ -73,7 +74,24 @@ public class TileHeart extends TileEntity implements ITickable {
         sync();
     }
 
+    /** Счётчики модулей на клиенте (для вида Сердца). */
+    private final int[] clientModules = new int[ItemHeartModule.Type.values().length];
+
     public int count(ItemHeartModule.Type type) {
+        if (world != null && world.isRemote) {
+            return clientModules[type.ordinal()];
+        }
+        int n = 0;
+        for (int i = 0; i < Math.min(tier, MODULE_SLOTS); i++) {
+            ItemStack s = modules.getStackInSlot(i);
+            if (s.getItem() instanceof ItemHeartModule && ((ItemHeartModule) s.getItem()).type == type) {
+                n += s.getCount();
+            }
+        }
+        return n;
+    }
+
+    private int countServer(ItemHeartModule.Type type) {
         int n = 0;
         for (int i = 0; i < Math.min(tier, MODULE_SLOTS); i++) {
             ItemStack s = modules.getStackInSlot(i);
@@ -227,6 +245,13 @@ public class TileHeart extends TileEntity implements ITickable {
 
     private void writeShared(NBTTagCompound tag) {
         tag.setInteger("tier", tier);
+        int[] counts = new int[ItemHeartModule.Type.values().length];
+        if (world == null || !world.isRemote) {
+            for (ItemHeartModule.Type t : ItemHeartModule.Type.values()) {
+                counts[t.ordinal()] = countServer(t);
+            }
+        }
+        tag.setIntArray("mods", counts);
         NBTTagList list = new NBTTagList();
         for (String k : disabled) {
             list.appendTag(new NBTTagString(k));
@@ -246,6 +271,10 @@ public class TileHeart extends TileEntity implements ITickable {
 
     private void readShared(NBTTagCompound tag) {
         tier = Math.max(1, tag.getInteger("tier"));
+        int[] counts = tag.getIntArray("mods");
+        for (int i = 0; i < clientModules.length && i < counts.length; i++) {
+            clientModules[i] = counts[i];
+        }
         disabled.clear();
         NBTTagList list = tag.getTagList("disabled", 8);
         for (int i = 0; i < list.tagCount(); i++) {
@@ -274,5 +303,15 @@ public class TileHeart extends TileEntity implements ITickable {
     @Override
     public void onDataPacket(net.minecraft.network.NetworkManager net, net.minecraft.network.play.server.SPacketUpdateTileEntity pkt) {
         readShared(pkt.getNbtCompound());
+        if (world != null) {
+            world.markBlockRangeForRenderUpdate(pos, pos);
+            world.checkLight(pos);
+        }
+    }
+
+    @Override
+    @net.minecraftforge.fml.relauncher.SideOnly(net.minecraftforge.fml.relauncher.Side.CLIENT)
+    public net.minecraft.util.math.AxisAlignedBB getRenderBoundingBox() {
+        return new net.minecraft.util.math.AxisAlignedBB(pos.add(-2, -1, -2), pos.add(3, 4, 3));
     }
 }

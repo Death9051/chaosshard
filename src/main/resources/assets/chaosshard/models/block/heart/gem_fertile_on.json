@@ -1,0 +1,52 @@
+{
+ "parent": "block/block",
+ "ambientocclusion": false,
+ "textures": {
+  "g": "chaosshard:blocks/heart_gem_fertile",
+  "particle": "chaosshard:blocks/heart_core"
+ },
+ "elements": [
+  {
+   "from": [
+    3.5500000000000003,
+    7,
+    10.65
+   ],
+   "to": [
+    5.3500000000000005,
+    9.2,
+    12.450000000000001
+   ],
+   "faces": {
+    "north": {
+     "texture": "#g"
+    },
+    "south": {
+     "texture": "#g"
+    },
+    "east": {
+     "texture": "#g"
+    },
+    "west": {
+     "texture": "#g"
+    },
+    "up": {
+     "texture": "#g"
+    },
+    "down": {
+     "texture": "#g"
+    }
+   },
+   "rotation": {
+    "origin": [
+     4.45,
+     8,
+     11.55
+    ],
+    "axis": "y",
+    "angle": 45
+   },
+   "shade": false
+  }
+ ]
+}
