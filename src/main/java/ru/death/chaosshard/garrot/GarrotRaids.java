@@ -199,12 +199,40 @@ public class GarrotRaids {
         if (kills >= 3) {
             Milestones.grant(player, Milestones.GARROT_3);
         }
-        // Остальной отряд бежит
-        for (Entity other : e.world.getEntitiesWithinAABB(EntityLiving.class, e.getEntityBoundingBox().grow(32))) {
-            if (other != e && other.getTags().contains(TAG_ARMY)) {
-                ((WorldServer) e.world).spawnParticle(EnumParticleTypes.SMOKE_LARGE, other.posX, other.posY + 1, other.posZ,
-                        10, 0.3, 0.5, 0.3, 0.02);
-                other.setDead();
+        // Остальной отряд бежит — убираем на следующих тиках сервера, вне события смерти
+        RETREATS.put(e.world.provider.getDimension(), 4);
+    }
+
+    /** Измерение → сколько ещё тиков проверять, что отряд ушёл. */
+    private static final java.util.Map<Integer, Integer> RETREATS = new java.util.HashMap<>();
+
+    @SubscribeEvent
+    public void onServerTick(net.minecraftforge.fml.common.gameevent.TickEvent.ServerTickEvent event) {
+        if (event.phase != net.minecraftforge.fml.common.gameevent.TickEvent.Phase.END || RETREATS.isEmpty()) {
+            return;
+        }
+        java.util.Iterator<java.util.Map.Entry<Integer, Integer>> it = RETREATS.entrySet().iterator();
+        while (it.hasNext()) {
+            java.util.Map.Entry<Integer, Integer> r = it.next();
+            WorldServer world = net.minecraftforge.common.DimensionManager.getWorld(r.getKey());
+            int left = r.getValue() - 1;
+            if (world != null) {
+                for (Entity other : new java.util.ArrayList<>(world.loadedEntityList)) {
+                    if (other.isDead || !other.getTags().contains(TAG_ARMY)) {
+                        continue;
+                    }
+                    world.spawnParticle(EnumParticleTypes.SMOKE_LARGE, other.posX, other.posY + 1, other.posZ, 12, 0.3, 0.5, 0.3, 0.02);
+                    if (left <= 1 && other instanceof net.minecraft.entity.EntityLivingBase) {
+                        // Последняя попытка: если кто-то держится за мир — добить из пустоты
+                        other.attackEntityFrom(net.minecraft.util.DamageSource.OUT_OF_WORLD, 100000.0F);
+                    }
+                    world.removeEntity(other);
+                }
+            }
+            if (left <= 0) {
+                it.remove();
+            } else {
+                r.setValue(left);
             }
         }
     }
