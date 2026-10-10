@@ -27,6 +27,10 @@ public final class ModItems {
     public static Item MEMORY_PAGE;
     /** Книга Прорыва. */
     public static Item BREACH_BOOK;
+    /** Эссенция Хаоса — перемолотый Осколок Завесы. */
+    public static Item CHAOS_ESSENCE;
+    /** Искажённый звёздный металл — звёздный металл, пропитанный Хаосом. */
+    public static Item DISTORTED_STARMETAL;
 
     public static final List<Item> ALL = new ArrayList<>();
 
@@ -40,6 +44,8 @@ public final class ModItems {
         MEMORY_FRAGMENT = add(new ru.death.chaosshard.item.ItemLore("chaosshard.memory_fragment.lore", false), "memory_fragment");
         MEMORY_PAGE = add(new ru.death.chaosshard.item.ItemLore("chaosshard.memory_page.lore", true).setMaxStackSize(1), "memory_page");
         BREACH_BOOK = add(new ru.death.chaosshard.item.ItemBreachBook(), "breach_book");
+        CHAOS_ESSENCE = add(new ru.death.chaosshard.item.ItemLore("chaosshard.chaos_essence.lore", false), "chaos_essence");
+        DISTORTED_STARMETAL = add(new ru.death.chaosshard.item.ItemLore("chaosshard.distorted_starmetal.lore", true), "distorted_starmetal");
         for (ru.death.chaosshard.heart.ItemHeartModule.Type t : ru.death.chaosshard.heart.ItemHeartModule.Type.values()) {
             add(new ru.death.chaosshard.heart.ItemHeartModule(t), "heart_module_" + t.name().toLowerCase());
         }

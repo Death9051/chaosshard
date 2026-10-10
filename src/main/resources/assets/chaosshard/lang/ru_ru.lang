@@ -163,3 +163,14 @@ chaosshard.command.quests.edit=Режим редактора Better Questing п�
 chaosshard.breach.hint=Постройка Прорыва: на месте %s из %s блоков. Смотри подсветку: контур — поставить блок, красное — убрать.
 
 chaosshard.command.selftest.done=Самопроверка: пройдено %s%% проверок, ошибок %s. Отчёт: %s — пришли его мне.
+
+# Техномагия
+item.chaosshard.chaos_essence.name=Эссенция Хаоса
+item.chaosshard.distorted_starmetal.name=Искажённый звёздный металл
+item.chaosshard.heart_module_star.name=Модуль «Звёздный»
+chaosshard.chaos_essence.lore=Осколок Завесы, перемолотый в пыль. Шевелится, если на неё не смотреть.
+chaosshard.distorted_starmetal.lore=Звёздный металл, которому показали Хаос. Он больше не будет прежним.
+chaosshard.heart_module.star.desc=Руды Astral Sorcery растут втрое чаще
+material.chaosshard_distorted.name=Искажённый звёздный металл
+modifier.chaosshard_distortion.name=Искажение
+modifier.chaosshard_distortion.desc=§oУдар отзывается эхом из Плана Хаоса.§r\n15% шанс нанести ещё 4 магического урона.

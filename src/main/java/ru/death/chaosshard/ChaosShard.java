@@ -80,6 +80,8 @@ public class ChaosShard {
 
     @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
+        net.minecraftforge.oredict.OreDictionary.registerOre("dustChaos", ru.death.chaosshard.init.ModItems.CHAOS_ESSENCE);
+        net.minecraftforge.oredict.OreDictionary.registerOre("ingotDistortedStarmetal", ru.death.chaosshard.init.ModItems.DISTORTED_STARMETAL);
         if (Loader.isModLoaded("tconstruct") && ChaosConfig.compat.tinkers) {
             ru.death.chaosshard.compat.tinkers.TinkersCompat.init();
         }

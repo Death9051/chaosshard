@@ -1,0 +1,19 @@
+{
+ "type": "minecraft:crafting_shapeless",
+ "group": "chaosshard:transmute",
+ "ingredients": [
+  {
+   "item": "chaosshard:grimoire"
+  },
+  {
+   "item": "chaosshard:veil_shard"
+  },
+  {
+   "item": "chaosshard:chaos_stone"
+  }
+ ],
+ "result": {
+  "item": "chaosshard:chaos_essence",
+  "count": 1
+ }
+}

@@ -1,0 +1,29 @@
+{
+ "conditions": [
+  {
+   "type": "forge:mod_loaded",
+   "modid": "astralsorcery"
+  }
+ ],
+ "type": "forge:ore_shapeless",
+ "group": "chaosshard:transmute",
+ "ingredients": [
+  {
+   "item": "chaosshard:grimoire"
+  },
+  {
+   "type": "forge:ore_dict",
+   "ore": "ingotAstralStarmetal"
+  },
+  {
+   "item": "chaosshard:chaos_essence"
+  },
+  {
+   "item": "chaosshard:chaos_essence"
+  }
+ ],
+ "result": {
+  "item": "chaosshard:distorted_starmetal",
+  "count": 1
+ }
+}

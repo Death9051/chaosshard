@@ -96,7 +96,8 @@ public final class SelfTest {
         check(ModBlocks.BREACH_ALTAR != null, "Алтарь Прорыва");
         check(ModBlocks.ISLAND_HEART != null, "Сердце Острова");
         for (String name : new String[]{"grimoire", "veil_shard", "memory_fragment", "memory_page", "breach_book",
-                "heart_module_pulse", "heart_module_capacity", "heart_module_rich", "heart_module_fertile"}) {
+                "heart_module_pulse", "heart_module_capacity", "heart_module_rich", "heart_module_fertile", "heart_module_star",
+                "chaos_essence", "distorted_starmetal"}) {
             check(ForgeRegistries.ITEMS.containsKey(new ResourceLocation(Tags.MOD_ID, name)), "предмет " + name);
         }
         check(TileEntity.getKey(TileHeart.class) != null, "тайл Сердца зарегистрирован");
@@ -117,7 +118,7 @@ public final class SelfTest {
         String[] expect = {"transmute_log", "transmute_cobblestone", "transmute_dirt", "transmute_sand", "transmute_paper",
                 "transmute_leather", "transmute_ink", "transmute_feather", "transmute_string", "transmute_water",
                 "memory_page", "breach_book", "breach_altar", "heart_module_pulse", "heart_module_capacity",
-                "heart_module_rich", "heart_module_fertile"};
+                "heart_module_rich", "heart_module_fertile", "heart_module_star", "transmute_essence", "transmute_distorted"};
         for (String e : expect) {
             check(names.contains(e), "рецепт " + e);
         }
@@ -296,6 +297,9 @@ public final class SelfTest {
                 .getMethod("getMaterial", String.class).invoke(null, "chaosshard_chaos");
         Object unknown = Class.forName("slimeknights.tconstruct.library.materials.Material").getField("UNKNOWN").get(null);
         check(mat != null && mat != unknown, "материал «Хаосит» зарегистрирован");
+        Object dist = Class.forName("slimeknights.tconstruct.library.TinkerRegistry")
+                .getMethod("getMaterial", String.class).invoke(null, "chaosshard_distorted");
+        check(dist != null && dist != unknown, "материал «Искажённый звёздный металл» зарегистрирован");
     }
 
     private void quests() throws Exception {

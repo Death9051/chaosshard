@@ -141,10 +141,17 @@ public class TileHeart extends TileEntity implements ITickable {
             maxWeight = Math.max(maxWeight, g.weight);
         }
         int rich = count(ItemHeartModule.Type.RICH);
+        int star = count(ItemHeartModule.Type.STAR);
         for (HeartTiers.Growth g : all) {
             if (isEnabled(g.state)) {
                 // Богатство подтягивает редкие руды к частым
-                out.add(new HeartTiers.Growth(g.state, g.weight + rich * Math.max(1, maxWeight / 3)));
+                int w = g.weight + rich * Math.max(1, maxWeight / 3);
+                // Звёздный модуль — руды Astral Sorcery втрое чаще за каждый модуль
+                if (star > 0 && g.state.getBlock().getRegistryName() != null
+                        && "astralsorcery".equals(g.state.getBlock().getRegistryName().getNamespace())) {
+                    w *= 1 + 2 * star;
+                }
+                out.add(new HeartTiers.Growth(g.state, w));
             }
         }
         return out;

@@ -157,3 +157,14 @@ chaosshard.command.quests.edit=Better Questing edit mode toggled: all quests are
 chaosshard.breach.hint=Breach structure: %s of %s blocks in place. Follow the highlight: outline — place a block, red — remove.
 
 chaosshard.command.selftest.done=Self-test: %s%% of checks passed, %s failures. Report: %s
+
+# Technomagic
+item.chaosshard.chaos_essence.name=Chaos Essence
+item.chaosshard.distorted_starmetal.name=Distorted Starmetal
+item.chaosshard.heart_module_star.name=Star Module
+chaosshard.chaos_essence.lore=A Veil Shard ground into dust. It moves when you're not looking.
+chaosshard.distorted_starmetal.lore=Starmetal that has been shown Chaos. It will never be the same.
+chaosshard.heart_module.star.desc=Astral Sorcery ores grow three times as often
+material.chaosshard_distorted.name=Distorted Starmetal
+modifier.chaosshard_distortion.name=Distortion
+modifier.chaosshard_distortion.desc=§oThe blow echoes from the Plane of Chaos.§r\n15% chance to deal 4 extra magic damage.

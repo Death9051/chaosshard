@@ -19,6 +19,8 @@ public final class TinkersCompat {
 
     public static final int COLOR = 0x6A2AA0;
     private static Material chaos;
+    private static Material distorted;
+    public static final int DISTORTED_COLOR = 0x9B3CFF;
 
     public static void preInit() {
         chaos = new Material("chaosshard_chaos", COLOR);
@@ -30,8 +32,19 @@ public final class TinkersCompat {
                 new HeadMaterialStats(220, 5.0F, 3.5F, 1),
                 new HandleMaterialStats(0.9F, 40),
                 new ExtraMaterialStats(60));
+        distorted = new Material("chaosshard_distorted", DISTORTED_COLOR);
+        distorted.setCraftable(true);
+        distorted.setCastable(false);
+        distorted.addTrait(new TraitThread());
+        distorted.addTrait(new TraitDistortion());
+        TinkerRegistry.addMaterial(distorted);
+        TinkerRegistry.addMaterialStats(distorted,
+                new HeadMaterialStats(650, 7.5F, 6.0F, 3),
+                new HandleMaterialStats(1.1F, 120),
+                new ExtraMaterialStats(150));
         if (FMLCommonHandler.instance().getSide().isClient()) {
             chaos.setRenderInfo(COLOR);
+            distorted.setRenderInfo(DISTORTED_COLOR);
         }
         ChaosShard.LOG.info("Tinkers: материал «Хаосит» зарегистрирован");
     }
@@ -44,6 +57,10 @@ public final class TinkersCompat {
         Item stone = Item.getItemFromBlock(ModBlocks.CHAOS_STONE);
         chaos.addItem(stone, 1, Material.VALUE_Ingot);
         chaos.setRepresentativeItem(stone);
+        if (distorted != null) {
+            distorted.addItem(ru.death.chaosshard.init.ModItems.DISTORTED_STARMETAL, 1, Material.VALUE_Ingot);
+            distorted.setRepresentativeItem(ru.death.chaosshard.init.ModItems.DISTORTED_STARMETAL);
+        }
     }
 
     private TinkersCompat() {
