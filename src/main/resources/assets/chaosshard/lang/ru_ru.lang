@@ -132,3 +132,25 @@ chaosshard.heart.upgraded.3=Гримуар: Сердце налилось све
 chaosshard.heart.upgraded.4=Гримуар: Сердце поёт (ступень %s). Алмазы, изумруды, звёздный металл. Лорд был бы доволен. Он и доволен.
 chaosshard.command.heart.missing=Сердца Острова нет на месте. /oh heart place — поставить заново.
 chaosshard.config.heart=Сердце Острова
+
+# Окно Сердца и модули
+chaosshard.heart.gui.title=Сердце Острова · ступень %s/%s
+chaosshard.heart.gui.modules=Модули
+chaosshard.heart.gui.next=Нарост через %s с
+chaosshard.heart.gui.growths=Наросты: %s / %s
+chaosshard.heart.gui.ores=Что растёт (клик — вкл/выкл):
+chaosshard.heart.gui.on=§aРастёт§r — клик, чтобы выключить
+chaosshard.heart.gui.off=§cВыключено§r — клик, чтобы включить
+chaosshard.heart.gui.upgrade=Пробудить
+chaosshard.heart.gui.thread=Нить %s
+chaosshard.heart.gui.max=Сердце пробуждено полностью.
+chaosshard.heart.gui.slot_locked=Гнездо %s откроется на этой ступени Сердца
+item.chaosshard.heart_module_pulse.name=Модуль «Пульс»
+item.chaosshard.heart_module_capacity.name=Модуль «Ёмкость»
+item.chaosshard.heart_module_rich.name=Модуль «Богатство»
+item.chaosshard.heart_module_fertile.name=Модуль «Плодовитость»
+chaosshard.heart_module.pulse.desc=Наросты растут на 35% быстрее
+chaosshard.heart_module.capacity.desc=+6 наростов одновременно
+chaosshard.heart_module.rich.desc=Редкие руды растут чаще
+chaosshard.heart_module.fertile.desc=25% шанс вырастить сразу два нароста
+chaosshard.heart_module.hint=Вставляется в гнездо Сердца Острова. Модули складываются.

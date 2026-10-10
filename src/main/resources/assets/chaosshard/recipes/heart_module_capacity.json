@@ -1,0 +1,24 @@
+{
+ "type": "forge:ore_shaped",
+ "pattern": [
+  "SCS",
+  "CXC",
+  "SCS"
+ ],
+ "key": {
+  "S": {
+   "item": "chaosshard:chaos_stone"
+  },
+  "C": {
+   "item": "chaosshard:chaos_crust"
+  },
+  "X": {
+   "type": "forge:ore_dict",
+   "ore": "chestWood"
+  }
+ },
+ "result": {
+  "item": "chaosshard:heart_module_capacity",
+  "count": 1
+ }
+}

@@ -12,6 +12,7 @@ public final class ChaosNetwork {
     public static void init() {
         CHANNEL = NetworkRegistry.INSTANCE.newSimpleChannel(Tags.MOD_ID);
         CHANNEL.registerMessage(PacketThreadSync.Handler.class, PacketThreadSync.class, 0, Side.CLIENT);
+        CHANNEL.registerMessage(PacketHeartAction.Handler.class, PacketHeartAction.class, 1, Side.SERVER);
     }
 
     private ChaosNetwork() {

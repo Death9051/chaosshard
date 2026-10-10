@@ -1,0 +1,24 @@
+{
+ "type": "forge:ore_shaped",
+ "pattern": [
+  "MVM",
+  "VXV",
+  "MVM"
+ ],
+ "key": {
+  "M": {
+   "item": "chaosshard:memory_fragment"
+  },
+  "V": {
+   "item": "chaosshard:veil_shard"
+  },
+  "X": {
+   "type": "forge:ore_dict",
+   "ore": "dustRedstone"
+  }
+ },
+ "result": {
+  "item": "chaosshard:heart_module_fertile",
+  "count": 1
+ }
+}

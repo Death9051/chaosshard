@@ -30,10 +30,10 @@ public final class HeartTiers {
     // ------------------------------------------------------------------ наросты
 
     public static final class Growth {
-        final IBlockState state;
-        final int weight;
+        public final IBlockState state;
+        public final int weight;
 
-        Growth(IBlockState state, int weight) {
+        public Growth(IBlockState state, int weight) {
             this.state = state;
             this.weight = weight;
         }

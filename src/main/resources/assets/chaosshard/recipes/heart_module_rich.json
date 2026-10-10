@@ -1,0 +1,27 @@
+{
+ "type": "forge:ore_shaped",
+ "pattern": [
+  "VXV",
+  "MSM",
+  "VXV"
+ ],
+ "key": {
+  "V": {
+   "item": "chaosshard:veil_shard"
+  },
+  "M": {
+   "item": "chaosshard:memory_fragment"
+  },
+  "S": {
+   "item": "chaosshard:chaos_stone"
+  },
+  "X": {
+   "type": "forge:ore_dict",
+   "ore": "ingotGold"
+  }
+ },
+ "result": {
+  "item": "chaosshard:heart_module_rich",
+  "count": 1
+ }
+}

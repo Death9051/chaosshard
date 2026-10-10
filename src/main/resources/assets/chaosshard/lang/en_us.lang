@@ -126,3 +126,25 @@ chaosshard.heart.upgraded.3=Grimoire: The Heart fills with light (tier %s). Gold
 chaosshard.heart.upgraded.4=Grimoire: The Heart sings (tier %s). Diamonds, emeralds, starmetal. The Lord would be pleased. He is.
 chaosshard.command.heart.missing=The Island Heart is missing. /oh heart place puts it back.
 chaosshard.config.heart=Island Heart
+
+# Heart GUI and modules
+chaosshard.heart.gui.title=Island Heart · tier %s/%s
+chaosshard.heart.gui.modules=Modules
+chaosshard.heart.gui.next=Next growth in %s s
+chaosshard.heart.gui.growths=Growths: %s / %s
+chaosshard.heart.gui.ores=What grows (click to toggle):
+chaosshard.heart.gui.on=§aGrowing§r — click to disable
+chaosshard.heart.gui.off=§cDisabled§r — click to enable
+chaosshard.heart.gui.upgrade=Awaken
+chaosshard.heart.gui.thread=Thread %s
+chaosshard.heart.gui.max=The Heart is fully awakened.
+chaosshard.heart.gui.slot_locked=Slot %s opens at this Heart tier
+item.chaosshard.heart_module_pulse.name=Pulse Module
+item.chaosshard.heart_module_capacity.name=Capacity Module
+item.chaosshard.heart_module_rich.name=Richness Module
+item.chaosshard.heart_module_fertile.name=Fertility Module
+chaosshard.heart_module.pulse.desc=Growths appear 35% faster
+chaosshard.heart_module.capacity.desc=+6 growths at once
+chaosshard.heart_module.rich.desc=Rare ores grow more often
+chaosshard.heart_module.fertile.desc=25% chance to grow two at once
+chaosshard.heart_module.hint=Goes into an Island Heart slot. Modules stack.

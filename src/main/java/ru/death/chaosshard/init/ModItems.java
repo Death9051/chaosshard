@@ -40,6 +40,9 @@ public final class ModItems {
         MEMORY_FRAGMENT = add(new ru.death.chaosshard.item.ItemLore("chaosshard.memory_fragment.lore", false), "memory_fragment");
         MEMORY_PAGE = add(new ru.death.chaosshard.item.ItemLore("chaosshard.memory_page.lore", true).setMaxStackSize(1), "memory_page");
         BREACH_BOOK = add(new ru.death.chaosshard.item.ItemBreachBook(), "breach_book");
+        for (ru.death.chaosshard.heart.ItemHeartModule.Type t : ru.death.chaosshard.heart.ItemHeartModule.Type.values()) {
+            add(new ru.death.chaosshard.heart.ItemHeartModule(t), "heart_module_" + t.name().toLowerCase());
+        }
         for (Item item : ALL) {
             event.getRegistry().register(item);
         }

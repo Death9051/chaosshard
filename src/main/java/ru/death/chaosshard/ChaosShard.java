@@ -57,6 +57,7 @@ public class ChaosShard {
     public void preInit(FMLPreInitializationEvent event) {
         ThreadCapability.register();
         ChaosNetwork.init();
+        net.minecraftforge.fml.common.network.NetworkRegistry.INSTANCE.registerGuiHandler(this, new ru.death.chaosshard.heart.HeartGuiHandler());
         AntechamberDimension.register();
         MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.thread.ThreadEvents());
         MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.antechamber.AntechamberEvents());

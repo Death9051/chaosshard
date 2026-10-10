@@ -6,29 +6,20 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.init.SoundEvents;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.EnumParticleTypes;
-import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentString;
-import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import ru.death.chaosshard.breach.Breach;
-import ru.death.chaosshard.thread.ThreadManager;
 
 import javax.annotation.Nullable;
-import java.util.List;
 import java.util.Random;
 
 /**
- * Сердце Острова. Неразрушимо. ПКМ — состояние, Shift+ПКМ — прокачать (плата берётся из инвентаря).
+ * Сердце Острова. Неразрушимо. ПКМ — окно: ступень, выбор руды, модули, пробуждение.
  */
 public class BlockHeart extends Block {
 
@@ -58,72 +49,10 @@ public class BlockHeart extends Block {
         if (hand != EnumHand.MAIN_HAND) {
             return false;
         }
-        if (world.isRemote) {
-            return true;
-        }
-        TileEntity te = world.getTileEntity(pos);
-        if (!(te instanceof TileHeart)) {
-            return true;
-        }
-        TileHeart heart = (TileHeart) te;
-        EntityPlayerMP mp = (EntityPlayerMP) player;
-        if (player.isSneaking()) {
-            upgrade(mp, heart);
-        } else {
-            info(mp, heart);
+        if (!world.isRemote) {
+            player.openGui(ru.death.chaosshard.ChaosShard.INSTANCE, HeartGuiHandler.HEART, world, pos.getX(), pos.getY(), pos.getZ());
         }
         return true;
-    }
-
-    private static void info(EntityPlayerMP player, TileHeart heart) {
-        int tier = heart.getTier();
-        player.sendMessage(Breach.grimoire("chaosshard.heart.info", tier, HeartTiers.maxTier(),
-                heart.countGrowths(HeartTiers.pool(tier)), heart.maxGrowths(), heart.interval() / 20));
-        if (tier >= HeartTiers.maxTier()) {
-            player.sendMessage(Breach.grimoire("chaosshard.heart.max"));
-            return;
-        }
-        int target = tier + 1;
-        player.sendMessage(Breach.grimoire("chaosshard.heart.next", target, HeartTiers.threadFor(target)));
-        for (HeartTiers.Cost c : HeartTiers.costFor(target)) {
-            int have = HeartTiers.count(player, c);
-            TextComponentString line = new TextComponentString("  " + c.displayName() + ": " + Math.min(have, c.count) + "/" + c.count);
-            line.getStyle().setColor(have >= c.count ? TextFormatting.GREEN : TextFormatting.GRAY);
-            player.sendMessage(line);
-        }
-    }
-
-    private static void upgrade(EntityPlayerMP player, TileHeart heart) {
-        int tier = heart.getTier();
-        if (tier >= HeartTiers.maxTier()) {
-            player.sendMessage(Breach.grimoire("chaosshard.heart.max"));
-            return;
-        }
-        int target = tier + 1;
-        if (!player.isCreative()) {
-            if (ThreadManager.getLevel(player) < HeartTiers.threadFor(target)) {
-                player.sendMessage(Breach.grimoire("chaosshard.heart.thin", HeartTiers.threadFor(target)));
-                return;
-            }
-            List<HeartTiers.Cost> costs = HeartTiers.costFor(target);
-            for (HeartTiers.Cost c : costs) {
-                if (HeartTiers.count(player, c) < c.count) {
-                    player.sendMessage(Breach.grimoire("chaosshard.heart.poor"));
-                    info(player, heart);
-                    return;
-                }
-            }
-            for (HeartTiers.Cost c : costs) {
-                HeartTiers.take(player, c);
-            }
-            player.inventoryContainer.detectAndSendChanges();
-        }
-        heart.setTier(target);
-        World world = heart.getWorld();
-        world.playSound(null, heart.getPos(), SoundEvents.BLOCK_END_PORTAL_FRAME_FILL, SoundCategory.BLOCKS, 1.0F, 0.6F);
-        world.playSound(null, heart.getPos(), SoundEvents.ENTITY_WITHER_SPAWN, SoundCategory.BLOCKS, 0.3F, 1.6F);
-        player.sendMessage(Breach.grimoire("chaosshard.heart.upgraded." + Math.min(target, 4), target));
-        heart.grow(true);
     }
 
     @Override

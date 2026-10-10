@@ -94,7 +94,7 @@ public class CommandChaosShard extends CommandBase {
                     heart.setTier(parseInt(args[2], 1, ru.death.chaosshard.heart.HeartTiers.maxTier()));
                 }
                 sender.sendMessage(new net.minecraft.util.text.TextComponentString("Сердце Острова " + hp + ": ступень "
-                        + heart.getTier() + ", наростов " + heart.countGrowths(ru.death.chaosshard.heart.HeartTiers.pool(heart.getTier()))
+                        + heart.getTier() + ", наростов " + heart.countGrowths()
                         + "/" + heart.maxGrowths()));
                 break;
             }
