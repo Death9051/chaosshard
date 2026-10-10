@@ -111,7 +111,7 @@ chaosshard.config.breach=Breach
 # Tinkers
 material.chaosshard_chaos.name=Chaos Stone
 modifier.chaosshard_thread.name=Chaos Thread
-modifier.chaosshard_thread.desc=§oThe Thread runs through the handle.§r\nPer Thread level: +0.5 damage, +8% mining speed, 5% chance to not use durability.\nOnce a minute while held — Chaos Surge: a random effect for 20 seconds.\nModifier: 64 Chaosite or 4 Chaos Essence.
+modifier.chaosshard_thread.desc=§oThe Thread runs through the handle.§r\nPer Thread level: +0.5 damage, +8% mining speed, 5% chance to not use durability.\nOnce a minute while held — Chaos Surge: a random fitting Tinkers' modifier for 30 seconds (no slot used).\nModifier: 64 Chaosite or 4 Chaos Essence.
 chaosshard.config.compat=Mod integrations
 
 # Island Heart
@@ -201,7 +201,7 @@ tile.chaosshard.seed_island.name=[Test] Small Island
 tile.chaosshard.seed_island.desc=Floating disc: Heart with Harvester and Breach Altar.
 
 tile.chaosshard.veil_vein.name=Veil Vein
-chaosshard.surge=Chaos Surge: %s
+chaosshard.surge=Chaos Surge: %s for %s s
 
 # Act 3: shrines, villages, Garrot
 tile.chaosshard.shrine_stone.name=Holy Stone
@@ -236,3 +236,4 @@ chaosshard.garrot.raid.4=The Grim Army does not retreat. It regroups. And comes 
 chaosshard.garrot.retreat.1=That was reconnaissance. Merely reconnaissance. Write that down in your little book, creature.
 chaosshard.garrot.retreat.2=Hm. The captain was young. And not very bright. I'll send another.
 chaosshard.garrot.retreat.3=…Fine. I admit you are an annoying obstacle. We'll meet again — in person. Then we'll see who belongs to whom.
+chaosshard.surge.end=The Chaos Surge fades.

@@ -3,10 +3,7 @@ package ru.death.chaosshard.compat.tinkers;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.MobEffects;
 import net.minecraft.item.ItemStack;
-import net.minecraft.potion.Potion;
-import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -21,18 +18,13 @@ import slimeknights.tconstruct.library.modifiers.ModifierTrait;
  * «Нить Хаоса» — свойство хаосита и Искажённого металла, а также модификатор (кладётся хаоситом).
  * Сила растёт с уровнем Нити владельца и работает для любого инструмента:
  * урон, скорость добычи, шанс не потратить прочность.
- * Раз в минуту, пока инструмент в руке, — «Всплеск Хаоса»: случайный временный эффект.
+ * Раз в минуту, пока инструмент в руке, — «Всплеск Хаоса»: случайный подходящий модификатор Tinkers' на 30 секунд.
  */
 public class TraitThread extends ModifierTrait {
 
     /** Хаосит на один модификатор (эссенция идёт за несколько). */
     public static final int COST = 64;
 
-    private static final Potion[] SURGE = {
-            MobEffects.HASTE, MobEffects.SPEED, MobEffects.STRENGTH, MobEffects.REGENERATION,
-            MobEffects.RESISTANCE, MobEffects.JUMP_BOOST, MobEffects.NIGHT_VISION, MobEffects.ABSORPTION,
-            MobEffects.FIRE_RESISTANCE, MobEffects.WATER_BREATHING
-    };
 
     public TraitThread() {
         super("chaosshard_thread", TinkersCompat.COLOR, 1, COST);
@@ -61,20 +53,30 @@ public class TraitThread extends ModifierTrait {
         return newDamage;
     }
 
+    /** Длительность всплеска, тики. */
+    private static final int SURGE_TICKS = 20 * 30;
+
     @Override
     public void onUpdate(ItemStack tool, World world, Entity entity, int itemSlot, boolean isSelected) {
-        if (world.isRemote || !isSelected || !(entity instanceof EntityPlayer)) {
-            return;
-        }
-        if ((world.getTotalWorldTime() + entity.getEntityId()) % 1200 != 0) {
+        if (world.isRemote || !(entity instanceof EntityPlayer)) {
             return;
         }
         EntityPlayer player = (EntityPlayer) entity;
-        Potion potion = SURGE[world.rand.nextInt(SURGE.length)];
-        int amp = level(player) >= 3 ? 1 : 0;
-        player.addPotionEffect(new PotionEffect(potion, 20 * 20, amp, false, true));
-        TextComponentTranslation name = new TextComponentTranslation(potion.getName());
-        TextComponentTranslation msg = new TextComponentTranslation("chaosshard.surge", name);
+        // Срок вышел — снять временный модификатор (даже если инструмент не в руке)
+        if (ChaosSurge.tick(tool, world)) {
+            TextComponentTranslation msg = new TextComponentTranslation("chaosshard.surge.end");
+            msg.getStyle().setColor(TextFormatting.DARK_PURPLE);
+            player.sendStatusMessage(msg, true);
+            return;
+        }
+        if (!isSelected || (world.getTotalWorldTime() + entity.getEntityId()) % 1200 != 0) {
+            return;
+        }
+        slimeknights.tconstruct.library.modifiers.IModifier mod = ChaosSurge.start(tool, world, SURGE_TICKS);
+        if (mod == null) {
+            return;
+        }
+        TextComponentTranslation msg = new TextComponentTranslation("chaosshard.surge", ChaosSurge.name(mod), SURGE_TICKS / 20);
         msg.getStyle().setColor(TextFormatting.LIGHT_PURPLE);
         player.sendStatusMessage(msg, true);
         world.playSound(null, player.posX, player.posY, player.posZ, net.minecraft.init.SoundEvents.BLOCK_ENCHANTMENT_TABLE_USE,
