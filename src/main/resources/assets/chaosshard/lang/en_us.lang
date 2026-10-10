@@ -155,3 +155,5 @@ chaosshard.command.quests.reset=Quest progress of %s has been reset.
 chaosshard.command.quests.edit=Better Questing edit mode toggled: all quests are visible in it.
 
 chaosshard.breach.hint=Breach structure: %s of %s blocks in place. Follow the highlight: outline — place a block, red — remove.
+
+chaosshard.command.selftest.done=Self-test: %s%% of checks passed, %s failures. Report: %s

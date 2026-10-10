@@ -30,6 +30,7 @@ import java.util.List;
  *   grimoire [игрок]            — выдать Гримуар
  *   breach [on|off] [игрок]     — отметить Прорыв пройденным / сбросить
  *   heart [place|grow [n]|tier N] — Сердце Острова
+ *   selftest                    — самопроверка сборки → chaosshard-selftest.txt
  *   quests complete|reset|edit [игрок] — выполнить все квесты / сбросить / режим редактора BQ
  *   debug [report|reset|kit]    — отчёт в chaosshard-debug.txt / сброс «первого входа» / набор для теста
  */
@@ -73,6 +74,16 @@ public class CommandChaosShard extends CommandBase {
             case "debug":
                 debug(server, sender, args);
                 break;
+            case "selftest": {
+                SelfTest test = SelfTest.run(server, getCommandSenderAsPlayer(sender));
+                try {
+                    java.io.File file = test.write();
+                    sender.sendMessage(new TextComponentTranslation("chaosshard.command.selftest.done", test.percent(), test.failures(), file.getPath()));
+                } catch (Exception e) {
+                    throw new CommandException("chaosshard.command.debug.failed", e.toString());
+                }
+                break;
+            }
             case "quests": {
                 // /oh quests <complete|reset|edit> [игрок] — через команды Better Questing
                 if (!net.minecraftforge.fml.common.Loader.isModLoaded("betterquesting")) {
@@ -280,7 +291,7 @@ public class CommandChaosShard extends CommandBase {
     @Override
     public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos targetPos) {
         if (args.length == 1) {
-            return getListOfStringsMatchingLastWord(args, "nit", "tp", "sky", "grimoire", "debug", "breach", "heart", "quests");
+            return getListOfStringsMatchingLastWord(args, "nit", "tp", "sky", "grimoire", "debug", "breach", "heart", "quests", "selftest");
         }
         if (args.length == 2 && "nit".equals(args[0])) {
             return getListOfStringsMatchingLastWord(args, "get", "set", "add", "resync");
