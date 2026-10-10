@@ -3,14 +3,14 @@
 tile.chaosshard.chaos_stone.name=Chaosite
 tile.chaosshard.chaos_crust.name=Antechamber Crust
 
-chaosshard.antechamber.first_arrival=Grimoire: Oh, you're awake. Welcome to the Antechamber, Shard. Look around — just stay away from the edge. The void out there is hungry.
-chaosshard.antechamber.reassembled=Grimoire: Piecing you back together again. The Lord is patient. I am slightly less so.
+chaosshard.antechamber.first_arrival=Grimoire: Shard active. You are in the Antechamber — a small plane Chaos made for this world. Look around. Stay away from the edge: there is only void beyond.
+chaosshard.antechamber.reassembled=Grimoire: The Shard's body is reassembled. Continuing where we left off.
 
-chaosshard.thread.levelup.1=Grimoire: Feel that? The Thread is taut (level %s). The Lord heard you. So did the stars — check your perk tree.
-chaosshard.thread.levelup.2=Grimoire: The Thread grows stronger (level %s). The Lord has noticed you. Don't get cocky, but a little pride is allowed.
-chaosshard.thread.levelup.3=Grimoire: The Thread holds steady (level %s). More is open to you than I expected. I like being wrong this way.
-chaosshard.thread.levelup.4=Grimoire: The Thread sings (level %s). The Lord is pleased — rarer than you think. Your star perks burn brighter.
-chaosshard.thread.levelup.5=Grimoire: The Thread is at full strength (level %s). You are Lord Death's voice and hand now. The whole star tree is yours. Don't fail him.
+chaosshard.thread.levelup.1=Grimoire: The Thread is taut (level %s). The Lord hears you. The stars answered too — check your perk tree.
+chaosshard.thread.levelup.2=Grimoire: The Thread grows stronger (level %s). The Lord has noticed you. Recorded.
+chaosshard.thread.levelup.3=Grimoire: The Thread holds steady (level %s). By the records of the Grimoire network, Shards usually get here slower.
+chaosshard.thread.levelup.4=Grimoire: The Thread sings (level %s). The Lord is pleased — that is rare. Your star perks burn brighter.
+chaosshard.thread.levelup.5=Grimoire: The Thread is at full strength (level %s). You are Lord Death's voice and hand now. The whole star tree is yours.
 chaosshard.hud.thread=Thread %s · %s/%s
 chaosshard.hud.thread.max=Thread %s · max
 
@@ -100,11 +100,11 @@ chaosshard.breach.no_sky=Grimoire: The altar needs open sky above it. How else w
 chaosshard.breach.no_pillars=Grimoire: Missing pillars. Diagonally from the altar, one block gap — four pillars: chaos stone below, crust on top.
 chaosshard.breach.start=Grimoire: Here we go. Stay close and hold still — break the ritual and we start over.
 chaosshard.breach.step1=Grimoire: Feel the Thread pull? That's the Lord reaching for the Veil. With your hands.
-chaosshard.breach.step2=Grimoire: The Veil has noticed us. It doesn't like it. We do.
+chaosshard.breach.step2=Grimoire: The Veil has noticed you. The world's Soul resists — as expected.
 chaosshard.breach.lord=Death: Go, my Shard. This world will be mine.
-chaosshard.breach.broken=Grimoire: The ritual broke. Well. Start again.
+chaosshard.breach.broken=Grimoire: The ritual broke. Start again.
 chaosshard.breach.lord_done=Death: You are through. Take this world.
-chaosshard.breach.done=Grimoire: We're in Luchezaria! Sun, grass, villagers... ugh. The book is open now: RMB takes you home to the Antechamber and back.
+chaosshard.breach.done=Grimoire: You are in Luchezaria. Sun, grass, villagers — and a world Soul that now knows about you. The book is open: RMB takes you to the Antechamber, again — back.
 chaosshard.spell.recall.sealed=The Veil is closed. Breach it first.
 chaosshard.config.breach=Breach
 
