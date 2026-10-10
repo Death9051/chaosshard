@@ -32,6 +32,7 @@
   "count": 1,
   "nbt": {
    "symbol": "mystcraft:hugetrees"
-  }
+  },
+  "data": 0
  }
 }

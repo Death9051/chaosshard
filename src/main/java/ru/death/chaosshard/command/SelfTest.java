@@ -190,7 +190,18 @@ public final class SelfTest {
             if (resolved == entries.length) {
                 check(true, "ступень " + tier + ": все " + entries.length + " руд найдены");
             } else {
-                warn("ступень " + tier + ": найдено " + resolved + " из " + entries.length + " руд (остальных модов нет)");
+                StringBuilder miss = new StringBuilder();
+                for (String entry : entries) {
+                    String e = entry.trim();
+                    String name = e.contains("*") ? e.substring(0, e.lastIndexOf('*')) : e;
+                    boolean found = name.startsWith("ore:")
+                            ? !net.minecraftforge.oredict.OreDictionary.getOres(name.substring(4)).isEmpty()
+                            : ForgeRegistries.BLOCKS.containsKey(new ResourceLocation(name.split(":")[0], name.split(":")[1]));
+                    if (!found) {
+                        miss.append(' ').append(name);
+                    }
+                }
+                warn("ступень " + tier + ": найдено " + resolved + " из " + entries.length + " руд, нет:" + miss);
             }
             if (tier >= 2) {
                 String[] costs = ChaosConfig.heart.upgradeCosts[tier - 2].split(",");

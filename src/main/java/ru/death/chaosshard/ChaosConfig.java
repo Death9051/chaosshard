@@ -125,7 +125,7 @@ public final class ChaosConfig {
                 "minecraft:iron_ore*14,ore:oreTin*10,ore:oreLead*6,ore:oreOsmium*8,minecraft:quartz_ore*4",
                 "minecraft:gold_ore*8,minecraft:redstone_ore*10,minecraft:lapis_ore*6,ore:oreSilver*5,ore:oreNickel*4,"
                         + "astralsorcery:blockcustomsandore*6,astralsorcery:blockcustomore*3",
-                "minecraft:diamond_ore*4,minecraft:emerald_ore*3,ore:orePlatinum*2,ore:oreAluminum*4,ore:oreUranium*3,"
+                "minecraft:diamond_ore*4,minecraft:emerald_ore*3,ore:orePlatinum*2,ore:oreAluminum*4,ore:oreIridium*2,"
                         + "astralsorcery:blockcustomore:1*3"
         };
 

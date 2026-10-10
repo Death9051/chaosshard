@@ -28,6 +28,7 @@
   "count": 1,
   "nbt": {
    "symbol": "mystcraft:terrainnormal"
-  }
+  },
+  "data": 0
  }
 }
