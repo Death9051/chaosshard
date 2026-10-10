@@ -11,7 +11,6 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -43,7 +42,7 @@ public class BlockHeart extends Block {
         setBlockUnbreakable();
         setResistance(6000000.0F);
         setLightLevel(0.8F);
-        setCreativeTab(CreativeTabs.MISC);
+        setCreativeTab(ru.death.chaosshard.ChaosTab.TAB);
         setDefaultState(blockState.getBaseState().withProperty(TIER, 1).withProperty(PULSE, false)
                 .withProperty(CAPACITY, false).withProperty(RICH, false).withProperty(FERTILE, false));
     }

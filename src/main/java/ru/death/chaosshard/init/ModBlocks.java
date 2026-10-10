@@ -3,7 +3,6 @@ package ru.death.chaosshard.init;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraftforge.event.RegistryEvent;
@@ -30,6 +29,9 @@ public final class ModBlocks {
     public static Block CHAOS_ANCHOR;
     public static Block HEART_HARVESTER;
 
+    /** Тестовые блоки-структуры (только творческий режим). */
+    public static final List<Block> SEEDS = new ArrayList<>();
+
     public static final List<Block> ALL = new ArrayList<>();
 
     @SubscribeEvent
@@ -46,6 +48,9 @@ public final class ModBlocks {
         net.minecraftforge.fml.common.registry.GameRegistry.registerTileEntity(ru.death.chaosshard.anchor.TileAnchor.class,
                 new net.minecraft.util.ResourceLocation(Tags.MOD_ID, "chaos_anchor"));
         BREACH_ALTAR = add(new ru.death.chaosshard.breach.BlockBreachAltar(), "breach_altar");
+        for (ru.death.chaosshard.debug.StructureBuilder.Kind k : ru.death.chaosshard.debug.StructureBuilder.Kind.values()) {
+            SEEDS.add(add(new ru.death.chaosshard.debug.BlockStructureSeed(k), "seed_" + k.name().toLowerCase()));
+        }
         for (Block block : ALL) {
             event.getRegistry().register(block);
         }
@@ -62,7 +67,7 @@ public final class ModBlocks {
     private static Block add(Block block, String name) {
         block.setRegistryName(Tags.MOD_ID, name);
         block.setTranslationKey(Tags.MOD_ID + "." + name);
-        block.setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
+        block.setCreativeTab(ru.death.chaosshard.ChaosTab.TAB);
         ALL.add(block);
         return block;
     }

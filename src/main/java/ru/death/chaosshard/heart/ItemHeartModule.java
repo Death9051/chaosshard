@@ -2,7 +2,6 @@ package ru.death.chaosshard.heart;
 
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -33,7 +32,7 @@ public class ItemHeartModule extends Item {
     public ItemHeartModule(Type type) {
         this.type = type;
         setMaxStackSize(16);
-        setCreativeTab(CreativeTabs.MISC);
+        setCreativeTab(ru.death.chaosshard.ChaosTab.TAB);
     }
 
     @Override

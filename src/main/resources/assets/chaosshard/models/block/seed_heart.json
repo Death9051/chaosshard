@@ -1,0 +1,6 @@
+{
+  "parent": "block/cube_all",
+  "textures": {
+    "all": "chaosshard:blocks/seed_heart"
+  }
+}

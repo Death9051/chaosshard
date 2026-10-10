@@ -191,3 +191,17 @@ chaosshard.anchor.captured_lord=Death: Ещё один клочок этого �
 chaosshard.config.anchor=Якоря и Скверна
 
 chaosshard.command.anchor.none=Рядом нет Якоря.
+
+itemGroup.chaosshard=Осколок Хаоса
+chaosshard.seed.built=Тестовая структура «%s» построена в (%s, %s, %s).
+chaosshard.seed.hint=Тест: поставь — структура соберётся вокруг.
+tile.chaosshard.seed_breach.name=[Тест] Алтарь Прорыва
+tile.chaosshard.seed_breach.desc=Алтарь, четыре столба и открытое небо — готов к ритуалу.
+tile.chaosshard.seed_heart.name=[Тест] Сердце Острова
+tile.chaosshard.seed_heart.desc=Сердце макс. уровня со всеми модулями и 12 наростами.
+tile.chaosshard.seed_heart_auto.name=[Тест] Сердце со Жнецом
+tile.chaosshard.seed_heart_auto.desc=Сердце макс. уровня, все модули, Жнец сверху.
+tile.chaosshard.seed_anchor.name=[Тест] Захваченный Якорь
+tile.chaosshard.seed_anchor.desc=Якорь Хаоса с уже расползшейся Скверной. Не в Преддверии.
+tile.chaosshard.seed_island.name=[Тест] Малый остров
+tile.chaosshard.seed_island.desc=Парящий диск: Сердце со Жнецом и Алтарь Прорыва.

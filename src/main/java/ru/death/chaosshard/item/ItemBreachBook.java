@@ -2,7 +2,6 @@ package ru.death.chaosshard.item;
 
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.EnumRarity;
@@ -30,7 +29,7 @@ public class ItemBreachBook extends Item {
 
     public ItemBreachBook() {
         setMaxStackSize(1);
-        setCreativeTab(CreativeTabs.MISC);
+        setCreativeTab(ru.death.chaosshard.ChaosTab.TAB);
     }
 
     @Override

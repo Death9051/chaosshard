@@ -2,7 +2,6 @@ package ru.death.chaosshard.item;
 
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.EnumRarity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -23,7 +22,7 @@ public class ItemLore extends Item {
     public ItemLore(String loreKey, boolean shiny) {
         this.loreKey = loreKey;
         this.shiny = shiny;
-        setCreativeTab(CreativeTabs.MISC);
+        setCreativeTab(ru.death.chaosshard.ChaosTab.TAB);
     }
 
     @Override

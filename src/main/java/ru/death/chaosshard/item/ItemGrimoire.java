@@ -2,7 +2,6 @@ package ru.death.chaosshard.item;
 
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.EnumFacing;
@@ -33,7 +32,7 @@ public class ItemGrimoire extends Item {
 
     public ItemGrimoire() {
         setMaxStackSize(1);
-        setCreativeTab(CreativeTabs.MISC);
+        setCreativeTab(ru.death.chaosshard.ChaosTab.TAB);
     }
 
     /**

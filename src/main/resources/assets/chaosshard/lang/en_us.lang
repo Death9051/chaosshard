@@ -185,3 +185,17 @@ chaosshard.anchor.captured_lord=Death: Another scrap of this world is mine. Cont
 chaosshard.config.anchor=Anchors and Corruption
 
 chaosshard.command.anchor.none=No Anchor nearby.
+
+itemGroup.chaosshard=Chaos Shard
+chaosshard.seed.built=Test structure "%s" built at (%s, %s, %s).
+chaosshard.seed.hint=Test: place it and the structure builds around.
+tile.chaosshard.seed_breach.name=[Test] Breach Altar
+tile.chaosshard.seed_breach.desc=Altar, four pillars and open sky — ready for the ritual.
+tile.chaosshard.seed_heart.name=[Test] Island Heart
+tile.chaosshard.seed_heart.desc=Max tier Heart with all modules and 12 growths.
+tile.chaosshard.seed_heart_auto.name=[Test] Heart with Harvester
+tile.chaosshard.seed_heart_auto.desc=Max tier Heart, all modules, Harvester on top.
+tile.chaosshard.seed_anchor.name=[Test] Captured Anchor
+tile.chaosshard.seed_anchor.desc=Chaos Anchor with corruption already spread. Not in the Antechamber.
+tile.chaosshard.seed_island.name=[Test] Small Island
+tile.chaosshard.seed_island.desc=Floating disc: Heart with Harvester and Breach Altar.
