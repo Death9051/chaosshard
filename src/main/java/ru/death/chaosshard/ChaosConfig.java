@@ -29,6 +29,10 @@ public final class ChaosConfig {
     @Config.LangKey("chaosshard.config.breach")
     public static final BreachCfg breach = new BreachCfg();
 
+    @Config.Comment("Сердце Острова — наросты руды в центре Преддверия")
+    @Config.LangKey("chaosshard.config.heart")
+    public static final HeartCfg heart = new HeartCfg();
+
     @Config.Comment("Связки с другими модами")
     @Config.LangKey("chaosshard.config.compat")
     public static final CompatCfg compat = new CompatCfg();
@@ -105,6 +109,39 @@ public final class ChaosConfig {
         @Config.Comment("Добавить на небо дополнительные места для созвездий (в Astral их всего 15)")
         @Config.RequiresMcRestart
         public boolean extraSkyPositions = true;
+    }
+
+    public static final class HeartCfg {
+        @Config.Comment("Ставить Сердце Острова в Преддверии")
+        public boolean enabled = true;
+
+        @Config.Comment({"Что нарастает на каждой ступени (ступень включает и все предыдущие).",
+                "Формат: ore:<оредикт>*вес или modid:блок[:мета]*вес, через запятую. Несуществующее пропускается."})
+        public String[] tierOres = {
+                "minecraft:coal_ore*30,ore:oreCopper*12,minecraft:iron_ore*6",
+                "minecraft:iron_ore*14,ore:oreTin*10,ore:oreLead*6,ore:oreOsmium*8,minecraft:quartz_ore*4",
+                "minecraft:gold_ore*8,minecraft:redstone_ore*10,minecraft:lapis_ore*6,ore:oreSilver*5,ore:oreNickel*4,"
+                        + "astralsorcery:blockcustomsandore*6,astralsorcery:blockcustomore*3",
+                "minecraft:diamond_ore*4,minecraft:emerald_ore*3,ore:orePlatinum*2,ore:oreAluminum*4,ore:oreUranium*3,"
+                        + "astralsorcery:blockcustomore:1*3"
+        };
+
+        @Config.Comment({"Плата за переход на ступени 2, 3, 4 (берётся из инвентаря при Shift+ПКМ по Сердцу).",
+                "Формат: ore:<оредикт>*кол-во или modid:предмет[:мета]*кол-во, через запятую."})
+        public String[] upgradeCosts = {
+                "ore:ingotIron*8,ore:ingotCopper*8,chaosshard:veil_shard*4",
+                "ore:ingotIron*16,ore:ingotTin*8,chaosshard:memory_fragment*4,chaosshard:veil_shard*8",
+                "ore:ingotGold*16,ore:dustRedstone*32,ore:gemLapis*16,chaosshard:memory_fragment*8"
+        };
+
+        @Config.Comment("Уровень Нити для ступеней 2, 3, 4")
+        public int[] threadForTier = {1, 2, 3};
+
+        @Config.Comment("Как часто (в тиках) нарастает руда на ступенях 1..4")
+        public int[] growthInterval = {600, 400, 300, 200};
+
+        @Config.Comment("Сколько наростов может быть на Сердце одновременно, ступени 1..4")
+        public int[] maxGrowths = {8, 12, 18, 24};
     }
 
     public static final class CompatCfg {

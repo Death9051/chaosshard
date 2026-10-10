@@ -29,6 +29,7 @@ import java.util.List;
  *   sky                         — какие правила неба действуют здесь (отладка)
  *   grimoire [игрок]            — выдать Гримуар
  *   breach [on|off] [игрок]     — отметить Прорыв пройденным / сбросить
+ *   heart [place|grow [n]|tier N] — Сердце Острова
  *   debug [report|reset|kit]    — отчёт в chaosshard-debug.txt / сброс «первого входа» / набор для теста
  */
 public class CommandChaosShard extends CommandBase {
@@ -71,6 +72,32 @@ public class CommandChaosShard extends CommandBase {
             case "debug":
                 debug(server, sender, args);
                 break;
+            case "heart": {
+                // /oh heart [place|grow|tier <N>] — Сердце Острова
+                net.minecraft.world.World ante = server.getWorld(ru.death.chaosshard.antechamber.AntechamberDimension.id());
+                BlockPos hp = ru.death.chaosshard.heart.HeartPlacer.heartPos();
+                String sub = args.length >= 2 ? args[1] : "info";
+                if ("place".equals(sub)) {
+                    ru.death.chaosshard.heart.HeartPlacer.place(ante);
+                }
+                net.minecraft.tileentity.TileEntity te = ante.getTileEntity(hp);
+                if (!(te instanceof ru.death.chaosshard.heart.TileHeart)) {
+                    throw new CommandException("chaosshard.command.heart.missing");
+                }
+                ru.death.chaosshard.heart.TileHeart heart = (ru.death.chaosshard.heart.TileHeart) te;
+                if ("grow".equals(sub)) {
+                    int n = args.length >= 3 ? parseInt(args[2], 1, 64) : 1;
+                    for (int i = 0; i < n; i++) {
+                        heart.grow(true);
+                    }
+                } else if ("tier".equals(sub) && args.length >= 3) {
+                    heart.setTier(parseInt(args[2], 1, ru.death.chaosshard.heart.HeartTiers.maxTier()));
+                }
+                sender.sendMessage(new net.minecraft.util.text.TextComponentString("Сердце Острова " + hp + ": ступень "
+                        + heart.getTier() + ", наростов " + heart.countGrowths(ru.death.chaosshard.heart.HeartTiers.pool(heart.getTier()))
+                        + "/" + heart.maxGrowths()));
+                break;
+            }
             case "breach": {
                 // /oh breach [on|off] [игрок] — отметить Прорыв пройденным или сбросить
                 boolean on = args.length < 2 || !"off".equals(args[1]);
@@ -217,10 +244,13 @@ public class CommandChaosShard extends CommandBase {
     @Override
     public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos targetPos) {
         if (args.length == 1) {
-            return getListOfStringsMatchingLastWord(args, "nit", "tp", "sky", "grimoire", "debug", "breach");
+            return getListOfStringsMatchingLastWord(args, "nit", "tp", "sky", "grimoire", "debug", "breach", "heart");
         }
         if (args.length == 2 && "nit".equals(args[0])) {
             return getListOfStringsMatchingLastWord(args, "get", "set", "add", "resync");
+        }
+        if (args.length == 2 && "heart".equals(args[0])) {
+            return getListOfStringsMatchingLastWord(args, "info", "place", "grow", "tier");
         }
         if (args.length == 2 && "debug".equals(args[0])) {
             return getListOfStringsMatchingLastWord(args, "report", "reset", "kit");

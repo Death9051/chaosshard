@@ -52,6 +52,7 @@ public final class DebugReport {
         r.section("Game Stages", () -> r.stages(player));
         r.section("Флаги игрока", () -> r.flags(player));
         r.section("Измерения", () -> r.dimensions(server));
+        r.section("Сердце Острова", () -> r.heart(server));
         r.section("Better Questing", () -> r.questing());
         r.section("Astral Sorcery", () -> r.astral(player));
         r.line("");
@@ -182,6 +183,25 @@ public final class DebugReport {
             World w = DimensionManager.getWorld(id);
             line(String.format("  %4d %-12s %s", id, w == null ? "-" : SkyRules.classify(w).toString(),
                     w == null ? "не загружен" : w.provider.getClass().getSimpleName()));
+        }
+    }
+
+    private void heart(MinecraftServer server) {
+        World ante = server.getWorld(AntechamberDimension.id());
+        BlockPos hp = ru.death.chaosshard.heart.HeartPlacer.heartPos();
+        net.minecraft.tileentity.TileEntity te = ante.getTileEntity(hp);
+        if (!(te instanceof ru.death.chaosshard.heart.TileHeart)) {
+            if (ChaosConfig.heart.enabled) {
+                problem("нет Сердца Острова в " + hp + " (/oh heart place)");
+            }
+            return;
+        }
+        ru.death.chaosshard.heart.TileHeart h = (ru.death.chaosshard.heart.TileHeart) te;
+        line("Сердце: " + hp + ", ступень " + h.getTier() + "/" + ru.death.chaosshard.heart.HeartTiers.maxTier()
+                + ", интервал " + h.interval() + " т, лимит " + h.maxGrowths());
+        for (int t = 1; t <= ru.death.chaosshard.heart.HeartTiers.maxTier(); t++) {
+            line("  ступень " + t + ": видов наростов " + ru.death.chaosshard.heart.HeartTiers.pool(t).size()
+                    + (t >= 2 ? ", плата: " + ru.death.chaosshard.heart.HeartTiers.costFor(t).size() + " позиций, Нить " + ru.death.chaosshard.heart.HeartTiers.threadFor(t) : ""));
         }
     }
 

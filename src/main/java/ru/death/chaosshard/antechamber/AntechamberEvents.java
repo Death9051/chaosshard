@@ -25,6 +25,7 @@ public class AntechamberEvents {
             return;
         }
         EntityPlayerMP player = (EntityPlayerMP) event.player;
+        ru.death.chaosshard.heart.HeartPlacer.ensure(player.getServer().getWorld(AntechamberDimension.id()));
         NBTTagCompound persisted = persisted(player);
         // Гримуар выдаётся один раз, в том числе в мирах, созданных до его появления
         if (!persisted.getBoolean(TAG_GRIMOIRE)) {

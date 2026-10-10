@@ -26,6 +26,7 @@ public final class ModBlocks {
     public static Block CHAOS_CRUST;
 
     public static Block BREACH_ALTAR;
+    public static Block ISLAND_HEART;
 
     public static final List<Block> ALL = new ArrayList<>();
 
@@ -33,6 +34,9 @@ public final class ModBlocks {
     public static void registerBlocks(RegistryEvent.Register<Block> event) {
         CHAOS_STONE = add(new SimpleBlock(Material.GROUND, SoundType.STONE, 1.2F, 12.0F, 0.0F), "chaos_stone");
         CHAOS_CRUST = add(new SimpleBlock(Material.GROUND, SoundType.STONE, 0.8F, 8.0F, 0.2F), "chaos_crust");
+        ISLAND_HEART = add(new ru.death.chaosshard.heart.BlockHeart(), "island_heart");
+        net.minecraftforge.fml.common.registry.GameRegistry.registerTileEntity(ru.death.chaosshard.heart.TileHeart.class,
+                new net.minecraft.util.ResourceLocation(Tags.MOD_ID, "island_heart"));
         BREACH_ALTAR = add(new ru.death.chaosshard.breach.BlockBreachAltar(), "breach_altar");
         for (Block block : ALL) {
             event.getRegistry().register(block);

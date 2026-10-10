@@ -113,3 +113,16 @@ material.chaosshard_chaos.name=Chaos Stone
 modifier.chaosshard_thread.name=Chaos Thread
 modifier.chaosshard_thread.desc=§oThe Lord guides the blow.§r\nDeals +0.5 damage per level of the wielder's Thread.
 chaosshard.config.compat=Mod integrations
+
+# Island Heart
+tile.chaosshard.island_heart.name=Island Heart
+chaosshard.heart.info=Island Heart: tier %s of %s. Growths %s/%s, a new one every %s s.
+chaosshard.heart.next=Next tier %s: needs Thread %s and an offering (Shift+RMB the Heart):
+chaosshard.heart.max=The Heart beats at full strength. Nowhere left to grow — for now.
+chaosshard.heart.thin=Grimoire: The Heart won't answer — your Thread is too thin. Level %s needed.
+chaosshard.heart.poor=Grimoire: The offering is short. The Heart doesn't haggle.
+chaosshard.heart.upgraded.2=Grimoire: The Heart beats faster (tier %s). Iron, tin and other metals grow on it now.
+chaosshard.heart.upgraded.3=Grimoire: The Heart fills with light (tier %s). Gold, redstone, lapis — even star ores.
+chaosshard.heart.upgraded.4=Grimoire: The Heart sings (tier %s). Diamonds, emeralds, starmetal. The Lord would be pleased. He is.
+chaosshard.command.heart.missing=The Island Heart is missing. /oh heart place puts it back.
+chaosshard.config.heart=Island Heart

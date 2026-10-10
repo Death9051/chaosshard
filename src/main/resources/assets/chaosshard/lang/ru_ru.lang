@@ -119,3 +119,16 @@ material.chaosshard_chaos.name=Хаосит
 modifier.chaosshard_thread.name=Нить Хаоса
 modifier.chaosshard_thread.desc=§oЛорд направляет удар.§r\nУрон растёт на 0,5 за каждый уровень Нити владельца.
 chaosshard.config.compat=Связки с модами
+
+# Сердце Острова
+tile.chaosshard.island_heart.name=Сердце Острова
+chaosshard.heart.info=Сердце Острова: ступень %s из %s. Наростов %s/%s, новый — раз в %s с.
+chaosshard.heart.next=Следующая ступень %s: нужна Нить %s и подношение (Shift+ПКМ по Сердцу):
+chaosshard.heart.max=Сердце бьётся в полную силу. Дальше расти некуда — пока.
+chaosshard.heart.thin=Гримуар: Сердце не отзовётся — Нить тонковата. Нужен уровень %s.
+chaosshard.heart.poor=Гримуар: Подношения не хватает. Сердце не торгуется.
+chaosshard.heart.upgraded.2=Гримуар: Сердце забилось чаще (ступень %s). Теперь на нём растёт железо, олово и прочий металл.
+chaosshard.heart.upgraded.3=Гримуар: Сердце налилось светом (ступень %s). Золото, редстоун, лазурит — и даже звёздные руды.
+chaosshard.heart.upgraded.4=Гримуар: Сердце поёт (ступень %s). Алмазы, изумруды, звёздный металл. Лорд был бы доволен. Он и доволен.
+chaosshard.command.heart.missing=Сердца Острова нет на месте. /oh heart place — поставить заново.
+chaosshard.config.heart=Сердце Острова
