@@ -122,6 +122,16 @@ public final class ChaosConfig {
         @Config.Comment("Наросты при добыче выпадают блоком руды (как с «Шёлковым касанием»), а не осколками")
         public boolean dropOreBlocks = true;
 
+        @Config.Comment("Шанс за каждый модуль «Богатство», что вместо руды вырастет Жила Завесы (даёт Осколки Завесы)")
+        @Config.RangeDouble(min = 0, max = 0.25)
+        public float veinChancePerModule = 0.10F;
+
+        @Config.Comment("Редкие наросты (и Жила Завесы) появляются с ударом молнии — только вспышка, без огня")
+        public boolean lightning = true;
+
+        @Config.Comment("Руда считается редкой, если её вес в пуле не больше этого числа")
+        public int lightningMaxWeight = 4;
+
         @Config.Comment({"Что нарастает на каждой ступени (ступень включает и все предыдущие).",
                 "Формат: ore:<оредикт>*вес или modid:блок[:мета]*вес, через запятую. Несуществующее пропускается."})
         public String[] tierOres = {

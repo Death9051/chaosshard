@@ -46,13 +46,8 @@ public class HeartDrops {
         if (item == net.minecraft.init.Items.AIR) {
             return;
         }
-        ItemStack drop = new ItemStack(item, 1, state.getBlock().getMetaFromState(state));
         event.getDrops().clear();
-        event.getDrops().add(drop.copy());
-        // «Богатство»: шанс, что нарост окажется вдвое богаче
-        if (world.rand.nextFloat() < heart.richChance()) {
-            event.getDrops().add(drop.copy());
-        }
+        event.getDrops().add(new ItemStack(item, 1, state.getBlock().getMetaFromState(state)));
         event.setDropChance(1.0F);
     }
 

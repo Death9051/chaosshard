@@ -28,6 +28,8 @@ public final class ModBlocks {
     public static Block ISLAND_HEART;
     public static Block CHAOS_ANCHOR;
     public static Block HEART_HARVESTER;
+    /** Жила Завесы — нарост Сердца с модулем «Богатство». */
+    public static Block VEIL_VEIN;
 
     /** Тестовые блоки-структуры (только творческий режим). */
     public static final List<Block> SEEDS = new ArrayList<>();
@@ -44,6 +46,7 @@ public final class ModBlocks {
         HEART_HARVESTER = add(new ru.death.chaosshard.heart.BlockHarvester(), "heart_harvester");
         net.minecraftforge.fml.common.registry.GameRegistry.registerTileEntity(ru.death.chaosshard.heart.TileHarvester.class,
                 new net.minecraft.util.ResourceLocation(Tags.MOD_ID, "heart_harvester"));
+        VEIL_VEIN = add(new ru.death.chaosshard.heart.BlockVeilVein(), "veil_vein");
         CHAOS_ANCHOR = add(new ru.death.chaosshard.anchor.BlockAnchor(), "chaos_anchor");
         net.minecraftforge.fml.common.registry.GameRegistry.registerTileEntity(ru.death.chaosshard.anchor.TileAnchor.class,
                 new net.minecraft.util.ResourceLocation(Tags.MOD_ID, "chaos_anchor"));

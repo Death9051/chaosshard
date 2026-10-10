@@ -19,11 +19,12 @@ public final class TinkersCompat {
 
     public static final int COLOR = 0x6A2AA0;
     private static Material chaos;
+    private static TraitThread thread;
     private static Material distorted;
     public static final int DISTORTED_COLOR = 0x9B3CFF;
 
     public static void preInit() {
-        TraitThread thread = new TraitThread();
+        thread = new TraitThread();
         chaos = new Material("chaosshard_chaos", COLOR);
         chaos.setCraftable(true);
         chaos.setCastable(false);
@@ -57,6 +58,9 @@ public final class TinkersCompat {
         }
         Item stone = Item.getItemFromBlock(ModBlocks.CHAOS_STONE);
         chaos.addItem(stone, 1, Material.VALUE_Ingot);
+        // Модификатор «Нить Хаоса» для любого инструмента: хаосит (1) или Эссенция Хаоса (16)
+        thread.addItem(stone, 1, 1);
+        thread.addItem(ru.death.chaosshard.init.ModItems.CHAOS_ESSENCE, 1, 16);
         chaos.setRepresentativeItem(stone);
         if (distorted != null) {
             distorted.addItem(ru.death.chaosshard.init.ModItems.DISTORTED_STARMETAL, 1, Material.VALUE_Ingot);

@@ -156,7 +156,6 @@ public class TileAnchor extends TileEntity implements ITickable {
         EntityPlayerMP p = ownerOnline();
         if (p != null) {
             ThreadManager.addPoints(p, ChaosConfig.anchor.captureReward);
-            p.sendMessage(Breach.lord("chaosshard.anchor.captured_lord"));
             p.sendMessage(Breach.grimoire("chaosshard.anchor.captured", pos.getX(), pos.getZ(), ChaosConfig.anchor.captureReward));
         }
     }

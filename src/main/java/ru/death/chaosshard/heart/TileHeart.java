@@ -77,10 +77,83 @@ public class TileHeart extends TileEntity implements ITickable {
     /** Счётчики модулей на клиенте (для вида Сердца). */
     private final int[] clientModules = new int[ItemHeartModule.Type.values().length];
 
-    /** Шанс двойной добычи с нароста: 15% за каждый модуль «Богатство». */
+    /** Шанс, что вместо руды вырастет Жила Завесы: 10% за каждый модуль «Богатство». */
     public float richChance() {
-        return 0.15F * count(ItemHeartModule.Type.RICH);
+        return ChaosConfig.heart.veinChancePerModule * count(ItemHeartModule.Type.RICH);
     }
+
+    /** Какой нарост вырастет: руда из пула или (с «Богатством») Жила Завесы. */
+    private IBlockState pickGrowth(List<HeartTiers.Growth> pool, Random rand) {
+        if (rand.nextFloat() < richChance()) {
+            return ModBlocks.VEIL_VEIN.getDefaultState();
+        }
+        return HeartTiers.pick(pool, rand);
+    }
+
+    /** Все блоки, которые считаются наростами. */
+    private static Set<IBlockState> growthStates() {
+        Set<IBlockState> states = new HashSet<>();
+        for (HeartTiers.Growth g : HeartTiers.pool(HeartTiers.maxTier())) {
+            states.add(g.state);
+        }
+        states.add(ModBlocks.VEIL_VEIN.getDefaultState());
+        return states;
+    }
+
+    // ------------------------------------------------------------------ рождение нароста из разлома
+
+    /** Нарост, который ещё «проступает» из разлома. */
+    private static final class Pending {
+        final BlockPos at;
+        final IBlockState state;
+        int ticks;
+
+        Pending(BlockPos at, IBlockState state, int ticks) {
+            this.at = at;
+            this.state = state;
+            this.ticks = ticks;
+        }
+    }
+
+    private final List<Pending> pending = new ArrayList<>();
+
+    private void tickPending() {
+        if (pending.isEmpty()) {
+            return;
+        }
+        WorldServer ws = (WorldServer) world;
+        java.util.Iterator<Pending> it = pending.iterator();
+        while (it.hasNext()) {
+            Pending p = it.next();
+            double x = p.at.getX() + 0.5, y = p.at.getY() + 0.5, z = p.at.getZ() + 0.5;
+            if (--p.ticks > 0) {
+                // Разлом: частицы тянутся в точку, где появится нарост
+                if (p.ticks % 3 == 0) {
+                    ws.spawnParticle(EnumParticleTypes.PORTAL, x, y, z, 14, 0.15, 0.15, 0.15, 1.2);
+                    ws.spawnParticle(EnumParticleTypes.SPELL_WITCH, x, y, z, 2, 0.1, 0.1, 0.1, 0.0);
+                }
+                if (p.ticks == RIFT_TICKS - 1) {
+                    world.playSound(null, p.at, SoundEvents.BLOCK_PORTAL_TRIGGER, SoundCategory.BLOCKS, 0.25F, 1.8F);
+                }
+                continue;
+            }
+            it.remove();
+            if (!canReplace(p.at)) {
+                continue;
+            }
+            world.setBlockState(p.at, p.state, 3);
+            boolean rare = p.state.getBlock() == ModBlocks.VEIL_VEIN || HeartTiers.weightOf(p.state) <= ChaosConfig.heart.lightningMaxWeight;
+            if (rare && ChaosConfig.heart.lightning) {
+                // Редкий нарост — удар молнии (только вспышка, без огня и урона)
+                ws.addWeatherEffect(new net.minecraft.entity.effect.EntityLightningBolt(world, x, p.at.getY(), z, true));
+            }
+            world.playSound(null, p.at, SoundEvents.ENTITY_ENDERMEN_TELEPORT, SoundCategory.BLOCKS, 0.5F, 0.6F);
+            ws.spawnParticle(EnumParticleTypes.SPELL_WITCH, x, y, z, 20, 0.4, 0.4, 0.4, 0.05);
+            ws.spawnParticle(EnumParticleTypes.CRIT_MAGIC, x, y, z, 12, 0.3, 0.3, 0.3, 0.3);
+        }
+    }
+
+    private static final int RIFT_TICKS = 40;
 
     public int count(ItemHeartModule.Type type) {
         if (world != null && world.isRemote) {
@@ -156,6 +229,7 @@ public class TileHeart extends TileEntity implements ITickable {
         if (world.isRemote) {
             return;
         }
+        tickPending();
         if (++timer < interval()) {
             return;
         }
@@ -180,19 +254,13 @@ public class TileHeart extends TileEntity implements ITickable {
 
     /** Жнец срезает один уже выросший нарост вокруг Сердца. */
     private void harvestExisting(TileHarvester h) {
-        java.util.Set<IBlockState> states = new HashSet<>();
-        for (HeartTiers.Growth g : HeartTiers.pool(HeartTiers.maxTier())) {
-            states.add(g.state);
-        }
+        Set<IBlockState> states = growthStates();
         for (BlockPos p : BlockPos.getAllInBox(pos.add(-RADIUS, 0, -RADIUS), pos.add(RADIUS, 1, RADIUS))) {
             IBlockState s = world.getBlockState(p);
             if (states.contains(s)) {
-                ItemStack item = asItem(s);
+                ItemStack item = harvestItem(s);
                 if (!item.isEmpty() && h.hasRoomFor(item)) {
-                    h.accept(item.copy());
-                    if (world.rand.nextFloat() < richChance() && h.hasRoomFor(item)) {
-                        h.accept(item.copy());
-                    }
+                    h.accept(item);
                     world.setBlockToAir(p);
                     ((WorldServer) world).spawnParticle(EnumParticleTypes.PORTAL, p.getX() + 0.5, p.getY() + 0.5, p.getZ() + 0.5,
                             10, 0.3, 0.3, 0.3, 0.3);
@@ -212,13 +280,10 @@ public class TileHeart extends TileEntity implements ITickable {
         if (h != null) {
             // С Жнецом нарост сразу уходит в хранилище; места нет — растёт как обычно
             harvestExisting(h);
-            IBlockState ore = HeartTiers.pick(pool, world.rand);
-            ItemStack item = ore == null ? ItemStack.EMPTY : asItem(ore);
+            IBlockState ore = pickGrowth(pool, world.rand);
+            ItemStack item = ore == null ? ItemStack.EMPTY : harvestItem(ore);
             if (!item.isEmpty() && h.hasRoomFor(item)) {
-                h.accept(item.copy());
-                if (world.rand.nextFloat() < richChance() && h.hasRoomFor(item)) {
-                    h.accept(item.copy());
-                }
+                h.accept(item);
                 world.playSound(null, pos, SoundEvents.BLOCK_CHORUS_FLOWER_GROW, SoundCategory.BLOCKS, 0.4F, 1.2F);
                 ((WorldServer) world).spawnParticle(EnumParticleTypes.SPELL_WITCH, pos.getX() + 0.5, pos.getY() + 1.2,
                         pos.getZ() + 0.5, 10, 0.3, 0.2, 0.3, 0.02);
@@ -232,7 +297,7 @@ public class TileHeart extends TileEntity implements ITickable {
         // Только на уровне Сердца и на блок выше: землю под собой Сердце не трогает
         for (BlockPos p : BlockPos.getAllInBox(pos.add(-RADIUS, 0, -RADIUS), pos.add(RADIUS, 1, RADIUS))) {
             int ring = Math.max(Math.abs(p.getX() - pos.getX()), Math.abs(p.getZ() - pos.getZ()));
-            if (ring >= 2 && canReplace(p)) {
+            if (ring >= 2 && canReplace(p) && !isPending(p)) {
                 spots.add(p);
             }
         }
@@ -241,15 +306,31 @@ public class TileHeart extends TileEntity implements ITickable {
         }
         Random rand = world.rand;
         BlockPos target = spots.get(rand.nextInt(spots.size()));
-        IBlockState ore = HeartTiers.pick(pool, rand);
+        IBlockState ore = pickGrowth(pool, rand);
         if (ore == null) {
             return false;
         }
-        world.setBlockState(target, ore, 3);
-        world.playSound(null, target, SoundEvents.BLOCK_CHORUS_FLOWER_GROW, SoundCategory.BLOCKS, 0.6F, 0.7F);
-        ((WorldServer) world).spawnParticle(EnumParticleTypes.SPELL_WITCH,
-                target.getX() + 0.5, target.getY() + 0.5, target.getZ() + 0.5, 12, 0.4, 0.4, 0.4, 0.02);
+        // Нарост не появляется сразу: сначала над местом открывается разлом
+        pending.add(new Pending(target.toImmutable(), ore, RIFT_TICKS));
+        markDirty();
         return true;
+    }
+
+    private boolean isPending(BlockPos p) {
+        for (Pending x : pending) {
+            if (x.at.equals(p)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /** Что получает Жнец за нарост: блок руды или Осколки Завесы за жилу. */
+    private ItemStack harvestItem(IBlockState state) {
+        if (state.getBlock() == ModBlocks.VEIL_VEIN) {
+            return new ItemStack(ru.death.chaosshard.init.ModItems.VEIL_SHARD, 1 + world.rand.nextInt(2));
+        }
+        return asItem(state);
     }
 
     private boolean canReplace(BlockPos p) {
@@ -264,12 +345,8 @@ public class TileHeart extends TileEntity implements ITickable {
 
     /** Наросты вокруг Сердца (любая руда любой ступени). */
     public int countGrowths() {
-        List<HeartTiers.Growth> pool = HeartTiers.pool(HeartTiers.maxTier());
-        Set<IBlockState> states = new HashSet<>();
-        for (HeartTiers.Growth g : pool) {
-            states.add(g.state);
-        }
-        int n = 0;
+        Set<IBlockState> states = growthStates();
+        int n = pending.size();
         for (BlockPos p : BlockPos.getAllInBoxMutable(pos.add(-RADIUS, -RADIUS, -RADIUS), pos.add(RADIUS, RADIUS, RADIUS))) {
             if (states.contains(world.getBlockState(p))) {
                 n++;
@@ -293,6 +370,15 @@ public class TileHeart extends TileEntity implements ITickable {
         writeShared(tag);
         tag.setInteger("timer", timer);
         tag.setTag("modules", modules.serializeNBT());
+        NBTTagList pend = new NBTTagList();
+        for (Pending p : pending) {
+            NBTTagCompound c = new NBTTagCompound();
+            c.setLong("pos", p.at.toLong());
+            c.setInteger("state", Block.getStateId(p.state));
+            c.setInteger("ticks", p.ticks);
+            pend.appendTag(c);
+        }
+        tag.setTag("pending", pend);
         return tag;
     }
 
@@ -319,6 +405,12 @@ public class TileHeart extends TileEntity implements ITickable {
         timer = tag.getInteger("timer");
         if (tag.hasKey("modules")) {
             modules.deserializeNBT(tag.getCompoundTag("modules"));
+        }
+        pending.clear();
+        NBTTagList pend = tag.getTagList("pending", 10);
+        for (int i = 0; i < pend.tagCount(); i++) {
+            NBTTagCompound c = pend.getCompoundTagAt(i);
+            pending.add(new Pending(BlockPos.fromLong(c.getLong("pos")), Block.getStateById(c.getInteger("state")), c.getInteger("ticks")));
         }
     }
 

@@ -54,6 +54,16 @@ public final class HeartTiers {
         return out;
     }
 
+    /** Вес руды в общем пуле (для «редкости»); не найдена — большой вес. */
+    public static int weightOf(IBlockState state) {
+        for (Growth g : pool(maxTier())) {
+            if (g.state == state) {
+                return g.weight;
+            }
+        }
+        return Integer.MAX_VALUE;
+    }
+
     public static IBlockState pick(List<Growth> pool, Random rand) {
         int total = 0;
         for (Growth g : pool) {

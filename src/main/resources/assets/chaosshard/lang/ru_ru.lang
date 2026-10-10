@@ -5,15 +5,15 @@ tile.chaosshard.chaos_stone.name=Хаосит
 tile.chaosshard.chaos_crust.name=Корка Преддверия
 
 # Преддверие
-chaosshard.antechamber.first_arrival=Гримуар: Осколок активен. Ты в Преддверии — малом плане, который Хаос создал для этого мира. Осмотрись. К краю не подходи: за ним пустота.
-chaosshard.antechamber.reassembled=Гримуар: Тело Осколка собрано заново. Продолжаем с того, на чём остановились.
+chaosshard.antechamber.first_arrival=Преддверие. Малый план, который Хаос создал для этого мира. Осмотреться. К краю не подходить: за ним пустота.
+chaosshard.antechamber.reassembled=Тело собрано заново. Продолжаю с того, на чём остановился.
 
 # Нить
-chaosshard.thread.levelup.1=Гримуар: Нить натянулась (уровень %s). Лорд тебя слышит. Звёзды тоже отозвались — проверь древо перков.
-chaosshard.thread.levelup.2=Гримуар: Нить крепнет (уровень %s). Лорд тебя заметил. Это записано.
-chaosshard.thread.levelup.3=Гримуар: Нить держит ровно (уровень %s). По записям сети Гримуаров, Осколки обычно доходят сюда медленнее.
-chaosshard.thread.levelup.4=Гримуар: Нить поёт (уровень %s). Лорд доволен — такое случается нечасто. Перки звёзд горят ярче.
-chaosshard.thread.levelup.5=Гримуар: Нить в полную силу (уровень %s). Теперь ты — голос и рука Лорда Death. Всё звёздное древо твоё.
+chaosshard.thread.levelup.1=Нить натянулась (уровень %s). Звёзды отозвались — древо перков стоит проверить.
+chaosshard.thread.levelup.2=Нить крепнет (уровень %s). Записано.
+chaosshard.thread.levelup.3=Нить держит ровно (уровень %s). По записям из сети, обычно сюда доходят медленнее.
+chaosshard.thread.levelup.4=Нить поёт (уровень %s). Звёздные перки горят ярче.
+chaosshard.thread.levelup.5=Нить в полную силу (уровень %s). Всё звёздное древо открыто.
 chaosshard.hud.thread=Нить %s · %s/%s
 chaosshard.hud.thread.max=Нить %s · предел
 
@@ -41,21 +41,21 @@ chaosshard.config.perks=Перки
 
 # Созвездие Хаоса (Astral Sorcery)
 astralsorcery.constellation.chaos=Хаос
-astralsorcery.constellation.chaos.info=Метка Лорда
-astralsorcery.constellation.chaos.effect=Восьмилучевая звезда, которую видно в небе любого мира. Это не созвездие здешних небес, а метка, которую Лорд Death оставляет там, куда пришли его Осколки.
+astralsorcery.constellation.chaos.info=Звезда Хаоса
+astralsorcery.constellation.chaos.effect=Восьмилучевая звезда, которую видно в небе любого мира, куда пришли Осколки. Это не созвездие здешних небес, а русло, которым Хаос вошёл в мир.
 astralsorcery.constellation.chaos.enchantments=Свойства этого света ещё не изучены.
-astralsorcery.constellation.chaos.ritual=Ритуал Хаоса ещё не открыт. Гримуар обещает, что «в своё время».
+astralsorcery.constellation.chaos.ritual=Ритуал Хаоса ещё не открыт. В записях о нём — только пустые страницы.
 astralsorcery.constellation.chaos.capeeffect=Мантия, настроенная на Хаос, пока молчит.
-knowledge.astralsorcery.fragment.constellation.chaos.showup.name=Метка Лорда
+knowledge.astralsorcery.fragment.constellation.chaos.showup.name=Звезда Хаоса
 knowledge.astralsorcery.fragment.constellation.chaos.showup.bookmark=Появление
 knowledge.astralsorcery.fragment.constellation.chaos.showup.description=Созвездие Хаоса видно каждую ночь, в любом мире, где есть небо. Над Преддверием оно горит вместе со всеми созвездиями сразу.
 
 # Гримуар
 item.chaosshard.grimoire.name=Гримуар
-item.chaosshard.grimoire.lore=Артефакт Лорда Death, созданный для его Осколков
+item.chaosshard.grimoire.lore=Записная книжка Осколка. Связана с сетью других Гримуаров
 item.chaosshard.grimoire.use=ПКМ — открыть записи или прочитать заклинание
 item.chaosshard.grimoire.craft=В верстаке — Преобразование: хаосит и корка становятся тем, что нужно. Сам Гримуар не тратится.
-chaosshard.grimoire.no_bq=Гримуар молчит: не установлен Better Questing.
+chaosshard.grimoire.no_bq=Записи не открываются: не установлен Better Questing.
 
 # Отладка
 chaosshard.command.debug.written=Отчёт записан: %s (проблем: %s). Пришлите этот файл.
@@ -66,11 +66,11 @@ chaosshard.command.debug.usage=/oh debug [report|reset|kit]
 # Заклинания Гримуара
 item.chaosshard.grimoire.current=Заклинание: %s
 item.chaosshard.grimoire.cycle=Shift+ПКМ — сменить заклинание
-chaosshard.spell.selected=Гримуар раскрыт на странице: %s
+chaosshard.spell.selected=Страница заклинания: %s
 chaosshard.spell.need_block=Это заклинание нужно направить на блок
 chaosshard.spell.locked=Нить пока слишком тонкая для этого (нужен уровень %s)
 chaosshard.spell.hungry=Ты слишком голоден — магия берёт силы из тела
-chaosshard.spell.cooldown=Гримуар ещё не остыл: %s с.
+chaosshard.spell.cooldown=Страница ещё не остыла: %s с.
 chaosshard.spell.fizzle=Не вышло — здесь это не сработает
 chaosshard.spell.book=Записи
 chaosshard.spell.sprout=Росток
@@ -93,31 +93,31 @@ item.chaosshard.memory_fragment.name=Обрывок памяти
 item.chaosshard.memory_page.name=Страница памяти: «Прорыв»
 item.chaosshard.breach_book.name=Книга Прорыва
 chaosshard.veil_shard.lore=Кусочек барьера, которым Лучезария закрылась от Хаоса. Звенит, если поднести к уху.
-chaosshard.memory_fragment.lore=Клочок памяти Лорда, застрявший в чужом мире. Тёплый на ощупь.
+chaosshard.memory_fragment.lore=Клочок памяти, застрявший в чужом мире. Тёплый на ощупь.
 chaosshard.memory_page.lore=Восстановленное воспоминание: как проскользнуть сквозь Завесу.
-chaosshard.breach_book.lore=Путь сквозь Завесу, записанный рукой Лорда.
+chaosshard.breach_book.lore=Путь сквозь Завесу, восстановленный по памяти.
 chaosshard.breach_book.use1=Первый раз — ПКМ по Алтарю Прорыва
 chaosshard.breach_book.use2=Потом ПКМ — между Преддверием и Лучезарией
 chaosshard.breach_book.sealed=Книга молчит. Сначала проведи ритуал на Алтаре Прорыва.
 chaosshard.breach.need_book=Алтарю нужна Книга Прорыва в руке. ПКМ без книги — подсветить постройку.
-chaosshard.breach.not_here=Гримуар: Прорыв возможен только из Преддверия. Здесь Завеса слишком далеко.
-chaosshard.breach.thin=Гримуар: Нить слишком тонкая — Лорд не дотянется. Нужен уровень %s.
-chaosshard.breach.no_sky=Гримуар: Над алтарём должно быть открытое небо. Завесу надо видеть, иначе как в неё целиться?
-chaosshard.breach.no_pillars=Гримуар: Не хватает опор. По диагоналям от алтаря, через клетку, — четыре столба: хаосит внизу, корка сверху.
-chaosshard.breach.start=Гримуар: Начинаем. Стой рядом и не дёргайся — если оборвёшь ритуал, начнём с начала.
-chaosshard.breach.step1=Гримуар: Чувствуешь, как натянулась Нить? Это Лорд тянется к Завесе. Твоими руками.
-chaosshard.breach.step2=Гримуар: Завеса заметила вас. Душа мира сопротивляется — ожидаемо.
+chaosshard.breach.not_here=Прорыв возможен только из Преддверия. Отсюда Завеса слишком далеко.
+chaosshard.breach.thin=Нить слишком тонкая — не дотянуться. Нужен уровень %s.
+chaosshard.breach.no_sky=Над алтарём нужно открытое небо. Завесу надо видеть, чтобы в неё целиться.
+chaosshard.breach.no_pillars=Не хватает опор. По диагоналям от алтаря, через клетку, — четыре столба: хаосит внизу, корка сверху.
+chaosshard.breach.start=Начинаю. Стоять рядом и не дёргаться — оборву ритуал, придётся заново.
+chaosshard.breach.step1=Нить натянулась и тянется к Завесе. Моими руками.
+chaosshard.breach.step2=Завеса заметила. Душа мира сопротивляется — ожидаемо.
 chaosshard.breach.lord=Death: Иди, мой Осколок. Этот мир будет моим.
-chaosshard.breach.broken=Гримуар: Ритуал оборван. Начни заново.
+chaosshard.breach.broken=Ритуал оборван. Заново.
 chaosshard.breach.lord_done=Death: Ты прошёл. Возьми этот мир.
-chaosshard.breach.done=Гримуар: Ты в Лучезарии. Солнце, трава, селяне — и Душа мира, которая теперь знает о тебе. Книга открыта: ПКМ — и ты в Преддверии, ещё раз — обратно.
+chaosshard.breach.done=Лучезария. Солнце, трава, селяне — и Душа мира, которая теперь знает обо мне. Книга открыта: ПКМ — в Преддверие, ещё раз — обратно.
 chaosshard.spell.recall.sealed=Завеса закрыта. Сначала Прорыв.
 chaosshard.config.breach=Прорыв
 
 # Tinkers
 material.chaosshard_chaos.name=Хаосит
 modifier.chaosshard_thread.name=Нить Хаоса
-modifier.chaosshard_thread.desc=§oЛорд направляет удар.§r\nУрон растёт на 0,5 за каждый уровень Нити владельца.
+modifier.chaosshard_thread.desc=§oНить тянется сквозь рукоять.§r\nЗа каждый уровень Нити: +0,5 урона, +8% скорости добычи, 5% шанс не потратить прочность.\nРаз в минуту в руке — «Всплеск Хаоса»: случайный эффект на 20 секунд.\nМодификатор: 64 хаосита или 4 Эссенции Хаоса.
 chaosshard.config.compat=Связки с модами
 
 # Сердце Острова
@@ -125,11 +125,11 @@ tile.chaosshard.island_heart.name=Сердце Острова
 chaosshard.heart.info=Сердце Острова: ступень %s из %s. Наростов %s/%s, новый — раз в %s с.
 chaosshard.heart.next=Следующая ступень %s: нужна Нить %s и подношение (Shift+ПКМ по Сердцу):
 chaosshard.heart.max=Сердце бьётся в полную силу. Дальше расти некуда — пока.
-chaosshard.heart.thin=Гримуар: Сердце не отзовётся — Нить тонковата. Нужен уровень %s.
-chaosshard.heart.poor=Гримуар: Подношения не хватает. Сердце не торгуется.
-chaosshard.heart.upgraded.2=Гримуар: Сердце забилось чаще (ступень %s). Теперь на нём растёт железо, олово и прочий металл.
-chaosshard.heart.upgraded.3=Гримуар: Сердце налилось светом (ступень %s). Золото, редстоун, лазурит — и даже звёздные руды.
-chaosshard.heart.upgraded.4=Гримуар: Сердце поёт (ступень %s). Алмазы, изумруды, звёздный металл. Лорд был бы доволен. Он и доволен.
+chaosshard.heart.thin=Сердце не отзовётся — Нить тонковата. Нужен уровень %s.
+chaosshard.heart.poor=Подношения не хватает. Сердце не торгуется.
+chaosshard.heart.upgraded.2=Сердце забилось чаще (ступень %s). Теперь растут железо, олово и прочий металл.
+chaosshard.heart.upgraded.3=Сердце налилось светом (ступень %s). Золото, редстоун, лазурит — и звёздные руды.
+chaosshard.heart.upgraded.4=Сердце поёт (ступень %s). Алмазы, изумруды, иридий, звёздная руда.
 chaosshard.command.heart.missing=Сердца Острова нет на месте. /oh heart place — поставить заново.
 chaosshard.config.heart=Сердце Острова
 
@@ -151,7 +151,7 @@ item.chaosshard.heart_module_rich.name=Модуль «Богатство»
 item.chaosshard.heart_module_fertile.name=Модуль «Плодовитость»
 chaosshard.heart_module.pulse.desc=Наросты растут на 35% быстрее
 chaosshard.heart_module.capacity.desc=+6 наростов одновременно
-chaosshard.heart_module.rich.desc=Шанс 15%% за модуль, что нарост даст двойную добычу
+chaosshard.heart_module.rich.desc=Иногда вместо руды вырастает Жила Завесы — из неё выпадают Осколки Завесы (+10%% за модуль)
 chaosshard.heart_module.fertile.desc=25% шанс вырастить сразу два нароста
 chaosshard.heart_module.hint=Вставляется в гнездо Сердца Острова, до 4 в одно гнездо. Модули складываются.
 
@@ -179,14 +179,14 @@ chaosshard.heart.gui.harvester=Жнец собирает наросты
 
 # Якорь Хаоса и Скверна
 tile.chaosshard.chaos_anchor.name=Якорь Хаоса
-chaosshard.anchor.not_here=Гримуар: Якорь вбивают в чужой мир, а не в свой тыл.
-chaosshard.anchor.thin=Гримуар: Нить слишком тонкая — Якорь не удержится. Нужен уровень %s.
-chaosshard.anchor.too_close=Гримуар: Рядом уже стоит Якорь (%s, %s, %s). Между Якорями должно быть не меньше %s блоков.
-chaosshard.anchor.placed=Гримуар: Якорь вбит. Скверна поползёт от него кругом — сначала робко, потом всё шире. Край станет нашим, когда Скверна наберёт силу.
+chaosshard.anchor.not_here=Якорь вбивают в чужой мир, а не в свой тыл.
+chaosshard.anchor.thin=Нить слишком тонкая — Якорь не удержится. Нужен уровень %s.
+chaosshard.anchor.too_close=Рядом уже стоит Якорь (%s, %s, %s). Между Якорями — не меньше %s блоков.
+chaosshard.anchor.placed=Якорь вбит. Скверна поползёт от него кругом — сначала робко, потом шире. Край станет моим, когда она наберёт силу.
 chaosshard.anchor.info=Якорь Хаоса (владелец %s): радиус Скверны %s, осквернено %s из %s.
 chaosshard.anchor.info_open=Край ещё сопротивляется.
 chaosshard.anchor.info_captured=Край захвачен. Он питает Нить.
-chaosshard.anchor.captured=Гримуар: Край у (%s, %s) наш! Нить окрепла на %s.
+chaosshard.anchor.captured=Край у (%s, %s) захвачен. Нить окрепла на %s.
 chaosshard.anchor.captured_lord=Death: Ещё один клочок этого мира — мой. Продолжай.
 chaosshard.config.anchor=Якоря и Скверна
 
@@ -205,3 +205,6 @@ tile.chaosshard.seed_anchor.name=[Тест] Захваченный Якорь
 tile.chaosshard.seed_anchor.desc=Якорь Хаоса с уже расползшейся Скверной. Не в Преддверии.
 tile.chaosshard.seed_island.name=[Тест] Малый остров
 tile.chaosshard.seed_island.desc=Парящий диск: Сердце со Жнецом и Алтарь Прорыва.
+
+tile.chaosshard.veil_vein.name=Жила Завесы
+chaosshard.surge=Всплеск Хаоса: %s

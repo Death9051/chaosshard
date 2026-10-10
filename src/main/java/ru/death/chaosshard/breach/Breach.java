@@ -72,10 +72,13 @@ public final class Breach {
         }
     }
 
+    /** Запись в Гримуаре Осколка: «✎» и фиолетовый курсив. */
     public static ITextComponent grimoire(String key, Object... args) {
+        net.minecraft.util.text.TextComponentString pen = new net.minecraft.util.text.TextComponentString("\u270E ");
+        pen.getStyle().setColor(TextFormatting.DARK_GRAY);
         TextComponentTranslation msg = new TextComponentTranslation(key, args);
-        msg.getStyle().setColor(TextFormatting.DARK_PURPLE).setItalic(true);
-        return msg;
+        msg.getStyle().setColor(TextFormatting.LIGHT_PURPLE).setItalic(true);
+        return pen.appendSibling(msg);
     }
 
     public static ITextComponent lord(String key, Object... args) {

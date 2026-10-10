@@ -3,14 +3,14 @@
 tile.chaosshard.chaos_stone.name=Chaosite
 tile.chaosshard.chaos_crust.name=Antechamber Crust
 
-chaosshard.antechamber.first_arrival=Grimoire: Shard active. You are in the Antechamber — a small plane Chaos made for this world. Look around. Stay away from the edge: there is only void beyond.
-chaosshard.antechamber.reassembled=Grimoire: The Shard's body is reassembled. Continuing where we left off.
+chaosshard.antechamber.first_arrival=The Antechamber. A small plane Chaos made for this world. Look around. Stay away from the edge: only void beyond.
+chaosshard.antechamber.reassembled=Body reassembled. Picking up where I left off.
 
-chaosshard.thread.levelup.1=Grimoire: The Thread is taut (level %s). The Lord hears you. The stars answered too — check your perk tree.
-chaosshard.thread.levelup.2=Grimoire: The Thread grows stronger (level %s). The Lord has noticed you. Recorded.
-chaosshard.thread.levelup.3=Grimoire: The Thread holds steady (level %s). By the records of the Grimoire network, Shards usually get here slower.
-chaosshard.thread.levelup.4=Grimoire: The Thread sings (level %s). The Lord is pleased — that is rare. Your star perks burn brighter.
-chaosshard.thread.levelup.5=Grimoire: The Thread is at full strength (level %s). You are Lord Death's voice and hand now. The whole star tree is yours.
+chaosshard.thread.levelup.1=The Thread is taut (level %s). The stars answered — worth checking the perk tree.
+chaosshard.thread.levelup.2=The Thread grows stronger (level %s). Noted.
+chaosshard.thread.levelup.3=The Thread holds steady (level %s). Per the network records, most get here slower.
+chaosshard.thread.levelup.4=The Thread sings (level %s). Star perks burn brighter.
+chaosshard.thread.levelup.5=The Thread is at full strength (level %s). The whole star tree is open.
 chaosshard.hud.thread=Thread %s · %s/%s
 chaosshard.hud.thread.max=Thread %s · max
 
@@ -35,21 +35,21 @@ chaosshard.config.stars=Stars
 chaosshard.config.perks=Perks
 
 astralsorcery.constellation.chaos=Chaos
-astralsorcery.constellation.chaos.info=The Lord's Mark
-astralsorcery.constellation.chaos.effect=An eight-pointed star visible in the sky of any world. Not a constellation of these heavens, but a mark Lord Death leaves wherever his Shards arrive.
+astralsorcery.constellation.chaos.info=Star of Chaos
+astralsorcery.constellation.chaos.effect=An eight-pointed star seen in the sky of every world the Shards reach. Not a constellation of these skies, but the channel through which Chaos entered.
 astralsorcery.constellation.chaos.enchantments=The properties of this light are not yet known.
-astralsorcery.constellation.chaos.ritual=The Chaos ritual is not yet revealed. The Grimoire promises "in due time".
+astralsorcery.constellation.chaos.ritual=The Chaos ritual is not yet revealed. The notes about it are blank pages.
 astralsorcery.constellation.chaos.capeeffect=A mantle attuned to Chaos stays silent for now.
-knowledge.astralsorcery.fragment.constellation.chaos.showup.name=The Lord's Mark
+knowledge.astralsorcery.fragment.constellation.chaos.showup.name=Star of Chaos
 knowledge.astralsorcery.fragment.constellation.chaos.showup.bookmark=Appearance
 knowledge.astralsorcery.fragment.constellation.chaos.showup.description=The Chaos constellation shows every night, in any world that has a sky. Above the Antechamber it burns together with every other constellation at once.
 
 # Гримуар
 item.chaosshard.grimoire.name=Grimoire
-item.chaosshard.grimoire.lore=An artifact Lord Death made for his Shards
+item.chaosshard.grimoire.lore=A Shard's notebook. Linked to the network of other Grimoires
 item.chaosshard.grimoire.use=RMB — open records or cast the spell
 item.chaosshard.grimoire.craft=In a crafting grid — Transmutation: chaos stone and crust become what you need. The Grimoire is not consumed.
-chaosshard.grimoire.no_bq=The Grimoire is silent: Better Questing is not installed.
+chaosshard.grimoire.no_bq=The notes will not open: Better Questing is not installed.
 
 # Отладка
 chaosshard.command.debug.written=Report written: %s (problems: %s). Send this file.
@@ -60,11 +60,11 @@ chaosshard.command.debug.usage=/oh debug [report|reset|kit]
 # Grimoire spells
 item.chaosshard.grimoire.current=Spell: %s
 item.chaosshard.grimoire.cycle=Shift+RMB — switch spell
-chaosshard.spell.selected=The Grimoire opens to: %s
+chaosshard.spell.selected=Spell page: %s
 chaosshard.spell.need_block=This spell must be aimed at a block
 chaosshard.spell.locked=Your Thread is too thin for this yet (level %s needed)
 chaosshard.spell.hungry=You are too hungry — magic draws on the body
-chaosshard.spell.cooldown=The Grimoire is still cooling: %s s
+chaosshard.spell.cooldown=The page is still cooling: %s s
 chaosshard.spell.fizzle=Nothing happens — it won't work here
 chaosshard.spell.book=Records
 chaosshard.spell.sprout=Sprout
@@ -87,31 +87,31 @@ item.chaosshard.memory_fragment.name=Memory Fragment
 item.chaosshard.memory_page.name=Memory Page: "Breach"
 item.chaosshard.breach_book.name=Book of Breach
 chaosshard.veil_shard.lore=A sliver of the barrier Luchezaria hides behind. It rings if you hold it to your ear.
-chaosshard.memory_fragment.lore=A scrap of the Lord's memory, stuck in a foreign world. Warm to the touch.
+chaosshard.memory_fragment.lore=A scrap of memory stuck in a foreign world. Warm to the touch.
 chaosshard.memory_page.lore=A restored memory: how to slip through the Veil.
-chaosshard.breach_book.lore=A way through the Veil, written in the Lord's hand.
+chaosshard.breach_book.lore=A path through the Veil, restored from memory.
 chaosshard.breach_book.use1=First time — RMB on the Breach Altar
 chaosshard.breach_book.use2=Then RMB — travel between the Antechamber and Luchezaria
 chaosshard.breach_book.sealed=The book is silent. Perform the ritual at the Breach Altar first.
 chaosshard.breach.need_book=The altar needs the Book of Breach in hand
-chaosshard.breach.not_here=Grimoire: A breach is only possible from the Antechamber. The Veil is too far from here.
-chaosshard.breach.thin=Grimoire: The Thread is too thin — the Lord can't reach. Level %s needed.
-chaosshard.breach.no_sky=Grimoire: The altar needs open sky above it. How else would we aim at the Veil?
-chaosshard.breach.no_pillars=Grimoire: Missing pillars. Diagonally from the altar, one block gap — four pillars: chaos stone below, crust on top.
-chaosshard.breach.start=Grimoire: Here we go. Stay close and hold still — break the ritual and we start over.
-chaosshard.breach.step1=Grimoire: Feel the Thread pull? That's the Lord reaching for the Veil. With your hands.
-chaosshard.breach.step2=Grimoire: The Veil has noticed you. The world's Soul resists — as expected.
+chaosshard.breach.not_here=A breach is only possible from the Antechamber. The Veil is too far from here.
+chaosshard.breach.thin=The Thread is too thin to reach. Level %s needed.
+chaosshard.breach.no_sky=The altar needs open sky. You have to see the Veil to aim at it.
+chaosshard.breach.no_pillars=Missing pillars. Diagonally from the altar, one block gap — four pillars: chaosite below, crust on top.
+chaosshard.breach.start=Starting. Stay close and hold still — break it and I start over.
+chaosshard.breach.step1=The Thread pulls taut toward the Veil. Through my hands.
+chaosshard.breach.step2=The Veil noticed. The world's Soul resists — as expected.
 chaosshard.breach.lord=Death: Go, my Shard. This world will be mine.
-chaosshard.breach.broken=Grimoire: The ritual broke. Start again.
+chaosshard.breach.broken=The ritual broke. Again.
 chaosshard.breach.lord_done=Death: You are through. Take this world.
-chaosshard.breach.done=Grimoire: You are in Luchezaria. Sun, grass, villagers — and a world Soul that now knows about you. The book is open: RMB takes you to the Antechamber, again — back.
+chaosshard.breach.done=Luchezaria. Sun, grass, villagers — and a world Soul that now knows about me. The book is open: RMB to the Antechamber, again — back.
 chaosshard.spell.recall.sealed=The Veil is closed. Breach it first.
 chaosshard.config.breach=Breach
 
 # Tinkers
 material.chaosshard_chaos.name=Chaos Stone
 modifier.chaosshard_thread.name=Chaos Thread
-modifier.chaosshard_thread.desc=§oThe Lord guides the blow.§r\nDeals +0.5 damage per level of the wielder's Thread.
+modifier.chaosshard_thread.desc=§oThe Thread runs through the handle.§r\nPer Thread level: +0.5 damage, +8% mining speed, 5% chance to not use durability.\nOnce a minute while held — Chaos Surge: a random effect for 20 seconds.\nModifier: 64 Chaosite or 4 Chaos Essence.
 chaosshard.config.compat=Mod integrations
 
 # Island Heart
@@ -119,11 +119,11 @@ tile.chaosshard.island_heart.name=Island Heart
 chaosshard.heart.info=Island Heart: tier %s of %s. Growths %s/%s, a new one every %s s.
 chaosshard.heart.next=Next tier %s: needs Thread %s and an offering (Shift+RMB the Heart):
 chaosshard.heart.max=The Heart beats at full strength. Nowhere left to grow — for now.
-chaosshard.heart.thin=Grimoire: The Heart won't answer — your Thread is too thin. Level %s needed.
-chaosshard.heart.poor=Grimoire: The offering is short. The Heart doesn't haggle.
-chaosshard.heart.upgraded.2=Grimoire: The Heart beats faster (tier %s). Iron, tin and other metals grow on it now.
-chaosshard.heart.upgraded.3=Grimoire: The Heart fills with light (tier %s). Gold, redstone, lapis — even star ores.
-chaosshard.heart.upgraded.4=Grimoire: The Heart sings (tier %s). Diamonds, emeralds, starmetal. The Lord would be pleased. He is.
+chaosshard.heart.thin=The Heart won't answer — the Thread is too thin. Level %s needed.
+chaosshard.heart.poor=The offering is short. The Heart doesn't haggle.
+chaosshard.heart.upgraded.2=The Heart beats faster (tier %s). Iron, tin and other metals grow now.
+chaosshard.heart.upgraded.3=The Heart fills with light (tier %s). Gold, redstone, lapis — and star ores.
+chaosshard.heart.upgraded.4=The Heart sings (tier %s). Diamonds, emeralds, iridium, star ore.
 chaosshard.command.heart.missing=The Island Heart is missing. /oh heart place puts it back.
 chaosshard.config.heart=Island Heart
 
@@ -145,7 +145,7 @@ item.chaosshard.heart_module_rich.name=Richness Module
 item.chaosshard.heart_module_fertile.name=Fertility Module
 chaosshard.heart_module.pulse.desc=Growths appear 35% faster
 chaosshard.heart_module.capacity.desc=+6 growths at once
-chaosshard.heart_module.rich.desc=15%% chance per module for a growth to yield double
+chaosshard.heart_module.rich.desc=Sometimes a Veil Vein grows instead of ore — it drops Veil Shards (+10%% per module)
 chaosshard.heart_module.fertile.desc=25% chance to grow two at once
 chaosshard.heart_module.hint=Goes into an Island Heart slot, up to 4 per slot. Modules stack.
 
@@ -173,14 +173,14 @@ chaosshard.heart.gui.harvester=Harvester collects growths
 
 # Chaos Anchor and Corruption
 tile.chaosshard.chaos_anchor.name=Chaos Anchor
-chaosshard.anchor.not_here=Grimoire: Anchors are driven into a foreign world, not into your own rear.
-chaosshard.anchor.thin=Grimoire: The Thread is too thin — the Anchor won't hold. Level %s needed.
-chaosshard.anchor.too_close=Grimoire: Another Anchor stands nearby (%s, %s, %s). Anchors must be at least %s blocks apart.
-chaosshard.anchor.placed=Grimoire: The Anchor is in. Corruption will creep outward from it — slowly at first, then wider. The land is ours once the Corruption grows strong.
+chaosshard.anchor.not_here=Anchors go into a foreign world, not into my own rear.
+chaosshard.anchor.thin=The Thread is too thin — the Anchor won't hold. Level %s needed.
+chaosshard.anchor.too_close=Another Anchor stands nearby (%s, %s, %s). Anchors must be at least %s blocks apart.
+chaosshard.anchor.placed=Anchor in. Corruption will creep outward — slowly, then wider. The land is mine once it grows strong.
 chaosshard.anchor.info=Chaos Anchor (owner %s): corruption radius %s, corrupted %s of %s.
 chaosshard.anchor.info_open=The land still resists.
 chaosshard.anchor.info_captured=The land is captured. It feeds the Thread.
-chaosshard.anchor.captured=Grimoire: The land at (%s, %s) is ours! The Thread grew by %s.
+chaosshard.anchor.captured=The land at (%s, %s) is taken. The Thread grew by %s.
 chaosshard.anchor.captured_lord=Death: Another scrap of this world is mine. Continue.
 chaosshard.config.anchor=Anchors and Corruption
 
@@ -199,3 +199,6 @@ tile.chaosshard.seed_anchor.name=[Test] Captured Anchor
 tile.chaosshard.seed_anchor.desc=Chaos Anchor with corruption already spread. Not in the Antechamber.
 tile.chaosshard.seed_island.name=[Test] Small Island
 tile.chaosshard.seed_island.desc=Floating disc: Heart with Harvester and Breach Altar.
+
+tile.chaosshard.veil_vein.name=Veil Vein
+chaosshard.surge=Chaos Surge: %s
