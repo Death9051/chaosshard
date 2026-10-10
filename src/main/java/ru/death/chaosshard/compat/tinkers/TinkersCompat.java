@@ -23,10 +23,11 @@ public final class TinkersCompat {
     public static final int DISTORTED_COLOR = 0x9B3CFF;
 
     public static void preInit() {
+        TraitThread thread = new TraitThread();
         chaos = new Material("chaosshard_chaos", COLOR);
         chaos.setCraftable(true);
         chaos.setCastable(false);
-        chaos.addTrait(new TraitThread());
+        chaos.addTrait(thread);
         TinkerRegistry.addMaterial(chaos);
         TinkerRegistry.addMaterialStats(chaos,
                 new HeadMaterialStats(220, 5.0F, 3.5F, 1),
@@ -35,7 +36,7 @@ public final class TinkersCompat {
         distorted = new Material("chaosshard_distorted", DISTORTED_COLOR);
         distorted.setCraftable(true);
         distorted.setCastable(false);
-        distorted.addTrait(new TraitThread());
+        distorted.addTrait(thread);
         distorted.addTrait(new TraitDistortion());
         TinkerRegistry.addMaterial(distorted);
         TinkerRegistry.addMaterialStats(distorted,
