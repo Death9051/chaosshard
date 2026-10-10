@@ -69,6 +69,7 @@ public final class SelfTest {
         t.section("Нить и Game Stages", () -> t.thread(player));
         t.section("Сердце Острова", () -> t.heart(server));
         t.section("Прорыв", () -> t.breach());
+        t.section("Якоря и Скверна", () -> t.anchors());
         t.section("Заклинания", () -> t.spells());
         t.section("Astral Sorcery", () -> t.astral(player));
         t.section("Mystcraft", () -> t.mystcraft());
@@ -96,8 +97,8 @@ public final class SelfTest {
         check(ModBlocks.BREACH_ALTAR != null, "Алтарь Прорыва");
         check(ModBlocks.ISLAND_HEART != null, "Сердце Острова");
         for (String name : new String[]{"grimoire", "veil_shard", "memory_fragment", "memory_page", "breach_book",
-                "heart_module_pulse", "heart_module_capacity", "heart_module_rich", "heart_module_fertile", "heart_module_star",
-                "chaos_essence", "distorted_starmetal"}) {
+                "heart_module_pulse", "heart_module_capacity", "heart_module_rich", "heart_module_fertile", "heart_harvester",
+                "chaos_essence", "distorted_starmetal", "chaos_anchor"}) {
             check(ForgeRegistries.ITEMS.containsKey(new ResourceLocation(Tags.MOD_ID, name)), "предмет " + name);
         }
         check(TileEntity.getKey(TileHeart.class) != null, "тайл Сердца зарегистрирован");
@@ -118,7 +119,7 @@ public final class SelfTest {
         String[] expect = {"transmute_log", "transmute_cobblestone", "transmute_dirt", "transmute_sand", "transmute_paper",
                 "transmute_leather", "transmute_ink", "transmute_feather", "transmute_string", "transmute_water",
                 "memory_page", "breach_book", "breach_altar", "heart_module_pulse", "heart_module_capacity",
-                "heart_module_rich", "heart_module_fertile", "heart_module_star", "transmute_essence", "transmute_distorted"};
+                "heart_module_rich", "heart_module_fertile", "heart_harvester", "chaos_anchor", "transmute_essence", "transmute_distorted"};
         for (String e : expect) {
             check(names.contains(e), "рецепт " + e);
         }
@@ -229,6 +230,24 @@ public final class SelfTest {
         check(ChaosConfig.breach.threadLevel <= ThreadManager.maxLevel(), "уровень Нити для Прорыва достижим");
         check(ChaosConfig.breach.veilShardChance > 0, "Осколки Завесы выпадают из корки");
         check(ChaosConfig.breach.memoryFragmentChance > 0, "Обрывки памяти выпадают с монстров");
+    }
+
+    private void anchors() {
+        int[] r = ru.death.chaosshard.anchor.Corruption.resolved();
+        check(r[0] == r[1], "правила Скверны: найдено " + r[0] + " из " + r[1]);
+        check(!ru.death.chaosshard.anchor.Corruption.rules().isEmpty(), "Скверне есть что осквернять");
+        if (Loader.isModLoaded("defiledlands")) {
+            check(ForgeRegistries.BIOMES.containsKey(new ResourceLocation("defiledlands", "plains_defiled")), "биомы Defiled Lands доступны");
+            File cfg = new File("config/defiled_lands.cfg");
+            boolean noGen = false;
+            try {
+                String text = new String(Files.readAllBytes(cfg.toPath()), StandardCharsets.UTF_8);
+                noGen = !text.matches("(?s).*I:weight(Desert|Forest|Hills|IcePlains|Plains|Swamp)\\w*=[1-9].*");
+            } catch (Exception ignored) {
+            }
+            check(noGen, "биомы Скверны не генерируются в мире сами (веса = 0 в defiled_lands.cfg)");
+        }
+        check(ChaosConfig.anchor.threadLevel <= ThreadManager.maxLevel(), "уровень Нити для Якоря достижим");
     }
 
     private void spells() {

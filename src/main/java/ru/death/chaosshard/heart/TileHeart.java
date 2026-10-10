@@ -141,16 +141,10 @@ public class TileHeart extends TileEntity implements ITickable {
             maxWeight = Math.max(maxWeight, g.weight);
         }
         int rich = count(ItemHeartModule.Type.RICH);
-        int star = count(ItemHeartModule.Type.STAR);
         for (HeartTiers.Growth g : all) {
             if (isEnabled(g.state)) {
                 // Богатство подтягивает редкие руды к частым
                 int w = g.weight + rich * Math.max(1, maxWeight / 3);
-                // Звёздный модуль — руды Astral Sorcery втрое чаще за каждый модуль
-                if (star > 0 && g.state.getBlock().getRegistryName() != null
-                        && "astralsorcery".equals(g.state.getBlock().getRegistryName().getNamespace())) {
-                    w *= 1 + 2 * star;
-                }
                 out.add(new HeartTiers.Growth(g.state, w));
             }
         }
@@ -173,11 +167,59 @@ public class TileHeart extends TileEntity implements ITickable {
         }
     }
 
+    /** Жнец над Сердцем, если стоит. */
+    public TileHarvester harvester() {
+        TileEntity te = world.getTileEntity(pos.up());
+        return te instanceof TileHarvester ? (TileHarvester) te : null;
+    }
+
+    /** Блок руды как предмет (так же, как он выпадает при добыче). */
+    private static ItemStack asItem(IBlockState state) {
+        net.minecraft.item.Item item = net.minecraft.item.Item.getItemFromBlock(state.getBlock());
+        return item == net.minecraft.init.Items.AIR ? ItemStack.EMPTY
+                : new ItemStack(item, 1, state.getBlock().getMetaFromState(state));
+    }
+
+    /** Жнец срезает один уже выросший нарост вокруг Сердца. */
+    private void harvestExisting(TileHarvester h) {
+        java.util.Set<IBlockState> states = new HashSet<>();
+        for (HeartTiers.Growth g : HeartTiers.pool(HeartTiers.maxTier())) {
+            states.add(g.state);
+        }
+        for (BlockPos p : BlockPos.getAllInBox(pos.add(-RADIUS, 0, -RADIUS), pos.add(RADIUS, 1, RADIUS))) {
+            IBlockState s = world.getBlockState(p);
+            if (states.contains(s)) {
+                ItemStack item = asItem(s);
+                if (!item.isEmpty() && h.hasRoomFor(item)) {
+                    h.accept(item);
+                    world.setBlockToAir(p);
+                    ((WorldServer) world).spawnParticle(EnumParticleTypes.PORTAL, p.getX() + 0.5, p.getY() + 0.5, p.getZ() + 0.5,
+                            10, 0.3, 0.3, 0.3, 0.3);
+                }
+                return;
+            }
+        }
+    }
+
     /** Вырастить один нарост. force — игнорировать лимит. */
     public boolean grow(boolean force) {
         List<HeartTiers.Growth> pool = activePool();
         if (pool.isEmpty()) {
             return false;
+        }
+        TileHarvester h = harvester();
+        if (h != null) {
+            // С Жнецом нарост сразу уходит в хранилище; места нет — растёт как обычно
+            harvestExisting(h);
+            IBlockState ore = HeartTiers.pick(pool, world.rand);
+            ItemStack item = ore == null ? ItemStack.EMPTY : asItem(ore);
+            if (!item.isEmpty() && h.hasRoomFor(item)) {
+                h.accept(item);
+                world.playSound(null, pos, SoundEvents.BLOCK_CHORUS_FLOWER_GROW, SoundCategory.BLOCKS, 0.4F, 1.2F);
+                ((WorldServer) world).spawnParticle(EnumParticleTypes.SPELL_WITCH, pos.getX() + 0.5, pos.getY() + 1.2,
+                        pos.getZ() + 0.5, 10, 0.3, 0.2, 0.3, 0.02);
+                return true;
+            }
         }
         if (!force && countGrowths() >= maxGrowths()) {
             return false;

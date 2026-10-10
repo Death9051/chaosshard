@@ -1,0 +1,30 @@
+{
+ "type": "forge:ore_shaped",
+ "pattern": [
+  "VMV",
+  "SIS",
+  "SES"
+ ],
+ "key": {
+  "V": {
+   "item": "chaosshard:veil_shard"
+  },
+  "M": {
+   "item": "chaosshard:memory_fragment"
+  },
+  "S": {
+   "item": "chaosshard:chaos_stone"
+  },
+  "E": {
+   "item": "chaosshard:chaos_essence"
+  },
+  "I": {
+   "type": "forge:ore_dict",
+   "ore": "blockIron"
+  }
+ },
+ "result": {
+  "item": "chaosshard:chaos_anchor",
+  "count": 1
+ }
+}

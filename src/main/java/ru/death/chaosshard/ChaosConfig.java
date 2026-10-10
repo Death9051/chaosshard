@@ -33,6 +33,10 @@ public final class ChaosConfig {
     @Config.LangKey("chaosshard.config.heart")
     public static final HeartCfg heart = new HeartCfg();
 
+    @Config.Comment("Якоря Хаоса и Скверна")
+    @Config.LangKey("chaosshard.config.anchor")
+    public static final AnchorCfg anchor = new AnchorCfg();
+
     @Config.Comment("Связки с другими модами")
     @Config.LangKey("chaosshard.config.compat")
     public static final CompatCfg compat = new CompatCfg();
@@ -147,6 +151,53 @@ public final class ChaosConfig {
         public int[] maxGrowths = {8, 12, 18, 24};
     }
 
+    public static final class AnchorCfg {
+        @Config.Comment("Уровень Нити, нужный, чтобы вбить Якорь")
+        public int threadLevel = 2;
+
+        @Config.Comment("Минимальное расстояние между Якорями (блоков)")
+        public int minDistance = 96;
+
+        @Config.Comment("Как часто Скверна делает шаг (тиков) и сколько попыток за шаг")
+        public int spreadInterval = 40;
+        public int attemptsPerSpread = 4;
+
+        @Config.Comment("Начальный и наибольший радиус Скверны; +1 к радиусу за каждые N осквернённых блоков")
+        public int startRadius = 4;
+        public int maxRadius = 32;
+        public int blocksPerRadius = 25;
+
+        @Config.Comment("Сколько блоков осквернить, чтобы край считался захваченным, и награда Нитью")
+        public int captureThreshold = 300;
+        public int captureReward = 150;
+
+        @Config.Comment("Захваченный край понемногу питает Нить владельца: очков и интервал (тиков)")
+        public int passiveThread = 5;
+        public int passiveInterval = 24000;
+
+        @Config.Comment("Менять биом осквернённой земли на биомы Defiled Lands")
+        public boolean changeBiomes = true;
+
+        @Config.Comment({"Что во что превращает Скверна: откуда=куда. Если целевого блока нет (нет мода) —",
+                "трава, земля и песок становятся коркой Преддверия, камень и гравий — хаоситом."})
+        public String[] conversions = {
+                "minecraft:grass=defiledlands:grass_defiled",
+                "minecraft:dirt=defiledlands:dirt_defiled",
+                "minecraft:stone=defiledlands:stone_defiled",
+                "minecraft:sand=defiledlands:sand_defiled",
+                "minecraft:gravel=defiledlands:gravel_defiled",
+                "minecraft:sandstone=defiledlands:sandstone_defiled",
+                "minecraft:log=defiledlands:tenebra_log",
+                "minecraft:log2=defiledlands:tenebra_log",
+                "minecraft:leaves=defiledlands:tenebra_leaves",
+                "minecraft:leaves2=defiledlands:tenebra_leaves",
+                "minecraft:tallgrass=defiledlands:vilespine",
+                "minecraft:red_flower=minecraft:air",
+                "minecraft:yellow_flower=minecraft:air",
+                "minecraft:double_plant=minecraft:air"
+        };
+    }
+
     public static final class CompatCfg {
         @Config.Comment("Tinkers' Construct: материал «Хаосит» со свойством «Нить Хаоса»")
         @Config.RequiresMcRestart
@@ -202,6 +253,7 @@ public final class ChaosConfig {
     public static void onConfigChanged(ConfigChangedEvent.OnConfigChangedEvent event) {
         if (Tags.MOD_ID.equals(event.getModID())) {
             ConfigManager.sync(Tags.MOD_ID, Config.Type.INSTANCE);
+            ru.death.chaosshard.anchor.Corruption.reset();
         }
     }
 

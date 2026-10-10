@@ -1,0 +1,27 @@
+{
+ "type": "forge:ore_shaped",
+ "pattern": [
+  "DHD",
+  "ECE",
+  "DED"
+ ],
+ "key": {
+  "D": {
+   "item": "chaosshard:distorted_starmetal"
+  },
+  "E": {
+   "item": "chaosshard:chaos_essence"
+  },
+  "H": {
+   "item": "minecraft:hopper"
+  },
+  "C": {
+   "type": "forge:ore_dict",
+   "ore": "chestWood"
+  }
+ },
+ "result": {
+  "item": "chaosshard:heart_harvester",
+  "count": 1
+ }
+}

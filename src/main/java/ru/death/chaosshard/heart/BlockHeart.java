@@ -128,6 +128,10 @@ public class BlockHeart extends Block {
         if (hand != EnumHand.MAIN_HAND) {
             return false;
         }
+        // С Жнецом в руке — не открывать окно, а дать поставить его на Сердце
+        if (player.getHeldItem(hand).getItem() == net.minecraft.item.Item.getItemFromBlock(ru.death.chaosshard.init.ModBlocks.HEART_HARVESTER)) {
+            return false;
+        }
         if (!world.isRemote) {
             player.openGui(ru.death.chaosshard.ChaosShard.INSTANCE, HeartGuiHandler.HEART, world, pos.getX(), pos.getY(), pos.getZ());
         }

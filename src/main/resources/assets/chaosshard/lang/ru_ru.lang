@@ -167,10 +167,27 @@ chaosshard.command.selftest.done=Самопроверка: пройдено %s%%
 # Техномагия
 item.chaosshard.chaos_essence.name=Эссенция Хаоса
 item.chaosshard.distorted_starmetal.name=Искажённый звёздный металл
-item.chaosshard.heart_module_star.name=Модуль «Звёздный»
 chaosshard.chaos_essence.lore=Осколок Завесы, перемолотый в пыль. Шевелится, если на неё не смотреть.
 chaosshard.distorted_starmetal.lore=Звёздный металл, которому показали Хаос. Он больше не будет прежним.
-chaosshard.heart_module.star.desc=Руды Astral Sorcery растут втрое чаще
 material.chaosshard_distorted.name=Искажённый звёздный металл
 modifier.chaosshard_distortion.name=Искажение
 modifier.chaosshard_distortion.desc=§oУдар отзывается эхом из Плана Хаоса.§r\n15% шанс нанести ещё 4 магического урона.
+
+# Жнец Сердца
+tile.chaosshard.heart_harvester.name=Жнец Сердца
+chaosshard.heart.gui.harvester=Жнец собирает наросты
+
+# Якорь Хаоса и Скверна
+tile.chaosshard.chaos_anchor.name=Якорь Хаоса
+chaosshard.anchor.not_here=Гримуар: Якорь вбивают в чужой мир, а не в свой тыл.
+chaosshard.anchor.thin=Гримуар: Нить слишком тонкая — Якорь не удержится. Нужен уровень %s.
+chaosshard.anchor.too_close=Гримуар: Рядом уже стоит Якорь (%s, %s, %s). Между Якорями должно быть не меньше %s блоков.
+chaosshard.anchor.placed=Гримуар: Якорь вбит. Скверна поползёт от него кругом — сначала робко, потом всё шире. Край станет нашим, когда Скверна наберёт силу.
+chaosshard.anchor.info=Якорь Хаоса (владелец %s): радиус Скверны %s, осквернено %s из %s.
+chaosshard.anchor.info_open=Край ещё сопротивляется.
+chaosshard.anchor.info_captured=Край захвачен. Он питает Нить.
+chaosshard.anchor.captured=Гримуар: Край у (%s, %s) наш! Нить окрепла на %s.
+chaosshard.anchor.captured_lord=Death: Ещё один клочок этого мира — мой. Продолжай.
+chaosshard.config.anchor=Якоря и Скверна
+
+chaosshard.command.anchor.none=Рядом нет Якоря.

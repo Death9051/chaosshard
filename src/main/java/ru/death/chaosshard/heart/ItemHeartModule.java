@@ -25,9 +25,7 @@ public class ItemHeartModule extends Item {
         /** Богатство: редкие руды чаще. */
         RICH,
         /** Плодовитость: шанс вырастить два нароста сразу. */
-        FERTILE,
-        /** Звёздный: руды Astral Sorcery растут втрое чаще. */
-        STAR
+        FERTILE
     }
 
     public final Type type;

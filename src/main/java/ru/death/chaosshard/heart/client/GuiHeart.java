@@ -121,7 +121,9 @@ public class GuiHeart extends GuiContainer {
 
         int secs = Math.max(0, (container.interval - container.timer) / 20);
         fontRenderer.drawString(I18n.format("chaosshard.heart.gui.next", secs), 46, 31, DIM);
-        fontRenderer.drawString(I18n.format("chaosshard.heart.gui.growths", container.growths, container.maxGrowths), 46, 42, TEXT);
+        boolean harvester = heart.getWorld().getTileEntity(heart.getPos().up()) instanceof ru.death.chaosshard.heart.TileHarvester;
+        fontRenderer.drawString(harvester ? I18n.format("chaosshard.heart.gui.harvester")
+                : I18n.format("chaosshard.heart.gui.growths", container.growths, container.maxGrowths), 46, 42, harvester ? 0x80FFB0 : TEXT);
 
         // Выбор руды
         fontRenderer.drawString(I18n.format("chaosshard.heart.gui.ores"), 8, ORE_Y - 12 + 2, TEXT);

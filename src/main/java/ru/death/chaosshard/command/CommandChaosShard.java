@@ -30,6 +30,7 @@ import java.util.List;
  *   grimoire [игрок]            — выдать Гримуар
  *   breach [on|off] [игрок]     — отметить Прорыв пройденным / сбросить
  *   heart [place|grow [n]|tier N] — Сердце Острова
+ *   anchor [list|spread <n>]    — Якоря Хаоса: список / прогнать Скверну у ближайшего
  *   selftest                    — самопроверка сборки → chaosshard-selftest.txt
  *   quests complete|reset|edit [игрок] — выполнить все квесты / сбросить / режим редактора BQ
  *   debug [report|reset|kit]    — отчёт в chaosshard-debug.txt / сброс «первого входа» / набор для теста
@@ -74,6 +75,33 @@ public class CommandChaosShard extends CommandBase {
             case "debug":
                 debug(server, sender, args);
                 break;
+            case "anchor": {
+                // /oh anchor [list|spread <n>] — Якоря Хаоса
+                String sub = args.length >= 2 ? args[1] : "list";
+                World w = sender.getEntityWorld();
+                ru.death.chaosshard.anchor.AnchorData data = ru.death.chaosshard.anchor.AnchorData.get(w);
+                if ("spread".equals(sub)) {
+                    int n = args.length >= 3 ? parseInt(args[2], 1, 10000) : 100;
+                    BlockPos near = data.nearest(sender.getPosition(), null);
+                    if (near == null || !(w.getTileEntity(near) instanceof ru.death.chaosshard.anchor.TileAnchor)) {
+                        throw new CommandException("chaosshard.command.anchor.none");
+                    }
+                    ru.death.chaosshard.anchor.TileAnchor a = (ru.death.chaosshard.anchor.TileAnchor) w.getTileEntity(near);
+                    int done = a.forceSpread(n);
+                    sender.sendMessage(new net.minecraft.util.text.TextComponentString("Якорь " + near + ": осквернено ещё " + done
+                            + ", всего " + a.getCorrupted() + ", радиус " + a.radius()));
+                } else {
+                    sender.sendMessage(new net.minecraft.util.text.TextComponentString("Якорей в этом мире: " + data.anchors.size()));
+                    for (BlockPos p : data.anchors) {
+                        net.minecraft.tileentity.TileEntity te = w.getTileEntity(p);
+                        String st = te instanceof ru.death.chaosshard.anchor.TileAnchor
+                                ? ((ru.death.chaosshard.anchor.TileAnchor) te).getCorrupted() + " осквернено"
+                                + (((ru.death.chaosshard.anchor.TileAnchor) te).isCaptured() ? ", захвачен" : "") : "чанк не загружен";
+                        sender.sendMessage(new net.minecraft.util.text.TextComponentString("  " + p.getX() + " " + p.getY() + " " + p.getZ() + " — " + st));
+                    }
+                }
+                break;
+            }
             case "selftest": {
                 SelfTest test = SelfTest.run(server, getCommandSenderAsPlayer(sender));
                 try {
@@ -291,7 +319,7 @@ public class CommandChaosShard extends CommandBase {
     @Override
     public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos targetPos) {
         if (args.length == 1) {
-            return getListOfStringsMatchingLastWord(args, "nit", "tp", "sky", "grimoire", "debug", "breach", "heart", "quests", "selftest");
+            return getListOfStringsMatchingLastWord(args, "nit", "tp", "sky", "grimoire", "debug", "breach", "heart", "quests", "selftest", "anchor");
         }
         if (args.length == 2 && "nit".equals(args[0])) {
             return getListOfStringsMatchingLastWord(args, "get", "set", "add", "resync");

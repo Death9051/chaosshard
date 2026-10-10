@@ -27,6 +27,8 @@ public final class ModBlocks {
 
     public static Block BREACH_ALTAR;
     public static Block ISLAND_HEART;
+    public static Block CHAOS_ANCHOR;
+    public static Block HEART_HARVESTER;
 
     public static final List<Block> ALL = new ArrayList<>();
 
@@ -37,6 +39,12 @@ public final class ModBlocks {
         ISLAND_HEART = add(new ru.death.chaosshard.heart.BlockHeart(), "island_heart");
         net.minecraftforge.fml.common.registry.GameRegistry.registerTileEntity(ru.death.chaosshard.heart.TileHeart.class,
                 new net.minecraft.util.ResourceLocation(Tags.MOD_ID, "island_heart"));
+        HEART_HARVESTER = add(new ru.death.chaosshard.heart.BlockHarvester(), "heart_harvester");
+        net.minecraftforge.fml.common.registry.GameRegistry.registerTileEntity(ru.death.chaosshard.heart.TileHarvester.class,
+                new net.minecraft.util.ResourceLocation(Tags.MOD_ID, "heart_harvester"));
+        CHAOS_ANCHOR = add(new ru.death.chaosshard.anchor.BlockAnchor(), "chaos_anchor");
+        net.minecraftforge.fml.common.registry.GameRegistry.registerTileEntity(ru.death.chaosshard.anchor.TileAnchor.class,
+                new net.minecraft.util.ResourceLocation(Tags.MOD_ID, "chaos_anchor"));
         BREACH_ALTAR = add(new ru.death.chaosshard.breach.BlockBreachAltar(), "breach_altar");
         for (Block block : ALL) {
             event.getRegistry().register(block);

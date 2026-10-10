@@ -161,10 +161,27 @@ chaosshard.command.selftest.done=Self-test: %s%% of checks passed, %s failures. 
 # Technomagic
 item.chaosshard.chaos_essence.name=Chaos Essence
 item.chaosshard.distorted_starmetal.name=Distorted Starmetal
-item.chaosshard.heart_module_star.name=Star Module
 chaosshard.chaos_essence.lore=A Veil Shard ground into dust. It moves when you're not looking.
 chaosshard.distorted_starmetal.lore=Starmetal that has been shown Chaos. It will never be the same.
-chaosshard.heart_module.star.desc=Astral Sorcery ores grow three times as often
 material.chaosshard_distorted.name=Distorted Starmetal
 modifier.chaosshard_distortion.name=Distortion
 modifier.chaosshard_distortion.desc=§oThe blow echoes from the Plane of Chaos.§r\n15% chance to deal 4 extra magic damage.
+
+# Heart Harvester
+tile.chaosshard.heart_harvester.name=Heart Harvester
+chaosshard.heart.gui.harvester=Harvester collects growths
+
+# Chaos Anchor and Corruption
+tile.chaosshard.chaos_anchor.name=Chaos Anchor
+chaosshard.anchor.not_here=Grimoire: Anchors are driven into a foreign world, not into your own rear.
+chaosshard.anchor.thin=Grimoire: The Thread is too thin — the Anchor won't hold. Level %s needed.
+chaosshard.anchor.too_close=Grimoire: Another Anchor stands nearby (%s, %s, %s). Anchors must be at least %s blocks apart.
+chaosshard.anchor.placed=Grimoire: The Anchor is in. Corruption will creep outward from it — slowly at first, then wider. The land is ours once the Corruption grows strong.
+chaosshard.anchor.info=Chaos Anchor (owner %s): corruption radius %s, corrupted %s of %s.
+chaosshard.anchor.info_open=The land still resists.
+chaosshard.anchor.info_captured=The land is captured. It feeds the Thread.
+chaosshard.anchor.captured=Grimoire: The land at (%s, %s) is ours! The Thread grew by %s.
+chaosshard.anchor.captured_lord=Death: Another scrap of this world is mine. Continue.
+chaosshard.config.anchor=Anchors and Corruption
+
+chaosshard.command.anchor.none=No Anchor nearby.
