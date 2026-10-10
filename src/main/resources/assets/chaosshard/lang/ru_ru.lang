@@ -99,7 +99,7 @@ chaosshard.breach_book.lore=Путь сквозь Завесу, записанн
 chaosshard.breach_book.use1=Первый раз — ПКМ по Алтарю Прорыва
 chaosshard.breach_book.use2=Потом ПКМ — между Преддверием и Лучезарией
 chaosshard.breach_book.sealed=Книга молчит. Сначала проведи ритуал на Алтаре Прорыва.
-chaosshard.breach.need_book=Алтарю нужна Книга Прорыва в руке
+chaosshard.breach.need_book=Алтарю нужна Книга Прорыва в руке. ПКМ без книги — подсветить постройку.
 chaosshard.breach.not_here=Гримуар: Прорыв возможен только из Преддверия. Здесь Завеса слишком далеко.
 chaosshard.breach.thin=Гримуар: Нить слишком тонкая — Лорд не дотянется. Нужен уровень %s.
 chaosshard.breach.no_sky=Гримуар: Над алтарём должно быть открытое небо. Завесу надо видеть, иначе как в неё целиться?
@@ -153,9 +153,11 @@ chaosshard.heart_module.pulse.desc=Наросты растут на 35% быст
 chaosshard.heart_module.capacity.desc=+6 наростов одновременно
 chaosshard.heart_module.rich.desc=Редкие руды растут чаще
 chaosshard.heart_module.fertile.desc=25% шанс вырастить сразу два нароста
-chaosshard.heart_module.hint=Вставляется в гнездо Сердца Острова. Модули складываются.
+chaosshard.heart_module.hint=Вставляется в гнездо Сердца Острова, до 4 в одно гнездо. Модули складываются.
 
 chaosshard.command.quests.usage=/oh quests <complete|reset|edit> [игрок]
 chaosshard.command.quests.completed=Выполнено квестов: %s (игрок %s). Награды можно забрать в Гримуаре.
 chaosshard.command.quests.reset=Прогресс квестов %s сброшен.
 chaosshard.command.quests.edit=Режим редактора Better Questing переключён: в нём видны все квесты.
+
+chaosshard.breach.hint=Постройка Прорыва: на месте %s из %s блоков. Смотри подсветку: контур — поставить блок, красное — убрать.

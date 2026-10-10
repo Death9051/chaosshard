@@ -26,7 +26,8 @@ import java.util.Set;
 
 /**
  * Сердце Острова. Раз в несколько секунд вокруг него нарастает руда — кольцом
- * на расстоянии 2–3 блоков, так что само Сердце всегда открыто.
+ * на расстоянии 2–3 блоков, на уровне Сердца и на блок выше, только в пустом месте:
+ * само Сердце всегда открыто, а земля и постройки рядом не ломаются.
  * Модули (вставные модификаторы) меняют скорость, лимит, редкость и количество наростов.
  * Игрок может выключить ненужные руды — тогда растут только выбранные.
  */
@@ -47,7 +48,7 @@ public class TileHeart extends TileEntity implements ITickable {
 
         @Override
         public int getSlotLimit(int slot) {
-            return 1;
+            return 4;
         }
 
         @Override
@@ -77,7 +78,7 @@ public class TileHeart extends TileEntity implements ITickable {
         for (int i = 0; i < Math.min(tier, MODULE_SLOTS); i++) {
             ItemStack s = modules.getStackInSlot(i);
             if (s.getItem() instanceof ItemHeartModule && ((ItemHeartModule) s.getItem()).type == type) {
-                n++;
+                n += s.getCount();
             }
         }
         return n;
@@ -157,7 +158,8 @@ public class TileHeart extends TileEntity implements ITickable {
             return false;
         }
         List<BlockPos> spots = new ArrayList<>();
-        for (BlockPos p : BlockPos.getAllInBox(pos.add(-RADIUS, -1, -RADIUS), pos.add(RADIUS, 1, RADIUS))) {
+        // Только на уровне Сердца и на блок выше: землю под собой Сердце не трогает
+        for (BlockPos p : BlockPos.getAllInBox(pos.add(-RADIUS, 0, -RADIUS), pos.add(RADIUS, 1, RADIUS))) {
             int ring = Math.max(Math.abs(p.getX() - pos.getX()), Math.abs(p.getZ() - pos.getZ()));
             if (ring >= 2 && canReplace(p)) {
                 spots.add(p);
@@ -185,8 +187,8 @@ public class TileHeart extends TileEntity implements ITickable {
         if (world.getTileEntity(p) != null) {
             return false;
         }
-        return world.isAirBlock(p) || b == ModBlocks.CHAOS_STONE || b == ModBlocks.CHAOS_CRUST
-                || b.isReplaceable(world, p);
+        // Наросты занимают только пустое место (траву и прочее заменяемое), блоки не ломают
+        return world.isAirBlock(p) || (b.isReplaceable(world, p) && !s.getMaterial().isLiquid());
     }
 
     /** Наросты вокруг Сердца (любая руда любой ступени). */

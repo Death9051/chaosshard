@@ -110,8 +110,20 @@ public class ContainerHeart extends Container {
             boolean moved = false;
             for (int i = 0; i < modules && !stack.isEmpty(); i++) {
                 Slot m = inventorySlots.get(i);
-                if (!m.getHasStack() && m.isItemValid(stack)) {
-                    m.putStack(stack.splitStack(1));
+                if (!m.isItemValid(stack)) {
+                    continue;
+                }
+                ItemStack in = m.getStack();
+                int limit = m.getItemStackLimit(stack);
+                if (in.isEmpty()) {
+                    m.putStack(stack.splitStack(Math.min(limit, stack.getCount())));
+                    moved = true;
+                } else if (ItemStack.areItemsEqual(in, stack) && ItemStack.areItemStackTagsEqual(in, stack) && in.getCount() < limit) {
+                    int add = Math.min(limit - in.getCount(), stack.getCount());
+                    ItemStack grown = in.copy();
+                    grown.grow(add);
+                    m.putStack(grown);
+                    stack.shrink(add);
                     moved = true;
                 }
             }

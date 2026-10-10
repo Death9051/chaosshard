@@ -25,7 +25,8 @@ public class BlockBreachAltar extends ModBlocks.SimpleBlock {
                                     EnumFacing facing, float hitX, float hitY, float hitZ) {
         if (player.getHeldItem(hand).getItem() != ModItems.BREACH_BOOK) {
             if (!world.isRemote && hand == EnumHand.MAIN_HAND) {
-                player.sendStatusMessage(Breach.grimoire("chaosshard.breach.need_book"), true);
+                // Без книги — просто показать, чего не хватает в постройке
+                BreachHints.show((EntityPlayerMP) player, pos);
             }
             return hand == EnumHand.MAIN_HAND;
         }
@@ -39,6 +40,7 @@ public class BlockBreachAltar extends ModBlocks.SimpleBlock {
         String error = BreachRitual.check(world, pos, mp);
         if (error != null) {
             mp.sendMessage(Breach.grimoire(error, ru.death.chaosshard.ChaosConfig.breach.threadLevel));
+            BreachHints.show(mp, pos);
             return true;
         }
         BreachRitual.start(mp, pos);

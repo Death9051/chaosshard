@@ -1,0 +1,31 @@
+{
+ "conditions": [
+  {
+   "type": "forge:mod_loaded",
+   "modid": "mystcraft"
+  }
+ ],
+ "type": "forge:ore_shapeless",
+ "group": "chaosshard:resource_pages",
+ "ingredients": [
+  {
+   "item": "minecraft:paper"
+  },
+  {
+   "item": "mystcraft:vial"
+  },
+  {
+   "item": "minecraft:torch"
+  },
+  {
+   "item": "minecraft:torch"
+  }
+ ],
+ "result": {
+  "item": "mystcraft:page",
+  "count": 1,
+  "nbt": {
+   "symbol": "mystcraft:lightingbright"
+  }
+ }
+}

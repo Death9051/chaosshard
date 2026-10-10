@@ -147,9 +147,11 @@ chaosshard.heart_module.pulse.desc=Growths appear 35% faster
 chaosshard.heart_module.capacity.desc=+6 growths at once
 chaosshard.heart_module.rich.desc=Rare ores grow more often
 chaosshard.heart_module.fertile.desc=25% chance to grow two at once
-chaosshard.heart_module.hint=Goes into an Island Heart slot. Modules stack.
+chaosshard.heart_module.hint=Goes into an Island Heart slot, up to 4 per slot. Modules stack.
 
 chaosshard.command.quests.usage=/oh quests <complete|reset|edit> [player]
 chaosshard.command.quests.completed=Quests completed: %s (player %s). Rewards can be claimed in the Grimoire.
 chaosshard.command.quests.reset=Quest progress of %s has been reset.
 chaosshard.command.quests.edit=Better Questing edit mode toggled: all quests are visible in it.
+
+chaosshard.breach.hint=Breach structure: %s of %s blocks in place. Follow the highlight: outline — place a block, red — remove.
