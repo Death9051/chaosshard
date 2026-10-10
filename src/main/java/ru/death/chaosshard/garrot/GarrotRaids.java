@@ -46,6 +46,8 @@ public class GarrotRaids {
     private static final String TAG_KILLS = "chaosshard_captains";
     private static final int ARMY_COLOR = 0x1C1A24;
     private static final int RAID_LINES = 4;
+    /** Фракция Ancient Warfare, которая играет Мрачную Армию. */
+    public static final String FACTION = "evil";
 
     /** Набег у края с Якорем в anchor, против игрока target. */
     public static void spawn(WorldServer world, BlockPos anchor, EntityPlayerMP target) {
@@ -63,6 +65,18 @@ public class GarrotRaids {
         int number = ++data.raids;
         data.markDirty();
 
+        if (!spawnAncientWarfare(world, base, target, number)) {
+            spawnVanilla(world, base, target, number);
+        }
+        world.playSound(null, base, net.minecraft.init.SoundEvents.EVOCATION_ILLAGER_PREPARE_WOLOLO, SoundCategory.HOSTILE, 2.0F, 0.5F);
+        world.spawnParticle(EnumParticleTypes.SMOKE_LARGE, base.getX() + 0.5, base.getY() + 1, base.getZ() + 0.5, 40, 2, 1, 2, 0.02);
+        say(target, "chaosshard.garrot.raid." + Math.min(number, RAID_LINES));
+        target.sendMessage(ru.death.chaosshard.breach.Breach.grimoire("chaosshard.garrot.where", base.getX(), base.getZ()));
+    }
+
+    /** Запасной вариант без Ancient Warfare: переодетые ванильные мобы. */
+    private static void spawnVanilla(WorldServer world, BlockPos base, EntityPlayerMP target, int number) {
+        Random r = world.rand;
         EntityWitherSkeleton captain = new EntityWitherSkeleton(world);
         setup(world, captain, base, target);
         captain.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, new ItemStack(Items.IRON_SWORD));
@@ -90,10 +104,52 @@ public class GarrotRaids {
             s.setItemStackToSlot(EntityEquipmentSlot.HEAD, dyed(Items.LEATHER_HELMET));
             s.setCustomNameTag(TextFormatting.DARK_GRAY + new TextComponentTranslation("chaosshard.garrot.soldier").getUnformattedText());
         }
-        world.playSound(null, base, net.minecraft.init.SoundEvents.EVOCATION_ILLAGER_PREPARE_WOLOLO, SoundCategory.HOSTILE, 2.0F, 0.5F);
-        world.spawnParticle(EnumParticleTypes.SMOKE_LARGE, base.getX() + 0.5, base.getY() + 1, base.getZ() + 0.5, 40, 2, 1, 2, 0.02);
-        say(target, "chaosshard.garrot.raid." + Math.min(number, RAID_LINES));
-        target.sendMessage(ru.death.chaosshard.breach.Breach.grimoire("chaosshard.garrot.where", base.getX(), base.getZ()));
+    }
+
+    /**
+     * Мрачная Армия из Ancient Warfare 2: фракция «evil» (в переводе сборки — Мрачная Армия).
+     * Капитан — элитный лидер, отряд — солдаты, лучники, с третьего набега — палачи.
+     * API у AW нет, поэтому через отражение: AWNPCEntities.createNpc(world, type, subtype, faction).
+     */
+    private static boolean spawnAncientWarfare(WorldServer world, BlockPos base, EntityPlayerMP target, int number) {
+        if (!net.minecraftforge.fml.common.Loader.isModLoaded("ancientwarfarenpc") && !net.minecraftforge.fml.common.Loader.isModLoaded("ancientwarfare")) {
+            return false;
+        }
+        try {
+            Class<?> cls = Class.forName("net.shadowmage.ancientwarfare.npc.init.AWNPCEntities");
+            java.lang.reflect.Method create = cls.getMethod("createNpc", World.class, String.class, String.class, String.class);
+            Random r = world.rand;
+            EntityLiving captain = (EntityLiving) create.invoke(null, world, "faction.leader.elite", "", FACTION);
+            if (captain == null) {
+                return false;
+            }
+            setup(world, captain, base, target);
+            double hp = 80 + 15 * Math.min(number, 6);
+            captain.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(hp);
+            captain.setHealth((float) hp);
+            captain.setGlowing(true);
+            captain.addTag(TAG_CAPTAIN);
+            int soldiers = 3 + Math.min(number, 4);
+            for (int i = 0; i < soldiers; i++) {
+                String type;
+                int roll = r.nextInt(10);
+                if (number >= 3 && roll < 2) {
+                    type = "faction.soldier.elite";
+                } else if (roll < 5) {
+                    type = "faction.archer";
+                } else {
+                    type = "faction.soldier";
+                }
+                EntityLiving s = (EntityLiving) create.invoke(null, world, type, "", FACTION);
+                if (s != null) {
+                    setup(world, s, world.getHeight(base.add(r.nextInt(7) - 3, 0, r.nextInt(7) - 3)), target);
+                }
+            }
+            return true;
+        } catch (Throwable t) {
+            ru.death.chaosshard.ChaosShard.LOG.warn("Мрачная Армия через Ancient Warfare не вышла, беру ванильных мобов: {}", t.toString());
+            return false;
+        }
     }
 
     private static void setup(World world, EntityLiving e, BlockPos p, EntityPlayer target) {
