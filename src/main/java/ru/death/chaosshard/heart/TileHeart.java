@@ -77,6 +77,11 @@ public class TileHeart extends TileEntity implements ITickable {
     /** Счётчики модулей на клиенте (для вида Сердца). */
     private final int[] clientModules = new int[ItemHeartModule.Type.values().length];
 
+    /** Шанс двойной добычи с нароста: 15% за каждый модуль «Богатство». */
+    public float richChance() {
+        return 0.15F * count(ItemHeartModule.Type.RICH);
+    }
+
     public int count(ItemHeartModule.Type type) {
         if (world != null && world.isRemote) {
             return clientModules[type.ordinal()];
@@ -132,20 +137,13 @@ public class TileHeart extends TileEntity implements ITickable {
         sync();
     }
 
-    /** Пул с учётом выключенных руд и модулей «Богатство». */
+    /** Пул с учётом выключенных руд. */
     public List<HeartTiers.Growth> activePool() {
         List<HeartTiers.Growth> all = HeartTiers.pool(tier);
         List<HeartTiers.Growth> out = new ArrayList<>();
-        int maxWeight = 1;
-        for (HeartTiers.Growth g : all) {
-            maxWeight = Math.max(maxWeight, g.weight);
-        }
-        int rich = count(ItemHeartModule.Type.RICH);
         for (HeartTiers.Growth g : all) {
             if (isEnabled(g.state)) {
-                // Богатство подтягивает редкие руды к частым
-                int w = g.weight + rich * Math.max(1, maxWeight / 3);
-                out.add(new HeartTiers.Growth(g.state, w));
+                out.add(g);
             }
         }
         return out;
@@ -191,7 +189,10 @@ public class TileHeart extends TileEntity implements ITickable {
             if (states.contains(s)) {
                 ItemStack item = asItem(s);
                 if (!item.isEmpty() && h.hasRoomFor(item)) {
-                    h.accept(item);
+                    h.accept(item.copy());
+                    if (world.rand.nextFloat() < richChance() && h.hasRoomFor(item)) {
+                        h.accept(item.copy());
+                    }
                     world.setBlockToAir(p);
                     ((WorldServer) world).spawnParticle(EnumParticleTypes.PORTAL, p.getX() + 0.5, p.getY() + 0.5, p.getZ() + 0.5,
                             10, 0.3, 0.3, 0.3, 0.3);
@@ -214,7 +215,10 @@ public class TileHeart extends TileEntity implements ITickable {
             IBlockState ore = HeartTiers.pick(pool, world.rand);
             ItemStack item = ore == null ? ItemStack.EMPTY : asItem(ore);
             if (!item.isEmpty() && h.hasRoomFor(item)) {
-                h.accept(item);
+                h.accept(item.copy());
+                if (world.rand.nextFloat() < richChance() && h.hasRoomFor(item)) {
+                    h.accept(item.copy());
+                }
                 world.playSound(null, pos, SoundEvents.BLOCK_CHORUS_FLOWER_GROW, SoundCategory.BLOCKS, 0.4F, 1.2F);
                 ((WorldServer) world).spawnParticle(EnumParticleTypes.SPELL_WITCH, pos.getX() + 0.5, pos.getY() + 1.2,
                         pos.getZ() + 0.5, 10, 0.3, 0.2, 0.3, 0.02);

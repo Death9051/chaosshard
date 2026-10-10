@@ -145,7 +145,7 @@ item.chaosshard.heart_module_rich.name=Richness Module
 item.chaosshard.heart_module_fertile.name=Fertility Module
 chaosshard.heart_module.pulse.desc=Growths appear 35% faster
 chaosshard.heart_module.capacity.desc=+6 growths at once
-chaosshard.heart_module.rich.desc=Rare ores grow more often
+chaosshard.heart_module.rich.desc=15%% chance per module for a growth to yield double
 chaosshard.heart_module.fertile.desc=25% chance to grow two at once
 chaosshard.heart_module.hint=Goes into an Island Heart slot, up to 4 per slot. Modules stack.
 

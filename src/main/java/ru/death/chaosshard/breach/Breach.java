@@ -46,6 +46,11 @@ public final class Breach {
         persisted(player).setTag(TAG_RETURN, tag);
     }
 
+    /** Возвращался ли игрок из Лучезарии в Преддверие (точка возврата запомнена). */
+    public static boolean hasReturnPoint(EntityPlayer player) {
+        return persisted(player).getCompoundTag(TAG_RETURN).hasKey("y");
+    }
+
     /** В Лучезарию: к точке возврата или к точке появления мира. */
     public static void toLuchezariya(EntityPlayerMP player) {
         NBTTagCompound tag = persisted(player).getCompoundTag(TAG_RETURN);

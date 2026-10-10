@@ -12,7 +12,6 @@ import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import ru.death.chaosshard.ChaosConfig;
-import ru.death.chaosshard.antechamber.AntechamberDimension;
 
 /**
  * Наросты Сердца — цельные куски руды: при добыче выпадает сам блок руды
@@ -24,32 +23,49 @@ public class HeartDrops {
     @SubscribeEvent(priority = EventPriority.LOW)
     public void onHarvest(BlockEvent.HarvestDropsEvent event) {
         World world = event.getWorld();
-        if (world.isRemote || event.isSilkTouching() || !ChaosConfig.heart.dropOreBlocks || !AntechamberDimension.is(world)) {
+        if (world.isRemote || event.isSilkTouching() || !ChaosConfig.heart.dropOreBlocks) {
             return;
         }
         BlockPos pos = event.getPos();
-        BlockPos hp = HeartPlacer.heartPos();
-        if (Math.abs(pos.getX() - hp.getX()) > TileHeart.RADIUS || Math.abs(pos.getY() - hp.getY()) > TileHeart.RADIUS
-                || Math.abs(pos.getZ() - hp.getZ()) > TileHeart.RADIUS) {
-            return;
-        }
-        TileEntity te = world.getTileEntity(hp);
-        if (!(te instanceof TileHeart)) {
-            return;
-        }
         IBlockState state = normalize(event.getState());
+        boolean growth = false;
         for (HeartTiers.Growth g : HeartTiers.pool(HeartTiers.maxTier())) {
             if (g.state == state) {
-                Item item = Item.getItemFromBlock(state.getBlock());
-                if (item == net.minecraft.init.Items.AIR) {
-                    return;
-                }
-                event.getDrops().clear();
-                event.getDrops().add(new ItemStack(item, 1, state.getBlock().getMetaFromState(state)));
-                event.setDropChance(1.0F);
-                return;
+                growth = true;
+                break;
             }
         }
+        if (!growth) {
+            return;
+        }
+        TileHeart heart = findHeart(world, pos);
+        if (heart == null) {
+            return;
+        }
+        Item item = Item.getItemFromBlock(state.getBlock());
+        if (item == net.minecraft.init.Items.AIR) {
+            return;
+        }
+        ItemStack drop = new ItemStack(item, 1, state.getBlock().getMetaFromState(state));
+        event.getDrops().clear();
+        event.getDrops().add(drop.copy());
+        // «Богатство»: шанс, что нарост окажется вдвое богаче
+        if (world.rand.nextFloat() < heart.richChance()) {
+            event.getDrops().add(drop.copy());
+        }
+        event.setDropChance(1.0F);
+    }
+
+    /** Сердце, в кольце которого стоит этот блок (наросты растут на уровне Сердца и на блок выше). */
+    private static TileHeart findHeart(World world, BlockPos pos) {
+        int r = TileHeart.RADIUS;
+        for (BlockPos p : BlockPos.getAllInBox(pos.add(-r, -1, -r), pos.add(r, 0, r))) {
+            TileEntity te = world.getTileEntity(p);
+            if (te instanceof TileHeart) {
+                return (TileHeart) te;
+            }
+        }
+        return null;
     }
 
     /** Горящая редстоун-руда (после касания) — та же редстоун-руда. */

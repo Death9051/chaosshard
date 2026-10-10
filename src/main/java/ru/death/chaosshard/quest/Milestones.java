@@ -1,0 +1,234 @@
+package ru.death.chaosshard.quest;
+
+import net.minecraft.advancements.Advancement;
+import net.minecraft.advancements.AdvancementProgress;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
+import net.minecraftforge.common.DimensionManager;
+import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
+import ru.death.chaosshard.ChaosShard;
+import ru.death.chaosshard.Tags;
+import ru.death.chaosshard.anchor.AnchorData;
+import ru.death.chaosshard.antechamber.AntechamberDimension;
+import ru.death.chaosshard.breach.Breach;
+import ru.death.chaosshard.heart.HeartPlacer;
+import ru.death.chaosshard.heart.TileHeart;
+
+/**
+ * Вехи Осколка — скрытые достижения chaosshard:m/&lt;id&gt;. Квесты Better Questing проверяют их
+ * задачей «advancement», поэтому отмечать квесты руками не нужно.
+ * Большинство вех проверяется раз в две секунды по состоянию мира — так они засчитываются
+ * и задним числом, если игрок сделал дело раньше, чем открыл квест.
+ */
+public class Milestones {
+
+    public static final String SPELL = "spell_cast";
+    public static final String SKY = "chaos_sky";
+    public static final String AGE = "enter_age";
+    public static final String TWO_AGES = "two_ages";
+    public static final String BREACH = "breach_through";
+    public static final String HOME = "breach_return";
+    public static final String ANCHOR = "anchor_placed";
+    public static final String CAPTURE_1 = "capture_1";
+    public static final String CAPTURE_3 = "capture_3";
+    public static final String TINKER_STAR = "tinker_starmetal";
+    public static final String TINKER_DISTORTED = "tinker_distorted";
+    public static final String TINKER_ASTRAL = "tinker_astral";
+    public static final String DYNAMO = "starlight_dynamo";
+
+    private static final String TAG_AGES = "chaosshard_ages";
+    private static final String TAG_CAPTURED = "chaosshard_captured";
+
+    public static void grant(EntityPlayerMP player, String id) {
+        MinecraftServer server = player.getServer();
+        if (server == null) {
+            return;
+        }
+        Advancement adv = server.getAdvancementManager().getAdvancement(new ResourceLocation(Tags.MOD_ID, "m/" + id));
+        if (adv == null) {
+            ChaosShard.LOG.warn("Нет вехи chaosshard:m/{}", id);
+            return;
+        }
+        AdvancementProgress progress = player.getAdvancements().getProgress(adv);
+        if (!progress.isDone()) {
+            player.getAdvancements().grantCriterion(adv, "done");
+        }
+    }
+
+    public static boolean has(EntityPlayerMP player, String id) {
+        MinecraftServer server = player.getServer();
+        if (server == null) {
+            return false;
+        }
+        Advancement adv = server.getAdvancementManager().getAdvancement(new ResourceLocation(Tags.MOD_ID, "m/" + id));
+        return adv != null && player.getAdvancements().getProgress(adv).isDone();
+    }
+
+    /** Захват края Якорем: счётчик у владельца. */
+    public static void onCapture(EntityPlayerMP owner) {
+        NBTTagCompound data = persisted(owner);
+        data.setInteger(TAG_CAPTURED, data.getInteger(TAG_CAPTURED) + 1);
+    }
+
+    @SubscribeEvent
+    public void onTick(TickEvent.PlayerTickEvent event) {
+        if (event.phase != TickEvent.Phase.END || !(event.player instanceof EntityPlayerMP)) {
+            return;
+        }
+        EntityPlayerMP player = (EntityPlayerMP) event.player;
+        if (player.ticksExisted % 40 != 7) {
+            return;
+        }
+        try {
+            check(player);
+            if (Loader.isModLoaded("betterquesting")) {
+                BqSync.detect(player);
+            }
+        } catch (Throwable t) {
+            ChaosShard.LOG.error("Проверка вех упала", t);
+        }
+    }
+
+    private void check(EntityPlayerMP player) {
+        World world = player.world;
+        boolean inAntechamber = AntechamberDimension.is(world);
+
+        // Небо Преддверия: посмотреть вверх
+        if (inAntechamber && player.rotationPitch < -55.0F) {
+            grant(player, SKY);
+        }
+
+        // Сердце Острова: ступени
+        WorldServer ante = DimensionManager.getWorld(AntechamberDimension.id());
+        if (ante != null && ante.isBlockLoaded(HeartPlacer.heartPos())) {
+            TileEntity te = ante.getTileEntity(HeartPlacer.heartPos());
+            if (te instanceof TileHeart) {
+                int tier = ((TileHeart) te).getTier();
+                for (int t = 2; t <= tier; t++) {
+                    grant(player, "heart_tier_" + t);
+                }
+            }
+        }
+
+        // Mystcraft: миры-Кладовки
+        if (world.provider.getClass().getName().contains("mystcraft")) {
+            grant(player, AGE);
+            NBTTagCompound data = persisted(player);
+            int[] ages = data.getIntArray(TAG_AGES);
+            int dim = world.provider.getDimension();
+            boolean known = false;
+            for (int a : ages) {
+                known |= a == dim;
+            }
+            if (!known) {
+                int[] next = java.util.Arrays.copyOf(ages, ages.length + 1);
+                next[ages.length] = dim;
+                data.setIntArray(TAG_AGES, next);
+                ages = next;
+            }
+            if (ages.length >= 2) {
+                grant(player, TWO_AGES);
+            }
+        }
+
+        // Прорыв
+        if (Breach.hasBreached(player)) {
+            if (world.provider.getDimension() == Breach.luchezariyaDim()) {
+                grant(player, BREACH);
+            }
+            if (inAntechamber && Breach.hasReturnPoint(player)) {
+                grant(player, HOME);
+            }
+        }
+
+        // Якоря
+        if (!has(player, ANCHOR)) {
+            WorldServer luch = DimensionManager.getWorld(Breach.luchezariyaDim());
+            if (luch != null && !AnchorData.get(luch).anchors.isEmpty()) {
+                grant(player, ANCHOR);
+            }
+        }
+        int captured = persisted(player).getInteger(TAG_CAPTURED);
+        if (captured >= 1) {
+            grant(player, CAPTURE_1);
+        }
+        if (captured >= 3) {
+            grant(player, CAPTURE_3);
+        }
+
+        // Инструменты Tinkers' Construct в инвентаре
+        if (!has(player, TINKER_STAR) || !has(player, TINKER_DISTORTED) || !has(player, TINKER_ASTRAL)) {
+            for (ItemStack stack : player.inventory.mainInventory) {
+                tinkerTool(player, stack);
+            }
+            tinkerTool(player, player.getHeldItemOffhand());
+        }
+
+        // Компрессионный динамо Thermal на жидком звёздном свете
+        if (!has(player, DYNAMO)) {
+            for (TileEntity te : world.loadedTileEntityList) {
+                if (te.getClass().getSimpleName().equals("TileDynamoCompression")
+                        && te.getPos().distanceSq(player.getPosition()) < 32 * 32 && TileChecks.burnsStarlight(te)) {
+                    grant(player, DYNAMO);
+                    break;
+                }
+            }
+        }
+
+        if (ChaosShard.astralLoaded) {
+            AstralMilestones.check(player);
+        }
+    }
+
+    private static void tinkerTool(EntityPlayerMP player, ItemStack stack) {
+        if (stack.isEmpty() || !stack.hasTagCompound()) {
+            return;
+        }
+        NBTTagCompound tag = stack.getTagCompound();
+        NBTTagCompound data = tag.getCompoundTag("TinkerData");
+        NBTTagList materials = data.getTagList("Materials", 8);
+        for (int i = 0; i < materials.tagCount(); i++) {
+            String m = materials.getStringTagAt(i).toLowerCase();
+            if (m.contains("chaosshard_distorted")) {
+                grant(player, TINKER_DISTORTED);
+            } else if (m.contains("starmetal")) {
+                grant(player, TINKER_STAR);
+            }
+        }
+        NBTTagList modifiers = tag.getTagList("Modifiers", 10);
+        for (int i = 0; i < modifiers.tagCount(); i++) {
+            String id = modifiers.getCompoundTagAt(i).getString("identifier").toLowerCase();
+            if (id.contains("astral")) {
+                grant(player, TINKER_ASTRAL);
+            }
+        }
+        NBTBase mods = data.getTag("Modifiers");
+        if (mods instanceof NBTTagList) {
+            NBTTagList list = (NBTTagList) mods;
+            for (int i = 0; i < list.tagCount(); i++) {
+                if (list.getStringTagAt(i).toLowerCase().contains("astral")) {
+                    grant(player, TINKER_ASTRAL);
+                }
+            }
+        }
+    }
+
+    static NBTTagCompound persisted(EntityPlayer player) {
+        NBTTagCompound data = player.getEntityData();
+        if (!data.hasKey(EntityPlayer.PERSISTED_NBT_TAG)) {
+            data.setTag(EntityPlayer.PERSISTED_NBT_TAG, new NBTTagCompound());
+        }
+        return data.getCompoundTag(EntityPlayer.PERSISTED_NBT_TAG);
+    }
+}

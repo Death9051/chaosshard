@@ -65,6 +65,7 @@ public class ChaosShard {
         MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.breach.BreachHints());
         MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.heart.HeartDrops());
         MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.breach.BreachEvents());
+        MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.quest.Milestones());
         if (astralLoaded) {
             MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.stars.PerkBridge());
         }

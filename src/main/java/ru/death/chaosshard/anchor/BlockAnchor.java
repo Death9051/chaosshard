@@ -95,6 +95,7 @@ public class BlockAnchor extends Block {
         data.anchors.add(pos);
         data.markDirty();
         player.sendMessage(Breach.grimoire("chaosshard.anchor.placed"));
+        ru.death.chaosshard.quest.Milestones.grant(player, ru.death.chaosshard.quest.Milestones.ANCHOR);
     }
 
     @Override

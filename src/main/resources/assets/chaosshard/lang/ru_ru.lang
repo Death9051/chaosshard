@@ -151,7 +151,7 @@ item.chaosshard.heart_module_rich.name=Модуль «Богатство»
 item.chaosshard.heart_module_fertile.name=Модуль «Плодовитость»
 chaosshard.heart_module.pulse.desc=Наросты растут на 35% быстрее
 chaosshard.heart_module.capacity.desc=+6 наростов одновременно
-chaosshard.heart_module.rich.desc=Редкие руды растут чаще
+chaosshard.heart_module.rich.desc=Шанс 15%% за модуль, что нарост даст двойную добычу
 chaosshard.heart_module.fertile.desc=25% шанс вырастить сразу два нароста
 chaosshard.heart_module.hint=Вставляется в гнездо Сердца Острова, до 4 в одно гнездо. Модули складываются.
 

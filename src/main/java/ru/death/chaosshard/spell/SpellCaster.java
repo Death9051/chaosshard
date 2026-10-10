@@ -216,6 +216,7 @@ public final class SpellCaster {
             player.addExhaustion(spell.hunger * 4.0F);
         }
         setCooldown(player, spell);
+        ru.death.chaosshard.quest.Milestones.grant(player, ru.death.chaosshard.quest.Milestones.SPELL);
         World world = player.world;
         world.playSound(null, where, SoundEvents.EVOCATION_ILLAGER_CAST_SPELL, SoundCategory.PLAYERS, 0.6F, 1.2F);
         if (world instanceof WorldServer) {

@@ -34,6 +34,8 @@ public class TileAnchor extends TileEntity implements ITickable {
     private boolean captured;
     private int timer;
     private int passiveTimer;
+    /** Захват уже засчитан владельцу (для квестов). */
+    private boolean counted;
     private final Set<Long> dirtyChunks = new HashSet<>();
 
     public void setOwner(EntityPlayerMP player) {
@@ -75,6 +77,14 @@ public class TileAnchor extends TileEntity implements ITickable {
                 corrupted += done;
                 markDirty();
                 checkCapture();
+            }
+        }
+        if (captured && !counted && timer % 20 == 0) {
+            EntityPlayerMP owner = ownerOnline();
+            if (owner != null) {
+                ru.death.chaosshard.quest.Milestones.onCapture(owner);
+                counted = true;
+                markDirty();
             }
         }
         if (timer % 200 == 0 && !dirtyChunks.isEmpty()) {
@@ -182,6 +192,7 @@ public class TileAnchor extends TileEntity implements ITickable {
         tag.setInteger("corrupted", corrupted);
         tag.setBoolean("captured", captured);
         tag.setInteger("passive", passiveTimer);
+        tag.setBoolean("counted", counted);
         return tag;
     }
 
@@ -193,5 +204,6 @@ public class TileAnchor extends TileEntity implements ITickable {
         corrupted = tag.getInteger("corrupted");
         captured = tag.getBoolean("captured");
         passiveTimer = tag.getInteger("passive");
+        counted = tag.getBoolean("counted");
     }
 }
