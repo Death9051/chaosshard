@@ -45,6 +45,51 @@ public final class ChaosConfig {
     @Config.LangKey("chaosshard.config.perks")
     public static final PerksCfg perks = new PerksCfg();
 
+    @Config.Comment("Акт 3: святыни Ордена, деревни, Мрачная Армия Гаррота")
+    @Config.LangKey("chaosshard.config.order")
+    public static final OrderCfg order = new OrderCfg();
+
+    public static final class OrderCfg {
+        @Config.Comment("Шанс святыни Ордена на чанк Лучезарии (1 из N)")
+        @Config.RangeInt(min = 0, max = 100000)
+        public int shrineRarity = 220;
+
+        @Config.Comment("Радиус святой земли вокруг святыни: Нить истончается, Скверна не ползёт")
+        @Config.RangeInt(min = 4, max = 128)
+        public int shrineRadius = 32;
+
+        @Config.Comment("На сколько уровней истончается Нить на святой земле")
+        @Config.RangeInt(min = 0, max = 5)
+        public int shrinePenalty = 2;
+
+        @Config.Comment("Уровень Нити, нужный, чтобы осквернить святыню (Эссенцией Хаоса)")
+        public int desecrateThread = 2;
+
+        @Config.Comment("Очки Нити за осквернение святыни")
+        public int desecrateReward = 60;
+
+        @Config.Comment("Как часто Знак покровителя собирает дань (тики, 24000 = день)")
+        public int tributeInterval = 24000;
+
+        @Config.Comment("Очки Нити владельцу за каждую дань")
+        public int tributeThread = 8;
+
+        @Config.Comment("Очки Нити за деревню, поглощённую Скверной")
+        public int fallenVillageReward = 60;
+
+        @Config.Comment("Набеги Мрачной Армии на захваченные края")
+        public boolean raids = true;
+
+        @Config.Comment("Через сколько тиков после захвата края приходит первый набег")
+        public int firstRaidDelay = 2400;
+
+        @Config.Comment("Пауза между набегами на один край (тики)")
+        public int raidInterval = 72000;
+
+        @Config.Comment("Очки Нити за убитого капитана Мрачной Армии")
+        public int captainReward = 40;
+    }
+
     public static final class AntechamberCfg {
         @Config.Comment("ID измерения Преддверия. Меняйте только на новом мире.")
         @Config.RequiresMcRestart

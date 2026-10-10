@@ -1,0 +1,106 @@
+{
+  "parent": "block/block",
+  "textures": {
+    "particle": "chaosshard:blocks/patron_sigil",
+    "s": "chaosshard:blocks/patron_sigil",
+    "c": "chaosshard:blocks/chaos_stone"
+  },
+  "elements": [
+    {
+      "from": [
+        3,
+        0,
+        3
+      ],
+      "to": [
+        13,
+        2,
+        13
+      ],
+      "faces": {
+        "north": {
+          "texture": "#c"
+        },
+        "south": {
+          "texture": "#c"
+        },
+        "east": {
+          "texture": "#c"
+        },
+        "west": {
+          "texture": "#c"
+        },
+        "up": {
+          "texture": "#c"
+        },
+        "down": {
+          "texture": "#c"
+        }
+      }
+    },
+    {
+      "from": [
+        5,
+        2,
+        5
+      ],
+      "to": [
+        11,
+        14,
+        11
+      ],
+      "faces": {
+        "north": {
+          "texture": "#s"
+        },
+        "south": {
+          "texture": "#s"
+        },
+        "east": {
+          "texture": "#s"
+        },
+        "west": {
+          "texture": "#s"
+        },
+        "up": {
+          "texture": "#s"
+        },
+        "down": {
+          "texture": "#s"
+        }
+      }
+    },
+    {
+      "from": [
+        4,
+        14,
+        4
+      ],
+      "to": [
+        12,
+        16,
+        12
+      ],
+      "faces": {
+        "north": {
+          "texture": "#c"
+        },
+        "south": {
+          "texture": "#c"
+        },
+        "east": {
+          "texture": "#c"
+        },
+        "west": {
+          "texture": "#c"
+        },
+        "up": {
+          "texture": "#c"
+        },
+        "down": {
+          "texture": "#c"
+        }
+      }
+    }
+  ]
+}

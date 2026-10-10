@@ -18,7 +18,7 @@ chaosshard.hud.thread=Нить %s · %s/%s
 chaosshard.hud.thread.max=Нить %s · предел
 
 # Команды
-chaosshard.command.usage=/chaosshard <nit|tp|sky|grimoire|breach|heart|quests|selftest|debug> ...
+chaosshard.command.usage=/oh <nit|tp|sky|grimoire|breach|heart|anchor|shrine|quests|selftest|debug> ...
 chaosshard.command.nit.usage=/chaosshard nit <get [игрок]|set <игрок> <очки>|add <игрок> <очки>|resync [игрок]>
 chaosshard.command.nit.get=Нить %s: уровень %s, очков %s
 chaosshard.command.nit.changed=Нить %s: уровень %s, очков %s
@@ -208,3 +208,37 @@ tile.chaosshard.seed_island.desc=Парящий диск: Сердце со Жн
 
 tile.chaosshard.veil_vein.name=Жила Завесы
 chaosshard.surge=Всплеск Хаоса: %s
+
+# Акт 3: святыни, деревни, Гаррот
+tile.chaosshard.shrine_stone.name=Святой камень
+tile.chaosshard.desecrated_stone.name=Осквернённый камень
+tile.chaosshard.patron_sigil.name=Знак покровителя
+tile.chaosshard.seed_shrine.name=[Тест] Святыня Ордена
+tile.chaosshard.seed_shrine.desc=Святыня с Святым камнем. Вокруг — святая земля.
+item.chaosshard.garrot_banner.name=Знамя Мрачной Армии
+chaosshard.garrot_banner.lore=Снято с капитана Гаррота. Пахнет старой пылью и самомнением.
+chaosshard.hud.thinned=Святая земля: Нить −%s
+chaosshard.shrine.enter=Святая земля. Нить истончилась.
+chaosshard.shrine.leave=Святая земля позади. Нить снова держит.
+chaosshard.shrine.info=Святой камень Ордена. Рукой не взять. Эссенция Хаоса — другое дело.
+chaosshard.shrine.thin=Камень не поддаётся — Нить тонковата. Нужен уровень %s.
+chaosshard.shrine.desecrated=Святыня осквернена. Свет погас, земля вокруг больше не держит Нить. Нить окрепла на %s.
+chaosshard.anchor.shrine=Здесь святая земля — Якорь не встанет. Сначала осквернить святыню.
+chaosshard.village.not_village=Знак ставят внутри деревни, среди домов.
+chaosshard.village.already_fallen=Эта деревня уже пала. Покровительствовать некому.
+chaosshard.village.already_patron=У этой деревни уже есть покровитель. Я.
+chaosshard.village.patron=Деревня под моим покровительством (домов: %s). Будут платить дань, а Скверна их обойдёт.
+chaosshard.village.tribute=Дань от деревни у (%s, %s) собрана.
+chaosshard.village.empty=Дани пока нет. Следующая — примерно через %s мин.
+chaosshard.village.fallen=Деревня у (%s, %s) пала под Скверной: жителей обращено — %s. Нить окрепла на %s.
+chaosshard.garrot.name=Гаррот:
+chaosshard.garrot.captain=Капитан Мрачной Армии
+chaosshard.garrot.soldier=Солдат Мрачной Армии
+chaosshard.garrot.where=Мрачная Армия у (%s, %s). Капитан светится — его и бить.
+chaosshard.garrot.raid.1=Тварь из-за Завесы ставит колья на МОЕЙ земле? Триста лет я берегу эту страну для себя. Капитан, объясните гостю.
+chaosshard.garrot.raid.2=Опять ты. Мои летописцы уже устали записывать твои выходки. Капитан, на этот раз — без летописцев.
+chaosshard.garrot.raid.3=Довольно! Этот край — мой по праву тьмы, по праву первенства и по праву того, что я так сказал!
+chaosshard.garrot.raid.4=Мрачная Армия не отступает. Она перегруппировывается. И возвращается. Как сейчас.
+chaosshard.garrot.retreat.1=Это была разведка. Только разведка. Запиши это в своей книжке, тварь.
+chaosshard.garrot.retreat.2=Хм. Капитан был молод. И, кажется, не очень умён. Пришлю другого.
+chaosshard.garrot.retreat.3=…Ладно. Признаю: ты досадная помеха. Мы ещё встретимся — лично. И тогда посмотрим, кто чей.

@@ -41,7 +41,7 @@ public final class SpellCaster {
 
     /** Следующее доступное заклинание по кругу. */
     public static void cycle(EntityPlayerMP player, ItemStack stack) {
-        int level = ThreadManager.getLevel(player);
+        int level = ru.death.chaosshard.thread.ThreadBonus.level(player);
         Spell current = selected(stack);
         Spell[] all = Spell.values();
         Spell next = Spell.BOOK;
@@ -190,7 +190,7 @@ public final class SpellCaster {
             return false;
         }
         if (!player.isCreative()) {
-            if (ThreadManager.getLevel(player) < spell.minThread) {
+            if (ru.death.chaosshard.thread.ThreadBonus.level(player) < spell.minThread) {
                 status(player, new TextComponentTranslation("chaosshard.spell.locked", spell.minThread));
                 return false;
             }

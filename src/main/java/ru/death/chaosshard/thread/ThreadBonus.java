@@ -18,7 +18,9 @@ public final class ThreadBonus {
             return ChaosShard.proxy.clientThreadLevel();
         }
         IThread thread = ThreadCapability.get(player);
-        return thread == null ? 0 : ThreadManager.levelFor(thread.getPoints());
+        int raw = thread == null ? 0 : ThreadManager.levelFor(thread.getPoints());
+        // Святая земля истончает Нить
+        return Math.max(0, raw - ru.death.chaosshard.order.Shrines.penalty(player.getUniqueID()));
     }
 
     /** Множитель силы всех перков Astral Sorcery: 1 + бонус × уровень. */

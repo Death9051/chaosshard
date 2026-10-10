@@ -80,7 +80,13 @@ public class CommandChaosShard extends CommandBase {
                 String sub = args.length >= 2 ? args[1] : "list";
                 World w = sender.getEntityWorld();
                 ru.death.chaosshard.anchor.AnchorData data = ru.death.chaosshard.anchor.AnchorData.get(w);
-                if ("spread".equals(sub)) {
+                if ("raid".equals(sub)) {
+                    BlockPos near = data.nearest(sender.getPosition(), null);
+                    if (near == null || !(w.getTileEntity(near) instanceof ru.death.chaosshard.anchor.TileAnchor)) {
+                        throw new CommandException("chaosshard.command.anchor.none");
+                    }
+                    ((ru.death.chaosshard.anchor.TileAnchor) w.getTileEntity(near)).forceRaid(getCommandSenderAsPlayer(sender));
+                } else if ("spread".equals(sub)) {
                     int n = args.length >= 3 ? parseInt(args[2], 1, 10000) : 100;
                     BlockPos near = data.nearest(sender.getPosition(), null);
                     if (near == null || !(w.getTileEntity(near) instanceof ru.death.chaosshard.anchor.TileAnchor)) {
@@ -99,6 +105,25 @@ public class CommandChaosShard extends CommandBase {
                                 + (((ru.death.chaosshard.anchor.TileAnchor) te).isCaptured() ? ", захвачен" : "") : "чанк не загружен";
                         sender.sendMessage(new net.minecraft.util.text.TextComponentString("  " + p.getX() + " " + p.getY() + " " + p.getZ() + " — " + st));
                     }
+                }
+                break;
+            }
+            case "shrine": {
+                // /oh shrine [list|place] — святыни Ордена
+                String sub = args.length >= 2 ? args[1] : "list";
+                World w = sender.getEntityWorld();
+                if ("place".equals(sub)) {
+                    BlockPos at = sender.getPosition();
+                    ru.death.chaosshard.order.ShrineGen.build(w, at, w.rand);
+                    sender.sendMessage(new net.minecraft.util.text.TextComponentString("Святыня поставлена: " + at.getX() + " " + at.getY() + " " + at.getZ()));
+                } else {
+                    java.util.Set<BlockPos> all = ru.death.chaosshard.order.ShrineData.get(w).shrines;
+                    sender.sendMessage(new net.minecraft.util.text.TextComponentString("Святынь в этом мире: " + all.size()
+                            + ", осквернено: " + ru.death.chaosshard.order.ShrineData.get(w).desecrated));
+                    BlockPos me = sender.getPosition();
+                    all.stream().sorted(java.util.Comparator.comparingDouble(p -> p.distanceSq(me))).limit(8).forEach(p ->
+                            sender.sendMessage(new net.minecraft.util.text.TextComponentString("  " + p.getX() + " " + p.getY() + " " + p.getZ()
+                                    + " — " + (int) Math.sqrt(p.distanceSq(me)) + " бл.")));
                 }
                 break;
             }
@@ -319,7 +344,7 @@ public class CommandChaosShard extends CommandBase {
     @Override
     public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos targetPos) {
         if (args.length == 1) {
-            return getListOfStringsMatchingLastWord(args, "nit", "tp", "sky", "grimoire", "debug", "breach", "heart", "quests", "selftest", "anchor");
+            return getListOfStringsMatchingLastWord(args, "nit", "tp", "sky", "grimoire", "debug", "breach", "heart", "quests", "selftest", "anchor", "shrine");
         }
         if (args.length == 2 && "nit".equals(args[0])) {
             return getListOfStringsMatchingLastWord(args, "get", "set", "add", "resync");
@@ -332,6 +357,12 @@ public class CommandChaosShard extends CommandBase {
         }
         if (args.length == 2 && "heart".equals(args[0])) {
             return getListOfStringsMatchingLastWord(args, "info", "place", "grow", "tier");
+        }
+        if (args.length == 2 && "anchor".equals(args[0])) {
+            return getListOfStringsMatchingLastWord(args, "list", "spread", "raid");
+        }
+        if (args.length == 2 && "shrine".equals(args[0])) {
+            return getListOfStringsMatchingLastWord(args, "list", "place");
         }
         if (args.length == 2 && "debug".equals(args[0])) {
             return getListOfStringsMatchingLastWord(args, "report", "reset", "kit");

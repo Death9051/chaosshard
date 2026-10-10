@@ -65,6 +65,8 @@ public class BlockAnchor extends Block {
             error = "chaosshard.anchor.not_here";
         } else if (!player.isCreative() && ThreadManager.getLevel(player) < ChaosConfig.anchor.threadLevel) {
             error = "chaosshard.anchor.thin";
+        } else if (ru.death.chaosshard.order.Shrines.nearest(world, pos, ChaosConfig.order.shrineRadius) != null) {
+            error = "chaosshard.anchor.shrine";
         } else {
             BlockPos near = AnchorData.get(world).nearest(pos, pos);
             if (near != null && near.distanceSq(pos) < (double) ChaosConfig.anchor.minDistance * ChaosConfig.anchor.minDistance) {

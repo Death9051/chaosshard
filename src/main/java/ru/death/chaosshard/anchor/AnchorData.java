@@ -14,6 +14,8 @@ public class AnchorData extends WorldSavedData {
 
     public static final String NAME = "chaosshard_anchors";
     public final List<BlockPos> anchors = new ArrayList<>();
+    /** Сколько набегов Мрачной Армии уже было. */
+    public int raids;
 
     public AnchorData(String name) {
         super(name);
@@ -47,6 +49,7 @@ public class AnchorData extends WorldSavedData {
     @Override
     public void readFromNBT(NBTTagCompound nbt) {
         anchors.clear();
+        raids = nbt.getInteger("raids");
         NBTTagList list = nbt.getTagList("a", 4);
         for (int i = 0; i < list.tagCount(); i++) {
             anchors.add(BlockPos.fromLong(((net.minecraft.nbt.NBTTagLong) list.get(i)).getLong()));
@@ -60,6 +63,7 @@ public class AnchorData extends WorldSavedData {
             list.appendTag(new net.minecraft.nbt.NBTTagLong(p.toLong()));
         }
         nbt.setTag("a", list);
+        nbt.setInteger("raids", raids);
         return nbt;
     }
 }

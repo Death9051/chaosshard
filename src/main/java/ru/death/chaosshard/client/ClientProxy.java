@@ -42,7 +42,12 @@ public class ClientProxy extends CommonProxy {
 
     @Override
     public int clientThreadLevel() {
-        return ru.death.chaosshard.thread.ThreadManager.levelFor(ClientThreadCache.points());
+        return Math.max(0, ru.death.chaosshard.thread.ThreadManager.levelFor(ClientThreadCache.points()) - ClientThreadCache.penalty());
+    }
+
+    @Override
+    public void handleThinned(int penalty) {
+        Minecraft.getMinecraft().addScheduledTask(() -> ClientThreadCache.setPenalty(penalty));
     }
 
     @Override

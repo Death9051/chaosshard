@@ -46,6 +46,12 @@ public class Milestones {
     public static final String TINKER_DISTORTED = "tinker_distorted";
     public static final String TINKER_ASTRAL = "tinker_astral";
     public static final String DYNAMO = "starlight_dynamo";
+    public static final String SHRINE_NEAR = "shrine_near";
+    public static final String SHRINE_DESECRATED = "shrine_desecrated";
+    public static final String VILLAGE_PATRON = "village_patron";
+    public static final String VILLAGE_FALLEN = "village_fallen";
+    public static final String GARROT_1 = "garrot_1";
+    public static final String GARROT_3 = "garrot_3";
 
     private static final String TAG_AGES = "chaosshard_ages";
     private static final String TAG_CAPTURED = "chaosshard_captured";

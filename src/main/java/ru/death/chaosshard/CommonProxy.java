@@ -19,6 +19,10 @@ public class CommonProxy {
     public void handleThreadSync(int points) {
     }
 
+    /** Истончение Нити (святая земля) пришло на клиент. */
+    public void handleThinned(int penalty) {
+    }
+
     /** Уровень Нити, известный клиенту. На сервере 0. */
     public int clientThreadLevel() {
         return 0;

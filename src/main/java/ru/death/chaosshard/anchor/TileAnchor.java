@@ -36,6 +36,36 @@ public class TileAnchor extends TileEntity implements ITickable {
     private int passiveTimer;
     /** Захват уже засчитан владельцу (для квестов). */
     private boolean counted;
+    /** Тики до следующего набега Мрачной Армии (−1 — ещё не назначен). */
+    private int raidTimer = -1;
+
+    /** Раз в секунду: отсчёт до набега. Набег приходит, только если владелец рядом. */
+    private void tickArmy() {
+        if (!ru.death.chaosshard.ChaosConfig.order.raids) {
+            return;
+        }
+        if (raidTimer < 0) {
+            raidTimer = ru.death.chaosshard.ChaosConfig.order.firstRaidDelay;
+            markDirty();
+        }
+        raidTimer = Math.max(0, raidTimer - 20);
+        if (raidTimer > 0) {
+            return;
+        }
+        EntityPlayerMP o = ownerOnline();
+        if (o == null || o.world != world || o.getDistanceSq(pos) > 96 * 96) {
+            return;
+        }
+        ru.death.chaosshard.garrot.GarrotRaids.spawn((WorldServer) world, pos, o);
+        raidTimer = ru.death.chaosshard.ChaosConfig.order.raidInterval / 2
+                + world.rand.nextInt(Math.max(1, ru.death.chaosshard.ChaosConfig.order.raidInterval));
+        markDirty();
+    }
+
+    /** Для отладки: набег прямо сейчас. */
+    public void forceRaid(EntityPlayerMP player) {
+        ru.death.chaosshard.garrot.GarrotRaids.spawn((WorldServer) world, pos, player);
+    }
     private final Set<Long> dirtyChunks = new HashSet<>();
 
     public void setOwner(EntityPlayerMP player) {
@@ -78,6 +108,13 @@ public class TileAnchor extends TileEntity implements ITickable {
                 markDirty();
                 checkCapture();
             }
+        }
+        if (timer % 20 == 5 && captured) {
+            tickArmy();
+        }
+        if (timer == 11 && world.getTotalWorldTime() % 200 < 40) {
+            EntityPlayerMP o = ownerOnline();
+            ru.death.chaosshard.village.VillageFate.checkAnchor(world, pos, radius(), o);
         }
         if (captured && !counted && timer % 20 == 0) {
             EntityPlayerMP owner = ownerOnline();
@@ -122,6 +159,10 @@ public class TileAnchor extends TileEntity implements ITickable {
         int x = pos.getX() + (int) Math.round(Math.cos(ang) * dist);
         int z = pos.getZ() + (int) Math.round(Math.sin(ang) * dist);
         if (!world.isBlockLoaded(new BlockPos(x, 0, z))) {
+            return false;
+        }
+        // Святая земля и деревни под покровительством Скверне не по зубам
+        if (ru.death.chaosshard.order.Shrines.protects(world, x, z) || ru.death.chaosshard.village.VillageFate.protects(world, x, z)) {
             return false;
         }
         boolean changed = false;
@@ -192,6 +233,7 @@ public class TileAnchor extends TileEntity implements ITickable {
         tag.setBoolean("captured", captured);
         tag.setInteger("passive", passiveTimer);
         tag.setBoolean("counted", counted);
+        tag.setInteger("raidTimer", raidTimer);
         return tag;
     }
 
@@ -204,5 +246,6 @@ public class TileAnchor extends TileEntity implements ITickable {
         captured = tag.getBoolean("captured");
         passiveTimer = tag.getInteger("passive");
         counted = tag.getBoolean("counted");
+        raidTimer = tag.hasKey("raidTimer") ? tag.getInteger("raidTimer") : -1;
     }
 }

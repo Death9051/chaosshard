@@ -27,7 +27,7 @@ public class ThreadHud {
             return;
         }
         boolean recent = mc.world.getTotalWorldTime() - ClientThreadCache.changedAt() < SHOW_TICKS;
-        if (!mc.player.isSneaking() && !recent) {
+        if (!mc.player.isSneaking() && !recent && ClientThreadCache.penalty() == 0) {
             return;
         }
 
@@ -43,6 +43,9 @@ public class ThreadHud {
         FontRenderer font = mc.fontRenderer;
         int x = 6, y = 6, width = 90;
         font.drawStringWithShadow(title, x, y, 0xC9A0FF);
+        if (ClientThreadCache.penalty() > 0) {
+            font.drawStringWithShadow(I18n.format("chaosshard.hud.thinned", ClientThreadCache.penalty()), x, y + font.FONT_HEIGHT + 7, 0xFFD27F);
+        }
 
         float fill = next < 0 ? 1.0F : (float) (points - prev) / Math.max(1, next - prev);
         int barY = y + font.FONT_HEIGHT + 2;

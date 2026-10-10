@@ -34,7 +34,9 @@ public final class StructureBuilder {
         /** Якорь Хаоса с уже захваченной округой. */
         ANCHOR,
         /** Малый остров: Сердце, Жнец и Алтарь Прорыва на парящем диске. */
-        ISLAND
+        ISLAND,
+        /** Святыня Ордена. */
+        SHRINE
     }
 
     public static String build(World world, BlockPos pos, Kind kind, EntityPlayerMP player) {
@@ -57,6 +59,9 @@ public final class StructureBuilder {
                 return anchor(world, pos, player);
             case ISLAND:
                 island(world, pos);
+                return null;
+            case SHRINE:
+                ru.death.chaosshard.order.ShrineGen.build(world, pos, world.rand);
                 return null;
             default:
                 return null;

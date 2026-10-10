@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "VEV",
+    "GSG",
+    "CCC"
+  ],
+  "key": {
+    "V": {
+      "item": "chaosshard:veil_shard"
+    },
+    "E": {
+      "item": "minecraft:emerald"
+    },
+    "G": {
+      "type": "forge:ore_dict",
+      "ore": "ingotGold"
+    },
+    "S": {
+      "item": "chaosshard:memory_fragment"
+    },
+    "C": {
+      "item": "chaosshard:chaos_stone"
+    }
+  },
+  "result": {
+    "item": "chaosshard:patron_sigil",
+    "count": 1
+  }
+}

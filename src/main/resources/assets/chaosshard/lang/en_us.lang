@@ -14,7 +14,7 @@ chaosshard.thread.levelup.5=The Thread is at full strength (level %s). The whole
 chaosshard.hud.thread=Thread %s · %s/%s
 chaosshard.hud.thread.max=Thread %s · max
 
-chaosshard.command.usage=/chaosshard <nit|tp|sky> ...
+chaosshard.command.usage=/oh <nit|tp|sky|grimoire|breach|heart|anchor|shrine|quests|selftest|debug> ...
 chaosshard.command.nit.usage=/chaosshard nit <get [player]|set <player> <points>|add <player> <points>|resync [player]>
 chaosshard.command.nit.get=Thread of %s: level %s, %s points
 chaosshard.command.nit.changed=Thread of %s: level %s, %s points
@@ -202,3 +202,37 @@ tile.chaosshard.seed_island.desc=Floating disc: Heart with Harvester and Breach 
 
 tile.chaosshard.veil_vein.name=Veil Vein
 chaosshard.surge=Chaos Surge: %s
+
+# Act 3: shrines, villages, Garrot
+tile.chaosshard.shrine_stone.name=Holy Stone
+tile.chaosshard.desecrated_stone.name=Desecrated Stone
+tile.chaosshard.patron_sigil.name=Patron Sigil
+tile.chaosshard.seed_shrine.name=[Test] Order Shrine
+tile.chaosshard.seed_shrine.desc=A shrine with a Holy Stone. Holy ground around it.
+item.chaosshard.garrot_banner.name=Banner of the Grim Army
+chaosshard.garrot_banner.lore=Taken from one of Garrot's captains. Smells of old dust and vanity.
+chaosshard.hud.thinned=Holy ground: Thread −%s
+chaosshard.shrine.enter=Holy ground. The Thread grows thin.
+chaosshard.shrine.leave=Holy ground behind. The Thread holds again.
+chaosshard.shrine.info=A Holy Stone of the Order. Hands can't take it. Chaos Essence is another matter.
+chaosshard.shrine.thin=The stone won't yield — the Thread is too thin. Level %s needed.
+chaosshard.shrine.desecrated=Shrine desecrated. The light is out, the ground no longer weakens the Thread. Thread +%s.
+chaosshard.anchor.shrine=This is holy ground — the Anchor won't stand. Desecrate the shrine first.
+chaosshard.village.not_village=The Sigil goes inside a village, among the houses.
+chaosshard.village.already_fallen=This village has already fallen. Nobody left to patronize.
+chaosshard.village.already_patron=This village already has a patron. Me.
+chaosshard.village.patron=The village is under my patronage (houses: %s). They'll pay tribute and the Corruption will pass them by.
+chaosshard.village.tribute=Tribute collected from the village at (%s, %s).
+chaosshard.village.empty=No tribute yet. Next in about %s min.
+chaosshard.village.fallen=The village at (%s, %s) fell to the Corruption: %s villagers turned. Thread +%s.
+chaosshard.garrot.name=Garrot:
+chaosshard.garrot.captain=Captain of the Grim Army
+chaosshard.garrot.soldier=Soldier of the Grim Army
+chaosshard.garrot.where=The Grim Army is at (%s, %s). The captain glows — hit him.
+chaosshard.garrot.raid.1=A creature from beyond the Veil drives stakes into MY land? I have kept this country for myself for three hundred years. Captain, explain it to our guest.
+chaosshard.garrot.raid.2=You again. My chroniclers are tired of writing down your antics. Captain, no chroniclers this time.
+chaosshard.garrot.raid.3=Enough! This land is mine by right of darkness, by right of first claim and by right of me saying so!
+chaosshard.garrot.raid.4=The Grim Army does not retreat. It regroups. And comes back. Like now.
+chaosshard.garrot.retreat.1=That was reconnaissance. Merely reconnaissance. Write that down in your little book, creature.
+chaosshard.garrot.retreat.2=Hm. The captain was young. And not very bright. I'll send another.
+chaosshard.garrot.retreat.3=…Fine. I admit you are an annoying obstacle. We'll meet again — in person. Then we'll see who belongs to whom.

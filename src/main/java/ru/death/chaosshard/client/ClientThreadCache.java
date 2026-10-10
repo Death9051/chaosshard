@@ -18,6 +18,20 @@ public final class ClientThreadCache {
         points = newPoints;
     }
 
+    private static int penalty;
+
+    static void setPenalty(int p) {
+        penalty = p;
+        if (Minecraft.getMinecraft().world != null) {
+            changedAt = Minecraft.getMinecraft().world.getTotalWorldTime();
+        }
+    }
+
+    /** Насколько истончена Нить (святая земля). */
+    public static int penalty() {
+        return penalty;
+    }
+
     public static int points() {
         return Math.max(points, 0);
     }
