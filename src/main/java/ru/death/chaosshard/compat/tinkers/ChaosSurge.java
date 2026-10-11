@@ -38,66 +38,87 @@ public final class ChaosSurge {
         return tool.hasTagCompound() && tool.getTagCompound().hasKey(TAG);
     }
 
-    /** Наложить случайный модификатор. Возвращает модификатор или null, если подходящих нет. */
+    /** Итог последней попытки — для команды /oh surge и лога. */
+    public static String lastReport = "";
+
+    /** Наложить случайный модификатор. Возвращает модификатор или null, если ни один не встал. */
     public static IModifier start(ItemStack tool, World world, int durationTicks) {
-        if (!(tool.getItem() instanceof TinkersItem) || !tool.hasTagCompound() || active(tool)) {
+        if (!(tool.getItem() instanceof TinkersItem) || !tool.hasTagCompound()) {
+            lastReport = "не инструмент Tinkers'";
             return null;
         }
-        NBTTagCompound root = tool.getTagCompound();
-        NBTTagCompound baseBackup = TagUtil.getBaseTag(root).copy();
-        NBTTagList enchBackup = root.getTagList("ench", 10).copy();
+        if (active(tool)) {
+            lastReport = "всплеск уже идёт";
+            return null;
+        }
+        NBTTagCompound original = tool.getTagCompound();
+        NBTTagCompound baseBackup = TagUtil.getBaseTag(original).copy();
+        NBTTagList enchBackup = original.getTagList("ench", 10).copy();
 
         List<IModifier> pool = new ArrayList<>();
         for (IModifier m : TinkerRegistry.getAllModifiers()) {
-            if (m.isHidden() || !m.hasItemsToApplyWith() || BLACKLIST.contains(m.getIdentifier())) {
+            String id = m.getIdentifier();
+            if (m.isHidden() || !m.hasItemsToApplyWith() || BLACKLIST.contains(id) || id.startsWith("extratrait")) {
                 continue;
             }
-            if (TinkerUtil.hasModifier(root, m.getIdentifier())) {
+            if (TinkerUtil.hasModifier(original, id)) {
                 continue;
             }
-            ItemStack test = tool.copy();
-            giveFreeSlot(test.getTagCompound());
+            pool.add(m);
+        }
+        java.util.Collections.shuffle(pool, new Random(world.rand.nextLong()));
+        int tried = 0;
+        String lastError = "";
+        for (IModifier mod : pool) {
+            if (tried >= 40) {
+                break;
+            }
+            tried++;
+            ItemStack work = tool.copy();
+            NBTTagCompound root = work.getTagCompound();
             try {
-                if (m.canApply(test, tool)) {
-                    pool.add(m);
+                boolean applied = false;
+                // Многие модификаторы набирают уровень из нескольких предметов — докладываем, пока не появится 1-й уровень
+                for (int i = 0; i < 128; i++) {
+                    giveFreeSlot(root);
+                    if (!mod.canApply(work, tool)) {
+                        break;
+                    }
+                    mod.apply(work);
+                    applied = true;
+                    NBTTagCompound mt = TinkerUtil.getModifierTag(root, mod.getIdentifier());
+                    if (!mt.isEmpty() && ModifierNBT.readTag(mt).level >= 1) {
+                        break;
+                    }
+                }
+                if (!applied) {
+                    continue;
+                }
+                ToolBuilder.rebuildTool(root, (TinkersItem) work.getItem());
+                if (!TinkerUtil.hasModifier(root, mod.getIdentifier())) {
+                    continue;
                 }
             } catch (TinkerGuiException e) {
-                // не подходит
+                lastError = e.getMessage();
+                continue;
             } catch (Throwable t) {
-                // чужие модификаторы иногда падают на проверке — просто пропускаем
+                lastError = t.toString();
+                continue;
             }
+            NBTTagCompound surge = new NBTTagCompound();
+            surge.setString("id", mod.getIdentifier());
+            surge.setLong("until", world.getTotalWorldTime() + durationTicks);
+            surge.setTag("base", baseBackup);
+            surge.setTag("ench", enchBackup);
+            root.setTag(TAG, surge);
+            tool.setTagCompound(root);
+            lastReport = "встал «" + name(mod) + "» (" + mod.getIdentifier() + "), попыток: " + tried + " из " + pool.size();
+            return mod;
         }
-        if (pool.isEmpty()) {
-            return null;
-        }
-        Random rand = world.rand;
-        IModifier mod = pool.get(rand.nextInt(pool.size()));
-        try {
-            // Многие модификаторы набирают уровень из нескольких предметов — докладываем, пока не появится 1-й уровень
-            for (int i = 0; i < 128; i++) {
-                giveFreeSlot(root);
-                if (!mod.canApply(tool, tool)) {
-                    break;
-                }
-                mod.apply(tool);
-                NBTTagCompound mt = TinkerUtil.getModifierTag(root, mod.getIdentifier());
-                if (!mt.isEmpty() && ModifierNBT.readTag(mt).level >= 1) {
-                    break;
-                }
-            }
-            ToolBuilder.rebuildTool(root, (TinkersItem) tool.getItem());
-        } catch (Throwable t) {
-            ChaosShard.LOG.warn("Всплеск Хаоса: модификатор {} не встал: {}", mod.getIdentifier(), t.toString());
-            restore(tool, baseBackup, enchBackup, mod.getIdentifier());
-            return null;
-        }
-        NBTTagCompound surge = new NBTTagCompound();
-        surge.setString("id", mod.getIdentifier());
-        surge.setLong("until", world.getTotalWorldTime() + durationTicks);
-        surge.setTag("base", baseBackup);
-        surge.setTag("ench", enchBackup);
-        root.setTag(TAG, surge);
-        return mod;
+        lastReport = "ни один модификатор не встал: кандидатов " + pool.size() + ", попыток " + tried
+                + (lastError.isEmpty() ? "" : ", последняя ошибка: " + lastError);
+        ChaosShard.LOG.info("Всплеск Хаоса: {}", lastReport);
+        return null;
     }
 
     /** Вызывается каждый тик из свойства: снять модификатор, когда время вышло. */

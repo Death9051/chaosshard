@@ -108,6 +108,15 @@ public class CommandChaosShard extends CommandBase {
                 }
                 break;
             }
+            case "surge": {
+                // /oh surge — Всплеск Хаоса на инструмент в руке прямо сейчас (снять: ещё раз)
+                EntityPlayerMP player = getCommandSenderAsPlayer(sender);
+                if (!net.minecraftforge.fml.common.Loader.isModLoaded("tconstruct")) {
+                    throw new CommandException("Tinkers' Construct не установлен");
+                }
+                ru.death.chaosshard.compat.tinkers.SurgeCommand.run(player, sender);
+                break;
+            }
             case "shrine": {
                 // /oh shrine [list|place] — святыни Ордена
                 String sub = args.length >= 2 ? args[1] : "list";
@@ -344,7 +353,7 @@ public class CommandChaosShard extends CommandBase {
     @Override
     public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos targetPos) {
         if (args.length == 1) {
-            return getListOfStringsMatchingLastWord(args, "nit", "tp", "sky", "grimoire", "debug", "breach", "heart", "quests", "selftest", "anchor", "shrine");
+            return getListOfStringsMatchingLastWord(args, "nit", "tp", "sky", "grimoire", "debug", "breach", "heart", "quests", "selftest", "anchor", "shrine", "surge");
         }
         if (args.length == 2 && "nit".equals(args[0])) {
             return getListOfStringsMatchingLastWord(args, "get", "set", "add", "resync");
