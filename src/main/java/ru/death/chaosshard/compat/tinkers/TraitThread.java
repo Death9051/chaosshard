@@ -18,7 +18,7 @@ import slimeknights.tconstruct.library.modifiers.ModifierTrait;
  * «Нить Хаоса» — свойство хаосита и Искажённого металла, а также модификатор (кладётся хаоситом).
  * Сила растёт с уровнем Нити владельца и работает для любого инструмента:
  * урон, скорость добычи, шанс не потратить прочность.
- * Раз в минуту, пока инструмент в руке, — «Всплеск Хаоса»: случайный подходящий модификатор Tinkers' на 30 секунд.
+ * Раз в минуту, пока инструмент в руке, — «Всплеск Хаоса»: случайный подходящий модификатор Tinkers', меняется каждые 10 минут.
  */
 public class TraitThread extends ModifierTrait {
 
@@ -53,8 +53,9 @@ public class TraitThread extends ModifierTrait {
         return newDamage;
     }
 
-    /** Длительность всплеска, тики. */
-    private static final int SURGE_TICKS = 20 * 30;
+    /** Длительность всплеска, тики: 10 минут. По окончании сразу приходит следующий. */
+    public static final int SURGE_TICKS = 20 * 60 * 10;
+    private static final String TAG_RETRY = "chaosshard_surge_retry";
 
     @Override
     public void onUpdate(ItemStack tool, World world, Entity entity, int itemSlot, boolean isSelected) {
@@ -63,20 +64,23 @@ public class TraitThread extends ModifierTrait {
         }
         EntityPlayer player = (EntityPlayer) entity;
         // Срок вышел — снять временный модификатор (даже если инструмент не в руке)
-        if (ChaosSurge.tick(tool, world)) {
-            TextComponentTranslation msg = new TextComponentTranslation("chaosshard.surge.end");
-            msg.getStyle().setColor(TextFormatting.DARK_PURPLE);
-            player.sendStatusMessage(msg, true);
+        boolean ended = ChaosSurge.tick(tool, world);
+        if (!isSelected || ChaosSurge.active(tool)) {
             return;
         }
-        if (!isSelected || (world.getTotalWorldTime() + entity.getEntityId()) % 1200 != 0) {
+        // Если подходящих модификаторов не нашлось — не перебирать каждый тик, ждать минуту
+        if (tool.hasTagCompound() && world.getTotalWorldTime() < tool.getTagCompound().getLong(TAG_RETRY)) {
             return;
         }
         slimeknights.tconstruct.library.modifiers.IModifier mod = ChaosSurge.start(tool, world, SURGE_TICKS);
         if (mod == null) {
+            if (tool.hasTagCompound()) {
+                tool.getTagCompound().setLong(TAG_RETRY, world.getTotalWorldTime() + 1200);
+            }
             return;
         }
-        TextComponentTranslation msg = new TextComponentTranslation("chaosshard.surge", ChaosSurge.name(mod), SURGE_TICKS / 20);
+        TextComponentTranslation msg = new TextComponentTranslation(ended ? "chaosshard.surge.next" : "chaosshard.surge",
+                ChaosSurge.name(mod), SURGE_TICKS / 1200);
         msg.getStyle().setColor(TextFormatting.LIGHT_PURPLE);
         player.sendStatusMessage(msg, true);
         world.playSound(null, player.posX, player.posY, player.posZ, net.minecraft.init.SoundEvents.BLOCK_ENCHANTMENT_TABLE_USE,

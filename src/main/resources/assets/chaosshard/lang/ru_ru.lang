@@ -117,7 +117,7 @@ chaosshard.config.breach=Прорыв
 # Tinkers
 material.chaosshard_chaos.name=Хаосит
 modifier.chaosshard_thread.name=Нить Хаоса
-modifier.chaosshard_thread.desc=§oНить тянется сквозь рукоять.§r\nЗа каждый уровень Нити: +0,5 урона, +8% скорости добычи, 5% шанс не потратить прочность.\nРаз в минуту в руке — «Всплеск Хаоса»: случайный подходящий модификатор Tinkers' на 30 секунд (слот не тратится).\nМодификатор: 64 хаосита или 4 Эссенции Хаоса.
+modifier.chaosshard_thread.desc=§oНить тянется сквозь рукоять.§r\nЗа каждый уровень Нити: +0,5 урона, +8% скорости добычи, 5% шанс не потратить прочность.\nПока инструмент в руке — «Всплеск Хаоса»: случайный подходящий модификатор Tinkers', сменяется каждые 10 минут (слот не тратится).\nМодификатор: 64 хаосита или 4 Эссенции Хаоса.
 chaosshard.config.compat=Связки с модами
 
 # Сердце Острова
@@ -207,7 +207,7 @@ tile.chaosshard.seed_island.name=[Тест] Малый остров
 tile.chaosshard.seed_island.desc=Парящий диск: Сердце со Жнецом и Алтарь Прорыва.
 
 tile.chaosshard.veil_vein.name=Жила Завесы
-chaosshard.surge=Всплеск Хаоса: %s на %s с
+chaosshard.surge=Всплеск Хаоса: %s на %s мин
 
 # Акт 3: святыни, деревни, Гаррот
 tile.chaosshard.shrine_stone.name=Святой камень
@@ -243,3 +243,4 @@ chaosshard.garrot.retreat.1=Это была разведка. Только ра�
 chaosshard.garrot.retreat.2=Хм. Капитан был молод. И, кажется, не очень умён. Пришлю другого.
 chaosshard.garrot.retreat.3=…Ладно. Признаю: ты досадная помеха. Мы ещё встретимся — лично. И тогда посмотрим, кто чей.
 chaosshard.surge.end=Всплеск Хаоса угас.
+chaosshard.surge.next=Всплеск Хаоса сменился: %s на %s мин

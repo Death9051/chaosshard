@@ -46,4 +46,26 @@ public class BlockBreachAltar extends ModBlocks.SimpleBlock {
         BreachRitual.start(mp, pos);
         return true;
     }
+
+    @Override
+    public boolean isOpaqueCube(net.minecraft.block.state.IBlockState state) {
+        return false;
+    }
+
+    @Override
+    public boolean isFullCube(net.minecraft.block.state.IBlockState state) {
+        return false;
+    }
+
+    @Override
+    public net.minecraft.util.BlockRenderLayer getRenderLayer() {
+        return net.minecraft.util.BlockRenderLayer.CUTOUT;
+    }
+
+    @Override
+    public net.minecraft.block.state.BlockFaceShape getBlockFaceShape(net.minecraft.world.IBlockAccess world,
+            net.minecraft.block.state.IBlockState state, net.minecraft.util.math.BlockPos pos, net.minecraft.util.EnumFacing face) {
+        return face == net.minecraft.util.EnumFacing.DOWN ? net.minecraft.block.state.BlockFaceShape.SOLID
+                : net.minecraft.block.state.BlockFaceShape.UNDEFINED;
+    }
 }

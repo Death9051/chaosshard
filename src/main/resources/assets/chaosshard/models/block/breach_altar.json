@@ -1,8 +1,483 @@
 {
- "parent": "block/cube_bottom_top",
+ "parent": "block/block",
+ "ambientocclusion": false,
  "textures": {
+  "particle": "chaosshard:blocks/breach_altar_side",
+  "base": "chaosshard:blocks/altar_base_side",
+  "stone": "chaosshard:blocks/chaos_stone",
+  "band": "chaosshard:blocks/altar_band",
+  "pillar": "chaosshard:blocks/altar_pillar",
   "top": "chaosshard:blocks/breach_altar_top",
-  "bottom": "chaosshard:blocks/chaos_stone",
-  "side": "chaosshard:blocks/breach_altar_side"
- }
+  "crystal": "chaosshard:blocks/altar_crystal"
+ },
+ "elements": [
+  {
+   "from": [
+    0,
+    0,
+    0
+   ],
+   "to": [
+    16,
+    3,
+    16
+   ],
+   "faces": {
+    "north": {
+     "texture": "#base"
+    },
+    "south": {
+     "texture": "#base"
+    },
+    "east": {
+     "texture": "#base"
+    },
+    "west": {
+     "texture": "#base"
+    },
+    "up": {
+     "texture": "#stone"
+    },
+    "down": {
+     "texture": "#stone"
+    }
+   },
+   "name": "base"
+  },
+  {
+   "from": [
+    2,
+    3,
+    2
+   ],
+   "to": [
+    14,
+    5,
+    14
+   ],
+   "faces": {
+    "north": {
+     "texture": "#band"
+    },
+    "south": {
+     "texture": "#band"
+    },
+    "east": {
+     "texture": "#band"
+    },
+    "west": {
+     "texture": "#band"
+    },
+    "up": {
+     "texture": "#stone"
+    },
+    "down": {
+     "texture": "#band"
+    }
+   },
+   "name": "tier"
+  },
+  {
+   "from": [
+    5,
+    5,
+    5
+   ],
+   "to": [
+    11,
+    11,
+    11
+   ],
+   "faces": {
+    "north": {
+     "texture": "#pillar"
+    },
+    "south": {
+     "texture": "#pillar"
+    },
+    "east": {
+     "texture": "#pillar"
+    },
+    "west": {
+     "texture": "#pillar"
+    },
+    "up": {
+     "texture": "#stone"
+    },
+    "down": {
+     "texture": "#pillar"
+    }
+   },
+   "name": "pillar"
+  },
+  {
+   "from": [
+    2,
+    11,
+    2
+   ],
+   "to": [
+    14,
+    13,
+    14
+   ],
+   "faces": {
+    "north": {
+     "texture": "#band"
+    },
+    "south": {
+     "texture": "#band"
+    },
+    "east": {
+     "texture": "#band"
+    },
+    "west": {
+     "texture": "#band"
+    },
+    "up": {
+     "texture": "#top"
+    },
+    "down": {
+     "texture": "#stone"
+    }
+   },
+   "name": "table"
+  },
+  {
+   "from": [
+    0.5,
+    3,
+    0.5
+   ],
+   "to": [
+    2.5,
+    9,
+    2.5
+   ],
+   "faces": {
+    "north": {
+     "texture": "#crystal"
+    },
+    "south": {
+     "texture": "#crystal"
+    },
+    "east": {
+     "texture": "#crystal"
+    },
+    "west": {
+     "texture": "#crystal"
+    },
+    "up": {
+     "texture": "#crystal"
+    },
+    "down": {
+     "texture": "#crystal"
+    }
+   },
+   "rotation": {
+    "origin": [
+     1.5,
+     3,
+     1.5
+    ],
+    "axis": "y",
+    "angle": 45
+   },
+   "name": "crystal"
+  },
+  {
+   "from": [
+    13.5,
+    3,
+    0.5
+   ],
+   "to": [
+    15.5,
+    9,
+    2.5
+   ],
+   "faces": {
+    "north": {
+     "texture": "#crystal"
+    },
+    "south": {
+     "texture": "#crystal"
+    },
+    "east": {
+     "texture": "#crystal"
+    },
+    "west": {
+     "texture": "#crystal"
+    },
+    "up": {
+     "texture": "#crystal"
+    },
+    "down": {
+     "texture": "#crystal"
+    }
+   },
+   "rotation": {
+    "origin": [
+     14.5,
+     3,
+     1.5
+    ],
+    "axis": "y",
+    "angle": 45
+   },
+   "name": "crystal"
+  },
+  {
+   "from": [
+    0.5,
+    3,
+    13.5
+   ],
+   "to": [
+    2.5,
+    9,
+    15.5
+   ],
+   "faces": {
+    "north": {
+     "texture": "#crystal"
+    },
+    "south": {
+     "texture": "#crystal"
+    },
+    "east": {
+     "texture": "#crystal"
+    },
+    "west": {
+     "texture": "#crystal"
+    },
+    "up": {
+     "texture": "#crystal"
+    },
+    "down": {
+     "texture": "#crystal"
+    }
+   },
+   "rotation": {
+    "origin": [
+     1.5,
+     3,
+     14.5
+    ],
+    "axis": "y",
+    "angle": 45
+   },
+   "name": "crystal"
+  },
+  {
+   "from": [
+    13.5,
+    3,
+    13.5
+   ],
+   "to": [
+    15.5,
+    9,
+    15.5
+   ],
+   "faces": {
+    "north": {
+     "texture": "#crystal"
+    },
+    "south": {
+     "texture": "#crystal"
+    },
+    "east": {
+     "texture": "#crystal"
+    },
+    "west": {
+     "texture": "#crystal"
+    },
+    "up": {
+     "texture": "#crystal"
+    },
+    "down": {
+     "texture": "#crystal"
+    }
+   },
+   "rotation": {
+    "origin": [
+     14.5,
+     3,
+     14.5
+    ],
+    "axis": "y",
+    "angle": 45
+   },
+   "name": "crystal"
+  },
+  {
+   "from": [
+    2,
+    13,
+    2
+   ],
+   "to": [
+    4,
+    15,
+    4
+   ],
+   "faces": {
+    "north": {
+     "texture": "#crystal"
+    },
+    "south": {
+     "texture": "#crystal"
+    },
+    "east": {
+     "texture": "#crystal"
+    },
+    "west": {
+     "texture": "#crystal"
+    },
+    "up": {
+     "texture": "#crystal"
+    },
+    "down": {
+     "texture": "#crystal"
+    }
+   },
+   "rotation": {
+    "origin": [
+     3,
+     13,
+     3
+    ],
+    "axis": "y",
+    "angle": 45
+   },
+   "name": "spike"
+  },
+  {
+   "from": [
+    12,
+    13,
+    2
+   ],
+   "to": [
+    14,
+    15,
+    4
+   ],
+   "faces": {
+    "north": {
+     "texture": "#crystal"
+    },
+    "south": {
+     "texture": "#crystal"
+    },
+    "east": {
+     "texture": "#crystal"
+    },
+    "west": {
+     "texture": "#crystal"
+    },
+    "up": {
+     "texture": "#crystal"
+    },
+    "down": {
+     "texture": "#crystal"
+    }
+   },
+   "rotation": {
+    "origin": [
+     13,
+     13,
+     3
+    ],
+    "axis": "y",
+    "angle": 45
+   },
+   "name": "spike"
+  },
+  {
+   "from": [
+    2,
+    13,
+    12
+   ],
+   "to": [
+    4,
+    15,
+    14
+   ],
+   "faces": {
+    "north": {
+     "texture": "#crystal"
+    },
+    "south": {
+     "texture": "#crystal"
+    },
+    "east": {
+     "texture": "#crystal"
+    },
+    "west": {
+     "texture": "#crystal"
+    },
+    "up": {
+     "texture": "#crystal"
+    },
+    "down": {
+     "texture": "#crystal"
+    }
+   },
+   "rotation": {
+    "origin": [
+     3,
+     13,
+     13
+    ],
+    "axis": "y",
+    "angle": 45
+   },
+   "name": "spike"
+  },
+  {
+   "from": [
+    12,
+    13,
+    12
+   ],
+   "to": [
+    14,
+    15,
+    14
+   ],
+   "faces": {
+    "north": {
+     "texture": "#crystal"
+    },
+    "south": {
+     "texture": "#crystal"
+    },
+    "east": {
+     "texture": "#crystal"
+    },
+    "west": {
+     "texture": "#crystal"
+    },
+    "up": {
+     "texture": "#crystal"
+    },
+    "down": {
+     "texture": "#crystal"
+    }
+   },
+   "rotation": {
+    "origin": [
+     13,
+     13,
+     13
+    ],
+    "axis": "y",
+    "angle": 45
+   },
+   "name": "spike"
+  }
+ ]
 }

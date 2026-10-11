@@ -317,7 +317,13 @@ public class CommandChaosShard extends CommandBase {
                         "chaosshard:breach_altar", "chaosshard:breach_book", "chaosshard:memory_fragment 8", "chaosshard:veil_shard 8",
                         "astralsorcery:itemjournal", "astralsorcery:itemwand", "astralsorcery:itemhandtelescope",
                         "astralsorcery:blockaltar 1 0", "astralsorcery:blockwell", "astralsorcery:itemrockcrystalsimple 4",
-                        "astralsorcery:itemcraftingcomponent 32 0", "astralsorcery:blockmarble 64 0"
+                        "astralsorcery:itemcraftingcomponent 32 0", "astralsorcery:blockmarble 64 0",
+                        // тестовые блоки-структуры
+                        "chaosshard:seed_breach", "chaosshard:seed_heart", "chaosshard:seed_heart_auto",
+                        "chaosshard:seed_anchor 2", "chaosshard:seed_island", "chaosshard:seed_shrine 2",
+                        // Акт 3 и прочее для проверок
+                        "chaosshard:chaos_essence 16", "chaosshard:patron_sigil 2", "chaosshard:heart_module_rich 4",
+                        "chaosshard:heart_module_pulse 4", "chaosshard:chaos_anchor"
                 };
                 for (String item : kit) {
                     server.getCommandManager().executeCommand(server, "give " + player.getName() + " " + item);

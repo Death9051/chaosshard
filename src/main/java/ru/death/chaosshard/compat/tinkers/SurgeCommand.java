@@ -16,7 +16,7 @@ public final class SurgeCommand {
             sender.sendMessage(new TextComponentString("Всплеск снят."));
             return;
         }
-        ChaosSurge.start(tool, player.world, 20 * 30);
+        ChaosSurge.start(tool, player.world, TraitThread.SURGE_TICKS);
         sender.sendMessage(new TextComponentString("Всплеск Хаоса: " + ChaosSurge.lastReport));
     }
 
