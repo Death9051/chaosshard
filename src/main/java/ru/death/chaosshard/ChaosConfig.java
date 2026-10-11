@@ -171,7 +171,7 @@ public final class ChaosConfig {
         @Config.RangeDouble(min = 0, max = 0.25)
         public float veinChancePerModule = 0.10F;
 
-        @Config.Comment("Редкие наросты (и Жила Завесы) появляются с ударом молнии — только вспышка, без огня")
+        @Config.Comment("Редкие наросты (и Жила Завесы) появляются с тонкой дугой из Сердца")
         public boolean lightning = true;
 
         @Config.Comment("Руда считается редкой, если её вес в пуле не больше этого числа")

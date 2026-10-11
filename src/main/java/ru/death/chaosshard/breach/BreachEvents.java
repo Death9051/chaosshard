@@ -17,14 +17,15 @@ import ru.death.chaosshard.stars.SkyRules;
 
 /**
  * Откуда берутся материалы Прорыва:
- *  - Осколки Завесы — из корки Преддверия;
+ *  - Осколки Завесы — из природной корки (она сама нарастает на хаосит под открытым небом);
  *  - Обрывки памяти — из тварей в чужих мирах (Кладовки, Трещины, обломки), но не в Лучезарии и не в Преддверии.
  */
 public class BreachEvents {
 
     @SubscribeEvent
     public void onHarvest(BlockEvent.HarvestDropsEvent event) {
-        if (event.getState().getBlock() != ModBlocks.CHAOS_CRUST || event.isSilkTouching() || event.getWorld().isRemote) {
+        // Осколки — только из природной корки: поставленная игроком «свежая» корка их не хранит
+        if (!BlockCrust.isNatural(event.getState()) || event.isSilkTouching() || event.getWorld().isRemote) {
             return;
         }
         double chance = ChaosConfig.breach.veilShardChance * (1 + event.getFortuneLevel() * 0.5);

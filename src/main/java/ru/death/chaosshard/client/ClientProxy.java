@@ -17,6 +17,7 @@ public class ClientProxy extends CommonProxy {
         MinecraftForge.EVENT_BUS.register(new ThreadHud());
         net.minecraftforge.fml.client.registry.ClientRegistry.bindTileEntitySpecialRenderer(
                 ru.death.chaosshard.heart.TileHeart.class, new ru.death.chaosshard.heart.client.HeartRenderer());
+        MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.heart.client.HeartBolts());
         if (ChaosShard.astralLoaded && ChaosConfig.stars.enabled) {
             MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.stars.client.AstralSkyClient());
         }
@@ -53,5 +54,10 @@ public class ClientProxy extends CommonProxy {
     @Override
     public void handleThreadSync(int points) {
         Minecraft.getMinecraft().addScheduledTask(() -> ClientThreadCache.update(points));
+    }
+
+    @Override
+    public void handleHeartBolt(ru.death.chaosshard.network.PacketHeartBolt bolt) {
+        Minecraft.getMinecraft().addScheduledTask(() -> ru.death.chaosshard.heart.client.HeartBolts.add(bolt));
     }
 }

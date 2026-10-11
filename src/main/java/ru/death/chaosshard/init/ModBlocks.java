@@ -44,7 +44,7 @@ public final class ModBlocks {
     @SubscribeEvent
     public static void registerBlocks(RegistryEvent.Register<Block> event) {
         CHAOS_STONE = add(new SimpleBlock(Material.GROUND, SoundType.STONE, 1.2F, 12.0F, 0.0F), "chaos_stone");
-        CHAOS_CRUST = add(new SimpleBlock(Material.GROUND, SoundType.STONE, 0.8F, 8.0F, 0.2F), "chaos_crust");
+        CHAOS_CRUST = add(new ru.death.chaosshard.breach.BlockCrust(), "chaos_crust");
         ISLAND_HEART = add(new ru.death.chaosshard.heart.BlockHeart(), "island_heart");
         net.minecraftforge.fml.common.registry.GameRegistry.registerTileEntity(ru.death.chaosshard.heart.TileHeart.class,
                 new net.minecraft.util.ResourceLocation(Tags.MOD_ID, "island_heart"));

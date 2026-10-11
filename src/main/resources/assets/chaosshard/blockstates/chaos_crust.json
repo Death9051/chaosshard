@@ -1,7 +1,6 @@
 {
   "variants": {
-    "normal": {
-      "model": "chaosshard:chaos_crust"
-    }
+    "fresh=false": { "model": "chaosshard:chaos_crust" },
+    "fresh=true": { "model": "chaosshard:chaos_crust_fresh" }
   }
 }

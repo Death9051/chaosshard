@@ -31,4 +31,8 @@ public class CommonProxy {
     /** Открыть книгу квестов (только клиент). */
     public void openGrimoire() {
     }
+
+    /** Дуга от Сердца (только клиент). */
+    public void handleHeartBolt(ru.death.chaosshard.network.PacketHeartBolt bolt) {
+    }
 }

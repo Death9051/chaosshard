@@ -144,8 +144,8 @@ public class TileHeart extends TileEntity implements ITickable {
             world.setBlockState(p.at, p.state, 3);
             boolean rare = p.state.getBlock() == ModBlocks.VEIL_VEIN || HeartTiers.weightOf(p.state) <= ChaosConfig.heart.lightningMaxWeight;
             if (rare && ChaosConfig.heart.lightning) {
-                // Редкий нарост — удар молнии (только вспышка, без огня и урона)
-                ws.addWeatherEffect(new net.minecraft.entity.effect.EntityLightningBolt(world, x, p.at.getY(), z, true));
+                // Редкий нарост — тонкая дуга из самого Сердца (как у виспов), без грома
+                boltTo(p.at, p.state.getBlock() == ModBlocks.VEIL_VEIN ? 0xC070FF : 0x9A60FF);
             }
             world.playSound(null, p.at, SoundEvents.ENTITY_ENDERMEN_TELEPORT, SoundCategory.BLOCKS, 0.5F, 0.6F);
             ws.spawnParticle(EnumParticleTypes.SPELL_WITCH, x, y, z, 20, 0.4, 0.4, 0.4, 0.05);
@@ -154,6 +154,15 @@ public class TileHeart extends TileEntity implements ITickable {
     }
 
     private static final int RIFT_TICKS = 40;
+
+    private void boltTo(BlockPos target, int color) {
+        double sx = pos.getX() + 0.5, sy = pos.getY() + 0.55, sz = pos.getZ() + 0.5;
+        ru.death.chaosshard.network.ChaosNetwork.CHANNEL.sendToAllAround(
+                new ru.death.chaosshard.network.PacketHeartBolt(sx, sy, sz,
+                        target.getX() + 0.5, target.getY() + 0.5, target.getZ() + 0.5, color),
+                new net.minecraftforge.fml.common.network.NetworkRegistry.TargetPoint(world.provider.getDimension(), sx, sy, sz, 64));
+        world.playSound(null, target, SoundEvents.ENTITY_LIGHTNING_IMPACT, SoundCategory.BLOCKS, 0.15F, 1.9F);
+    }
 
     public int count(ItemHeartModule.Type type) {
         if (world != null && world.isRemote) {
