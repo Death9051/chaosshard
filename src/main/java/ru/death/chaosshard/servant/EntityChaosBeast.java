@@ -228,7 +228,7 @@ public abstract class EntityChaosBeast extends EntityCreature {
 
         private void collect(EntityPlayer o, Entry e, double r) {
             List<EntityItem> items = world.getEntitiesWithinAABB(EntityItem.class, getEntityBoundingBox().grow(r),
-                    it -> it.isEntityAlive() && !it.cannotPickup());
+                    it -> it.isEntityAlive() && !it.cannotPickup() && it.getThrower() == null);
             boolean picky = e.has(Beasts.HARE_PICKY);
             boolean bag = e.has(Beasts.HARE_BAG) && !Beasts.bagOpen(o.getUniqueID());
             int got = 0;

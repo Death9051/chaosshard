@@ -301,7 +301,7 @@ public class WorkLumberjack extends EntityAIBase {
     /** Подобрать саженцы, яблоки, палки и брёвна вокруг — в сундук. */
     private void gather(BlockPos c, int r) {
         for (EntityItem it : m.world.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(c).grow(r, 8, r),
-                x -> x.isEntityAlive() && !x.cannotPickup() && woodish(x.getItem()))) {
+                x -> x.isEntityAlive() && !x.cannotPickup() && x.getThrower() == null && woodish(x.getItem()))) {
             Work.deposit(m, it.getItem().copy());
             it.setDead();
         }

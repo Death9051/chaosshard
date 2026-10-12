@@ -727,3 +727,4 @@ chaosshard.garrison.not_yours=Это не мой Якорь.
 chaosshard.garrison.full=Гарнизон сети полон: %s из %s (сумма уровней Якорей сети).
 chaosshard.garrison.bound=%s теперь в гарнизоне: %s из %s. Сеть: Якорей %s. Гарнизон не занимает места в свите.
 chaosshard.garrison.leave_first=Слуга в гарнизоне. Сначала Shift+ПКМ Гримуаром — вернуть ко мне.
+chaosshard.beast.gui.rotate=Зажми кнопку мыши и веди — повернуть.

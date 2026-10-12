@@ -120,8 +120,9 @@ class BeastPage {
         gui.text(ls, x + w - gui.font().getStringWidth(ls), y, lvl >= 5 ? GOLD : ACCENT);
         y += 13;
 
-        // модель: смотрит за курсором
+        // модель: крутится сама, зажатой кнопкой мыши — вручную
         int bx = x, by = y, bw = 64, bh = 70;
+        modelBox[0] = bx; modelBox[1] = by; modelBox[2] = bw; modelBox[3] = bh;
         Gui.drawRect(bx, by, bx + bw, by + bh, 0x60180C28);
         Gui.drawRect(bx, by + bh - 1, bx + bw, by + bh, 0xFF4A3A60);
         EntityChaosBeast m = model(b, lvl);
@@ -129,10 +130,13 @@ class BeastPage {
             int scale = b == Beast.TIGER ? 17 : b == Beast.CAT ? 30 : 32;
             int fx = bx + bw / 2, fy = by + bh - 8;
             GlStateManager.color(1, 1, 1, 1);
-            GuiInventory.drawEntityOnScreen(fx, fy, scale, fx - mx, fy - 30 - my, m);
+            if (!dragging) {
+                yaw += 0.6F;
+            }
+            drawModel(fx, fy, scale, yaw, m);
         }
-        if (mx >= bx && mx < bx + bw && my >= by && my < by + bh) {
-            hoverLines = split(tr("chaosshard.beast." + b.key() + ".lore"));
+        if (!dragging && mx >= bx && mx < bx + bw && my >= by && my < by + bh) {
+            hoverLines = split(tr("chaosshard.beast." + b.key() + ".lore") + "\n§8" + tr("chaosshard.beast.gui.rotate"));
         }
 
         // опыт, состояние, очки
@@ -219,6 +223,68 @@ class BeastPage {
                 hoverLines = split((owned ? "§6" : "§d") + tr(pk) + "\n§7" + tr(pk + ".desc") + "\n" + foot);
             }
         }
+    }
+
+    // ------------------------------------------------------------------ вращение модели
+
+    private final int[] modelBox = new int[4];
+    private static float yaw = 30F;
+    private boolean dragging;
+    private int dragX;
+
+    /** Нажата кнопка мыши: начать вращение, если курсор на модели. true — нажатие забрано. */
+    boolean press(int mx, int my) {
+        if (mx >= modelBox[0] && mx < modelBox[0] + modelBox[2] && my >= modelBox[1] && my < modelBox[1] + modelBox[3]) {
+            dragging = true;
+            dragX = mx;
+            return true;
+        }
+        return false;
+    }
+
+    void drag(int mx) {
+        if (dragging) {
+            yaw += (mx - dragX) * 2.5F;
+            dragX = mx;
+        }
+    }
+
+    void release() {
+        dragging = false;
+    }
+
+    /** Как GuiInventory.drawEntityOnScreen, но с полным поворотом вокруг оси. */
+    private static void drawModel(int x, int y, int scale, float yawDeg, net.minecraft.entity.EntityLivingBase e) {
+        GlStateManager.enableColorMaterial();
+        GlStateManager.pushMatrix();
+        GlStateManager.translate((float) x, (float) y, 50.0F);
+        GlStateManager.scale((float) -scale, (float) scale, (float) scale);
+        GlStateManager.rotate(180.0F, 0.0F, 0.0F, 1.0F);
+        GlStateManager.rotate(-12.0F, 1.0F, 0.0F, 0.0F);
+        GlStateManager.rotate(yawDeg, 0.0F, 1.0F, 0.0F);
+        RenderHelper.enableStandardItemLighting();
+        float by = e.renderYawOffset, ry = e.rotationYaw, rp = e.rotationPitch, ph = e.prevRotationYawHead, hy = e.rotationYawHead;
+        e.renderYawOffset = 0;
+        e.rotationYaw = 0;
+        e.rotationPitch = 0;
+        e.rotationYawHead = 0;
+        e.prevRotationYawHead = 0;
+        net.minecraft.client.renderer.entity.RenderManager rm = Minecraft.getMinecraft().getRenderManager();
+        rm.setPlayerViewY(180.0F);
+        rm.setRenderShadow(false);
+        rm.renderEntity(e, 0.0D, 0.0D, 0.0D, 0.0F, 1.0F, false);
+        rm.setRenderShadow(true);
+        e.renderYawOffset = by;
+        e.rotationYaw = ry;
+        e.rotationPitch = rp;
+        e.prevRotationYawHead = ph;
+        e.rotationYawHead = hy;
+        GlStateManager.popMatrix();
+        RenderHelper.disableStandardItemLighting();
+        GlStateManager.disableRescaleNormal();
+        GlStateManager.setActiveTexture(net.minecraft.client.renderer.OpenGlHelper.lightmapTexUnit);
+        GlStateManager.disableTexture2D();
+        GlStateManager.setActiveTexture(net.minecraft.client.renderer.OpenGlHelper.defaultTexUnit);
     }
 
     private int row() {

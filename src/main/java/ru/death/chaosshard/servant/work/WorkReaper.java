@@ -66,7 +66,7 @@ public class WorkReaper extends EntityAIBase {
         }
         if (ServantUpgrade.has(m, ServantUpgrade.REAPER_PICKUP) && t % 40 == 0) {
             for (EntityItem it : w.getEntitiesWithinAABB(EntityItem.class, new net.minecraft.util.math.AxisAlignedBB(c).grow(r, 4, r),
-                    x -> x.isEntityAlive() && !x.cannotPickup())) {
+                    x -> x.isEntityAlive() && !x.cannotPickup() && x.getThrower() == null)) {
                 Work.deposit(m, it.getItem().copy());
                 it.setDead();
             }

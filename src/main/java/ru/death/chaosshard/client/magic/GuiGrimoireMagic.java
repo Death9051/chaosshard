@@ -90,6 +90,18 @@ public class GuiGrimoireMagic extends GuiScreen {
     }
 
     @Override
+    protected void mouseClickMove(int mx, int my, int button, long time) {
+        super.mouseClickMove(mx, my, button, time);
+        beasts.drag(mx);
+    }
+
+    @Override
+    protected void mouseReleased(int mx, int my, int state) {
+        super.mouseReleased(mx, my, state);
+        beasts.release();
+    }
+
+    @Override
     protected void keyTyped(char c, int key) throws java.io.IOException {
         if (key == ru.death.chaosshard.client.MagicKeys.BOOK.getKeyCode()) {
             mc.displayGuiScreen(null);
@@ -100,6 +112,9 @@ public class GuiGrimoireMagic extends GuiScreen {
 
     @Override
     protected void mouseClicked(int mx, int my, int button) throws java.io.IOException {
+        if (tab == 2 && selBeast >= 0 && selBeast < 3 && beasts.press(mx, my)) {
+            return;
+        }
         super.mouseClicked(mx, my, button);
         // вкладки
         for (int i = 0; i < 3; i++) {
