@@ -73,8 +73,9 @@ public final class StructureBuilder {
     private static void breach(World world, BlockPos altar) {
         world.setBlockState(altar, ModBlocks.BREACH_ALTAR.getDefaultState());
         for (BlockPos p : BreachRitual.pillars(altar)) {
-            world.setBlockState(p, ModBlocks.CHAOS_STONE.getDefaultState());
-            world.setBlockState(p.up(), ModBlocks.CHAOS_CRUST.getDefaultState());
+            world.setBlockState(p, ModBlocks.RITUAL_SPIRE.getDefaultState(), 2);
+            world.setBlockState(p.up(), ModBlocks.RITUAL_SPIRE.getDefaultState()
+                    .withProperty(ru.death.chaosshard.breach.BlockRitualSpire.HALF, ru.death.chaosshard.breach.BlockRitualSpire.Half.UPPER), 2);
         }
         // Над алтарём должно быть небо
         for (int y = altar.getY() + 1; y < world.getHeight(); y++) {

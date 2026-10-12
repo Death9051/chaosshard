@@ -272,7 +272,7 @@ public final class ChaosConfig {
 
         @Config.Comment("Шанс Осколка Завесы из корки Преддверия")
         @Config.RangeDouble(min = 0, max = 1)
-        public double veilShardChance = 0.08;
+        public double veilShardChance = 0.14;
 
         @Config.Comment("Шанс Обрывка памяти с монстра в чужих мирах (Кладовки и пр.)")
         @Config.RangeDouble(min = 0, max = 1)

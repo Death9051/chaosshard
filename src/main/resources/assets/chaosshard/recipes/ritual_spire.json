@@ -1,0 +1,23 @@
+{
+ "type": "minecraft:crafting_shaped",
+ "pattern": [
+  " V ",
+  "CSC",
+  "SSS"
+ ],
+ "key": {
+  "V": {
+   "item": "chaosshard:veil_shard"
+  },
+  "C": {
+   "item": "chaosshard:chaos_crust"
+  },
+  "S": {
+   "item": "chaosshard:chaos_stone"
+  }
+ },
+ "result": {
+  "item": "chaosshard:ritual_spire",
+  "count": 2
+ }
+}

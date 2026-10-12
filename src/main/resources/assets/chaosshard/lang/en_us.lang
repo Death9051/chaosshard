@@ -81,6 +81,7 @@ chaosshard.spell.recall=Call of the Thread
 chaosshard.spell.recall.desc=RMB — to the Antechamber and back to Luchezaria (Thread 3)
 
 # Breach
+tile.chaosshard.ritual_spire.name=Ritual Spire
 tile.chaosshard.breach_altar.name=Breach Altar
 item.chaosshard.veil_shard.name=Veil Shard
 item.chaosshard.memory_fragment.name=Memory Fragment
@@ -97,7 +98,7 @@ chaosshard.breach.need_book=The altar needs the Book of Breach in hand
 chaosshard.breach.not_here=A breach is only possible from the Antechamber. The Veil is too far from here.
 chaosshard.breach.thin=The Thread is too thin to reach. Level %s needed.
 chaosshard.breach.no_sky=The altar needs open sky. You have to see the Veil to aim at it.
-chaosshard.breach.no_pillars=Missing pillars. Diagonally from the altar, one block gap — four pillars: chaosite below, crust on top.
+chaosshard.breach.no_pillars=Missing pillars. Diagonally from the altar, one block gap — four Ritual Spires.
 chaosshard.breach.start=Starting. Stay close and hold still — break it and I start over.
 chaosshard.breach.step1=The Thread pulls taut toward the Veil. Through my hands.
 chaosshard.breach.step2=The Veil noticed. The world's Soul resists — as expected.

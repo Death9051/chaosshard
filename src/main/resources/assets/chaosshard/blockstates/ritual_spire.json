@@ -1,0 +1,10 @@
+{
+ "variants": {
+  "half=lower": {
+   "model": "chaosshard:ritual_spire_lower"
+  },
+  "half=upper": {
+   "model": "chaosshard:ritual_spire_upper"
+  }
+ }
+}

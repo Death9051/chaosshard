@@ -56,8 +56,7 @@ public class BreachHints {
     public static List<Need> needs(BlockPos altar) {
         List<Need> out = new ArrayList<>();
         for (BlockPos p : BreachRitual.pillars(altar)) {
-            out.add(new Need(p, ModBlocks.CHAOS_STONE));
-            out.add(new Need(p.up(), ModBlocks.CHAOS_CRUST));
+            out.add(new Need(p, ModBlocks.RITUAL_SPIRE));
         }
         return out;
     }
@@ -77,7 +76,7 @@ public class BreachHints {
         int ok = 0;
         List<Need> needs = needs(altar);
         for (Need n : needs) {
-            if (player.world.getBlockState(n.pos).getBlock() == n.block) {
+            if (BlockRitualSpire.isWhole(player.world, n.pos)) {
                 ok++;
             }
         }
@@ -106,12 +105,12 @@ public class BreachHints {
         }
         WorldServer world = (WorldServer) player.world;
         for (Need n : needs(h.altar)) {
-            Block here = world.getBlockState(n.pos).getBlock();
-            if (here == n.block) {
-                dust(world, player, n.pos.getX() + 0.5, n.pos.getY() + 1.05, n.pos.getZ() + 0.5, 0.3F, 1.0F, 0.3F);
-            } else if (world.isAirBlock(n.pos)) {
-                boolean stone = n.block == ModBlocks.CHAOS_STONE;
-                outline(world, player, n.pos, stone ? 0.6F : 1.0F, stone ? 0.2F : 0.5F, stone ? 1.0F : 0.9F);
+            if (BlockRitualSpire.isWhole(world, n.pos)) {
+                dust(world, player, n.pos.getX() + 0.5, n.pos.getY() + 2.05, n.pos.getZ() + 0.5, 0.3F, 1.0F, 0.3F);
+            } else if (world.isAirBlock(n.pos) && world.isAirBlock(n.pos.up())) {
+                // место под шпиль — контур в два блока
+                outline(world, player, n.pos, 0.6F, 0.2F, 1.0F);
+                outline(world, player, n.pos.up(), 0.6F, 0.2F, 1.0F);
             } else {
                 outline(world, player, n.pos, 1.0F, 0.1F, 0.1F);
                 world.spawnParticle(player, EnumParticleTypes.BARRIER, true,

@@ -72,9 +72,7 @@ public class BreachRitual {
             return "chaosshard.breach.no_sky";
         }
         for (BlockPos p : pillars(altar)) {
-            Block base = world.getBlockState(p).getBlock();
-            Block top = world.getBlockState(p.up()).getBlock();
-            if (base != ModBlocks.CHAOS_STONE || top != ModBlocks.CHAOS_CRUST) {
+            if (!BlockRitualSpire.isWhole(world, p)) {
                 return "chaosshard.breach.no_pillars";
             }
         }
@@ -148,6 +146,16 @@ public class BreachRitual {
                 double z = p.getZ() + 0.5 + (cz - p.getZ() - 0.5) * t;
                 world.spawnParticle(EnumParticleTypes.SPELL_WITCH, x, p.getY() + 2.0, z, 2, 0.05, 0.05, 0.05, 0.0);
             }
+        }
+        // Дуги с остриёв шпилей в алтарь
+        if (r.ticks % 15 == 0) {
+            for (BlockPos p : pillars(r.altar)) {
+                ru.death.chaosshard.network.ChaosNetwork.CHANNEL.sendToAllAround(
+                        new ru.death.chaosshard.network.PacketHeartBolt(p.getX() + 0.5, p.getY() + 1.95, p.getZ() + 0.5,
+                                cx, r.altar.getY() + 0.9, cz, 0xB070FF),
+                        new net.minecraftforge.fml.common.network.NetworkRegistry.TargetPoint(world.provider.getDimension(), cx, cy, cz, 64));
+            }
+            world.playSound(null, r.altar, SoundEvents.ENTITY_LIGHTNING_IMPACT, SoundCategory.BLOCKS, 0.12F, 2.0F);
         }
         // Воронка над алтарём растёт с ходом ритуала
         double angle = r.ticks * 0.35;

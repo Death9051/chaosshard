@@ -87,6 +87,7 @@ chaosshard.spell.recall=Зов Нити
 chaosshard.spell.recall.desc=ПКМ — в Преддверие и обратно в Лучезарию (Нить 3)
 
 # Прорыв
+tile.chaosshard.ritual_spire.name=Ритуальный шпиль
 tile.chaosshard.breach_altar.name=Алтарь Прорыва
 item.chaosshard.veil_shard.name=Осколок Завесы
 item.chaosshard.memory_fragment.name=Обрывок памяти
@@ -103,7 +104,7 @@ chaosshard.breach.need_book=Алтарю нужна Книга Прорыва в
 chaosshard.breach.not_here=Прорыв возможен только из Преддверия. Отсюда Завеса слишком далеко.
 chaosshard.breach.thin=Нить слишком тонкая — не дотянуться. Нужен уровень %s.
 chaosshard.breach.no_sky=Над алтарём нужно открытое небо. Завесу надо видеть, чтобы в неё целиться.
-chaosshard.breach.no_pillars=Не хватает опор. По диагоналям от алтаря, через клетку, — четыре столба: хаосит внизу, корка сверху.
+chaosshard.breach.no_pillars=Не хватает опор. По диагоналям от алтаря, через клетку, — четыре Ритуальных шпиля.
 chaosshard.breach.start=Начинаю. Стоять рядом и не дёргаться — оборву ритуал, придётся заново.
 chaosshard.breach.step1=Нить натянулась и тянется к Завесе. Моими руками.
 chaosshard.breach.step2=Завеса заметила. Душа мира сопротивляется — ожидаемо.
