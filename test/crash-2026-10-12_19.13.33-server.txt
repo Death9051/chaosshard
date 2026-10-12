@@ -1,0 +1,76 @@
+---- Minecraft Crash Report ----
+
+WARNING: coremods are present:
+  ConfigAnytimePlugin (configanytime.jar)
+  MixinBooter (mixinbooter.jar)
+Contact their authors BEFORE contacting forge
+
+// This doesn't make any sense!
+
+Time: 10/12/26 7:13 PM
+Description: Exception in server tick loop
+
+java.lang.NoSuchMethodError: net.minecraft.world.World.func_72894_k(F)V
+	at ru.death.chaosshard.antechamber.WorldProviderAntechamber.clearWeather(WorldProviderAntechamber.java:110)
+	at ru.death.chaosshard.antechamber.WorldProviderAntechamber.calculateInitialWeather(WorldProviderAntechamber.java:105)
+	at net.minecraft.world.World.func_72947_a(World.java:2551)
+	at net.minecraft.world.WorldServer.<init>(WorldServer.java:122)
+	at net.minecraft.world.WorldServerMulti.<init>(WorldServerMulti.java:18)
+	at net.minecraft.server.MinecraftServer.func_71247_a(MinecraftServer.java:302)
+	at net.minecraft.server.dedicated.DedicatedServer.func_71197_b(DedicatedServer.java:270)
+	at net.minecraft.server.MinecraftServer.run(MinecraftServer.java:486)
+	at java.lang.Thread.run(Thread.java:750)
+
+No Mixin Metadata is found in the Stacktrace.
+
+
+A detailed walkthrough of the error, its code path and all known details is as follows:
+---------------------------------------------------------------------------------------
+
+-- System Details --
+Details:
+	Minecraft Version: 1.12.2
+	Operating System: Linux (amd64) version 6.17.0-1022-azure
+	Java Version: 1.8.0_504, Temurin
+	Java VM Version: OpenJDK 64-Bit Server VM (mixed mode), Temurin
+	Memory: 1100922536 bytes (1049 MB) / 2859466752 bytes (2727 MB) up to 4772593664 bytes (4551 MB)
+	JVM Flags: 1 total; -Xmx5G
+	IntCache: cache: 17, tcache: 0, allocated: 12, tallocated: 94
+	FML: MCP 9.42 Powered by Forge 14.23.5.2860 23 mods loaded, 23 mods active
+	States: 'U' = Unloaded 'L' = Loaded 'C' = Constructed 'H' = Pre-initialized 'I' = Initialized 'J' = Post-initialized 'A' = Available 'D' = Disabled 'E' = Errored
+
+	| State  | ID                       | Version              | Source                        | Signature                                |
+	|:------ |:------------------------ |:-------------------- |:----------------------------- |:---------------------------------------- |
+	| LCHIJA | minecraft                | 1.12.2               | minecraft.jar                 | None                                     |
+	| LCHIJA | mcp                      | 9.42                 | minecraft.jar                 | None                                     |
+	| LCHIJA | FML                      | 8.0.99.99            | forge-1.12.2-14.23.5.2860.jar | e3c3d50c7c986df74c645c0ac54639741c90a557 |
+	| LCHIJA | forge                    | 14.23.5.2860         | forge-1.12.2-14.23.5.2860.jar | e3c3d50c7c986df74c645c0ac54639741c90a557 |
+	| LCHIJA | mixinbooter              | 10.7                 | minecraft.jar                 | None                                     |
+	| LCHIJA | codechickenlib           | 3.2.3.358            | codechickenlib.jar            | f1850c39b2516232a2108a7bd84d1cb5df93b261 |
+	| LCHIJA | ancientwarfare           | 1.12.2-2.7.0.1038    | ancientwarfare.jar            | None                                     |
+	| LCHIJA | ancientwarfareautomation | 1.12.2-2.7.0.1038    | ancientwarfare.jar            | None                                     |
+	| LCHIJA | ancientwarfarenpc        | 1.12.2-2.7.0.1038    | ancientwarfare.jar            | None                                     |
+	| LCHIJA | ancientwarfarestructure  | 1.12.2-2.7.0.1038    | ancientwarfare.jar            | None                                     |
+	| LCHIJA | ancientwarfarevehicle    | 1.12.2-2.7.0.1038    | ancientwarfare.jar            | None                                     |
+	| LCHIJA | baubles                  | 1.5.2                | baubles.jar                   | None                                     |
+	| LCHIJA | bookshelf                | 2.3.590              | bookshelf.jar                 | d476d1b22b218a10d845928d1665d45fce301b27 |
+	| LCHIJA | cyberware                | 0.2.11.29            | cyberware.jar                 | None                                     |
+	| LCHIJA | gamestages               | 2.0.123              | gamestages.jar                | d476d1b22b218a10d845928d1665d45fce301b27 |
+	| LCHIJA | chaosshard               | 0.21.1               | chaosshard-0.21.1.jar         | None                                     |
+	| LCHIJA | configanytime            | 3.0                  | configanytime.jar             | None                                     |
+	| LCHIJA | cyclopscore              | 1.6.7                | cyclopscore.jar               | bd0353b3e8a2810d60dd584e256e364bc3bedd44 |
+	| LCHIJA | defiledlands             | 1.4.3                | defiledlands.jar              | None                                     |
+	| LCHIJA | evilcraft                | 0.10.78              | evilcraft.jar                 | bd0353b3e8a2810d60dd584e256e364bc3bedd44 |
+	| LCHIJA | evilcraftcompat          | 1.0.0                | evilcraft.jar                 | None                                     |
+	| LCHIJA | harvestcraft             | 1.12.2zb             | harvestcraft.jar              | None                                     |
+	| LCHIJA | lycanitesmobs            | 2.0.8.10 - MC 1.12.2 | lycanitesmobs.jar             | None                                     |
+
+	Loaded coremods (and transformers): 
+ConfigAnytimePlugin (configanytime.jar)
+  
+MixinBooter (mixinbooter.jar)
+  
+	Profiler Position: N/A (disabled)
+	Player Count: 0 / 20; []
+	Is Modded: Definitely; Server brand changed to 'fml,forge'
+	Type: Dedicated Server (map_server.txt)
