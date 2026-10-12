@@ -50,6 +50,7 @@ public class HeartRenderer extends TileEntitySpecialRenderer<TileHeart> {
         GlStateManager.enableBlend();
         GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE);
         GlStateManager.depthMask(false);
+        GlStateManager.disableCull();
         OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240F, 240F);
         bindTexture(ORB);
 
@@ -74,6 +75,7 @@ public class HeartRenderer extends TileEntitySpecialRenderer<TileHeart> {
             }
         }
 
+        GlStateManager.enableCull();
         GlStateManager.depthMask(true);
         GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
         GlStateManager.disableBlend();

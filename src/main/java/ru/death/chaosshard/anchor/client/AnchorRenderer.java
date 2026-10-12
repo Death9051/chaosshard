@@ -36,6 +36,7 @@ public class AnchorRenderer extends TileEntitySpecialRenderer<TileAnchor> {
         GlStateManager.enableBlend();
         GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE);
         GlStateManager.depthMask(false);
+        GlStateManager.disableCull();
         OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240F, 240F);
         bindTexture(ORB);
         int n = seals.size();
@@ -52,6 +53,7 @@ public class AnchorRenderer extends TileEntitySpecialRenderer<TileAnchor> {
             quad(0.09F, new float[]{1F, 1F, 1F}, 0.9F);
             GlStateManager.popMatrix();
         }
+        GlStateManager.enableCull();
         GlStateManager.depthMask(true);
         GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
         GlStateManager.disableBlend();
