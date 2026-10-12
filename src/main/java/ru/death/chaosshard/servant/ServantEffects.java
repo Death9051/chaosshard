@@ -44,6 +44,19 @@ public class ServantEffects {
                 ServantGear.refresh(m, o);
             }
         }
+        // гарнизон: после боя — домой, к своему Якорю
+        if (sec % 10 == 0 && m.getEntityData().hasKey(Servants.TAG_ANCHOR) && m.getAttackTarget() == null) {
+            net.minecraft.util.math.BlockPos home = net.minecraft.util.math.BlockPos.fromLong(m.getEntityData().getLong(Servants.TAG_ANCHOR));
+            if (m.getDistanceSq(home) > 24 * 24 && m.world.isBlockLoaded(home)) {
+                if (ru.death.chaosshard.anchor.AnchorClusters.at(m.world, home) == null) {
+                    m.getEntityData().removeTag(Servants.TAG_ANCHOR);   // Якоря больше нет
+                } else {
+                    net.minecraft.util.math.BlockPos at = m.world.getHeight(home.add(2, 0, 2));
+                    ws.spawnParticle(EnumParticleTypes.PORTAL, m.posX, m.posY + 1, m.posZ, 20, 0.3, 0.5, 0.3, 0.5);
+                    m.setPositionAndUpdate(at.getX() + 0.5, at.getY(), at.getZ() + 0.5);
+                }
+            }
+        }
         // станция добытчика держит чанки, пока он работает
         if (sec % 5 == 0 && m.getEntityData().hasKey(Servants.TAG_CHEST)) {
             Servants.Kind k = Servants.kindOf(m);

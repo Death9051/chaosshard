@@ -39,9 +39,40 @@ public class TileAnchor extends TileEntity implements ITickable {
     /** Тики до следующего набега Мрачной Армии (−1 — ещё не назначен). */
     private int raidTimer = -1;
 
-    /** Раз в секунду: отсчёт до набега. Набег приходит, только если владелец рядом. */
+    /** За сколько тиков до набега Гаррот предупреждает (барабаны, сторона света). */
+    public static final int WARN = 1200;
+    /** Сколько тиков отряд должен простоять у Якоря, чтобы Якорь потерял силу. */
+    public static final int SIEGE = 1200;
+    /** Пауза между набегами по уровню сети (доля от raidInterval). */
+    private static final double[] INTERVAL = {1.0, 1.0, 0.85, 0.67, 0.33};
+
+    private boolean raidWarned;
+    private double raidAngle;
+    private long raidTarget;
+    private int siege;
+    private long lastSiege;
+
+    public int raidTimer() {
+        return raidTimer;
+    }
+
+    public UUID getOwner() {
+        return owner;
+    }
+
+    /**
+     * Раз в секунду. Отсчёт ведёт главный Якорь сети: один набег на всю сеть. За минуту — предупреждение
+     * и барабаны с той стороны, откуда придут. Набег приходит, только если хозяин рядом с сетью.
+     */
     private void tickArmy() {
+        if (siege > 0 && world.getTotalWorldTime() - lastSiege > 200) {
+            siege = Math.max(0, siege - 20);
+        }
         if (!ru.death.chaosshard.ChaosConfig.order.raids) {
+            return;
+        }
+        java.util.List<TileAnchor> c = AnchorClusters.cluster(world, this);
+        if (!AnchorClusters.isLead(c, this)) {
             return;
         }
         if (raidTimer < 0) {
@@ -49,23 +80,150 @@ public class TileAnchor extends TileEntity implements ITickable {
             markDirty();
         }
         raidTimer = Math.max(0, raidTimer - 20);
+        EntityPlayerMP o = ownerOnline();
+        boolean near = false;
+        if (o != null && o.world == world) {
+            for (TileAnchor t : c) {
+                if (o.getDistanceSq(t.pos) < 96 * 96) {
+                    near = true;
+                }
+            }
+        }
+        if (raidTimer <= WARN && !raidWarned) {
+            if (!near) {
+                raidTimer = WARN;
+                return;
+            }
+            raidWarned = true;
+            TileAnchor target = c.get(world.rand.nextInt(c.size()));
+            raidTarget = target.pos.toLong();
+            raidAngle = world.rand.nextDouble() * Math.PI * 2;
+            ru.death.chaosshard.garrot.GarrotRaids.say(o, "chaosshard.garrot.warn");
+            o.sendMessage(Breach.grimoire("chaosshard.raid.warn", target.pos.getX(), target.pos.getZ(),
+                    new net.minecraft.util.text.TextComponentTranslation("chaosshard.dir." + compass(raidAngle))));
+            markDirty();
+        }
+        if (raidWarned && raidTimer > 0) {
+            if (near && (raidTimer / 20) % 3 == 0) {
+                BlockPos t = BlockPos.fromLong(raidTarget);
+                BlockPos drum = new BlockPos(t.getX() + Math.cos(raidAngle) * 24, o.posY, t.getZ() + Math.sin(raidAngle) * 24);
+                world.playSound(null, drum, SoundEvents.BLOCK_NOTE_BASEDRUM, SoundCategory.HOSTILE, 3.0F, 0.5F);
+                world.playSound(null, drum, SoundEvents.BLOCK_NOTE_BASEDRUM, SoundCategory.HOSTILE, 3.0F, 0.6F);
+            }
+            return;
+        }
         if (raidTimer > 0) {
             return;
         }
-        EntityPlayerMP o = ownerOnline();
-        if (o == null || o.world != world || o.getDistanceSq(pos) > 96 * 96) {
+        if (!near) {
+            raidTimer = 200;
             return;
         }
-        ru.death.chaosshard.garrot.GarrotRaids.spawn((WorldServer) world, pos, o);
-        raidTimer = ru.death.chaosshard.ChaosConfig.order.raidInterval / 2
-                + world.rand.nextInt(Math.max(1, ru.death.chaosshard.ChaosConfig.order.raidInterval));
+        TileAnchor target = AnchorClusters.at(world, BlockPos.fromLong(raidTarget));
+        if (target == null || !AnchorClusters.contains(c, target.pos)) {
+            target = this;
+        }
+        int lvl = AnchorClusters.maxLevel(c);
+        ru.death.chaosshard.garrot.GarrotRaids.spawn((WorldServer) world, target.pos, o, lvl, raidAngle);
+        target.siege = 0;
+        // гарнизон всей сети — на помощь
+        for (net.minecraft.entity.EntityLiving g : AnchorClusters.garrison((WorldServer) world, c)) {
+            if (g.getDistanceSq(target.pos) > 16 * 16) {
+                BlockPos at = world.getHeight(target.pos.add(world.rand.nextInt(7) - 3, 0, world.rand.nextInt(7) - 3));
+                ((WorldServer) world).spawnParticle(EnumParticleTypes.PORTAL, g.posX, g.posY + 1, g.posZ, 20, 0.3, 0.5, 0.3, 0.5);
+                g.setPositionAndUpdate(at.getX() + 0.5, at.getY(), at.getZ() + 0.5);
+                ((WorldServer) world).spawnParticle(EnumParticleTypes.SPELL_WITCH, g.posX, g.posY + 1, g.posZ, 20, 0.3, 0.5, 0.3, 0.05);
+            }
+        }
+        raidWarned = false;
+        raidTimer = (int) (ru.death.chaosshard.ChaosConfig.order.raidInterval * INTERVAL[Math.min(lvl, INTERVAL.length) - 1]
+                * (0.75 + 0.5 * world.rand.nextDouble()));
         markDirty();
+    }
+
+    /** 0..7: север, северо-восток, восток, … — откуда идут (угол в мире: +x восток, +z юг). */
+    private static int compass(double ang) {
+        double deg = Math.toDegrees(Math.atan2(Math.sin(ang), Math.cos(ang)));   // 0 = восток, 90 = юг
+        int idx = (int) Math.round(((deg + 90) % 360 + 360) % 360 / 45.0) % 8;    // 0 = север
+        return idx;
+    }
+
+    /** Солдат Мрачной Армии у Якоря (раз в секунду от каждого — считается раз в секунду). */
+    public void siegeTick(EntityPlayerMP warn) {
+        long now = world.getTotalWorldTime();
+        if (now - lastSiege < 20) {
+            return;
+        }
+        lastSiege = now;
+        siege += 20;
+        if (siege % 400 == 0 && siege < SIEGE) {
+            EntityPlayerMP o = ownerOnline();
+            if (o != null) {
+                o.sendStatusMessage(Breach.grimoire("chaosshard.raid.siege", siege * 100 / SIEGE), true);
+            }
+        }
+        if (siege >= SIEGE) {
+            siege = 0;
+            fall();
+        }
+    }
+
+    /** Отряд выстоял у Якоря: Якорь теряет силу (может откатиться на уровень). Армия уходит довольная. */
+    private void fall() {
+        int before = level();
+        int loss = Math.max(150, corrupted / 5);
+        corrupted = Math.max(0, corrupted - loss);
+        shownLevel = level();
+        trimColumn();
+        changed();
+        world.playSound(null, pos, SoundEvents.ENTITY_WITHER_BREAK_BLOCK, SoundCategory.BLOCKS, 0.8F, 0.6F);
+        ((WorldServer) world).spawnParticle(EnumParticleTypes.SMOKE_LARGE, pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5, 60, 1, 1.5, 1, 0.02);
+        EntityPlayerMP o = ownerOnline();
+        if (o != null) {
+            ru.death.chaosshard.garrot.GarrotRaids.say(o, "chaosshard.garrot.won");
+            o.sendMessage(Breach.grimoire(level() < before ? "chaosshard.raid.lost_level" : "chaosshard.raid.lost",
+                    pos.getX(), pos.getZ(), loss, level()));
+        }
+        ru.death.chaosshard.garrot.GarrotRaids.retreat(world);
+    }
+
+    /** Набег отбит: Якорь крепнет. */
+    public void repelled(int lvl) {
+        addCorrupted(50 * lvl);
     }
 
     /** Для отладки: набег прямо сейчас. */
     public void forceRaid(EntityPlayerMP player) {
-        ru.death.chaosshard.garrot.GarrotRaids.spawn((WorldServer) world, pos, player);
+        java.util.List<TileAnchor> c = AnchorClusters.cluster(world, this);
+        ru.death.chaosshard.garrot.GarrotRaids.spawn((WorldServer) world, pos, player, AnchorClusters.maxLevel(c), world.rand.nextDouble() * Math.PI * 2);
+        siege = 0;
     }
+
+    /** Дуги между Якорями сети (главный рисует раз в 10 секунд). */
+    private void clusterArcs() {
+        java.util.List<TileAnchor> c = AnchorClusters.cluster(world, this);
+        if (c.size() < 2 || !AnchorClusters.isLead(c, this)) {
+            return;
+        }
+        for (int i = 0; i < c.size(); i++) {
+            for (int j = i + 1; j < c.size(); j++) {
+                TileAnchor a = c.get(i), b = c.get(j);
+                if (!AnchorClusters.touch(a, b)) {
+                    continue;
+                }
+                BlockPos ta = a.pos.up(Math.max(0, a.level() - 1)), tb = b.pos.up(Math.max(0, b.level() - 1));
+                if (ta.distanceSq(tb) > 128 * 128) {
+                    continue;
+                }
+                ru.death.chaosshard.network.ChaosNetwork.CHANNEL.sendToAllAround(
+                        new ru.death.chaosshard.network.PacketHeartBolt(ta.getX() + 0.5, ta.getY() + 1.2, ta.getZ() + 0.5,
+                                tb.getX() + 0.5, tb.getY() + 1.2, tb.getZ() + 0.5, 0x8A50D0),
+                        new net.minecraftforge.fml.common.network.NetworkRegistry.TargetPoint(world.provider.getDimension(),
+                                (ta.getX() + tb.getX()) / 2.0, ta.getY(), (ta.getZ() + tb.getZ()) / 2.0, 128));
+            }
+        }
+    }
+
     private final Set<Long> dirtyChunks = new HashSet<>();
 
     public void setOwner(EntityPlayerMP player) {
@@ -104,7 +262,9 @@ public class TileAnchor extends TileEntity implements ITickable {
             double dx = p.getX() - at.getX(), dz = p.getZ() - at.getZ();
             int r = a.radius();
             if (dx * dx + dz * dz <= (double) r * r) {
-                best = Math.max(best, ChaosConfig.anchor.energyRegenMultiplier + a.seals(ItemAnchorSeal.Type.WELL));
+                int size = AnchorClusters.cluster(world, a).size();
+                double cluster = Math.min(1.0, 0.25 * (size - 1));
+                best = Math.max(best, ChaosConfig.anchor.energyRegenMultiplier + a.seals(ItemAnchorSeal.Type.WELL) + cluster);
             }
         }
         return best;
@@ -227,6 +387,27 @@ public class TileAnchor extends TileEntity implements ITickable {
         }
     }
 
+    /** Убрать сегменты колонны выше уровня (после поражения в набеге). */
+    private void trimColumn() {
+        int height = level() - 1;
+        for (int i = height + 1; i <= maxLevel() + 1; i++) {
+            BlockPos p = pos.up(i);
+            if (world.getBlockState(p).getBlock() instanceof BlockAnchorPart) {
+                world.setBlockToAir(p);
+            }
+        }
+        if (height >= 1) {
+            BlockPos top = pos.up(height);
+            if (world.getBlockState(top).getBlock() instanceof BlockAnchorPart) {
+                world.setBlockState(top, ru.death.chaosshard.init.ModBlocks.ANCHOR_PART.getDefaultState().withProperty(BlockAnchorPart.TOP, true), 3);
+            }
+        }
+        net.minecraft.block.state.IBlockState base = world.getBlockState(pos);
+        if (base.getBlock() instanceof BlockAnchor && level() < 2 && base.getValue(BlockAnchor.GROWN)) {
+            world.setBlockState(pos, base.withProperty(BlockAnchor.GROWN, false), 2);
+        }
+    }
+
     private void onLevelUp(int lvl) {
         int[] rw = ChaosConfig.anchor.levelReward;
         int reward = lvl - 1 < rw.length ? rw[lvl - 1] : 0;
@@ -271,8 +452,12 @@ public class TileAnchor extends TileEntity implements ITickable {
                 addCorrupted(done);
             }
         }
-        if (timer % 200 == 100) {
+        long wt = world.getTotalWorldTime();
+        if (wt % 200 == 100) {
             growColumn();
+        }
+        if (wt % 200 == 150 && captured) {
+            clusterArcs();
         }
         if (timer % 20 == 5 && captured) {
             tickArmy();
@@ -289,7 +474,7 @@ public class TileAnchor extends TileEntity implements ITickable {
                 markDirty();
             }
         }
-        if (timer % 200 == 0 && !dirtyChunks.isEmpty()) {
+        if (wt % 200 == 0 && !dirtyChunks.isEmpty()) {
             resendChunks();
         }
         if (captured && ChaosConfig.anchor.passiveThread > 0
@@ -430,6 +615,10 @@ public class TileAnchor extends TileEntity implements ITickable {
         tag.setInteger("passive", passiveTimer);
         tag.setBoolean("counted", counted);
         tag.setInteger("raidTimer", raidTimer);
+        tag.setBoolean("raidWarned", raidWarned);
+        tag.setDouble("raidAngle", raidAngle);
+        tag.setLong("raidTarget", raidTarget);
+        tag.setInteger("siege", siege);
         writeSeals(tag);
         return tag;
     }
@@ -444,6 +633,10 @@ public class TileAnchor extends TileEntity implements ITickable {
         passiveTimer = tag.getInteger("passive");
         counted = tag.getBoolean("counted");
         raidTimer = tag.hasKey("raidTimer") ? tag.getInteger("raidTimer") : -1;
+        raidWarned = tag.getBoolean("raidWarned");
+        raidAngle = tag.getDouble("raidAngle");
+        raidTarget = tag.getLong("raidTarget");
+        siege = tag.getInteger("siege");
         readSeals(tag);
     }
 

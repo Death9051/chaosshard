@@ -38,6 +38,7 @@ import java.util.function.Predicate;
 public class Work {
 
     private static final Map<UUID, UUID> SELECTED = new HashMap<>();
+    private static final Map<UUID, Long> SELECTED_AT = new HashMap<>();
 
     // ------------------------------------------------------------------ совместная работа у одного сундука
 
@@ -77,6 +78,7 @@ public class Work {
 
     public static void select(EntityPlayer p, Entity servant) {
         SELECTED.put(p.getUniqueID(), servant.getUniqueID());
+        SELECTED_AT.put(p.getUniqueID(), p.world.getTotalWorldTime());
     }
 
     public static BlockPos chest(Entity m) {
@@ -202,6 +204,60 @@ public class Work {
         return false;
     }
 
+    // ------------------------------------------------------------------ бойцы: гарнизон Якоря или «стереги здесь»
+
+    private static void fighter(EntityPlayer p, EntityCreature m, World w, BlockPos clicked) {
+        BlockPos anchorPos = clicked;
+        if (w.getBlockState(clicked).getBlock() instanceof ru.death.chaosshard.anchor.BlockAnchorPart) {
+            anchorPos = ru.death.chaosshard.anchor.BlockAnchorPart.base(w, clicked);
+        }
+        ru.death.chaosshard.anchor.TileAnchor a = anchorPos == null ? null : ru.death.chaosshard.anchor.AnchorClusters.at(w, anchorPos);
+        Servants.Kind kind = Servants.kindOf(m);
+        TextComponentTranslation name = new TextComponentTranslation("chaosshard.servant.kind." + kind.key());
+        if (a != null) {
+            if (a.getOwner() == null || !a.getOwner().equals(p.getUniqueID())) {
+                p.sendStatusMessage(Breach.grimoire("chaosshard.garrison.not_yours"), true);
+                return;
+            }
+            java.util.List<ru.death.chaosshard.anchor.TileAnchor> c = ru.death.chaosshard.anchor.AnchorClusters.cluster(w, a);
+            int limit = ru.death.chaosshard.anchor.AnchorClusters.garrisonLimit(c);
+            java.util.List<net.minecraft.entity.EntityLiving> g = ru.death.chaosshard.anchor.AnchorClusters.garrison((WorldServer) w, c);
+            g.remove(m);
+            if (g.size() >= limit && !p.isCreative()) {
+                p.sendMessage(Breach.grimoire("chaosshard.garrison.full", g.size(), limit));
+                return;
+            }
+            m.getEntityData().removeTag(Servants.TAG_GUARD);
+            m.getEntityData().setLong(Servants.TAG_ANCHOR, a.getPos().toLong());
+            m.setHomePosAndDistance(a.getPos(), 16);
+            m.setAttackTarget(null);
+            ((WorldServer) w).spawnParticle(EnumParticleTypes.SPELL_WITCH, a.getPos().getX() + 0.5, a.getPos().getY() + 1.5,
+                    a.getPos().getZ() + 0.5, 30, 0.4, 0.6, 0.4, 0.05);
+            if (m.getDistanceSq(a.getPos()) > 16 * 16) {
+                BlockPos at = w.getHeight(a.getPos().add(2, 0, 2));
+                m.setPositionAndUpdate(at.getX() + 0.5, at.getY(), at.getZ() + 0.5);
+            }
+            p.sendMessage(Breach.grimoire("chaosshard.garrison.bound", name, g.size() + 1, limit, c.size()));
+            if (p instanceof EntityPlayerMP) {
+                Milestones.grant((EntityPlayerMP) p, "anchor_garrison");
+                if (c.size() >= 2) {
+                    Milestones.grant((EntityPlayerMP) p, "anchor_cluster");
+                }
+            }
+            return;
+        }
+        // любое другое место — стеречь там (из гарнизона так не уйти: сначала Shift+ПКМ)
+        if (m.getEntityData().hasKey(Servants.TAG_ANCHOR)) {
+            p.sendStatusMessage(Breach.grimoire("chaosshard.garrison.leave_first"), true);
+            return;
+        }
+        BlockPos at = clicked.up();
+        m.getEntityData().setLong(Servants.TAG_GUARD, at.toLong());
+        m.setHomePosAndDistance(at, 8);
+        m.getNavigator().tryMoveToXYZ(at.getX() + 0.5, at.getY(), at.getZ() + 0.5, 1.1);
+        p.sendStatusMessage(Breach.grimoire("chaosshard.servant.guard"), true);
+    }
+
     // ------------------------------------------------------------------ закрепление за сундуком
 
     @SubscribeEvent(priority = EventPriority.HIGH)
@@ -214,10 +270,21 @@ public class Work {
         if (id == null) {
             return;
         }
+        // выбор живёт 30 секунд
+        if (p.world.getTotalWorldTime() - SELECTED_AT.getOrDefault(p.getUniqueID(), 0L) > 600) {
+            SELECTED.remove(p.getUniqueID());
+            return;
+        }
         event.setCanceled(true);
         Entity e = ((WorldServer) event.getWorld()).getEntityFromUuid(id);
         if (!(e instanceof EntityCreature) || !e.isEntityAlive() || !Servants.isServantOf(e, p.getUniqueID())) {
             SELECTED.remove(p.getUniqueID());
+            return;
+        }
+        Servants.Kind kind = Servants.kindOf(e);
+        if (kind != null && !kind.gatherer()) {
+            SELECTED.remove(p.getUniqueID());
+            fighter(p, (EntityCreature) e, event.getWorld(), event.getPos());
             return;
         }
         if (handler(event.getWorld(), event.getPos()) == null) {

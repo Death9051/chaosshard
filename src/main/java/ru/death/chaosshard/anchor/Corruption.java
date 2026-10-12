@@ -93,6 +93,29 @@ public final class Corruption {
         return true;
     }
 
+    /** Очистить осквернённый блок (обратное правило). true — если что-то изменилось. */
+    public static boolean cleanse(World world, BlockPos pos) {
+        IBlockState s = world.getBlockState(pos);
+        if (world.getTileEntity(pos) != null) {
+            return false;
+        }
+        for (Map.Entry<Block, IBlockState> r : rules().entrySet()) {
+            if (r.getValue().getBlock() == s.getBlock() && s.getBlock() != Blocks.AIR && r.getKey() != Blocks.AIR) {
+                world.setBlockState(pos, r.getKey().getDefaultState(), 2);
+                return true;
+            }
+        }
+        if (s.getBlock() == ModBlocks.CHAOS_CRUST) {
+            world.setBlockState(pos, Blocks.DIRT.getDefaultState(), 2);
+            return true;
+        }
+        if (s.getBlock() == ModBlocks.CHAOS_STONE) {
+            world.setBlockState(pos, Blocks.STONE.getDefaultState(), 2);
+            return true;
+        }
+        return false;
+    }
+
     /** Блок уже осквернён (результат одного из правил). */
     public static boolean isCorrupted(IBlockState state) {
         Block b = state.getBlock();

@@ -49,51 +49,82 @@ public class GarrotRaids {
     /** Фракция Ancient Warfare, которая играет Мрачную Армию. */
     public static final String FACTION = "evil";
 
-    /** Набег у края с Якорем в anchor, против игрока target. */
-    public static void spawn(WorldServer world, BlockPos anchor, EntityPlayerMP target) {
+    public static final String TAG_RAID = "chaosshard_raid", TAG_RAID_LVL = "chaosshard_raid_lvl";
+    public static final String TAG_BANNER = "chaosshard_bannerman", TAG_PYRO = "chaosshard_pyromancer";
+
+    /** Набег у Якоря anchor (по уровню сети), против хозяина target. angle — откуда идут. */
+    public static void spawn(WorldServer world, BlockPos anchor, EntityPlayerMP target, int level, double angle) {
         if (world.getDifficulty() == EnumDifficulty.PEACEFUL) {
             return;
-        }
-        Random r = world.rand;
-        double ang = r.nextDouble() * Math.PI * 2;
-        int dist = 22 + r.nextInt(8);
-        BlockPos base = world.getHeight(new BlockPos(anchor.getX() + Math.cos(ang) * dist, 0, anchor.getZ() + Math.sin(ang) * dist));
-        if (!world.isBlockLoaded(base)) {
-            base = world.getHeight(target.getPosition().add(12, 0, 12));
         }
         AnchorData data = AnchorData.get(world);
         int number = ++data.raids;
         data.markDirty();
-
-        if (!spawnAncientWarfare(world, base, target, number)) {
-            spawnVanilla(world, base, target, number);
+        int squads = level >= 4 ? 2 : 1;
+        BlockPos first = null;
+        for (int sq = 0; sq < squads; sq++) {
+            double ang = angle + sq * Math.PI;
+            int dist = 22 + world.rand.nextInt(8);
+            BlockPos base = world.getHeight(new BlockPos(anchor.getX() + Math.cos(ang) * dist, 0, anchor.getZ() + Math.sin(ang) * dist));
+            if (!world.isBlockLoaded(base)) {
+                base = world.getHeight(target.getPosition().add(12, 0, 12));
+            }
+            if (first == null) {
+                first = base;
+            }
+            CURRENT_ANCHOR = anchor;
+            CURRENT_LEVEL = level;
+            boolean lead = sq == 0;
+            if (!spawnAncientWarfare(world, base, target, number, level, lead)) {
+                spawnVanilla(world, base, target, number, level, lead);
+            }
+            specials(world, base, target, level, lead);
+            world.playSound(null, base, net.minecraft.init.SoundEvents.EVOCATION_ILLAGER_PREPARE_WOLOLO, SoundCategory.HOSTILE, 2.0F, 0.5F);
+            world.spawnParticle(EnumParticleTypes.SMOKE_LARGE, base.getX() + 0.5, base.getY() + 1, base.getZ() + 0.5, 40, 2, 1, 2, 0.02);
         }
-        world.playSound(null, base, net.minecraft.init.SoundEvents.EVOCATION_ILLAGER_PREPARE_WOLOLO, SoundCategory.HOSTILE, 2.0F, 0.5F);
-        world.spawnParticle(EnumParticleTypes.SMOKE_LARGE, base.getX() + 0.5, base.getY() + 1, base.getZ() + 0.5, 40, 2, 1, 2, 0.02);
         say(target, "chaosshard.garrot.raid." + Math.min(number, RAID_LINES));
-        target.sendMessage(ru.death.chaosshard.breach.Breach.grimoire("chaosshard.garrot.where", base.getX(), base.getZ()));
+        target.sendMessage(ru.death.chaosshard.breach.Breach.grimoire("chaosshard.raid.start", level, squads, first.getX(), first.getZ(),
+                anchor.getX(), anchor.getZ()));
+    }
+
+    /** Старый вызов (отладка): набег уровня 1 с случайной стороны. */
+    public static void spawn(WorldServer world, BlockPos anchor, EntityPlayerMP target) {
+        spawn(world, anchor, target, 1, world.rand.nextDouble() * Math.PI * 2);
+    }
+
+    private static BlockPos CURRENT_ANCHOR;
+    private static int CURRENT_LEVEL = 1;
+
+    /** Отряд разом уходит (поражение капитана или взятый Якорь). */
+    public static void retreat(World world) {
+        RETREATS.put(world.provider.getDimension(), 4);
     }
 
     /** Запасной вариант без Ancient Warfare: переодетые ванильные мобы. */
-    private static void spawnVanilla(WorldServer world, BlockPos base, EntityPlayerMP target, int number) {
+    private static void spawnVanilla(WorldServer world, BlockPos base, EntityPlayerMP target, int number, int level, boolean lead) {
         Random r = world.rand;
-        EntityWitherSkeleton captain = new EntityWitherSkeleton(world);
-        setup(world, captain, base, target);
-        captain.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, new ItemStack(Items.IRON_SWORD));
-        captain.setItemStackToSlot(EntityEquipmentSlot.CHEST, dyed(Items.LEATHER_CHESTPLATE));
-        captain.setItemStackToSlot(EntityEquipmentSlot.HEAD, new ItemStack(Items.IRON_HELMET));
-        double hp = 50 + 10 * Math.min(number, 6);
-        captain.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(hp);
-        captain.setHealth((float) hp);
-        captain.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(6 + Math.min(number, 6));
-        captain.setCustomNameTag(TextFormatting.DARK_GRAY + new TextComponentTranslation("chaosshard.garrot.captain").getUnformattedText());
-        captain.setGlowing(true);
-        captain.addTag(TAG_CAPTAIN);
-
-        int soldiers = 3 + Math.min(number, 4);
+        EntityLiving captain;
+        if (lead) {
+            EntityWitherSkeleton c = new EntityWitherSkeleton(world);
+            setup(world, c, base, target);
+            boolean commander = level >= 5;
+            c.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, new ItemStack(commander ? Items.DIAMOND_SWORD : Items.IRON_SWORD));
+            c.setItemStackToSlot(EntityEquipmentSlot.CHEST, commander ? new ItemStack(Items.DIAMOND_CHESTPLATE) : dyed(Items.LEATHER_CHESTPLATE));
+            c.setItemStackToSlot(EntityEquipmentSlot.HEAD, new ItemStack(commander ? Items.DIAMOND_HELMET : Items.IRON_HELMET));
+            double hp = 50 + 10 * Math.min(number, 6) + 20 * (level - 1);
+            c.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(hp);
+            c.setHealth((float) hp);
+            c.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(6 + Math.min(number, 6) + level);
+            c.setCustomNameTag(TextFormatting.DARK_GRAY + new TextComponentTranslation(commander ? "chaosshard.garrot.commander" : "chaosshard.garrot.captain").getUnformattedText());
+            c.setGlowing(true);
+            c.addTag(TAG_CAPTAIN);
+            captain = c;
+        }
+        int soldiers = 2 + level;
         for (int i = 0; i < soldiers; i++) {
             BlockPos p = world.getHeight(base.add(r.nextInt(7) - 3, 0, r.nextInt(7) - 3));
-            EntityLiving s = r.nextInt(3) == 0 ? new EntitySkeleton(world) : new EntityVindicator(world);
+            boolean archer = level >= 2 && r.nextInt(3) == 0;
+            EntityLiving s = archer ? new EntitySkeleton(world) : new EntityVindicator(world);
             setup(world, s, p, target);
             if (s instanceof AbstractSkeleton) {
                 s.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, new ItemStack(Items.BOW));
@@ -102,16 +133,66 @@ public class GarrotRaids {
             }
             s.setItemStackToSlot(EntityEquipmentSlot.CHEST, dyed(Items.LEATHER_CHESTPLATE));
             s.setItemStackToSlot(EntityEquipmentSlot.HEAD, dyed(Items.LEATHER_HELMET));
-            s.setCustomNameTag(TextFormatting.DARK_GRAY + new TextComponentTranslation("chaosshard.garrot.soldier").getUnformattedText());
+            s.setCustomNameTag(TextFormatting.DARK_GRAY + new TextComponentTranslation(archer ? "chaosshard.garrot.archer" : "chaosshard.garrot.soldier").getUnformattedText());
+        }
+    }
+
+    /** Особые бойцы (без Ancient Warfare тоже): щитоносцы и знаменосец с 3-го уровня, пиромант на 5-м. */
+    private static void specials(WorldServer world, BlockPos base, EntityPlayerMP target, int level, boolean lead) {
+        Random r = world.rand;
+        if (level >= 3) {
+            for (int i = 0; i < 2; i++) {
+                net.minecraft.entity.monster.EntityHusk s = new net.minecraft.entity.monster.EntityHusk(world);
+                setup(world, s, world.getHeight(base.add(r.nextInt(5) - 2, 0, r.nextInt(5) - 2)), target);
+                s.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, new ItemStack(Items.IRON_SWORD));
+                s.setItemStackToSlot(EntityEquipmentSlot.OFFHAND, new ItemStack(Items.SHIELD));
+                s.setItemStackToSlot(EntityEquipmentSlot.CHEST, new ItemStack(Items.IRON_CHESTPLATE));
+                s.setItemStackToSlot(EntityEquipmentSlot.HEAD, dyed(Items.LEATHER_HELMET));
+                s.setItemStackToSlot(EntityEquipmentSlot.LEGS, new ItemStack(Items.IRON_LEGGINGS));
+                s.getEntityAttribute(SharedMonsterAttributes.KNOCKBACK_RESISTANCE).setBaseValue(0.8);
+                s.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(40);
+                s.setHealth(40);
+                s.setChild(false);
+                s.setCustomNameTag(TextFormatting.DARK_GRAY + new TextComponentTranslation("chaosshard.garrot.shield").getUnformattedText());
+            }
+            if (lead) {
+                EntityVindicator b = new EntityVindicator(world);
+                setup(world, b, world.getHeight(base.add(r.nextInt(5) - 2, 0, r.nextInt(5) - 2)), target);
+                ItemStack banner = new ItemStack(Items.BANNER, 1, 0);   // чёрное знамя
+                b.setItemStackToSlot(EntityEquipmentSlot.HEAD, banner);
+                b.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, new ItemStack(Items.IRON_AXE));
+                b.setItemStackToSlot(EntityEquipmentSlot.CHEST, dyed(Items.LEATHER_CHESTPLATE));
+                b.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(36);
+                b.setHealth(36);
+                b.addTag(TAG_BANNER);
+                b.setGlowing(true);
+                b.setCustomNameTag(TextFormatting.GOLD + new TextComponentTranslation("chaosshard.garrot.bannerman").getUnformattedText());
+            }
+        }
+        if (level >= 5 && lead) {
+            EntitySkeleton p = new EntitySkeleton(world);
+            setup(world, p, world.getHeight(base.add(r.nextInt(5) - 2, 0, r.nextInt(5) - 2)), target);
+            ItemStack bow = new ItemStack(Items.BOW);
+            bow.addEnchantment(net.minecraft.init.Enchantments.FLAME, 1);
+            bow.addEnchantment(net.minecraft.init.Enchantments.POWER, 2);
+            p.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, bow);
+            p.setItemStackToSlot(EntityEquipmentSlot.HEAD, dyed(Items.LEATHER_HELMET));
+            p.setItemStackToSlot(EntityEquipmentSlot.CHEST, dyed(Items.LEATHER_CHESTPLATE));
+            p.addPotionEffect(new net.minecraft.potion.PotionEffect(net.minecraft.init.MobEffects.FIRE_RESISTANCE, 1000000, 0, false, false));
+            p.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(40);
+            p.setHealth(40);
+            p.addTag(TAG_PYRO);
+            p.setGlowing(true);
+            p.setCustomNameTag(TextFormatting.RED + new TextComponentTranslation("chaosshard.garrot.pyromancer").getUnformattedText());
         }
     }
 
     /**
      * Мрачная Армия из Ancient Warfare 2: фракция «evil» (в переводе сборки — Мрачная Армия).
-     * Капитан — элитный лидер, отряд — солдаты, лучники, с третьего набега — палачи.
+     * Капитан — элитный лидер, отряд — солдаты, лучники (со 2-го уровня), элитные солдаты (с 3-го).
      * API у AW нет, поэтому через отражение: AWNPCEntities.createNpc(world, type, subtype, faction).
      */
-    private static boolean spawnAncientWarfare(WorldServer world, BlockPos base, EntityPlayerMP target, int number) {
+    private static boolean spawnAncientWarfare(WorldServer world, BlockPos base, EntityPlayerMP target, int number, int level, boolean lead) {
         if (!net.minecraftforge.fml.common.Loader.isModLoaded("ancientwarfarenpc") && !net.minecraftforge.fml.common.Loader.isModLoaded("ancientwarfare")) {
             return false;
         }
@@ -119,23 +200,28 @@ public class GarrotRaids {
             Class<?> cls = Class.forName("net.shadowmage.ancientwarfare.npc.init.AWNPCEntities");
             java.lang.reflect.Method create = cls.getMethod("createNpc", World.class, String.class, String.class, String.class);
             Random r = world.rand;
-            EntityLiving captain = (EntityLiving) create.invoke(null, world, "faction.leader.elite", "", FACTION);
-            if (captain == null) {
-                return false;
+            if (lead) {
+                EntityLiving captain = (EntityLiving) create.invoke(null, world, "faction.leader.elite", "", FACTION);
+                if (captain == null) {
+                    return false;
+                }
+                setup(world, captain, base, target);
+                double hp = 80 + 15 * Math.min(number, 6) + 25 * (level - 1);
+                captain.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(hp);
+                captain.setHealth((float) hp);
+                captain.setGlowing(true);
+                captain.addTag(TAG_CAPTAIN);
+                if (level >= 5) {
+                    captain.setCustomNameTag(TextFormatting.DARK_GRAY + new TextComponentTranslation("chaosshard.garrot.commander").getUnformattedText());
+                }
             }
-            setup(world, captain, base, target);
-            double hp = 80 + 15 * Math.min(number, 6);
-            captain.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(hp);
-            captain.setHealth((float) hp);
-            captain.setGlowing(true);
-            captain.addTag(TAG_CAPTAIN);
-            int soldiers = 3 + Math.min(number, 4);
+            int soldiers = 2 + level;
             for (int i = 0; i < soldiers; i++) {
                 String type;
                 int roll = r.nextInt(10);
-                if (number >= 3 && roll < 2) {
+                if (level >= 3 && roll < 2) {
                     type = "faction.soldier.elite";
-                } else if (roll < 5) {
+                } else if (level >= 2 && roll < 5) {
                     type = "faction.archer";
                 } else {
                     type = "faction.soldier";
@@ -157,6 +243,10 @@ public class GarrotRaids {
         e.onInitialSpawn(world.getDifficultyForLocation(p), (IEntityLivingData) null);
         e.enablePersistence();
         e.addTag(TAG_ARMY);
+        if (CURRENT_ANCHOR != null) {
+            e.getEntityData().setLong(TAG_RAID, CURRENT_ANCHOR.toLong());
+            e.getEntityData().setInteger(TAG_RAID_LVL, CURRENT_LEVEL);
+        }
         for (EntityEquipmentSlot slot : EntityEquipmentSlot.values()) {
             e.setDropChance(slot, 0.0F);
         }
@@ -199,6 +289,18 @@ public class GarrotRaids {
         if (kills >= 3) {
             Milestones.grant(player, Milestones.GARROT_3);
         }
+        // Якорь, на который шли, крепнет
+        if (e.getEntityData().hasKey(TAG_RAID)) {
+            ru.death.chaosshard.anchor.TileAnchor a = ru.death.chaosshard.anchor.AnchorClusters.at(e.world, BlockPos.fromLong(e.getEntityData().getLong(TAG_RAID)));
+            int lvl = Math.max(1, e.getEntityData().getInteger(TAG_RAID_LVL));
+            if (a != null) {
+                a.repelled(lvl);
+            }
+            player.sendMessage(ru.death.chaosshard.breach.Breach.grimoire("chaosshard.raid.repelled", 50 * lvl));
+            if (lvl >= 4) {
+                Milestones.grant(player, "raid_hard");
+            }
+        }
         // Остальной отряд бежит — убираем на следующих тиках сервера, вне события смерти
         RETREATS.put(e.world.provider.getDimension(), 4);
     }
@@ -237,6 +339,57 @@ public class GarrotRaids {
         }
     }
 
+    /** Отряд идёт на Якорь: бьёт тех, кто рядом (меня и слуг), иначе — к Якорю; у Якоря — осада. */
+    @SubscribeEvent
+    public void onArmyUpdate(net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent event) {
+        net.minecraft.entity.EntityLivingBase e = event.getEntityLiving();
+        if (e.world.isRemote || e.ticksExisted % 20 != 7 || !(e instanceof EntityLiving) || !e.getTags().contains(TAG_ARMY)
+                || !e.getEntityData().hasKey(TAG_RAID)) {
+            return;
+        }
+        EntityLiving m = (EntityLiving) e;
+        BlockPos anchor = BlockPos.fromLong(m.getEntityData().getLong(TAG_RAID));
+        net.minecraft.entity.EntityLivingBase t = m.getAttackTarget();
+        if (t == null || !t.isEntityAlive() || t.getDistanceSq(m) > 24 * 24) {
+            net.minecraft.entity.EntityLivingBase best = null;
+            double bd = 12 * 12;
+            for (net.minecraft.entity.EntityLivingBase c : m.world.getEntitiesWithinAABB(net.minecraft.entity.EntityLivingBase.class,
+                    m.getEntityBoundingBox().grow(12), x -> x.isEntityAlive() && (x instanceof EntityPlayer && !((EntityPlayer) x).isCreative()
+                            && !((EntityPlayer) x).isSpectator() || ru.death.chaosshard.servant.Servants.isServant(x)))) {
+                double d = c.getDistanceSq(m);
+                if (d < bd) {
+                    bd = d;
+                    best = c;
+                }
+            }
+            m.setAttackTarget(best);
+            if (best == null) {
+                m.getNavigator().tryMoveToXYZ(anchor.getX() + 0.5, anchor.getY(), anchor.getZ() + 0.5, 1.0);
+            }
+        }
+        WorldServer ws = (WorldServer) m.world;
+        if (m.getDistanceSq(anchor) <= 6 * 6) {
+            ru.death.chaosshard.anchor.TileAnchor a = ru.death.chaosshard.anchor.AnchorClusters.at(m.world, anchor);
+            if (a != null) {
+                a.siegeTick(null);
+            }
+        }
+        // Знаменосец: Скверна вокруг отступает; Пиромант: выжигает корку
+        if (m.ticksExisted % 40 == 7 && (m.getTags().contains(TAG_BANNER) || m.getTags().contains(TAG_PYRO))) {
+            boolean pyro = m.getTags().contains(TAG_PYRO);
+            int r = pyro ? 8 : 6;
+            for (int i = 0; i < 12; i++) {
+                BlockPos p = m.world.getHeight(m.getPosition().add(m.world.rand.nextInt(2 * r + 1) - r, 0, m.world.rand.nextInt(2 * r + 1) - r)).down();
+                if (ru.death.chaosshard.anchor.Corruption.cleanse(m.world, p)) {
+                    ws.spawnParticle(pyro ? EnumParticleTypes.FLAME : EnumParticleTypes.END_ROD, p.getX() + 0.5, p.getY() + 1.1, p.getZ() + 0.5, 6, 0.3, 0.1, 0.3, 0.02);
+                    if (pyro && m.world.isAirBlock(p.up()) && m.world.rand.nextInt(3) == 0) {
+                        m.world.setBlockState(p.up(), net.minecraft.init.Blocks.FIRE.getDefaultState(), 11);
+                    }
+                }
+            }
+        }
+    }
+
     @SubscribeEvent
     public void onDrops(LivingDropsEvent event) {
         Entity e = event.getEntityLiving();
@@ -249,6 +402,9 @@ public class GarrotRaids {
             event.getDrops().add(new net.minecraft.entity.item.EntityItem(e.world, e.posX, e.posY, e.posZ,
                     new ItemStack(ModItems.MEMORY_FRAGMENT)));
         }
+        int lvl = Math.max(1, e.getEntityData().getInteger(TAG_RAID_LVL));
+        event.getDrops().add(new net.minecraft.entity.item.EntityItem(e.world, e.posX, e.posY, e.posZ,
+                new ItemStack(ModItems.CHAOS_ESSENCE, 1 + lvl)));
     }
 
     private static net.minecraft.nbt.NBTTagCompound persisted(EntityPlayer player) {

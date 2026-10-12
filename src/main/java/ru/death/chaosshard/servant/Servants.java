@@ -57,6 +57,8 @@ public class Servants {
     public static final String TAG_KIND = "chaosshard_kind";
     /** Сундук, за которым закреплён добытчик. */
     public static final String TAG_CHEST = "chaosshard_chest";
+    /** Якорь, в гарнизоне которого стоит боец (вне основной свиты). */
+    public static final String TAG_ANCHOR = "chaosshard_anchor";
     /** Направление шахты Рудокопа (горизонтальный индекс). */
     public static final String TAG_DIR = "chaosshard_dir";
 
@@ -134,7 +136,8 @@ public class Servants {
         int n = 0;
         for (WorldServer w : p.getServer().worlds) {
             for (Entity e : w.loadedEntityList) {
-                if (isServantOf(e, p.getUniqueID()) && e.isEntityAlive() && !(e instanceof EntityChaosBeast)) {
+                if (isServantOf(e, p.getUniqueID()) && e.isEntityAlive() && !(e instanceof EntityChaosBeast)
+                        && !e.getEntityData().hasKey(TAG_ANCHOR)) {
                     n++;
                 }
             }
@@ -272,8 +275,10 @@ public class Servants {
             m.targetTasks.addTask(1, new DefendOwner(m));
             m.targetTasks.addTask(2, new EntityAIHurtByTarget(m, false));
             m.targetTasks.addTask(3, new EntityAINearestAttackableTarget<>(m, EntityLiving.class, 10, true, false,
-                    t -> t instanceof IMob && !isServant(t)));
-            if (m.getEntityData().hasKey(TAG_GUARD)) {
+                    t -> (t instanceof IMob || t.getTags().contains(ru.death.chaosshard.garrot.GarrotRaids.TAG_ARMY)) && !isServant(t)));
+            if (m.getEntityData().hasKey(TAG_ANCHOR)) {
+                m.setHomePosAndDistance(BlockPos.fromLong(m.getEntityData().getLong(TAG_ANCHOR)), 16);
+            } else if (m.getEntityData().hasKey(TAG_GUARD)) {
                 m.setHomePosAndDistance(BlockPos.fromLong(m.getEntityData().getLong(TAG_GUARD)), 8);
             }
         }
@@ -293,7 +298,8 @@ public class Servants {
 
         @Override
         public boolean shouldExecute() {
-            if (m.getEntityData().hasKey(TAG_GUARD) || m.getEntityData().hasKey(TAG_CHEST) || m.getAttackTarget() != null) {
+            if (m.getEntityData().hasKey(TAG_GUARD) || m.getEntityData().hasKey(TAG_CHEST) || m.getEntityData().hasKey(TAG_ANCHOR)
+                    || m.getAttackTarget() != null) {
                 return false;
             }
             EntityPlayer o = owner(m);
@@ -382,7 +388,7 @@ public class Servants {
             int n = 0;
             for (Entity e : list) {
                 if (!e.isEntityAlive() || !isServantOf(e, p.getUniqueID()) || e.getEntityData().hasKey(TAG_GUARD)
-                        || e.getEntityData().hasKey(TAG_CHEST) || e.isRiding() || e.isBeingRidden()) {
+                        || e.getEntityData().hasKey(TAG_CHEST) || e.getEntityData().hasKey(TAG_ANCHOR) || e.isRiding() || e.isBeingRidden()) {
                     continue;
                 }
                 final double ox = (n % 3 - 1) * 1.2, oz = (n / 3 % 3 - 1) * 1.2;
@@ -441,6 +447,25 @@ public class Servants {
             } else {
                 ru.death.chaosshard.servant.work.Work.select(p, e);
                 p.sendStatusMessage(Breach.grimoire("chaosshard.work.selected",
+                        new net.minecraft.util.text.TextComponentTranslation("chaosshard.servant.kind." + kind.key())), true);
+            }
+            event.setCanceled(true);
+            return;
+        }
+        if (held.getItem() == ModItems.GRIMOIRE && kind != null && !kind.unique()) {
+            if (p.isSneaking()) {
+                // снова за мной (из гарнизона — только если в свите есть место)
+                if (d.hasKey(TAG_ANCHOR) && p instanceof EntityPlayerMP && count((EntityPlayerMP) p) >= limit(p) && !p.isCreative()) {
+                    p.sendStatusMessage(Breach.grimoire("chaosshard.servant.limit", limit(p)), true);
+                } else {
+                    d.removeTag(TAG_ANCHOR);
+                    d.removeTag(TAG_GUARD);
+                    ((EntityCreature) e).detachHome();
+                    p.sendStatusMessage(Breach.grimoire("chaosshard.servant.follow"), true);
+                }
+            } else {
+                ru.death.chaosshard.servant.work.Work.select(p, e);
+                p.sendStatusMessage(Breach.grimoire("chaosshard.work.selected_fighter",
                         new net.minecraft.util.text.TextComponentTranslation("chaosshard.servant.kind." + kind.key())), true);
             }
             event.setCanceled(true);
