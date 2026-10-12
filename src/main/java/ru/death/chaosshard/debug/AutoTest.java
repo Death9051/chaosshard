@@ -144,10 +144,7 @@ public final class AutoTest {
     private static int[] expectedAdvancements() {
         int ok = 0, skip = 0;
         try {
-            java.io.File f = new java.io.File(ChaosShard.class.getProtectionDomain().getCodeSource().getLocation().toURI());
-            String path = f.getPath();
-            int bang = path.indexOf('!');
-            if (bang > 0) f = new java.io.File(path.substring(0, bang));
+            java.io.File f = Loader.instance().getIndexedModList().get("chaosshard").getSource();
             try (java.util.zip.ZipFile z = new java.util.zip.ZipFile(f)) {
                 java.util.Enumeration<? extends java.util.zip.ZipEntry> en = z.entries();
                 while (en.hasMoreElements()) {
