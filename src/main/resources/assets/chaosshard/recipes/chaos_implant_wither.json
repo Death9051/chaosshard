@@ -1,0 +1,32 @@
+{
+ "conditions": [
+  {
+   "type": "forge:mod_loaded",
+   "modid": "cyberware"
+  }
+ ],
+ "type": "minecraft:crafting_shaped",
+ "pattern": [
+  "DSD",
+  "EXE",
+  "DSD"
+ ],
+ "key": {
+  "D": {
+   "item": "chaosshard:distorted_starmetal"
+  },
+  "S": {
+   "item": "minecraft:soul_sand"
+  },
+  "E": {
+   "item": "chaosshard:chaos_essence"
+  },
+  "X": {
+   "item": "minecraft:nether_star"
+  }
+ },
+ "result": {
+  "item": "chaosshard:chaos_implant",
+  "data": 10
+ }
+}

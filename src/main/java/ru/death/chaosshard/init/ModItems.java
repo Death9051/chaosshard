@@ -37,6 +37,8 @@ public final class ModItems {
     public static Item CHALK;
     /** Ключ обломка — вход в Испытание. */
     public static Item TRIAL_KEY;
+    /** Чешуя дракона — падает с Эндер-дракона. */
+    public static Item DRAGON_SCALE;
     /** Печати Якоря по типам. */
     public static final java.util.Map<ru.death.chaosshard.anchor.ItemAnchorSeal.Type, Item> SEALS = new java.util.EnumMap<>(ru.death.chaosshard.anchor.ItemAnchorSeal.Type.class);
 
@@ -57,6 +59,7 @@ public final class ModItems {
         DISTORTED_STARMETAL = add(new ru.death.chaosshard.item.ItemLore("chaosshard.distorted_starmetal.lore", true), "distorted_starmetal");
         CHALK = add(new ru.death.chaosshard.ritual.ItemChalk(), "chaos_chalk");
         TRIAL_KEY = add(new ru.death.chaosshard.trial.ItemTrialKey(), "trial_key");
+        DRAGON_SCALE = add(new ru.death.chaosshard.item.ItemLore("chaosshard.dragon_scale.lore", true), "dragon_scale");
         for (ru.death.chaosshard.anchor.ItemAnchorSeal.Type t : ru.death.chaosshard.anchor.ItemAnchorSeal.Type.values()) {
             SEALS.put(t, add(new ru.death.chaosshard.anchor.ItemAnchorSeal(t), "anchor_seal_" + t.name().toLowerCase()));
         }

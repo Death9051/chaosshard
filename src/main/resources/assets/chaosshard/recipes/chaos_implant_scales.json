@@ -1,0 +1,30 @@
+{
+ "conditions": [
+  {
+   "type": "forge:mod_loaded",
+   "modid": "cyberware"
+  }
+ ],
+ "type": "minecraft:crafting_shaped",
+ "pattern": [
+  "CPC",
+  "PEP",
+  "CPC"
+ ],
+ "key": {
+  "C": {
+   "item": "chaosshard:dragon_scale"
+  },
+  "P": {
+   "item": "cyberware:component",
+   "data": 4
+  },
+  "E": {
+   "item": "chaosshard:chaos_essence"
+  }
+ },
+ "result": {
+  "item": "chaosshard:chaos_implant",
+  "data": 11
+ }
+}

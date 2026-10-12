@@ -69,6 +69,7 @@ public class Milestones {
     public static final String TRIAL_3 = "trial_three";
     public static final String TRIAL_HARD = "trial_hard";
     public static final String LAIR_1 = "lair_1", LAIR_2 = "lair_2", LAIR_3 = "lair_3";
+    public static final String DRAGON = "dragon_scales";
     public static final String SERVANT = "servant_first", SERVANT_BONE = "servant_bone", SERVANT_EXEC = "servant_exec", SERVANT_3 = "servant_three";
     public static final String VILLAGE_EVOLVED = "village_evolved";
 
@@ -104,6 +105,22 @@ public class Milestones {
     public static void onCapture(EntityPlayerMP owner) {
         NBTTagCompound data = persisted(owner);
         data.setInteger(TAG_CAPTURED, data.getInteger(TAG_CAPTURED) + 1);
+    }
+
+    /** Эндер-дракон пал: каждый в Энде получает чешую дракона. */
+    @SubscribeEvent
+    public void onDragon(net.minecraftforge.event.entity.living.LivingDeathEvent event) {
+        if (!(event.getEntityLiving() instanceof net.minecraft.entity.boss.EntityDragon) || event.getEntityLiving().world.isRemote) {
+            return;
+        }
+        World w = event.getEntityLiving().world;
+        for (net.minecraft.entity.player.EntityPlayer pl : w.playerEntities) {
+            if (pl instanceof EntityPlayerMP && pl.getDistanceSq(event.getEntityLiving()) < 256 * 256) {
+                net.minecraftforge.items.ItemHandlerHelper.giveItemToPlayer(pl,
+                        new net.minecraft.item.ItemStack(ru.death.chaosshard.init.ModItems.DRAGON_SCALE, 6 + w.rand.nextInt(5)));
+                grant((EntityPlayerMP) pl, DRAGON);
+            }
+        }
     }
 
     /** Сломанный рассадник тварей (подземелья Roguelike и любые другие). */
