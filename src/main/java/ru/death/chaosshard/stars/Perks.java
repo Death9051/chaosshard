@@ -11,23 +11,23 @@ public final class Perks {
     }
 
     public static boolean spark(EntityPlayer p) {
-        return on() && ChaosPerks.has(p, ChaosPerks.SPARK);
+        return on() && ChaosPerks.has(p, 0);
     }
 
     public static boolean night(EntityPlayer p) {
-        return on() && ChaosPerks.has(p, ChaosPerks.NIGHT);
+        return on() && ChaosPerks.has(p, 1);
     }
 
     public static boolean shadow(EntityPlayer p) {
-        return on() && ChaosPerks.has(p, ChaosPerks.SHADOW);
+        return on() && ChaosPerks.has(p, 2);
     }
 
     public static boolean hunger(EntityPlayer p) {
-        return on() && ChaosPerks.has(p, ChaosPerks.HUNGER);
+        return on() && ChaosPerks.has(p, 3);
     }
 
     public static boolean well(EntityPlayer p) {
-        return on() && ChaosPerks.has(p, ChaosPerks.WELL);
+        return on() && ChaosPerks.has(p, 4);
     }
 
     private Perks() {

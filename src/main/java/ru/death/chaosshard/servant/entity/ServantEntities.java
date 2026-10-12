@@ -24,6 +24,13 @@ public final class ServantEntities {
     private ServantEntities() {
     }
 
+    /** removeAllModifiers есть только на клиенте — на сервере снимаем по одному. */
+    static void clearModifiers(IAttributeInstance a) {
+        for (net.minecraft.entity.ai.attributes.AttributeModifier m : new java.util.ArrayList<>(a.getModifiers())) {
+            a.removeModifier(m);
+        }
+    }
+
     static void tame(net.minecraft.entity.EntityLiving m) {
         for (EntityEquipmentSlot s : EntityEquipmentSlot.values()) {
             if (s.getSlotType() == EntityEquipmentSlot.Type.ARMOR) {
@@ -35,7 +42,7 @@ public final class ServantEntities {
                 m.getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE),
                 m.getEntityAttribute(SharedMonsterAttributes.KNOCKBACK_RESISTANCE)}) {
             if (a != null) {
-                a.removeAllModifiers();
+                clearModifiers(a);
             }
         }
     }
@@ -54,7 +61,7 @@ public final class ServantEntities {
             dismountRidingEntity();
             removePassengers();
             IAttributeInstance r = getEntityAttribute(SPAWN_REINFORCEMENTS_CHANCE);
-            r.removeAllModifiers();
+            clearModifiers(r);
             r.setBaseValue(0);
             tame(this);
             return d;

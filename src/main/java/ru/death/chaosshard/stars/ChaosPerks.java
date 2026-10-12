@@ -93,6 +93,12 @@ public final class ChaosPerks {
     }
 
     /** Есть ли у игрока действующий перк (только сервер). */
+    /** Для {@link Perks}: в его байткоде не должно быть типов Astral Sorcery. */
+    static boolean has(EntityPlayer player, int which) {
+        ChaosPerk[] all = {SPARK, NIGHT, SHADOW, HUNGER, WELL};
+        return which >= 0 && which < all.length && has(player, all[which]);
+    }
+
     public static boolean has(EntityPlayer player, AbstractPerk perk) {
         if (perk == null || player == null || player.world == null || player.world.isRemote) {
             return false;

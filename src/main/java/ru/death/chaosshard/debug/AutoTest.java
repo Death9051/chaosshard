@@ -8,6 +8,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.passive.EntityVillager;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.network.EnumPacketDirection;
 import net.minecraft.network.NetHandlerPlayServer;
@@ -139,10 +140,48 @@ public final class AutoTest {
         }
     }
 
+    /** [ожидаемо загрузятся, пропущено из-за отсутствующих модов] — по json-файлам в jar. */
+    private static int[] expectedAdvancements() {
+        int ok = 0, skip = 0;
+        try {
+            java.io.File f = new java.io.File(ChaosShard.class.getProtectionDomain().getCodeSource().getLocation().toURI());
+            String path = f.getPath();
+            int bang = path.indexOf('!');
+            if (bang > 0) f = new java.io.File(path.substring(0, bang));
+            try (java.util.zip.ZipFile z = new java.util.zip.ZipFile(f)) {
+                java.util.Enumeration<? extends java.util.zip.ZipEntry> en = z.entries();
+                while (en.hasMoreElements()) {
+                    java.util.zip.ZipEntry e = en.nextElement();
+                    String n = e.getName();
+                    if (!n.startsWith("assets/chaosshard/advancements/m/") || !n.endsWith(".json")) continue;
+                    String txt;
+                    try (java.io.InputStream in = z.getInputStream(e)) {
+                        txt = new String(org.apache.commons.io.IOUtils.toByteArray(in), java.nio.charset.StandardCharsets.UTF_8);
+                    }
+                    java.util.regex.Matcher m = java.util.regex.Pattern.compile("\"item\"\\s*:\\s*\"([a-z0-9_\\-.]+):").matcher(txt);
+                    boolean missing = false;
+                    while (m.find()) {
+                        String mod = m.group(1);
+                        if (!mod.equals("minecraft") && !Loader.isModLoaded(mod)) missing = true;
+                    }
+                    if (missing) skip++; else ok++;
+                }
+            }
+        } catch (Exception e) {
+            ChaosShard.LOGGER.warn("[autotest] не прочитал вехи из jar", e);
+        }
+        return new int[]{ok, skip};
+    }
+
     @SubscribeEvent
     public void onTick(TickEvent.ServerTickEvent event) {
         if (event.phase != TickEvent.Phase.END || running != this) {
             return;
+        }
+        // Подставные игроки держат чанки вокруг себя, как настоящие:
+        // без этого измерение без игроков выгружает их каждый тик.
+        for (EntityPlayerMP f : TestHooks.FAKES.values()) {
+            ((WorldServer) f.world).getPlayerChunkMap().updateMovingPlayer(f);
         }
         if (sleep > 0) {
             sleep--;
@@ -199,6 +238,11 @@ public final class AutoTest {
             ChaosShard.LOG.error("[autotest] не записал отчёт", e);
         }
         ChaosShard.LOG.info("AUTOTEST DONE pass={} fail={}", pass, fail);
+        for (EntityPlayerMP f : TestHooks.FAKES.values()) {
+            WorldServer w = (WorldServer) f.world;
+            w.getPlayerChunkMap().removePlayer(f);
+            w.playerEntities.remove(f);
+        }
         TestHooks.FAKES.clear();
         MinecraftForge.EVENT_BUS.unregister(this);
         running = null;
@@ -215,6 +259,11 @@ public final class AutoTest {
         new EmbeddedChannel(nm);
         new NetHandlerPlayServer(server, nm, p);
         TestHooks.FAKES.put(id, p);
+        p.setPosition(w.getSpawnPoint().getX() + 0.5, 150, w.getSpawnPoint().getZ() + 0.5);
+        p.managedPosX = p.posX;
+        p.managedPosZ = p.posZ;
+        w.playerEntities.add(p);
+        w.getPlayerChunkMap().addPlayer(p);
         return p;
     }
 
@@ -269,7 +318,9 @@ public final class AutoTest {
                     if (a.getDisplay() == null) noDisplay++;
                 }
             }
-            check(all >= 60, "вех загружено: " + all);
+            int[] exp = expectedAdvancements();
+            check(exp[0] > 0 && all == exp[0], "вех загружено: " + all + " из " + exp[0]
+                    + (exp[1] > 0 ? " (ещё " + exp[1] + " со значком из модов, которых нет на тестовом сервере)" : ""));
             check(noDisplay == 0, "вехи без значка и названия: " + noDisplay);
         });
 
