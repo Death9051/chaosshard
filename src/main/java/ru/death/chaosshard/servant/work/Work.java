@@ -37,7 +37,7 @@ import java.util.function.Predicate;
  */
 public class Work {
 
-    private static final Map<UUID, UUID> SELECTED = new HashMap<>();
+    private static final Map<UUID, java.util.LinkedHashSet<UUID>> SELECTED = new HashMap<>();
     private static final Map<UUID, Long> SELECTED_AT = new HashMap<>();
 
     // ------------------------------------------------------------------ совместная работа у одного сундука
@@ -76,9 +76,17 @@ public class Work {
         }
     }
 
-    public static void select(EntityPlayer p, Entity servant) {
-        SELECTED.put(p.getUniqueID(), servant.getUniqueID());
-        SELECTED_AT.put(p.getUniqueID(), p.world.getTotalWorldTime());
+    /** Добавить слугу к выбору (можно выбрать несколько подряд, выбор живёт 30 секунд с последнего щелчка). Возвращает, сколько выбрано. */
+    public static int select(EntityPlayer p, Entity servant) {
+        long now = p.world.getTotalWorldTime();
+        java.util.LinkedHashSet<UUID> set = SELECTED.get(p.getUniqueID());
+        if (set == null || now - SELECTED_AT.getOrDefault(p.getUniqueID(), 0L) > 600) {
+            set = new java.util.LinkedHashSet<>();
+            SELECTED.put(p.getUniqueID(), set);
+        }
+        set.add(servant.getUniqueID());
+        SELECTED_AT.put(p.getUniqueID(), now);
+        return set.size();
     }
 
     public static BlockPos chest(Entity m) {
@@ -268,8 +276,8 @@ public class Work {
         if (event.getWorld().isRemote || event.getHand() != EnumHand.MAIN_HAND || p.getHeldItemMainhand().getItem() != ModItems.GRIMOIRE) {
             return;
         }
-        UUID id = SELECTED.get(p.getUniqueID());
-        if (id == null) {
+        java.util.LinkedHashSet<UUID> ids = SELECTED.get(p.getUniqueID());
+        if (ids == null || ids.isEmpty()) {
             return;
         }
         // выбор живёт 30 секунд
@@ -278,36 +286,45 @@ public class Work {
             return;
         }
         event.setCanceled(true);
-        Entity e = ((WorldServer) event.getWorld()).getEntityFromUuid(id);
-        if (!(e instanceof EntityCreature) || !e.isEntityAlive() || !Servants.isServantOf(e, p.getUniqueID())) {
-            SELECTED.remove(p.getUniqueID());
-            return;
-        }
-        Servants.Kind kind = Servants.kindOf(e);
-        if (kind != null && !kind.gatherer()) {
-            SELECTED.remove(p.getUniqueID());
-            fighter(p, (EntityCreature) e, event.getWorld(), event.getPos());
-            return;
-        }
-        if (handler(event.getWorld(), event.getPos()) == null) {
-            p.sendStatusMessage(Breach.grimoire("chaosshard.work.not_chest"), true);
-            return;
-        }
         SELECTED.remove(p.getUniqueID());
-        EntityCreature m = (EntityCreature) e;
+        boolean chest = handler(event.getWorld(), event.getPos()) != null;
+        boolean notChest = false;
+        for (UUID id : ids) {
+            Entity e = ((WorldServer) event.getWorld()).getEntityFromUuid(id);
+            if (!(e instanceof EntityCreature) || !e.isEntityAlive() || !Servants.isServantOf(e, p.getUniqueID())) {
+                continue;
+            }
+            Servants.Kind kind = Servants.kindOf(e);
+            if (kind != null && !kind.gatherer()) {
+                fighter(p, (EntityCreature) e, event.getWorld(), event.getPos());
+                continue;
+            }
+            if (!chest) {
+                notChest = true;
+                continue;
+            }
+            bindChest(p, (EntityCreature) e, event.getPos());
+        }
+        if (notChest) {
+            p.sendStatusMessage(Breach.grimoire("chaosshard.work.not_chest"), true);
+        }
+    }
+
+    private static void bindChest(EntityPlayer p, EntityCreature m, BlockPos pos) {
         unbind(m);
-        m.getEntityData().setLong(Servants.TAG_CHEST, event.getPos().toLong());
+        m.getEntityData().setLong(Servants.TAG_CHEST, pos.toLong());
         m.getEntityData().setInteger(Servants.TAG_DIR, p.getHorizontalFacing().getHorizontalIndex());
         m.getEntityData().removeTag(Servants.TAG_GUARD);
-        m.setHomePosAndDistance(event.getPos(), 32);
+        m.setHomePosAndDistance(pos, 32);
         m.setAttackTarget(null);
-        ((WorldServer) m.world).spawnParticle(EnumParticleTypes.SPELL_WITCH, event.getPos().getX() + 0.5, event.getPos().getY() + 1,
-                event.getPos().getZ() + 0.5, 30, 0.3, 0.3, 0.3, 0.05);
+        ((WorldServer) m.world).spawnParticle(EnumParticleTypes.SPELL_WITCH, pos.getX() + 0.5, pos.getY() + 1,
+                pos.getZ() + 0.5, 30, 0.3, 0.3, 0.3, 0.05);
         Servants.Kind k = Servants.kindOf(m);
         p.sendMessage(Breach.grimoire(k == Servants.Kind.MINER ? "chaosshard.work.bound.miner" : "chaosshard.work.bound",
                 new TextComponentTranslation("chaosshard.servant.kind." + k.key())));
         if (p instanceof EntityPlayerMP) {
             Milestones.grant((EntityPlayerMP) p, "servant_bind");
         }
+    }
     }
 }

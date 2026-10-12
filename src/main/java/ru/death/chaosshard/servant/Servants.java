@@ -445,6 +445,11 @@ public class Servants {
         Entity src = event.getSource().getTrueSource();
         EntityLivingBase hurt = event.getEntityLiving();
         // слуга не бьёт владельца и других слуг; владелец случайно не бьёт своего слугу (если не присел)
+        // шипы осквернённой земли (лозоколюч Defiled Lands) своих не ранят
+        if (event.getSource() == net.minecraft.util.DamageSource.CACTUS && isServant(hurt)) {
+            event.setCanceled(true);
+            return;
+        }
         if (isServant(src) && (isServant(hurt) || hurt.getUniqueID().equals(src.getEntityData().getUniqueId(TAG_OWNER)))) {
             event.setCanceled(true);
         } else if (src instanceof EntityPlayer && isServantOf(hurt, src.getUniqueID()) && !src.isSneaking()) {
@@ -467,9 +472,9 @@ public class Servants {
                 ru.death.chaosshard.servant.work.Work.unbind((EntityCreature) e);
                 p.sendStatusMessage(Breach.grimoire("chaosshard.work.unbound"), true);
             } else {
-                ru.death.chaosshard.servant.work.Work.select(p, e);
+                int n = ru.death.chaosshard.servant.work.Work.select(p, e);
                 p.sendStatusMessage(Breach.grimoire("chaosshard.work.selected",
-                        new net.minecraft.util.text.TextComponentTranslation("chaosshard.servant.kind." + kind.key())), true);
+                        new net.minecraft.util.text.TextComponentTranslation("chaosshard.servant.kind." + kind.key()), n), true);
             }
             event.setCanceled(true);
             return;
@@ -486,9 +491,9 @@ public class Servants {
                     p.sendStatusMessage(Breach.grimoire("chaosshard.servant.follow"), true);
                 }
             } else {
-                ru.death.chaosshard.servant.work.Work.select(p, e);
+                int n = ru.death.chaosshard.servant.work.Work.select(p, e);
                 p.sendStatusMessage(Breach.grimoire("chaosshard.work.selected_fighter",
-                        new net.minecraft.util.text.TextComponentTranslation("chaosshard.servant.kind." + kind.key())), true);
+                        new net.minecraft.util.text.TextComponentTranslation("chaosshard.servant.kind." + kind.key()), n), true);
             }
             event.setCanceled(true);
             return;

@@ -370,11 +370,33 @@ public class GarrotRaids {
         if (e.world.isRemote || !e.getTags().contains(TAG_CAPTAIN)) {
             return;
         }
+        // Капитан пал — набег отбит, кто бы его ни убил: я, мои слуги, шипы Скверны
         Entity killer = event.getSource().getTrueSource();
-        if (!(killer instanceof EntityPlayerMP)) {
+        EntityPlayerMP player = null;
+        if (killer instanceof EntityPlayerMP) {
+            player = (EntityPlayerMP) killer;
+        } else if (ru.death.chaosshard.servant.Servants.isServant(killer)
+                && ru.death.chaosshard.servant.Servants.owner(killer) instanceof EntityPlayerMP) {
+            player = (EntityPlayerMP) ru.death.chaosshard.servant.Servants.owner(killer);
+        } else if (e.getEntityData().hasKey(TAG_RAID)) {
+            ru.death.chaosshard.anchor.TileAnchor a = ru.death.chaosshard.anchor.AnchorClusters.at(e.world, BlockPos.fromLong(e.getEntityData().getLong(TAG_RAID)));
+            if (a != null && a.getOwner() != null) {
+                EntityPlayer o = e.world.getPlayerEntityByUUID(a.getOwner());
+                if (o instanceof EntityPlayerMP) {
+                    player = (EntityPlayerMP) o;
+                }
+            }
+        }
+        RETREATS.put(e.world.provider.getDimension(), 4);
+        if (player == null) {
+            if (e.getEntityData().hasKey(TAG_RAID)) {
+                ru.death.chaosshard.anchor.TileAnchor a = ru.death.chaosshard.anchor.AnchorClusters.at(e.world, BlockPos.fromLong(e.getEntityData().getLong(TAG_RAID)));
+                if (a != null) {
+                    a.repelled(Math.max(1, e.getEntityData().getInteger(TAG_RAID_LVL)));
+                }
+            }
             return;
         }
-        EntityPlayerMP player = (EntityPlayerMP) killer;
         net.minecraft.nbt.NBTTagCompound data = persisted(player);
         int kills = data.getInteger(TAG_KILLS) + 1;
         data.setInteger(TAG_KILLS, kills);
