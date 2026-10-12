@@ -21,6 +21,10 @@ public final class ChaosConfig {
     @Config.LangKey("chaosshard.config.thread")
     public static final ThreadCfg thread = new ThreadCfg();
 
+    @Config.Comment("Испытания: обломки чужих миров")
+    @Config.LangKey("chaosshard.config.trials")
+    public static final TrialsCfg trials = new TrialsCfg();
+
     @Config.Comment("Тело Осколка: Robotic Parts и импланты Хаоса")
     @Config.LangKey("chaosshard.config.body")
     public static final BodyCfg body = new BodyCfg();
@@ -129,6 +133,12 @@ public final class ChaosConfig {
 
         @Config.Comment("Если у игрока нет кровати, после смерти тело Осколка собирается заново в Преддверии")
         public boolean respawnInAntechamber = true;
+    }
+
+    public static final class TrialsCfg {
+        @Config.Comment("ID измерения-архива Испытаний. Меняйте только на новом мире.")
+        @Config.RequiresMcRestart
+        public int dimensionId = 67;
     }
 
     public static final class BodyCfg {

@@ -59,6 +59,7 @@ public class ChaosShard {
         ChaosNetwork.init();
         net.minecraftforge.fml.common.network.NetworkRegistry.INSTANCE.registerGuiHandler(this, new ru.death.chaosshard.heart.HeartGuiHandler());
         AntechamberDimension.register();
+        ru.death.chaosshard.trial.TrialDimension.register();
         MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.thread.ThreadEvents());
         MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.antechamber.AntechamberEvents());
         MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.breach.BreachRitual());
@@ -70,6 +71,7 @@ public class ChaosShard {
         MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.garrot.GarrotRaids());
         MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.ritual.RitualEvents());
         MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.spell.ChaosEnergy());
+        MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.trial.TrialManager());
         ru.death.chaosshard.compat.body.Body.init();
         net.minecraftforge.fml.common.registry.GameRegistry.registerWorldGenerator(new ru.death.chaosshard.order.ShrineGen(), 20);
         if (astralLoaded) {

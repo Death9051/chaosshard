@@ -119,6 +119,19 @@ public class CommandChaosShard extends CommandBase {
                 }
                 break;
             }
+            case "trial": {
+                // /oh trial [start <ступень>|leave] — Испытания
+                EntityPlayerMP player = getCommandSenderAsPlayer(sender);
+                String sub = args.length >= 2 ? args[1] : "start";
+                if ("leave".equals(sub)) {
+                    ru.death.chaosshard.trial.TrialManager.finish(player, player.world, player.getPosition());
+                } else {
+                    int tier = args.length >= 3 ? parseInt(args[2], 1, 3) : 1;
+                    net.minecraft.nbt.NBTTagCompound tag = ru.death.chaosshard.trial.ItemTrialKey.roll((tier - 1) * 2, player.world.rand);
+                    ru.death.chaosshard.trial.TrialManager.enter(player, tier, tag.getInteger("cond"));
+                }
+                break;
+            }
             case "village": {
                 // /oh village [info|xp <n>|level <n>] — ближайший Знак покровителя
                 World w = sender.getEntityWorld();
@@ -352,7 +365,7 @@ public class CommandChaosShard extends CommandBase {
             case "kit": {
                 String[] kit = {
                         "chaosshard:grimoire", "chaosshard:chaos_stone 64", "chaosshard:chaos_crust 64",
-                        "chaosshard:breach_altar", "chaosshard:ritual_spire 4", "chaosshard:ritual_bowl", "chaosshard:chaos_chalk", "chaosshard:chaos_anchor 2", "chaosshard:patron_sigil", "chaosshard:anchor_seal_fury 2", "chaosshard:anchor_seal_reach 2", "chaosshard:anchor_seal_harvest", "chaosshard:anchor_seal_well 2", "chaosshard:chaos_essence 16", "minecraft:dye 32 15", "chaosshard:breach_book", "chaosshard:memory_fragment 8", "chaosshard:veil_shard 8",
+                        "chaosshard:breach_altar", "chaosshard:ritual_spire 4", "chaosshard:ritual_bowl", "chaosshard:chaos_chalk", "chaosshard:trial_key 2", "chaosshard:star_pump", "chaosshard:chaos_anchor 2", "chaosshard:patron_sigil", "chaosshard:anchor_seal_fury 2", "chaosshard:anchor_seal_reach 2", "chaosshard:anchor_seal_harvest", "chaosshard:anchor_seal_well 2", "chaosshard:chaos_essence 16", "minecraft:dye 32 15", "chaosshard:breach_book", "chaosshard:memory_fragment 8", "chaosshard:veil_shard 8",
                         "astralsorcery:itemjournal", "astralsorcery:itemwand", "astralsorcery:itemhandtelescope",
                         "astralsorcery:blockaltar 1 0", "astralsorcery:blockwell", "astralsorcery:itemrockcrystalsimple 4",
                         "astralsorcery:itemcraftingcomponent 32 0", "astralsorcery:blockmarble 64 0",
@@ -397,7 +410,7 @@ public class CommandChaosShard extends CommandBase {
     @Override
     public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos targetPos) {
         if (args.length == 1) {
-            return getListOfStringsMatchingLastWord(args, "nit", "tp", "sky", "grimoire", "debug", "breach", "heart", "quests", "selftest", "anchor", "shrine", "surge", "village");
+            return getListOfStringsMatchingLastWord(args, "nit", "tp", "sky", "grimoire", "debug", "breach", "heart", "quests", "selftest", "anchor", "shrine", "surge", "village", "trial");
         }
         if (args.length == 2 && "nit".equals(args[0])) {
             return getListOfStringsMatchingLastWord(args, "get", "set", "add", "resync");
@@ -413,6 +426,9 @@ public class CommandChaosShard extends CommandBase {
         }
         if (args.length == 2 && "anchor".equals(args[0])) {
             return getListOfStringsMatchingLastWord(args, "list", "spread", "level", "raid");
+        }
+        if (args.length == 2 && "trial".equals(args[0])) {
+            return getListOfStringsMatchingLastWord(args, "start", "leave");
         }
         if (args.length == 2 && "village".equals(args[0])) {
             return getListOfStringsMatchingLastWord(args, "info", "xp", "level");

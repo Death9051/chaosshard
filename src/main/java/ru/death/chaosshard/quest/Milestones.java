@@ -65,6 +65,9 @@ public class Milestones {
     public static final String LIMBO = "limbo";
     public static final String CHAOS_PERK = "chaos_perk";
     public static final String PUMP = "star_pump";
+    public static final String TRIAL = "trial_done";
+    public static final String TRIAL_3 = "trial_three";
+    public static final String TRIAL_HARD = "trial_hard";
     public static final String VILLAGE_EVOLVED = "village_evolved";
 
     private static final String TAG_AGES = "chaosshard_ages";

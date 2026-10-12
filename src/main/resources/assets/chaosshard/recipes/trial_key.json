@@ -1,0 +1,23 @@
+{
+ "type": "minecraft:crafting_shapeless",
+ "ingredients": [
+  {
+   "item": "chaosshard:grimoire"
+  },
+  {
+   "item": "minecraft:paper"
+  },
+  {
+   "item": "chaosshard:memory_fragment"
+  },
+  {
+   "item": "chaosshard:memory_fragment"
+  },
+  {
+   "item": "chaosshard:veil_shard"
+  }
+ ],
+ "result": {
+  "item": "chaosshard:trial_key"
+ }
+}

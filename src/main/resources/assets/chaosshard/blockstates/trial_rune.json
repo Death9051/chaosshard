@@ -1,0 +1,10 @@
+{
+ "variants": {
+  "lit=false": {
+   "model": "chaosshard:trial_rune_off"
+  },
+  "lit=true": {
+   "model": "chaosshard:trial_rune_on"
+  }
+ }
+}
