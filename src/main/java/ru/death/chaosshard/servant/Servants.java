@@ -347,6 +347,57 @@ public class Servants {
         }
     }
 
+    // ------------------------------------------------------------------ переходы между мирами
+
+    /** Игрок → мир, из которого он ушёл. Слуги переходят на следующем тике. */
+    private static final java.util.Map<UUID, Integer> MOVED = new java.util.HashMap<>();
+
+    @SubscribeEvent
+    public void onChangedDimension(net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerChangedDimensionEvent event) {
+        if (!event.player.world.isRemote) {
+            MOVED.put(event.player.getUniqueID(), event.fromDim);
+        }
+    }
+
+    /** Свита, что ходит за мной (не стережёт место и не закреплена за сундуком), переходит со мной в другой мир. */
+    @SubscribeEvent
+    public void onServerTick(net.minecraftforge.fml.common.gameevent.TickEvent.ServerTickEvent event) {
+        if (event.phase != net.minecraftforge.fml.common.gameevent.TickEvent.Phase.END || MOVED.isEmpty()) {
+            return;
+        }
+        java.util.Map<UUID, Integer> moved = new java.util.HashMap<>(MOVED);
+        MOVED.clear();
+        net.minecraft.server.MinecraftServer server = net.minecraftforge.fml.common.FMLCommonHandler.instance().getMinecraftServerInstance();
+        for (java.util.Map.Entry<UUID, Integer> me : moved.entrySet()) {
+            EntityPlayerMP p = server.getPlayerList().getPlayerByUUID(me.getKey());
+            WorldServer from = net.minecraftforge.common.DimensionManager.getWorld(me.getValue());
+            if (p == null || from == null || p.dimension == me.getValue()) {
+                continue;
+            }
+            // в Испытания свита не ходит — ждёт у входа
+            if (ru.death.chaosshard.trial.TrialDimension.is(p.world)) {
+                continue;
+            }
+            List<Entity> list = new java.util.ArrayList<>(from.loadedEntityList);
+            int n = 0;
+            for (Entity e : list) {
+                if (!e.isEntityAlive() || !isServantOf(e, p.getUniqueID()) || e.getEntityData().hasKey(TAG_GUARD)
+                        || e.getEntityData().hasKey(TAG_CHEST) || e.isRiding() || e.isBeingRidden()) {
+                    continue;
+                }
+                final double ox = (n % 3 - 1) * 1.2, oz = (n / 3 % 3 - 1) * 1.2;
+                n++;
+                e.changeDimension(p.dimension, (world, entity, yaw) -> {
+                    entity.setLocationAndAngles(p.posX + ox, p.posY, p.posZ + oz, p.rotationYaw, 0);
+                    entity.motionX = entity.motionY = entity.motionZ = 0;
+                });
+            }
+            if (n > 0) {
+                ((WorldServer) p.world).spawnParticle(EnumParticleTypes.PORTAL, p.posX, p.posY + 1, p.posZ, 40, 1.0, 0.8, 1.0, 0.5);
+            }
+        }
+    }
+
     // ------------------------------------------------------------------ верность
 
     @SubscribeEvent

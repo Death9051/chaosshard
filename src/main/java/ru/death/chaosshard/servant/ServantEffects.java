@@ -44,6 +44,15 @@ public class ServantEffects {
                 ServantGear.refresh(m, o);
             }
         }
+        // станция добытчика держит чанки, пока он работает
+        if (sec % 5 == 0 && m.getEntityData().hasKey(Servants.TAG_CHEST)) {
+            Servants.Kind k = Servants.kindOf(m);
+            ru.death.chaosshard.servant.work.MineData.Mine mine = k == Servants.Kind.MINER
+                    ? ru.death.chaosshard.servant.work.MineData.get(m.world).existing(ru.death.chaosshard.servant.work.Work.chest(m)) : null;
+            if (mine == null || !mine.done()) {
+                ru.death.chaosshard.servant.work.WorkChunks.touch(m, m.getPosition());
+            }
+        }
         if (ServantGear.tier(m) >= 4 && sec % 2 == 0) {
             ws.spawnParticle(EnumParticleTypes.SPELL_WITCH, m.posX, m.posY + m.height * 0.6, m.posZ, 2, 0.25, 0.4, 0.25, 0.0);
         }

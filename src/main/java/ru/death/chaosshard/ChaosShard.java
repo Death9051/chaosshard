@@ -35,6 +35,9 @@ public class ChaosShard {
     public static final String MODID = Tags.MOD_ID;
     public static final Logger LOG = LogManager.getLogger("ChaosShard");
 
+    /** Станции добытчиков держат чанки. */
+    public static final ru.death.chaosshard.servant.work.WorkChunks WORK_CHUNKS = new ru.death.chaosshard.servant.work.WorkChunks();
+
     @Mod.Instance(Tags.MOD_ID)
     public static ChaosShard INSTANCE;
 
@@ -84,6 +87,7 @@ public class ChaosShard {
         MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.servant.AltarAscension());
         MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.servant.ServantEffects());
         MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.servant.work.Work());
+        MinecraftForge.EVENT_BUS.register(WORK_CHUNKS);
         ru.death.chaosshard.compat.body.Body.init();
         net.minecraftforge.fml.common.registry.GameRegistry.registerWorldGenerator(new ru.death.chaosshard.order.ShrineGen(), 20);
         if (astralLoaded) {
@@ -101,6 +105,7 @@ public class ChaosShard {
 
     @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
+        net.minecraftforge.common.ForgeChunkManager.setForcedChunkLoadingCallback(this, WORK_CHUNKS);
         net.minecraftforge.oredict.OreDictionary.registerOre("dustChaos", ru.death.chaosshard.init.ModItems.CHAOS_ESSENCE);
         net.minecraftforge.oredict.OreDictionary.registerOre("ingotDistortedStarmetal", ru.death.chaosshard.init.ModItems.DISTORTED_STARMETAL);
         if (Loader.isModLoaded("tconstruct") && ChaosConfig.compat.tinkers) {

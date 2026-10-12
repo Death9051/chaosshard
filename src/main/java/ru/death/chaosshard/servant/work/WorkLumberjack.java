@@ -11,6 +11,7 @@ import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumParticleTypes;
@@ -37,6 +38,9 @@ public class WorkLumberjack extends EntityAIBase {
 
     private final EntityCreature m;
     private BlockPos base;
+    /** Порода срубаемого дерева (мета саженца; -1 — неизвестна) и клетки основания ствола. */
+    private int kind = -1;
+    private final List<BlockPos> bases = new ArrayList<>();
     private final List<BlockPos> logs = new ArrayList<>();
     private final int[] stuck = {0};
     private int t;
@@ -148,6 +152,14 @@ public class WorkLumberjack extends EntityAIBase {
                         best = p.toImmutable();
                         logs.clear();
                         logs.addAll(tree);
+                        kind = woodKind(s);
+                        bases.clear();
+                        int minY = tree.get(0).getY();
+                        for (BlockPos q : tree) {
+                            if (q.getY() == minY && ground(w.getBlockState(q.down()))) {
+                                bases.add(q);
+                            }
+                        }
                     }
                 }
             }
@@ -221,17 +233,69 @@ public class WorkLumberjack extends EntityAIBase {
         }
     }
 
+    /** Порода по бревну: мета саженца ванильной породы, -1 — модное дерево. */
+    private static int woodKind(IBlockState s) {
+        if (s.getBlock() == Blocks.LOG) {
+            return s.getValue(net.minecraft.block.BlockOldLog.VARIANT).getMetadata();
+        }
+        if (s.getBlock() == Blocks.LOG2) {
+            return s.getValue(net.minecraft.block.BlockNewLog.VARIANT).getMetadata();
+        }
+        return -1;
+    }
+
+    private static boolean isSapling(ItemStack s) {
+        if (!(s.getItem() instanceof ItemBlock)) {
+            return false;
+        }
+        Block b = ((ItemBlock) s.getItem()).getBlock();
+        return b instanceof BlockSapling || b.getClass().getSimpleName().toLowerCase(java.util.Locale.ROOT).contains("sapling");
+    }
+
+    private boolean sameKind(ItemStack s) {
+        if (!isSapling(s)) {
+            return false;
+        }
+        if (kind < 0) {
+            return true;
+        }
+        return ((ItemBlock) s.getItem()).getBlock() == Blocks.SAPLING && s.getMetadata() == kind;
+    }
+
+    /**
+     * Посадить на место срубленного дерева саженец той же породы (из сундука; нет такого — любой).
+     * Тёмный дуб, ель и джунгли с толстым стволом — квадратом 2×2, если в сундуке хватает саженцев.
+     */
     private void replant(World w, BlockPos b) {
-        if (!w.isAirBlock(b) || !ground(w.getBlockState(b.down()))) {
+        List<BlockPos> spots = new ArrayList<>();
+        for (BlockPos q : bases.isEmpty() ? java.util.Collections.singletonList(b) : bases) {
+            if (w.isAirBlock(q) && ground(w.getBlockState(q.down()))) {
+                spots.add(q);
+            }
+        }
+        if (spots.isEmpty()) {
             return;
         }
-        ItemStack sap = Work.take(m, s -> s.getItem() instanceof ItemBlock && ((ItemBlock) s.getItem()).getBlock() instanceof BlockSapling);
-        if (sap.isEmpty()) {
-            return;
+        boolean big = spots.size() >= 4 && (kind == 1 || kind == 3 || kind == 5) && Work.count(m, this::sameKind) >= 4;
+        if (!big) {
+            spots = spots.subList(0, 1);
+        } else {
+            spots = spots.subList(0, 4);
         }
-        Block block = ((ItemBlock) sap.getItem()).getBlock();
-        w.setBlockState(b, block.getStateFromMeta(sap.getMetadata()), 3);
-        ((WorldServer) w).spawnParticle(EnumParticleTypes.VILLAGER_HAPPY, b.getX() + 0.5, b.getY() + 0.5, b.getZ() + 0.5, 8, 0.3, 0.3, 0.3, 0);
+        for (BlockPos q : spots) {
+            // одиночный тёмный дуб не вырастет — тогда лучше другая порода
+            ItemStack sap = !big && kind == 5 ? Work.take(m, x -> isSapling(x) && !(x.getItem() == Item.getItemFromBlock(Blocks.SAPLING) && x.getMetadata() == 5))
+                    : Work.take(m, this::sameKind);
+            if (sap.isEmpty() && !big) {
+                sap = Work.take(m, WorkLumberjack::isSapling);
+            }
+            if (sap.isEmpty()) {
+                return;
+            }
+            Block block = ((ItemBlock) sap.getItem()).getBlock();
+            w.setBlockState(q, block.getStateFromMeta(sap.getMetadata()), 3);
+            ((WorldServer) w).spawnParticle(EnumParticleTypes.VILLAGER_HAPPY, q.getX() + 0.5, q.getY() + 0.5, q.getZ() + 0.5, 8, 0.3, 0.3, 0.3, 0);
+        }
     }
 
     /** Подобрать саженцы, яблоки, палки и брёвна вокруг — в сундук. */
@@ -249,7 +313,7 @@ public class WorkLumberjack extends EntityAIBase {
         }
         if (s.getItem() instanceof ItemBlock) {
             Block b = ((ItemBlock) s.getItem()).getBlock();
-            return b instanceof BlockSapling || b.getDefaultState().getMaterial() == Material.WOOD && b.getClass().getSimpleName().contains("Log");
+            return isSapling(s) || b.getDefaultState().getMaterial() == Material.WOOD && b.getClass().getSimpleName().contains("Log");
         }
         return false;
     }

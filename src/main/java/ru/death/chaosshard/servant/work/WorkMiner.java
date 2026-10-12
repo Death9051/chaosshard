@@ -125,6 +125,7 @@ public class WorkMiner extends EntityAIBase {
         // стоять у забоя: далеко — шагнуть по Нити на предыдущий (уже чистый) шаг
         BlockPos stand = stand(mine, job);
         if (stand != null && m.getDistanceSq(stand) > 25 && w.isAirBlock(stand) && w.isAirBlock(stand.up())) {
+            WorkChunks.touch(m, stand);
             m.setPositionAndUpdate(stand.getX() + 0.5, stand.getY(), stand.getZ() + 0.5);
         }
         boolean blocked = false;
@@ -152,6 +153,7 @@ public class WorkMiner extends EntityAIBase {
         }
         BlockPos feet = col.get(0);
         if (!blocked) {
+            WorkChunks.touch(m, feet);
             m.setPositionAndUpdate(feet.getX() + 0.5, feet.getY(), feet.getZ() + 0.5);
             scan(w, col);
         }

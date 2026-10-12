@@ -143,6 +143,21 @@ public class Work {
         return ItemStack.EMPTY;
     }
 
+    /** Сколько в сундуке подходящих предметов. */
+    public static int count(EntityCreature m, Predicate<ItemStack> what) {
+        IItemHandler h = handler(m.world, chest(m));
+        int n = 0;
+        if (h != null) {
+            for (int i = 0; i < h.getSlots(); i++) {
+                ItemStack s = h.getStackInSlot(i);
+                if (!s.isEmpty() && what.test(s)) {
+                    n += s.getCount();
+                }
+            }
+        }
+        return n;
+    }
+
     /** Сундук на месте? Нет — добытчик открепляется. */
     public static boolean alive(EntityCreature m) {
         BlockPos c = chest(m);
@@ -181,6 +196,7 @@ public class Work {
                 at = at.up();
             }
             ((WorldServer) m.world).spawnParticle(EnumParticleTypes.PORTAL, m.posX, m.posY + 1, m.posZ, 20, 0.3, 0.5, 0.3, 0.5);
+            WorkChunks.touch(m, at);
             m.setPositionAndUpdate(at.getX() + 0.5, at.getY(), at.getZ() + 0.5);
         }
         return false;

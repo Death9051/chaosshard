@@ -41,7 +41,7 @@ public enum Ritual {
     /** Добытчик: Жнец. */
     SERVANT_REAPER(1, 0, offer("chaosshard:chaos_essence", 0, 2), offer("minecraft:wheat_seeds", 0, 16), offer("minecraft:stone_hoe", 0, 1)),
     /** Добытчик: Лесоруб. */
-    SERVANT_LUMBERJACK(1, 0, offer("chaosshard:chaos_essence", 0, 2), offer("minecraft:sapling", 0, 8), offer("minecraft:stone_axe", 0, 1)),
+    SERVANT_LUMBERJACK(1, 0, offer("chaosshard:chaos_essence", 0, 2), offer("minecraft:sapling", -1, 8), offer("minecraft:stone_axe", 0, 1)),
     /** Добытчик: Рудокоп. */
     SERVANT_MINER(2, 0, offer("chaosshard:chaos_essence", 0, 3), offer("minecraft:stone_pickaxe", 0, 1), offer("minecraft:torch", 0, 16));
 
@@ -86,7 +86,7 @@ public enum Ritual {
     public List<ItemStack> offeringStacks() {
         List<ItemStack> out = new ArrayList<>();
         for (Offering o : offerings) {
-            out.add(new ItemStack(o.item.get(), o.count, o.meta));
+            out.add(new ItemStack(o.item.get(), o.count, Math.max(0, o.meta)));
         }
         return out;
     }
