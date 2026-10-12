@@ -89,6 +89,16 @@ public class ClientProxy extends CommonProxy {
     }
 
     @Override
+    public String clientEntity(int id) {
+        Minecraft mc = Minecraft.getMinecraft();
+        if (mc.world == null) {
+            return "?";
+        }
+        net.minecraft.entity.Entity e = mc.world.getEntityByID(id);
+        return e == null ? "§cнет§7" : (e.isDead ? "§cмёртв§7" : "да");
+    }
+
+    @Override
     public void handleBeasts(net.minecraft.nbt.NBTTagCompound tag) {
         Minecraft.getMinecraft().addScheduledTask(() -> ClientBeasts.set(tag));
     }

@@ -744,3 +744,7 @@ chaosshard.beast.renamed=Теперь его зовут: %s.
 chaosshard.beast.renamed_default=Зверю вернулось имя по виду: %s.
 item.chaosshard.anchor_seal_blood.name=Кровавая печать
 chaosshard.anchor_seal.blood.desc=Кровь: каждая смерть твари в краю питает Скверну (+3 к осквернению за печать).
+
+# вёдра Forge
+item.forge.bucketFilled.name=Ведро: %s
+item.forge.bucketFilled.evilcraftblood=Ведро тёмной крови

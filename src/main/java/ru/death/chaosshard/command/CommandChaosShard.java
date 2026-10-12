@@ -377,6 +377,31 @@ public class CommandChaosShard extends CommandBase {
         String mode = args.length >= 2 ? args[1] : "report";
         EntityPlayerMP player = getCommandSenderAsPlayer(sender);
         switch (mode) {
+            case "servants": {
+                // где мои слуги, знает ли о них сервер, отправлены ли они мне и есть ли они у меня в игре
+                int n = 0;
+                for (net.minecraft.world.WorldServer w : server.worlds) {
+                    for (net.minecraft.entity.Entity e : new java.util.ArrayList<>(w.loadedEntityList)) {
+                        if (!ru.death.chaosshard.servant.Servants.isServantOf(e, player.getUniqueID())) {
+                            continue;
+                        }
+                        n++;
+                        net.minecraft.entity.EntityTrackerEntry en = ru.death.chaosshard.servant.Resync.entry(e);
+                        boolean same = w == player.world;
+                        String line = "§d" + e.getName() + "§7 мир " + w.provider.getDimension() + " " + e.getPosition().getX() + " " + e.getPosition().getY()
+                                + " " + e.getPosition().getZ() + (e.isEntityAlive() ? "" : " §cмёртв§7")
+                                + " | учёт: " + (en == null ? "§cнет§7" : "да")
+                                + (same && en != null ? " | мне отправлен: " + (en.trackingPlayers.contains(player) ? "да" : "§cнет§7") : "")
+                                + (same ? " | чанк виден: " + (w.getPlayerChunkMap().isPlayerWatchingChunk(player, e.chunkCoordX, e.chunkCoordZ) ? "да" : "§cнет§7") : "")
+                                + (e.addedToChunk ? "" : " | §cвне чанка§7")
+                                + (same ? " | в игре: " + ChaosShard.proxy.clientEntity(e.getEntityId()) : "");
+                        sender.sendMessage(new net.minecraft.util.text.TextComponentString(line));
+                        ChaosShard.LOG.info("[servants] {}", line.replaceAll("§.", ""));
+                    }
+                }
+                sender.sendMessage(new net.minecraft.util.text.TextComponentString("§7Слуг загружено: " + n + " (подробно — в latest.log)"));
+                break;
+            }
             case "report": {
                 DebugReport report = DebugReport.build(server, player);
                 try {
@@ -500,7 +525,7 @@ public class CommandChaosShard extends CommandBase {
             return getListOfStringsMatchingLastWord(args, "list", "place");
         }
         if (args.length == 2 && "debug".equals(args[0])) {
-            return getListOfStringsMatchingLastWord(args, "report", "reset", "kit");
+            return getListOfStringsMatchingLastWord(args, "report", "reset", "kit", "servants");
         }
         if (args.length == 2 && "tp".equals(args[0])) {
             return getListOfStringsMatchingLastWord(args, "antechamber", "world");

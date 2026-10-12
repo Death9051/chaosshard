@@ -16,6 +16,11 @@ public class CommonProxy {
     }
 
     /** Пакет синхронизации Нити пришёл на клиент. На сервере ничего не делает. */
+    /** Есть ли сущность в мире клиента (только в одиночной игре; на сервере — «?»). */
+    public String clientEntity(int id) {
+        return "?";
+    }
+
     public void handleThreadSync(int points) {
     }
 
