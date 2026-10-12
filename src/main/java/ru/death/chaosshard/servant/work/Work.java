@@ -326,5 +326,4 @@ public class Work {
             Milestones.grant((EntityPlayerMP) p, "servant_bind");
         }
     }
-    }
 }
