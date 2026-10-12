@@ -57,7 +57,7 @@ public class ModelTiger extends ModelBase {
         tail2 = new ModelRenderer(this, 64, 12);
         tail2.addBox(-1.0F, -1.0F, 0.0F, 2, 2, 8);
         tail2.setRotationPoint(0.0F, 0.0F, 10.0F);
-        tail2.rotateAngleX = 0.8F;
+        tail2.rotateAngleX = 1.4F;
         head.addChild(snout);
         head.addChild(ear_l);
         head.addChild(ear_r);
