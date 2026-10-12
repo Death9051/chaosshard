@@ -634,7 +634,7 @@ public class TileAnchor extends TileEntity implements ITickable {
         if (owner == null || world.getMinecraftServer() == null) {
             return null;
         }
-        return world.getMinecraftServer().getPlayerList().getPlayerByUUID(owner);
+        return ru.death.chaosshard.debug.TestHooks.player(world.getMinecraftServer(), owner);
     }
 
     /** Отправить игрокам новые биомы, чтобы цвет травы и неба обновился. */

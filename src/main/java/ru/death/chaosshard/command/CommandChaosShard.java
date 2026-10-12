@@ -129,6 +129,12 @@ public class CommandChaosShard extends CommandBase {
                 }
                 break;
             }
+            case "autotest": {
+                // /oh autotest — сценарии без игрока, отчёт в chaosshard-autotest.txt
+                boolean ok = ru.death.chaosshard.debug.AutoTest.start(server, false);
+                sender.sendMessage(new net.minecraft.util.text.TextComponentString(ok ? "Автотест запущен — отчёт в " + ru.death.chaosshard.debug.AutoTest.FILE : "Автотест уже идёт"));
+                break;
+            }
             case "servant": {
                 // /oh servant <husk|bone|executioner|reaper|lumberjack|miner> — призвать без ритуала
                 // /oh servant up <УЛУЧШЕНИЕ> — дать улучшение слугам этого типа рядом (8 блоков)
@@ -505,7 +511,7 @@ public class CommandChaosShard extends CommandBase {
     @Override
     public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos targetPos) {
         if (args.length == 1) {
-            return getListOfStringsMatchingLastWord(args, "nit", "tp", "sky", "grimoire", "debug", "breach", "heart", "quests", "selftest", "anchor", "shrine", "surge", "village", "trial", "beast", "servant");
+            return getListOfStringsMatchingLastWord(args, "nit", "tp", "sky", "grimoire", "debug", "breach", "heart", "quests", "selftest", "anchor", "shrine", "surge", "village", "trial", "beast", "servant", "autotest");
         }
         if (args.length == 2 && "nit".equals(args[0])) {
             return getListOfStringsMatchingLastWord(args, "get", "set", "add", "resync");

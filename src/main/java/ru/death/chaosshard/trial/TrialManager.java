@@ -275,6 +275,17 @@ public class TrialManager {
         return I18n.translateToLocal("chaosshard.trial.riddle." + offeringKind(t, room) + ".sign").split("\\|");
     }
 
+    /** Верный дар для алтаря (для автотеста). */
+    public static ItemStack offeringSample(TrialData.Trial t, int room) {
+        switch (offeringKind(t, room)) {
+            case 0: return new ItemStack(Blocks.SAPLING);
+            case 1: return new ItemStack(Blocks.TORCH);
+            case 2: return new ItemStack(Items.IRON_SWORD);
+            case 3: return new ItemStack(Items.BREAD);
+            default: return new ItemStack(Items.IRON_INGOT);
+        }
+    }
+
     private static boolean fits(ItemStack s, int kind) {
         Item i = s.getItem();
         Block b = i instanceof ItemBlock ? ((ItemBlock) i).getBlock() : null;
@@ -305,7 +316,11 @@ public class TrialManager {
         if (event.phase != TickEvent.Phase.END || !(event.player instanceof EntityPlayerMP) || !TrialDimension.is(event.player.world)) {
             return;
         }
-        EntityPlayerMP p = (EntityPlayerMP) event.player;
+        tick((EntityPlayerMP) event.player, event.player.ticksExisted % 10 == 0);
+    }
+
+    /** Один шаг обломка для игрока (full — полный разбор комнаты, раз в 10 тиков). Автотест зовёт напрямую. */
+    public static void tick(EntityPlayerMP p, boolean full) {
         World world = p.world;
         TrialData data = TrialData.get(world);
         TrialData.Trial t = data.at(p.getPosition());
@@ -317,7 +332,7 @@ public class TrialManager {
             t.started = now;
         }
         everyTick(p, world, t, now);
-        if (p.ticksExisted % 10 != 0) {
+        if (!full) {
             return;
         }
         conditions(p, world, t, now);
@@ -476,7 +491,7 @@ public class TrialManager {
             t.nextEvent = now + 120;
             spawnAround(world, t, room, 1 + t.tier / 2);
         }
-        if (p.ticksExisted % 40 == 0) {
+        if (now % 40 == 0) {
             p.sendStatusMessage(Breach.grimoire(in ? "chaosshard.trial.hold" : "chaosshard.trial.hold_out", t.progress * 100 / HOLD_NEED), true);
         }
         if (in) {

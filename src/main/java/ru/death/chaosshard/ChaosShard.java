@@ -133,6 +133,14 @@ public class ChaosShard {
         proxy.postInit(event);
     }
 
+    /** -Dchaosshard.autotest=true: сразу после старта сервера — автотест, затем выключение (для CI). */
+    @Mod.EventHandler
+    public void serverStarted(net.minecraftforge.fml.common.event.FMLServerStartedEvent event) {
+        if (Boolean.getBoolean("chaosshard.autotest")) {
+            ru.death.chaosshard.debug.AutoTest.start(net.minecraftforge.fml.common.FMLCommonHandler.instance().getMinecraftServerInstance(), true);
+        }
+    }
+
     @Mod.EventHandler
     public void serverStarting(FMLServerStartingEvent event) {
         event.registerServerCommand(new CommandChaosShard());

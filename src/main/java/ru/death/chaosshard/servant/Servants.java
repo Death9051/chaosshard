@@ -173,7 +173,7 @@ public class Servants {
         if (!isServant(e) || e.world.getMinecraftServer() == null) {
             return null;
         }
-        return e.world.getMinecraftServer().getPlayerList().getPlayerByUUID(e.getEntityData().getUniqueId(TAG_OWNER));
+        return ru.death.chaosshard.debug.TestHooks.player(e.world.getMinecraftServer(), e.getEntityData().getUniqueId(TAG_OWNER));
     }
 
     /** Призвать слугу рядом с точкой (ритуал). null — не вышло. */
