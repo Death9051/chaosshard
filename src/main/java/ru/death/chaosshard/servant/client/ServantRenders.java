@@ -6,7 +6,6 @@ import net.minecraft.client.renderer.entity.RenderVindicator;
 import net.minecraft.client.renderer.entity.RenderWitherSkeleton;
 import net.minecraft.client.renderer.entity.RenderZombie;
 import net.minecraft.entity.monster.AbstractSkeleton;
-import net.minecraft.entity.monster.EntityVindicator;
 import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.util.ResourceLocation;
 import ru.death.chaosshard.Tags;
@@ -62,7 +61,7 @@ public final class ServantRenders {
         }
 
         @Override
-        protected ResourceLocation getEntityTexture(EntityVindicator e) {
+        protected ResourceLocation getEntityTexture(net.minecraft.entity.monster.EntityMob e) {
             return TEX;
         }
     }
