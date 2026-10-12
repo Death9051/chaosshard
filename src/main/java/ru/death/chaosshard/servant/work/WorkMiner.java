@@ -163,12 +163,12 @@ public class WorkMiner extends EntityAIBase {
 
     // ------------------------------------------------------------------ план
 
-    /** Ствол: центр (столб) — в 3 блоках от сундука. */
+    /** Ствол 3×3: центр (колодец) — в 3 блоках от сундука. */
     private BlockPos center(Mine mine) {
         return Work.chest(m).offset(dir(mine), 3);
     }
 
-    /** 8 клеток вокруг столба по кругу; соседние — через сторону. a — вдоль dir, b — вправо. */
+    /** 8 клеток-ступеней вокруг колодца по кругу; соседние — через сторону. a — вдоль dir, b — вправо. */
     private static final int[][] RING = {{-1, 0}, {-1, 1}, {0, 1}, {1, 1}, {1, 0}, {1, -1}, {0, -1}, {-1, -1}};
 
     private BlockPos ring(Mine mine, int k) {
@@ -215,6 +215,11 @@ public class WorkMiner extends EntityAIBase {
         out.add(f.up());
         out.add(f.up(2));
         if (job.type == MineData.SPIRAL) {
+            // ствол целиком 3×3: середину тоже вынимаем — посередине колодец до коренной породы
+            BlockPos c = center(mine).down(mine.spiralK);
+            out.add(c);
+            out.add(c.up());
+            out.add(c.up(2));
             return out;
         }
         if (!ServantUpgrade.has(m, ServantUpgrade.MINE_WIDE)) {
@@ -240,7 +245,7 @@ public class WorkMiner extends EntityAIBase {
                 if (!blocked && !bedrock) {
                     stair(mine, mine.spiralK, floor);
                     if (mine.spiralK % 8 == 4) {
-                        pillarTorch(mine, feet);
+                        wallTorch(mine, feet);
                     }
                     // уровень руды: штрек уходит от клетки на стороне dir
                     int[] r = RING[Math.floorMod(mine.spiralK, 8)];
@@ -336,23 +341,25 @@ public class WorkMiner extends EntityAIBase {
                 .withProperty(BlockStairs.HALF, BlockStairs.EnumHalf.BOTTOM), 3);
     }
 
-    /** Факел на столбе, раз в виток. */
-    private void pillarTorch(Mine mine, BlockPos feet) {
+    /** Факел на внешней стене ствола, раз в виток. */
+    private void wallTorch(Mine mine, BlockPos feet) {
         World w = m.world;
         BlockPos at = feet.up();
-        BlockPos pillar = new BlockPos(center(mine).getX(), at.getY(), center(mine).getZ());
-        EnumFacing face = EnumFacing.getFacingFromVector(at.getX() - pillar.getX(), 0, at.getZ() - pillar.getZ());
-        if (Math.abs(at.getX() - pillar.getX()) + Math.abs(at.getZ() - pillar.getZ()) != 1 || !w.isAirBlock(at)) {
+        BlockPos c = center(mine);
+        int dx = at.getX() - c.getX(), dz = at.getZ() - c.getZ();
+        if (Math.abs(dx) + Math.abs(dz) != 1 || !w.isAirBlock(at)) {
             return;
         }
-        if (!w.getBlockState(pillar).isSideSolid(w, pillar, face)) {
+        EnumFacing out = EnumFacing.getFacingFromVector(dx, 0, dz);
+        BlockPos wall = at.offset(out);
+        if (!w.getBlockState(wall).isSideSolid(w, wall, out.getOpposite())) {
             return;
         }
         if (!ServantUpgrade.has(m, ServantUpgrade.MINE_TORCH)
                 && Work.take(m, s -> s.getItem() == Item.getItemFromBlock(Blocks.TORCH)).isEmpty()) {
             return;
         }
-        w.setBlockState(at, Blocks.TORCH.getDefaultState().withProperty(BlockTorch.FACING, face), 3);
+        w.setBlockState(at, Blocks.TORCH.getDefaultState().withProperty(BlockTorch.FACING, out.getOpposite()), 3);
     }
 
     // ------------------------------------------------------------------ копание
