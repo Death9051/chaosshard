@@ -65,6 +65,8 @@ public class BeastData extends WorldSavedData {
         public long returnAt;
         public long saveReady, treatReady, giftDay = -1;
         public UUID entity;
+        /** Имя, которое дал хозяин (пусто — имя по виду). */
+        public String name = "";
         public final List<ItemStack> bag = new ArrayList<>();
         public final List<ItemStack> stash = new ArrayList<>();
 
@@ -97,6 +99,7 @@ public class BeastData extends WorldSavedData {
             if (entity != null) {
                 t.setUniqueId("eid", entity);
             }
+            t.setString("name", name);
             t.setTag("bag", list(bag));
             t.setTag("stash", list(stash));
             return t;
@@ -112,6 +115,7 @@ public class BeastData extends WorldSavedData {
             treatReady = t.getLong("treat");
             giftDay = t.hasKey("gift") ? t.getLong("gift") : -1;
             entity = t.hasUniqueId("eid") ? t.getUniqueId("eid") : null;
+            name = t.getString("name");
             unlist(t.getTagList("bag", 10), bag);
             unlist(t.getTagList("stash", 10), stash);
         }
@@ -125,6 +129,7 @@ public class BeastData extends WorldSavedData {
             t.setInteger("perks", perks);
             t.setLong("ret", returnAt);
             t.setBoolean("out", entity != null && returnAt == 0);
+            t.setString("name", name);
             return t;
         }
     }

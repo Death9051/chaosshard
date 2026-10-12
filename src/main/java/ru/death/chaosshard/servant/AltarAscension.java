@@ -116,7 +116,7 @@ public class AltarAscension {
             List<ItemStack> need = offerings(b);
             if (!p.isCreative() && !hasAll(p, need)) {
                 p.sendMessage(Breach.grimoire("chaosshard.altar.need",
-                        new TextComponentTranslation("chaosshard.beast." + b.key()), list(need)));
+                        Beasts.title(b, e), list(need)));
                 return;
             }
             if (!p.isCreative()) {
@@ -135,7 +135,8 @@ public class AltarAscension {
         beast.setNoAI(true);
         beast.setNoGravity(true);
         beast.setPositionAndUpdate(altar.getX() + 0.5, altar.getY() + 1.1, altar.getZ() + 0.5);
-        p.sendMessage(Breach.grimoire("chaosshard.altar.ascend.start", new TextComponentTranslation("chaosshard.beast." + beast.beast().key())));
+        p.sendMessage(Breach.grimoire("chaosshard.altar.ascend.start",
+                Beasts.title(beast.beast(), Beasts.entry(p.world, p.getUniqueID(), beast.beast()))));
         p.world.playSound(null, altar, SoundEvents.BLOCK_PORTAL_TRIGGER, SoundCategory.BLOCKS, 0.6F, 0.9F);
     }
 

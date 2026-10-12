@@ -99,6 +99,37 @@ public class Beasts {
         return l.isEmpty() ? null : l.get(0);
     }
 
+    /** Имя зверя для сообщений: данное хозяином или по виду. */
+    public static net.minecraft.util.text.ITextComponent title(Beast b, Entry e) {
+        return e != null && !e.name.isEmpty() ? new net.minecraft.util.text.TextComponentString(e.name)
+                : new TextComponentTranslation("chaosshard.beast." + b.key());
+    }
+
+    public static final int NAME_MAX = 24;
+
+    /** Переименовать зверя (пустое имя — вернуть имя по виду). */
+    public static void rename(EntityPlayerMP p, Beast b, String raw) {
+        Entry e = entry(p.world, p.getUniqueID(), b);
+        if (!e.known) {
+            return;
+        }
+        String name = net.minecraft.util.text.TextFormatting.getTextWithoutFormattingCodes(raw == null ? "" : raw).trim();
+        name = net.minecraft.util.ChatAllowedCharacters.filterAllowedCharacters(name);
+        if (name.length() > NAME_MAX) {
+            name = name.substring(0, NAME_MAX);
+        }
+        e.name = name;
+        changed(p.world, p.getUniqueID());
+        EntityChaosBeast beast = find(p, b, 128);
+        if (beast != null) {
+            refresh(beast);
+            ((WorldServer) p.world).spawnParticle(EnumParticleTypes.HEART, beast.posX, beast.posY + 0.9, beast.posZ, 4, 0.3, 0.2, 0.3, 0.0);
+        }
+        p.sendStatusMessage(Breach.grimoire(name.isEmpty() ? "chaosshard.beast.renamed_default" : "chaosshard.beast.renamed",
+                title(b, e)), true);
+        sync(p);
+    }
+
     // ------------------------------------------------------------------ опыт
 
     public static void addXp(EntityChaosBeast beast, int amount) {
@@ -123,7 +154,7 @@ public class Beasts {
         EntityPlayer p = Servants.owner(beast);
         if (p != null) {
             p.sendMessage(Breach.grimoire("chaosshard.beast.levelup",
-                    new TextComponentTranslation("chaosshard.beast." + beast.beast().key()), e.level()));
+                    title(beast.beast(), e), e.level()));
             if (e.level() >= 3) {
                 Milestones.grant((EntityPlayerMP) p, "beast_level3");
             }
@@ -151,7 +182,7 @@ public class Beasts {
         if (o != null) {
             beast.getEntityData().setString("chaosshard_owner_name", o.getName());
         }
-        String name = beast.beast().kind.name;
+        String name = e.name.isEmpty() ? beast.beast().kind.name : e.name;
         beast.setCustomNameTag((lvl >= 5 ? "§6" : "§d") + name + " §7[" + lvl + "] (" + owner + ")");
         if (beast.getEntityData().hasKey(Servants.TAG_GUARD)) {
             int r = beast.beast() == Beast.TIGER && e.has(TIGER_WARDEN) ? 16 : 8;
@@ -198,7 +229,7 @@ public class Beasts {
             ws.spawnParticle(EnumParticleTypes.SPELL_WITCH, m.posX, m.posY + 1.5, m.posZ, 30, 0.2, 1.0, 0.2, 0.0);
             p.world.playSound(null, at, SoundEvents.EVOCATION_ILLAGER_CAST_SPELL, SoundCategory.NEUTRAL, 1.0F, 0.8F);
             p.world.playSound(null, at, SoundEvents.ENTITY_ENDERMEN_TELEPORT, SoundCategory.NEUTRAL, 0.8F, 0.6F);
-            p.sendMessage(Breach.grimoire("chaosshard.beast.returned", new TextComponentTranslation("chaosshard.beast." + b.key())));
+            p.sendMessage(Breach.grimoire("chaosshard.beast.returned", title(b, e)));
         }
         changed(p.world, p.getUniqueID());
     }
@@ -288,7 +319,7 @@ public class Beasts {
                     EntityPlayer p = dead.world.getMinecraftServer().getPlayerList().getPlayerByUUID(o);
                     if (p != null) {
                         p.sendMessage(Breach.grimoire("chaosshard.beast.to_thread",
-                                new TextComponentTranslation("chaosshard.beast." + beast.beast().key()), ninth ? 1 : 5));
+                                title(beast.beast(), e), ninth ? 1 : 5));
                     }
                 }
             }
@@ -390,6 +421,15 @@ public class Beasts {
         }
         Entry e = entry(beast);
         ItemStack held = p.getHeldItemMainhand();
+        // бирка с именем
+        if (held.getItem() == Items.NAME_TAG && held.hasDisplayName()) {
+            rename((EntityPlayerMP) p, beast.beast(), held.getDisplayName());
+            if (!p.isCreative()) {
+                held.shrink(1);
+            }
+            event.setCanceled(true);
+            return;
+        }
         // любимое лакомство
         if (!held.isEmpty() && isTreat(beast.beast(), held)) {
             long now = p.world.getTotalWorldTime();
@@ -595,7 +635,7 @@ public class Beasts {
             ws.addWeatherEffect(new net.minecraft.entity.effect.EntityLightningBolt(p.world, beast.posX, beast.posY, beast.posZ, true));
             ws.spawnParticle(EnumParticleTypes.END_ROD, beast.posX, beast.posY + 1, beast.posZ, 120, 0.5, 1.2, 0.5, 0.08);
         }
-        p.sendMessage(Breach.grimoire("chaosshard.beast.ascended", new TextComponentTranslation("chaosshard.beast." + b.key())));
+        p.sendMessage(Breach.grimoire("chaosshard.beast.ascended", title(b, e)));
         Milestones.grant(p, "beast_ascend");
         sync(p);
     }

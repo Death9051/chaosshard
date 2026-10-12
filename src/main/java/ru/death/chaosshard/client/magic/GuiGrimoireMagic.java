@@ -54,6 +54,7 @@ public class GuiGrimoireMagic extends GuiScreen {
 
     @Override
     public void initGui() {
+        org.lwjgl.input.Keyboard.enableRepeatEvents(true);
         left = (width - W) / 2;
         top = (height - H) / 2;
         buttonList.clear();
@@ -90,6 +91,21 @@ public class GuiGrimoireMagic extends GuiScreen {
     }
 
     @Override
+    public void updateScreen() {
+        super.updateScreen();
+        beasts.tick();
+    }
+
+    @Override
+    public void onGuiClosed() {
+        super.onGuiClosed();
+        org.lwjgl.input.Keyboard.enableRepeatEvents(false);
+        if (beasts.editing()) {
+            beasts.finishEdit(true);
+        }
+    }
+
+    @Override
     protected void mouseClickMove(int mx, int my, int button, long time) {
         super.mouseClickMove(mx, my, button, time);
         beasts.drag(mx);
@@ -103,6 +119,9 @@ public class GuiGrimoireMagic extends GuiScreen {
 
     @Override
     protected void keyTyped(char c, int key) throws java.io.IOException {
+        if (tab == 2 && beasts.key(c, key)) {
+            return;
+        }
         if (key == ru.death.chaosshard.client.MagicKeys.BOOK.getKeyCode()) {
             mc.displayGuiScreen(null);
             return;
@@ -112,8 +131,12 @@ public class GuiGrimoireMagic extends GuiScreen {
 
     @Override
     protected void mouseClicked(int mx, int my, int button) throws java.io.IOException {
-        if (tab == 2 && selBeast >= 0 && selBeast < 3 && beasts.press(mx, my)) {
+        if (tab == 2 && selBeast >= 0 && selBeast < 3
+                && (beasts.clickTitle(ru.death.chaosshard.servant.BeastData.Beast.values()[selBeast], mx, my) || beasts.press(mx, my))) {
             return;
+        }
+        if (beasts.editing()) {
+            beasts.finishEdit(true);
         }
         super.mouseClicked(mx, my, button);
         // вкладки

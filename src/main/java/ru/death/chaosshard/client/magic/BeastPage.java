@@ -77,7 +77,8 @@ class BeastPage {
                 Beast b = Beast.values()[i];
                 ic = icon(b);
                 boolean known = ClientBeasts.get(b).getBoolean("known");
-                name = known ? tr("chaosshard.beast." + b.key()) + " §7" + ClientBeasts.level(b) : tr("chaosshard.beast.unknown");
+                String given = ClientBeasts.get(b).getString("name");
+                name = known ? (given.isEmpty() ? tr("chaosshard.beast." + b.key()) : given) + " §7" + ClientBeasts.level(b) : tr("chaosshard.beast.unknown");
                 col = known ? (ClientBeasts.level(b) >= 5 ? GOLD : OPEN) : DIM;
             } else {
                 Servants.Kind k = Servants.Kind.COMMON[i - HEADER_ROW];
@@ -115,7 +116,22 @@ class BeastPage {
             return;
         }
         int lvl = ClientBeasts.level(b);
-        gui.text("§l" + title, x, y, lvl >= 5 ? GOLD : ACCENT);
+        String given = t.getString("name");
+        titleBox[0] = x; titleBox[1] = y - 2; titleBox[2] = w - 40; titleBox[3] = 12;
+        if (editing == b && field != null) {
+            field.x = x;
+            field.y = y - 2;
+            field.drawTextBox();
+        } else {
+            String shown = given.isEmpty() ? title : given;
+            gui.text("§l" + shown, x, y, lvl >= 5 ? GOLD : ACCENT);
+            if (!given.isEmpty()) {
+                gui.text("§8" + title, x + gui.font().getStringWidth("§l" + shown) + 4, y, SOFT);
+            }
+            if (mx >= x && mx < x + w - 40 && my >= y - 2 && my < y + 10) {
+                hoverLines = split(tr("chaosshard.beast.gui.rename"));
+            }
+        }
         String ls = tr("chaosshard.beast.gui.level", lvl);
         gui.text(ls, x + w - gui.font().getStringWidth(ls), y, lvl >= 5 ? GOLD : ACCENT);
         y += 13;
@@ -222,6 +238,76 @@ class BeastPage {
                         : can ? tr("chaosshard.beast.gui.buy", 2 * (spent + 1)) : tr("chaosshard.beast.gui.no_points");
                 hoverLines = split((owned ? "§6" : "§d") + tr(pk) + "\n§7" + tr(pk + ".desc") + "\n" + foot);
             }
+        }
+    }
+
+    // ------------------------------------------------------------------ имя
+
+    private final int[] titleBox = new int[4];
+    private Beast editing;
+    private net.minecraft.client.gui.GuiTextField field;
+
+    boolean editing() {
+        return editing != null;
+    }
+
+    /** Клик по имени — начать ввод. */
+    boolean clickTitle(Beast b, int mx, int my) {
+        if (!ClientBeasts.get(b).getBoolean("known")) {
+            return false;
+        }
+        if (editing != null && field != null) {
+            field.mouseClicked(mx, my, 0);
+            if (mx >= field.x && mx < field.x + field.width && my >= field.y && my < field.y + field.height) {
+                return true;
+            }
+            finishEdit(true);
+            return false;
+        }
+        if (mx >= titleBox[0] && mx < titleBox[0] + titleBox[2] && my >= titleBox[1] && my < titleBox[1] + titleBox[3]) {
+            editing = b;
+            field = new net.minecraft.client.gui.GuiTextField(0, gui.font(), titleBox[0], titleBox[1], 120, 12);
+            field.setMaxStringLength(ru.death.chaosshard.servant.Beasts.NAME_MAX);
+            String given = ClientBeasts.get(b).getString("name");
+            field.setText(given.isEmpty() ? tr("chaosshard.beast." + b.key()) : given);
+            field.setFocused(true);
+            field.setCursorPositionEnd();
+            field.setSelectionPos(0);
+            return true;
+        }
+        return false;
+    }
+
+    /** Клавиша во время ввода. true — съедена. */
+    boolean key(char c, int code) {
+        if (editing == null || field == null) {
+            return false;
+        }
+        if (code == org.lwjgl.input.Keyboard.KEY_RETURN || code == org.lwjgl.input.Keyboard.KEY_NUMPADENTER) {
+            finishEdit(true);
+        } else if (code == org.lwjgl.input.Keyboard.KEY_ESCAPE) {
+            finishEdit(false);
+        } else {
+            field.textboxKeyTyped(c, code);
+        }
+        return true;
+    }
+
+    void finishEdit(boolean save) {
+        if (editing != null && field != null && save) {
+            String text = field.getText().trim();
+            if (text.equals(tr("chaosshard.beast." + editing.key()))) {
+                text = "";
+            }
+            ChaosNetwork.CHANNEL.sendToServer(new PacketBeastAction(editing, text));
+        }
+        editing = null;
+        field = null;
+    }
+
+    void tick() {
+        if (field != null) {
+            field.updateCursorCounter();
         }
     }
 

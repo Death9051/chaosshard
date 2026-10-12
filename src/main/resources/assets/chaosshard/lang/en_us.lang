@@ -709,3 +709,6 @@ chaosshard.garrison.full=The network garrison is full: %s of %s (sum of anchor l
 chaosshard.garrison.bound=%s joined the garrison: %s of %s. Network: %s anchors. Garrison doesn't take retinue slots.
 chaosshard.garrison.leave_first=This servant is in a garrison. Shift+right-click it with the Grimoire first.
 chaosshard.beast.gui.rotate=Hold the mouse button and drag to rotate.
+chaosshard.beast.gui.rename=Click the name to rename (Enter to save, Esc to cancel; empty — default name). A name tag works too.
+chaosshard.beast.renamed=Now it is called: %s.
+chaosshard.beast.renamed_default=The beast has its default name again: %s.

@@ -728,3 +728,6 @@ chaosshard.garrison.full=Гарнизон сети полон: %s из %s (су�
 chaosshard.garrison.bound=%s теперь в гарнизоне: %s из %s. Сеть: Якорей %s. Гарнизон не занимает места в свите.
 chaosshard.garrison.leave_first=Слуга в гарнизоне. Сначала Shift+ПКМ Гримуаром — вернуть ко мне.
 chaosshard.beast.gui.rotate=Зажми кнопку мыши и веди — повернуть.
+chaosshard.beast.gui.rename=ЛКМ по имени — переименовать (Enter — сохранить, Esc — отмена; пустое имя — имя по виду). Можно и биркой.
+chaosshard.beast.renamed=Теперь его зовут: %s.
+chaosshard.beast.renamed_default=Зверю вернулось имя по виду: %s.
