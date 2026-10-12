@@ -35,7 +35,7 @@ import java.util.Random;
 /**
  * Сердце Логова. ПКМ — сведения и точка возрождения. Shift+ПКМ — поднять логово на следующий уровень
  * (подношение берётся из инвентаря).
- *  2 — Башня: в Лучезарии, на захваченной земле, Нить 3, 8 Искажённого металла, 4 Обрывка памяти, 8 обсидиана.
+ *  2 — Башня: в Лучезарии, на захваченной земле, Нить 3, 8 Искажённого металла, 4 Осколка мира, 8 обсидиана.
  *  3 — Цитадель: на земле Якоря 5-го уровня, Нить 4, звезда Незера, 4 дыхания дракона, 16 Искажённого металла.
  */
 public class BlockLair extends Block {
@@ -187,7 +187,7 @@ public class BlockLair extends Block {
             return;
         }
         Object[][] cost = next == 2
-                ? new Object[][]{{ModItems.DISTORTED_STARMETAL, 8}, {ModItems.MEMORY_FRAGMENT, 4}, {Item.getItemFromBlock(net.minecraft.init.Blocks.OBSIDIAN), 8}}
+                ? new Object[][]{{ModItems.DISTORTED_STARMETAL, 8}, {ModItems.WORLD_SHARD, 4}, {Item.getItemFromBlock(net.minecraft.init.Blocks.OBSIDIAN), 8}}
                 : new Object[][]{{Items.NETHER_STAR, 1}, {Items.DRAGON_BREATH, 4}, {ModItems.DISTORTED_STARMETAL, 16}};
         if (!p.isCreative()) {
             for (Object[] c : cost) {

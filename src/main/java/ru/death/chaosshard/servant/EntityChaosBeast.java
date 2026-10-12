@@ -490,7 +490,7 @@ public abstract class EntityChaosBeast extends EntityCreature {
                 return new ItemStack(ModItems.VEIL_SHARD);
             }
             if (r < 10) {
-                return new ItemStack(ModItems.MEMORY_FRAGMENT);
+                return new ItemStack(ModItems.WORLD_SHARD);
             }
             if (r < 30) {
                 return new ItemStack(ModItems.CHAOS_ESSENCE, 1 + rand.nextInt(2));

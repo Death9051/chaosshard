@@ -40,7 +40,7 @@ public final class VillageEvolution {
         // Четыре ремесла Адептов — Обитель торгует почти всем, что нужно. Ремесло выпадает каждому жителю случайно.
         VillagerRegistry.VillagerCareer keeper = new VillagerRegistry.VillagerCareer(ADEPT, "chaos_keeper");
         keeper.addTrade(1, sell(ModItems.CHALK, 3, 5), sell(ModItems.VEIL_SHARD, 5, 8), buy(net.minecraft.init.Items.ROTTEN_FLESH, 18, 24));
-        keeper.addTrade(2, sell(ModItems.CHAOS_ESSENCE, 6, 9), sell(ModItems.MEMORY_FRAGMENT, 9, 14), buy(net.minecraft.init.Items.BONE, 10, 14));
+        keeper.addTrade(2, sell(ModItems.CHAOS_ESSENCE, 6, 9), sell(ModItems.WORLD_SHARD, 9, 14), buy(net.minecraft.init.Items.BONE, 10, 14));
         keeper.addTrade(3, sell(net.minecraft.init.Items.ENDER_PEARL, 4, 7), bulk(Item.getItemFromBlock(ru.death.chaosshard.init.ModBlocks.CHAOS_STONE), 12, 16),
                 bulk(Item.getItemFromBlock(ru.death.chaosshard.init.ModBlocks.CHAOS_CRUST), 8, 12));
         for (Item seal : ModItems.SEALS.values()) {
@@ -67,7 +67,7 @@ public final class VillageEvolution {
         scribe.addTrade(3, new EntityVillager.ListEnchantedBookForEmeralds(), sell(net.minecraft.init.Items.ENDER_EYE, 7, 10),
                 sell(net.minecraft.init.Items.NAME_TAG, 12, 18), new OreForEmeralds("dustRedstone", 4, 8));
         scribe.addTrade(4, new EntityVillager.ListEnchantedBookForEmeralds(), new EntityVillager.ListEnchantedBookForEmeralds(),
-                sell(ModItems.MEMORY_FRAGMENT, 8, 12), new OreForEmeralds("gemQuartz", 6, 10));
+                sell(ModItems.WORLD_SHARD, 8, 12), new OreForEmeralds("gemQuartz", 6, 10));
 
         VillagerRegistry.VillagerCareer grower = new VillagerRegistry.VillagerCareer(ADEPT, "chaos_grower");
         grower.addTrade(1, buy(net.minecraft.init.Items.WHEAT, 18, 22), buy(net.minecraft.init.Items.POTATO, 15, 19),

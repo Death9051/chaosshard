@@ -96,7 +96,7 @@ public final class SelfTest {
         check(ModBlocks.CHAOS_STONE != null && ModBlocks.CHAOS_CRUST != null, "блоки хаосит и корка");
         check(ModBlocks.BREACH_ALTAR != null, "Алтарь Прорыва");
         check(ModBlocks.ISLAND_HEART != null, "Сердце Острова");
-        for (String name : new String[]{"grimoire", "veil_shard", "memory_fragment", "memory_page", "breach_book",
+        for (String name : new String[]{"grimoire", "veil_shard", "world_shard", "memory_page", "breach_book",
                 "heart_module_pulse", "heart_module_capacity", "heart_module_rich", "heart_module_fertile", "heart_harvester",
                 "chaos_essence", "distorted_starmetal", "chaos_anchor"}) {
             check(ForgeRegistries.ITEMS.containsKey(new ResourceLocation(Tags.MOD_ID, name)), "предмет " + name);
@@ -229,7 +229,7 @@ public final class SelfTest {
         check(ModItems.BREACH_BOOK != null && ModBlocks.BREACH_ALTAR != null, "предметы Прорыва");
         check(ChaosConfig.breach.threadLevel <= ThreadManager.maxLevel(), "уровень Нити для Прорыва достижим");
         check(ChaosConfig.breach.veilShardChance > 0, "Осколки Завесы выпадают из корки");
-        check(ChaosConfig.breach.memoryFragmentChance > 0, "Обрывки памяти выпадают с монстров");
+        check(ChaosConfig.breach.worldShardChance > 0, "Осколки мира выпадают с монстров");
     }
 
     private void anchors() {

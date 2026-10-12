@@ -1,6 +1,6 @@
 {
  "parent": "item/generated",
  "textures": {
-  "layer0": "chaosshard:items/memory_fragment"
+  "layer0": "chaosshard:items/world_shard"
  }
 }

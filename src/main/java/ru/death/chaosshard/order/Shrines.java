@@ -137,7 +137,7 @@ public class Shrines {
         ws.spawnParticle(EnumParticleTypes.SPELL_WITCH, stone.getX() + 0.5, stone.getY() + 1, stone.getZ() + 0.5, 60, 1.5, 1.0, 1.5, 0.05);
         world.playSound(null, stone, net.minecraft.init.SoundEvents.ENTITY_WITHER_DEATH, SoundCategory.BLOCKS, 0.5F, 1.4F);
         net.minecraft.entity.item.EntityItem drop = new net.minecraft.entity.item.EntityItem(world,
-                stone.getX() + 0.5, stone.getY() + 1.2, stone.getZ() + 0.5, new ItemStack(ModItems.MEMORY_FRAGMENT));
+                stone.getX() + 0.5, stone.getY() + 1.2, stone.getZ() + 0.5, new ItemStack(ModItems.WORLD_SHARD));
         world.spawnEntity(drop);
         ThreadManager.addPoints(player, ChaosConfig.order.desecrateReward);
         ShrineData d = ShrineData.get(world);

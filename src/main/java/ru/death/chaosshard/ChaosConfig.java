@@ -235,8 +235,8 @@ public final class ChaosConfig {
                 "Формат: ore:<оредикт>*кол-во или modid:предмет[:мета]*кол-во, через запятую."})
         public String[] upgradeCosts = {
                 "ore:ingotIron*8,ore:ingotCopper*8,chaosshard:veil_shard*4",
-                "ore:ingotIron*16,ore:ingotTin*8,chaosshard:memory_fragment*4,chaosshard:veil_shard*8",
-                "ore:ingotGold*16,ore:dustRedstone*32,ore:gemLapis*16,chaosshard:memory_fragment*8"
+                "ore:ingotIron*16,ore:ingotTin*8,chaosshard:world_shard*4,chaosshard:veil_shard*8",
+                "ore:ingotGold*16,ore:dustRedstone*32,ore:gemLapis*16,chaosshard:world_shard*8"
         };
 
         @Config.Comment("Уровень Нити для ступеней 2, 3, 4")
@@ -328,9 +328,9 @@ public final class ChaosConfig {
         @Config.RangeDouble(min = 0, max = 1)
         public double veilShardChance = 0.14;
 
-        @Config.Comment("Шанс Обрывка памяти с монстра в чужих мирах (Кладовки и пр.)")
+        @Config.Comment("Базовый шанс Осколка мира с создания этого мира (умножается на крепость создания: здоровье/20, от 0.5 до 5)")
         @Config.RangeDouble(min = 0, max = 1)
-        public double memoryFragmentChance = 0.10;
+        public double worldShardChance = 0.06;
     }
 
     public static final class PerksCfg {

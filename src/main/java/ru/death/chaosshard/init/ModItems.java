@@ -21,8 +21,8 @@ public final class ModItems {
 
     /** Осколок Завесы — выпадает из корки Преддверия. */
     public static Item VEIL_SHARD;
-    /** Обрывок памяти — выпадает из тварей в Кладовках и чужих мирах. */
-    public static Item MEMORY_FRAGMENT;
+    /** Осколок мира — выпадает из тварей в Кладовках и чужих мирах. */
+    public static Item WORLD_SHARD;
     /** Страница памяти «Прорыв». */
     public static Item MEMORY_PAGE;
     /** Книга Прорыва. */
@@ -53,7 +53,7 @@ public final class ModItems {
         GRIMOIRE.setTranslationKey(Tags.MOD_ID + ".grimoire");
         ALL.add(GRIMOIRE);
         VEIL_SHARD = add(new ru.death.chaosshard.item.ItemLore("chaosshard.veil_shard.lore", false), "veil_shard");
-        MEMORY_FRAGMENT = add(new ru.death.chaosshard.item.ItemLore("chaosshard.memory_fragment.lore", false), "memory_fragment");
+        WORLD_SHARD = add(new ru.death.chaosshard.item.ItemLore("chaosshard.world_shard.lore", false), "world_shard");
         MEMORY_PAGE = add(new ru.death.chaosshard.item.ItemLore("chaosshard.memory_page.lore", true).setMaxStackSize(1), "memory_page");
         BREACH_BOOK = add(new ru.death.chaosshard.item.ItemBreachBook(), "breach_book");
         CHAOS_ESSENCE = add(new ru.death.chaosshard.item.ItemLore("chaosshard.chaos_essence.lore", false), "chaos_essence");

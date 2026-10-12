@@ -166,7 +166,7 @@ public final class DebugReport {
                 + ", chaosshard_grimoire_given = " + persisted.getBoolean("chaosshard_grimoire_given")
                 + ", прорыв = " + persisted.getBoolean("chaosshard_breached"));
         line("config breach: нить >= " + ChaosConfig.breach.threadLevel + ", осколок Завесы " + ChaosConfig.breach.veilShardChance
-                + ", обрывок памяти " + ChaosConfig.breach.memoryFragmentChance);
+                + ", осколок мира " + ChaosConfig.breach.worldShardChance);
         boolean hasGrimoire = false;
         for (int i = 0; i < player.inventory.getSizeInventory(); i++) {
             if (player.inventory.getStackInSlot(i).getItem() == ModItems.GRIMOIRE) {

@@ -186,7 +186,7 @@ public class TilePatronSigil extends TileEntity implements ITickable {
         if (evolved) {
             tribute = java.util.Arrays.copyOf(tribute, tribute.length + 2);
             tribute[tribute.length - 2] = new ItemStack(ru.death.chaosshard.init.ModItems.VEIL_SHARD, 1 + r.nextInt(2));
-            tribute[tribute.length - 1] = r.nextInt(3) == 0 ? new ItemStack(ru.death.chaosshard.init.ModItems.MEMORY_FRAGMENT) : ItemStack.EMPTY;
+            tribute[tribute.length - 1] = r.nextInt(3) == 0 ? new ItemStack(ru.death.chaosshard.init.ModItems.WORLD_SHARD) : ItemStack.EMPTY;
         }
         for (ItemStack t : tribute) {
             if (!t.isEmpty()) {

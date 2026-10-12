@@ -17,7 +17,7 @@ public final class TrialLoot {
         int k = t.tier;
         List<ItemStack> out = new ArrayList<>();
         out.add(new ItemStack(ModItems.VEIL_SHARD, 2 + r.nextInt(3) * k));
-        out.add(new ItemStack(ModItems.MEMORY_FRAGMENT, 1 + r.nextInt(2) + k));
+        out.add(new ItemStack(ModItems.WORLD_SHARD, 1 + r.nextInt(2) + k));
         out.add(new ItemStack(ModItems.CHAOS_ESSENCE, 2 + r.nextInt(3) * k));
         out.add(new ItemStack(Items.DIAMOND, k + r.nextInt(2)));
         out.add(new ItemStack(Items.GOLD_INGOT, 3 + r.nextInt(5)));

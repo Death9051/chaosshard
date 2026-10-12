@@ -18,7 +18,7 @@ import ru.death.chaosshard.stars.SkyRules;
 /**
  * Откуда берутся материалы Прорыва:
  *  - Осколки Завесы — из природной корки (она сама нарастает на хаосит под открытым небом);
- *  - Обрывки памяти — из тварей в чужих мирах (Кладовки, Трещины, обломки), но не в Лучезарии и не в Преддверии.
+ *  - Осколки мира — из тварей в чужих мирах (Кладовки, Трещины, обломки), но не в Лучезарии и не в Преддверии.
  */
 public class BreachEvents {
 
@@ -34,19 +34,35 @@ public class BreachEvents {
         }
     }
 
+    /**
+     * Осколки мира: Осколки — твари Хаоса — выбивают кусочек мира из любого его создания (звери, монстры, люди),
+     * в любом мире, кроме Преддверия. Чем крепче создание, тем выше шанс; Добыча повышает; боссы роняют по нескольку.
+     * Свои слуги, звери-отголоски и детёныши ничего не дают.
+     */
     @SubscribeEvent
     public void onDrops(LivingDropsEvent event) {
         EntityLivingBase mob = event.getEntityLiving();
         World world = mob.world;
-        if (world.isRemote || !(mob instanceof IMob) || !(event.getSource().getTrueSource() instanceof EntityPlayer)) {
+        if (world.isRemote || mob instanceof EntityPlayer || !(event.getSource().getTrueSource() instanceof EntityPlayer)) {
             return;
         }
-        if (AntechamberDimension.is(world) || isLuchezariya(world.provider.getDimension())) {
+        if (AntechamberDimension.is(world) || mob.isChild() || ru.death.chaosshard.servant.Servants.isServant(mob)
+                || mob instanceof ru.death.chaosshard.servant.EntityChaosBeast) {
             return;
         }
-        double chance = ChaosConfig.breach.memoryFragmentChance * (1 + event.getLootingLevel() * 0.5);
-        if (world.rand.nextDouble() < chance) {
-            event.getDrops().add(new EntityItem(world, mob.posX, mob.posY, mob.posZ, new ItemStack(ModItems.MEMORY_FRAGMENT)));
+        int n;
+        if (!mob.isNonBoss()) {
+            n = 3 + world.rand.nextInt(3);
+        } else {
+            double strength = Math.max(0.5, Math.min(5.0, mob.getMaxHealth() / 20.0));
+            double chance = ChaosConfig.breach.worldShardChance * strength * (1 + event.getLootingLevel() * 0.5);
+            if (mob instanceof net.minecraft.entity.passive.EntityAnimal) {
+                chance *= 0.5;   // мирные звери — скупее, иначе фермы
+            }
+            n = world.rand.nextDouble() < chance ? 1 : 0;
+        }
+        if (n > 0) {
+            event.getDrops().add(new EntityItem(world, mob.posX, mob.posY, mob.posZ, new ItemStack(ModItems.WORLD_SHARD, n)));
         }
     }
 

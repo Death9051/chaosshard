@@ -494,7 +494,7 @@ public class GarrotRaids {
                 new ItemStack(ModItems.GARROT_BANNER)));
         if (e.world.rand.nextBoolean()) {
             event.getDrops().add(new net.minecraft.entity.item.EntityItem(e.world, e.posX, e.posY, e.posZ,
-                    new ItemStack(ModItems.MEMORY_FRAGMENT)));
+                    new ItemStack(ModItems.WORLD_SHARD)));
         }
         int lvl = Math.max(1, e.getEntityData().getInteger(TAG_RAID_LVL));
         event.getDrops().add(new net.minecraft.entity.item.EntityItem(e.world, e.posX, e.posY, e.posZ,

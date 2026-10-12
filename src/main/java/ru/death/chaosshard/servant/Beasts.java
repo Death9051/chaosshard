@@ -523,12 +523,12 @@ public class Beasts {
         if (e.perks == 0) {
             return;
         }
-        if (!p.isCreative() && count(p, ModItems.MEMORY_FRAGMENT) < 1) {
+        if (!p.isCreative() && count(p, ModItems.WORLD_SHARD) < 1) {
             p.sendStatusMessage(Breach.grimoire("chaosshard.beast.no_fragment"), true);
             return;
         }
         if (!p.isCreative()) {
-            take(p, ModItems.MEMORY_FRAGMENT, 1);
+            take(p, ModItems.WORLD_SHARD, 1);
         }
         // мешок без перка не пропадает — содержимое отдаётся хозяину
         if (b == Beast.HARE && e.has(HARE_BAG)) {
