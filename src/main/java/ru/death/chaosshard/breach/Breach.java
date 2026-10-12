@@ -55,6 +55,10 @@ public final class Breach {
     public static void toLuchezariya(EntityPlayerMP player) {
         NBTTagCompound tag = persisted(player).getCompoundTag(TAG_RETURN);
         int dim = luchezariyaDim();
+        net.minecraft.world.WorldServer target = player.getServer().getWorld(dim);
+        if (target != null) {
+            ru.death.chaosshard.village.EntranceVillage.ensure(target);
+        }
         if (tag.hasKey("y")) {
             ChaosTeleporter.toPos(player, dim, new BlockPos(tag.getInteger("x"), tag.getInteger("y"), tag.getInteger("z")));
         } else {

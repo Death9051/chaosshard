@@ -180,6 +180,13 @@ public class CommandChaosShard extends CommandBase {
                 break;
             }
             case "village": {
+                if (args.length >= 2 && "entrance".equals(args[1])) {
+                    // /oh village entrance — поставить деревню рядом со мной (как у входа в Лучезарию)
+                    EntityPlayerMP pl = getCommandSenderAsPlayer(sender);
+                    BlockPos v = ru.death.chaosshard.village.EntranceVillage.build((net.minecraft.world.WorldServer) pl.world, pl.getPosition(), pl.world.rand);
+                    sender.sendMessage(new net.minecraft.util.text.TextComponentString(v == null ? "Деревня не встала" : "Деревня: " + v.getX() + " " + v.getZ()));
+                    break;
+                }
                 // /oh village [info|xp <n>|level <n>] — ближайший Знак покровителя
                 World w = sender.getEntityWorld();
                 ru.death.chaosshard.village.VillageData vd = ru.death.chaosshard.village.VillageData.get(w);
@@ -519,7 +526,7 @@ public class CommandChaosShard extends CommandBase {
             return getListOfStringsMatchingLastWord(args, "start", "leave");
         }
         if (args.length == 2 && "village".equals(args[0])) {
-            return getListOfStringsMatchingLastWord(args, "info", "xp", "level");
+            return getListOfStringsMatchingLastWord(args, "info", "xp", "level", "entrance");
         }
         if (args.length == 2 && "shrine".equals(args[0])) {
             return getListOfStringsMatchingLastWord(args, "list", "place");
