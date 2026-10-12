@@ -58,6 +58,11 @@ public class Milestones {
     public static final String CHAOS_CORE = "chaos_core";
     public static final String MORPH_1 = "morph_first";
     public static final String MORPH_5 = "morph_five";
+    public static final String SPAWNER = "spawner_broken";
+    public static final String SPAWNER_DEEP = "spawner_deep";
+    public static final String POCKET_DUNGEON = "pocket_dungeon";
+    public static final String POCKET_PERSONAL = "pocket_personal";
+    public static final String LIMBO = "limbo";
     public static final String VILLAGE_EVOLVED = "village_evolved";
 
     private static final String TAG_AGES = "chaosshard_ages";
@@ -92,6 +97,20 @@ public class Milestones {
     public static void onCapture(EntityPlayerMP owner) {
         NBTTagCompound data = persisted(owner);
         data.setInteger(TAG_CAPTURED, data.getInteger(TAG_CAPTURED) + 1);
+    }
+
+    /** Сломанный рассадник тварей (подземелья Roguelike и любые другие). */
+    @SubscribeEvent
+    public void onBreak(net.minecraftforge.event.world.BlockEvent.BreakEvent event) {
+        if (event.getWorld().isRemote || !(event.getPlayer() instanceof EntityPlayerMP)
+                || event.getState().getBlock() != net.minecraft.init.Blocks.MOB_SPAWNER) {
+            return;
+        }
+        EntityPlayerMP p = (EntityPlayerMP) event.getPlayer();
+        grant(p, SPAWNER);
+        if (event.getPos().getY() <= 20) {
+            grant(p, SPAWNER_DEEP);
+        }
     }
 
     @SubscribeEvent
@@ -132,6 +151,16 @@ public class Milestones {
                     grant(player, "heart_tier_" + t);
                 }
             }
+        }
+
+        // Dimensional Doors: карманные подземелья, личный карман, Лимб
+        String provider = world.provider.getClass().getSimpleName();
+        if (provider.equals("WorldProviderDungeonPocket")) {
+            grant(player, POCKET_DUNGEON);
+        } else if (provider.equals("WorldProviderPersonalPocket")) {
+            grant(player, POCKET_PERSONAL);
+        } else if (provider.equals("WorldProviderLimbo")) {
+            grant(player, LIMBO);
         }
 
         // Mystcraft: миры-Кладовки
