@@ -54,6 +54,10 @@ public class Milestones {
     public static final String GARROT_3 = "garrot_3";
     public static final String RITUAL = "ritual_done";
     public static final String ANCHOR_MAX = "anchor_max";
+    public static final String IMPLANT = "implant_installed";
+    public static final String CHAOS_CORE = "chaos_core";
+    public static final String MORPH_1 = "morph_first";
+    public static final String MORPH_5 = "morph_five";
     public static final String VILLAGE_EVOLVED = "village_evolved";
 
     private static final String TAG_AGES = "chaosshard_ages";

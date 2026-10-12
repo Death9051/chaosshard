@@ -51,6 +51,10 @@ public final class ThreadManager {
     }
 
     public static void addPoints(EntityPlayerMP player, int delta) {
+        // Приёмник Нити (имплант Хаоса): прибавка Нити на 25% больше
+        if (delta > 0 && ru.death.chaosshard.compat.body.Body.hasReceiver(player)) {
+            delta = (int) Math.ceil(delta * 1.25);
+        }
         setPoints(player, getPoints(player) + delta);
     }
 

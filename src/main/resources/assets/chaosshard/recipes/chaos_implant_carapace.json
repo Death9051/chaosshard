@@ -1,0 +1,30 @@
+{
+ "conditions": [
+  {
+   "type": "forge:mod_loaded",
+   "modid": "cyberware"
+  }
+ ],
+ "type": "minecraft:crafting_shaped",
+ "pattern": [
+  "PSP",
+  "SES",
+  "PSP"
+ ],
+ "key": {
+  "P": {
+   "item": "cyberware:component",
+   "data": 4
+  },
+  "S": {
+   "item": "chaosshard:chaos_stone"
+  },
+  "E": {
+   "item": "chaosshard:chaos_essence"
+  }
+ },
+ "result": {
+  "item": "chaosshard:chaos_implant",
+  "data": 3
+ }
+}

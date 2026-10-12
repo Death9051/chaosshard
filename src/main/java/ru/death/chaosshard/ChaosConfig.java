@@ -21,6 +21,10 @@ public final class ChaosConfig {
     @Config.LangKey("chaosshard.config.thread")
     public static final ThreadCfg thread = new ThreadCfg();
 
+    @Config.Comment("Тело Осколка: Robotic Parts и импланты Хаоса")
+    @Config.LangKey("chaosshard.config.body")
+    public static final BodyCfg body = new BodyCfg();
+
     @Config.Comment("Магия Гримуара: энергия Хаоса")
     @Config.LangKey("chaosshard.config.magic")
     public static final MagicCfg magic = new MagicCfg();
@@ -125,6 +129,14 @@ public final class ChaosConfig {
 
         @Config.Comment("Если у игрока нет кровати, после смерти тело Осколка собирается заново в Преддверии")
         public boolean respawnInAntechamber = true;
+    }
+
+    public static final class BodyCfg {
+        @Config.Comment("Стабильность конструкта: прибавка к толерантности Robotic Parts за каждый уровень Нити")
+        public int tolerancePerLevel = 8;
+
+        @Config.Comment("Ядро Хаоса: прибавка к запасу энергии Хаоса")
+        public int coreEnergy = 40;
     }
 
     public static final class MagicCfg {

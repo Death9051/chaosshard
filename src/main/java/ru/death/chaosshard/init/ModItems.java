@@ -63,6 +63,8 @@ public final class ModItems {
         for (Item item : ALL) {
             event.getRegistry().register(item);
         }
+        // Импланты Хаоса (Robotic Parts) регистрируются сами в конструкторе
+        ru.death.chaosshard.compat.body.Body.registerItems();
     }
 
     private static Item add(Item item, String name) {

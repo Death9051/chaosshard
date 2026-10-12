@@ -22,7 +22,8 @@ public class ChaosEnergy {
     private static final String TAG_SENT = "chaosshard_energy_sent";
 
     public static int max(EntityPlayer player) {
-        return ChaosConfig.magic.energyBase + ChaosConfig.magic.energyPerLevel * ThreadBonus.level(player);
+        int core = ru.death.chaosshard.compat.body.Body.hasCore(player) ? ChaosConfig.body.coreEnergy : 0;
+        return ChaosConfig.magic.energyBase + ChaosConfig.magic.energyPerLevel * ThreadBonus.level(player) + core;
     }
 
     public static float get(EntityPlayer player) {
@@ -54,6 +55,7 @@ public class ChaosEnergy {
             return;
         }
         EntityPlayerMP player = (EntityPlayerMP) event.player;
+        ru.death.chaosshard.compat.body.Body.tick(player);
         float now = get(player);
         int max = max(player);
         if (now < max) {
@@ -62,6 +64,9 @@ public class ChaosEnergy {
                 regen *= ChaosConfig.magic.antechamberRegenMultiplier;
             } else {
                 regen *= ru.death.chaosshard.anchor.TileAnchor.energyMultiplier(player.world, player.getPosition());
+            }
+            if (ru.death.chaosshard.compat.body.Body.hasCore(player)) {
+                regen *= 1.5;
             }
             player.getEntityData().setFloat(TAG, (float) Math.min(max, now + regen));
         }

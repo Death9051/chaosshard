@@ -12,7 +12,7 @@ import ru.death.chaosshard.client.magic.GuiGrimoireMagic;
 import ru.death.chaosshard.client.magic.GuiSpellWheel;
 import ru.death.chaosshard.init.ModItems;
 
-/** Клавиши магии: V — колесо заклинаний (Гримуар в руке), G — окно магии Гримуара (Гримуар в инвентаре). */
+/** Клавиши магии: R — колесо заклинаний (Гримуар в руке), G — окно магии Гримуара (Гримуар в инвентаре). */
 public class MagicKeys {
 
     public static final String CATEGORY = "key.categories.chaosshard";
@@ -20,7 +20,7 @@ public class MagicKeys {
     public static KeyBinding BOOK;
 
     public static void register() {
-        WHEEL = new KeyBinding("key.chaosshard.spell_wheel", Keyboard.KEY_V, CATEGORY);
+        WHEEL = new KeyBinding("key.chaosshard.spell_wheel", Keyboard.KEY_R, CATEGORY);
         BOOK = new KeyBinding("key.chaosshard.grimoire_magic", Keyboard.KEY_G, CATEGORY);
         ClientRegistry.registerKeyBinding(WHEEL);
         ClientRegistry.registerKeyBinding(BOOK);

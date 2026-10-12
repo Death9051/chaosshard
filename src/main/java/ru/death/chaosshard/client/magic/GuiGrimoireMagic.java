@@ -176,8 +176,8 @@ public class GuiGrimoireMagic extends GuiScreen {
         drawString(fontRenderer, I18n.format("chaosshard.magic.need_thread", s.minThread), x, y,
                 open ? 0x9AD08A : 0xD07070);
         y += 11;
-        boolean enough = ru.death.chaosshard.client.ClientThreadCache.energy() >= s.energy;
-        drawString(fontRenderer, I18n.format("chaosshard.magic.cost", s.energy), x, y, enough ? 0xB89CFF : 0xD07070);
+        boolean enough = ru.death.chaosshard.client.ClientThreadCache.energy() >= SpellCaster.cost(mc.player, s);
+        drawString(fontRenderer, I18n.format("chaosshard.magic.cost", SpellCaster.cost(mc.player, s)), x, y, enough ? 0xB89CFF : 0xD07070);
         y += 11;
         drawString(fontRenderer, I18n.format("chaosshard.magic.cooldown", cooldown(s.cooldown)), x, y, 0xB0A8C0);
         y += 11;

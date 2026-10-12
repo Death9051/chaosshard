@@ -23,6 +23,7 @@ public final class ModelRegistration {
         for (Item item : ru.death.chaosshard.init.ModItems.ALL) {
             ModelLoader.setCustomModelResourceLocation(item, 0, new ModelResourceLocation(item.getRegistryName(), "inventory"));
         }
+        ru.death.chaosshard.compat.body.BodyModels.register();
     }
 
     private ModelRegistration() {

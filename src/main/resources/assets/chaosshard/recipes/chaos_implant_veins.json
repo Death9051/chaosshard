@@ -1,0 +1,30 @@
+{
+ "conditions": [
+  {
+   "type": "forge:mod_loaded",
+   "modid": "cyberware"
+  }
+ ],
+ "type": "minecraft:crafting_shaped",
+ "pattern": [
+  "ENE",
+  "NDN",
+  "ENE"
+ ],
+ "key": {
+  "E": {
+   "item": "chaosshard:chaos_essence"
+  },
+  "N": {
+   "item": "cyberware:component",
+   "data": 7
+  },
+  "D": {
+   "item": "chaosshard:distorted_starmetal"
+  }
+ },
+ "result": {
+  "item": "chaosshard:chaos_implant",
+  "data": 2
+ }
+}

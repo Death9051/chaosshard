@@ -1,0 +1,33 @@
+{
+ "conditions": [
+  {
+   "type": "forge:mod_loaded",
+   "modid": "cyberware"
+  }
+ ],
+ "type": "minecraft:crafting_shaped",
+ "pattern": [
+  "DED",
+  "RHR",
+  "DED"
+ ],
+ "key": {
+  "D": {
+   "item": "chaosshard:distorted_starmetal"
+  },
+  "E": {
+   "item": "chaosshard:chaos_essence"
+  },
+  "R": {
+   "item": "cyberware:component",
+   "data": 1
+  },
+  "H": {
+   "item": "chaosshard:memory_fragment"
+  }
+ },
+ "result": {
+  "item": "chaosshard:chaos_implant",
+  "data": 0
+ }
+}

@@ -318,8 +318,8 @@ public final class SpellCaster {
                 status(player, new TextComponentTranslation("chaosshard.spell.locked", spell.minThread));
                 return false;
             }
-            if (ChaosEnergy.get(player) < spell.energy) {
-                status(player, new TextComponentTranslation("chaosshard.spell.no_energy", spell.energy, (int) ChaosEnergy.get(player)));
+            if (ChaosEnergy.get(player) < cost(player, spell)) {
+                status(player, new TextComponentTranslation("chaosshard.spell.no_energy", cost(player, spell), (int) ChaosEnergy.get(player)));
                 return false;
             }
         }
@@ -337,7 +337,7 @@ public final class SpellCaster {
             return;
         }
         if (!player.isCreative()) {
-            ChaosEnergy.spend(player, spell.energy);
+            ChaosEnergy.spend(player, cost(player, spell));
         }
         setCooldown(player, spell);
         ru.death.chaosshard.quest.Milestones.grant(player, ru.death.chaosshard.quest.Milestones.SPELL);
@@ -347,6 +347,11 @@ public final class SpellCaster {
             ((WorldServer) world).spawnParticle(EnumParticleTypes.SPELL_WITCH,
                     where.getX() + 0.5, where.getY() + 1.0, where.getZ() + 0.5, 24, 0.6, 0.4, 0.6, 0.02);
         }
+    }
+
+    /** Цена заклинания: Жилы Хаоса (имплант) снижают её на четверть. */
+    public static int cost(EntityPlayer player, Spell spell) {
+        return ru.death.chaosshard.compat.body.Body.hasVeins(player) ? (int) Math.ceil(spell.energy * 0.75) : spell.energy;
     }
 
     private static long cooldownLeft(EntityPlayer player, Spell spell) {
