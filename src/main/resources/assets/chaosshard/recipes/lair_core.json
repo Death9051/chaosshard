@@ -1,0 +1,26 @@
+{
+ "type": "forge:ore_shaped",
+ "pattern": [
+  "VEV",
+  "SBS",
+  "SSS"
+ ],
+ "key": {
+  "V": {
+   "item": "chaosshard:veil_shard"
+  },
+  "E": {
+   "item": "chaosshard:chaos_essence"
+  },
+  "S": {
+   "item": "chaosshard:chaos_stone"
+  },
+  "B": {
+   "item": "minecraft:bed",
+   "data": 32767
+  }
+ },
+ "result": {
+  "item": "chaosshard:lair_core"
+ }
+}

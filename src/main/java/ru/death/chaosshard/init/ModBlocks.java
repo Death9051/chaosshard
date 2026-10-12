@@ -33,6 +33,7 @@ public final class ModBlocks {
     public static Block RITUAL_BOWL;
     public static Block STAR_PUMP;
     public static Block TRIAL_SEAL, TRIAL_RUNE, TRIAL_EXIT;
+    public static Block LAIR;
     public static Block ISLAND_HEART;
     public static Block CHAOS_ANCHOR;
     public static Block HEART_HARVESTER;
@@ -78,6 +79,9 @@ public final class ModBlocks {
         TRIAL_SEAL = add(new ru.death.chaosshard.trial.TrialBlocks.Seal(), "trial_seal");
         TRIAL_RUNE = add(new ru.death.chaosshard.trial.TrialBlocks.Rune(), "trial_rune");
         TRIAL_EXIT = add(new ru.death.chaosshard.trial.TrialBlocks.Exit(), "trial_exit");
+        LAIR = add(new ru.death.chaosshard.lair.BlockLair(), "lair_core");
+        net.minecraftforge.fml.common.registry.GameRegistry.registerTileEntity(ru.death.chaosshard.lair.TileLair.class,
+                new net.minecraft.util.ResourceLocation(Tags.MOD_ID, "lair_core"));
         net.minecraftforge.fml.common.registry.GameRegistry.registerTileEntity(ru.death.chaosshard.pump.TileStarPump.class,
                 new net.minecraft.util.ResourceLocation(Tags.MOD_ID, "star_pump"));
         net.minecraftforge.fml.common.registry.GameRegistry.registerTileEntity(ru.death.chaosshard.ritual.TileRitualBowl.class,

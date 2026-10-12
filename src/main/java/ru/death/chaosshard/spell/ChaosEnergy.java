@@ -69,6 +69,7 @@ public class ChaosEnergy {
             if (ru.death.chaosshard.compat.body.Body.hasCore(player)) {
                 regen *= 1.5;
             }
+            regen *= ru.death.chaosshard.lair.TileLair.energyMultiplier(player);
             if (ru.death.chaosshard.stars.Perks.night(player)) {
                 regen *= 1.25;
             }

@@ -1,0 +1,13 @@
+{
+ "variants": {
+  "level=1": {
+   "model": "chaosshard:lair_core_1"
+  },
+  "level=2": {
+   "model": "chaosshard:lair_core_2"
+  },
+  "level=3": {
+   "model": "chaosshard:lair_core_3"
+  }
+ }
+}

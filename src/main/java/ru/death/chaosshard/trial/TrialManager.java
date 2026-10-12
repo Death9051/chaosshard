@@ -74,6 +74,9 @@ public class TrialManager {
     }
 
     public static void finish(EntityPlayerMP player, World world, BlockPos at) {
+        if (!TrialDimension.is(world)) {
+            return;
+        }
         TrialData data = TrialData.get(world);
         TrialData.Trial t = data.at(at);
         if (t == null) {
