@@ -1,0 +1,18 @@
+# slug projectID fileID
+cyberware 283377 3366534
+rewired 285550 2962840
+metamorph 256932 5440927
+mclib 304750 5440933
+chameleon 427823 4743912
+roguelike-dungeons 284876 6386037
+dimensional-doors 224770 5750564
+recurrent-complex 224535 2443253
+lycanites-mobs 307152 3177947
+ae2-uel 308380 7329681
+refined-storage 223852 5981297
+storage-drawers 230497 2450900
+iron-chests 74072 2902483
+packaged-auto 811828 7762599
+packaged-astral 243076 2940914
+cyclic 243121 2924091
+reliquary 313970 2906487
