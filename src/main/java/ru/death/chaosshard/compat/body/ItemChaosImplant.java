@@ -11,7 +11,7 @@ import net.minecraft.item.ItemStack;
  * 0 — Ядро Хаоса (сердце, заменяет его), 1 — Приёмник Нити (череп), 2 — Жилы Хаоса (мышцы), 3 — Панцирь Скверны (кожа).
  * Конструктор ItemCyberware сам регистрирует предмет, поэтому создавать его нужно внутри события регистрации предметов.
  */
-public class ItemChaosImplant extends ItemCyberware {
+public class ItemChaosImplant extends ItemCyberware implements flaxbeard.cyberware.api.item.IMenuItem {
 
     public static final String NAME = "chaos_implant";
     public static final String[] SUBS = {"core", "receiver", "veins", "carapace", "warden", "eye", "lungs", "bones", "claws", "stride"};
@@ -45,6 +45,29 @@ public class ItemChaosImplant extends ItemCyberware {
     @Override
     public int installedStackSize(ItemStack stack) {
         return 1;
+    }
+
+    // ------------------------------------------------------------------ Око Хаоса включается в меню Cyberware
+
+    @Override
+    public boolean hasMenu(ItemStack stack) {
+        return stack.getMetadata() == EYE;
+    }
+
+    @Override
+    public void use(net.minecraft.entity.Entity entity, ItemStack stack) {
+        flaxbeard.cyberware.api.item.EnableDisableHelper.toggle(stack);
+    }
+
+    @Override
+    public String getUnlocalizedLabel(ItemStack stack) {
+        return flaxbeard.cyberware.api.item.EnableDisableHelper.getUnlocalizedLabel(stack);
+    }
+
+    @Override
+    public float[] getColor(ItemStack stack) {
+        return flaxbeard.cyberware.api.item.EnableDisableHelper.isEnabled(stack)
+                ? new float[]{0.75F, 0.45F, 1.0F} : null;
     }
 
     @Override

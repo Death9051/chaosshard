@@ -34,6 +34,15 @@ public final class BodyCompat {
         MinecraftForge.EVENT_BUS.register(new BodyCompat.Events());
     }
 
+    /** Установленный экземпляр импланта (с его настройками) или пустой стак. */
+    static ItemStack installed(EntityPlayer player, int meta) {
+        if (IMPLANT == null || player == null || !CyberwareAPI.hasCapability(player)) {
+            return ItemStack.EMPTY;
+        }
+        ItemStack s = CyberwareAPI.getCyberware(player, new ItemStack(IMPLANT, 1, meta));
+        return s == null ? ItemStack.EMPTY : s;
+    }
+
     static boolean has(EntityPlayer player, int meta) {
         if (IMPLANT == null || player == null || !CyberwareAPI.hasCapability(player)) {
             return false;
@@ -71,14 +80,22 @@ public final class BodyCompat {
             player.addPotionEffect(new PotionEffect(MobEffects.REGENERATION, 60, 0, true, false));
             player.addPotionEffect(new PotionEffect(MobEffects.RESISTANCE, 60, 0, true, false));
         }
-        // Око Хаоса: ночное зрение и подсветка тварей вокруг
-        if (has(player, ItemChaosImplant.EYE)) {
+        // Око Хаоса: включается и выключается в меню имплантов Cyberware. Открыто — ночное зрение и подсветка тварей.
+        ItemStack eye = installed(player, ItemChaosImplant.EYE);
+        boolean eyeOpen = !eye.isEmpty() && flaxbeard.cyberware.api.item.EnableDisableHelper.isEnabled(eye);
+        PotionEffect nv = player.getActivePotionEffect(MobEffects.NIGHT_VISION);
+        if (eyeOpen) {
+            player.getEntityData().setBoolean("chaosshard_eye_nv", true);
             player.addPotionEffect(new PotionEffect(MobEffects.NIGHT_VISION, 400, 0, true, false));
-            if (player.ticksExisted % 60 < 20) {
-                for (net.minecraft.entity.EntityLivingBase e : player.world.getEntitiesWithinAABB(net.minecraft.entity.EntityLivingBase.class,
-                        player.getEntityBoundingBox().grow(16), e -> e instanceof net.minecraft.entity.monster.IMob)) {
-                    e.addPotionEffect(new PotionEffect(MobEffects.GLOWING, 70, 0, true, false));
-                }
+            for (net.minecraft.entity.EntityLivingBase e : player.world.getEntitiesWithinAABB(net.minecraft.entity.EntityLivingBase.class,
+                    player.getEntityBoundingBox().grow(16), e -> e instanceof net.minecraft.entity.monster.IMob)) {
+                e.addPotionEffect(new PotionEffect(MobEffects.GLOWING, 40, 0, true, false));
+            }
+        } else if (player.getEntityData().getBoolean("chaosshard_eye_nv")) {
+            // Око закрыли: снимаем своё ночное зрение (до 20 с), зелья и Звёздный взор не трогаем
+            player.getEntityData().removeTag("chaosshard_eye_nv");
+            if (nv != null && nv.getIsAmbient() && nv.getDuration() <= 400) {
+                player.removePotionEffect(MobEffects.NIGHT_VISION);
             }
         }
         // Дыхание Пустоты: дышать под водой, яд и иссушение не держатся
