@@ -1,3 +1,6 @@
 {
- "parent": "chaosshard:block/trial_exit"
+ "parent": "item/generated",
+ "textures": {
+  "layer0": "chaosshard:blocks/trial_exit_bottom"
+ }
 }

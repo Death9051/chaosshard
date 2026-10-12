@@ -12,18 +12,45 @@ import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumParticleTypes;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.Random;
 
 /** Блоки обломка: Печать (несокрушимая дверь), Руна и Разрыв-выход. */
 public final class TrialBlocks {
 
-    /** Несокрушимый камень обломка. */
+    /** Барьер обломка: светящееся поле в проходе. Прозрачное на вид, непроходимое и несокрушимое. */
     public static class Seal extends Block {
+        @Override
+        public boolean isOpaqueCube(IBlockState state) {
+            return false;
+        }
+
+        @Override
+        public boolean isFullCube(IBlockState state) {
+            return false;
+        }
+
+        @SideOnly(Side.CLIENT)
+        @Override
+        public BlockRenderLayer getRenderLayer() {
+            return BlockRenderLayer.TRANSLUCENT;
+        }
+
+        /** Стыки соседних полей не рисуются: стена выглядит одним полотном. */
+        @SideOnly(Side.CLIENT)
+        @Override
+        public boolean shouldSideBeRendered(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side) {
+            return world.getBlockState(pos.offset(side)).getBlock() != this && super.shouldSideBeRendered(state, world, pos, side);
+        }
+
         public Seal() {
             super(Material.BARRIER);
             setBlockUnbreakable();
@@ -107,29 +134,100 @@ public final class TrialBlocks {
         }
     }
 
-    /** Разрыв: ПКМ — вернуться туда, откуда пришёл. */
+    /** Разрыв: щель в пространстве в два блока высотой. Шагнуть в неё (или ПКМ) — вернуться туда, откуда пришёл. */
     public static class Exit extends Block {
+        public static final PropertyBool TOP = PropertyBool.create("top");
+        private static final AxisAlignedBB SHAPE = new AxisAlignedBB(0.2, 0, 0.375, 0.8, 1, 0.625);
+
         public Exit() {
             super(Material.PORTAL);
             setBlockUnbreakable();
             setResistance(6000000F);
             setLightLevel(1.0F);
+            setDefaultState(blockState.getBaseState().withProperty(TOP, false));
+        }
+
+        @Override
+        protected BlockStateContainer createBlockState() {
+            return new BlockStateContainer(this, TOP);
+        }
+
+        @Override
+        public IBlockState getStateFromMeta(int meta) {
+            return getDefaultState().withProperty(TOP, meta == 1);
+        }
+
+        @Override
+        public int getMetaFromState(IBlockState state) {
+            return state.getValue(TOP) ? 1 : 0;
+        }
+
+        @Override
+        public boolean isOpaqueCube(IBlockState state) {
+            return false;
+        }
+
+        @Override
+        public boolean isFullCube(IBlockState state) {
+            return false;
+        }
+
+        @SideOnly(Side.CLIENT)
+        @Override
+        public BlockRenderLayer getRenderLayer() {
+            return BlockRenderLayer.TRANSLUCENT;
+        }
+
+        @Override
+        public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
+            return SHAPE;
+        }
+
+        @Override
+        public AxisAlignedBB getCollisionBoundingBox(IBlockState state, IBlockAccess world, BlockPos pos) {
+            return NULL_AABB;
+        }
+
+        @Override
+        public net.minecraft.block.state.BlockFaceShape getBlockFaceShape(IBlockAccess world, IBlockState state, BlockPos pos, EnumFacing face) {
+            return net.minecraft.block.state.BlockFaceShape.UNDEFINED;
+        }
+
+        private static void leave(World world, BlockPos pos, EntityPlayer player) {
+            if (world.isRemote || !(player instanceof EntityPlayerMP) || world.getMinecraftServer() == null) {
+                return;
+            }
+            EntityPlayerMP p = (EntityPlayerMP) player;
+            if (p.getEntityData().getLong("chaosshard_rift_used") > world.getTotalWorldTime() - 40) {
+                return;
+            }
+            p.getEntityData().setLong("chaosshard_rift_used", world.getTotalWorldTime());
+            BlockPos base = world.getBlockState(pos).getValue(TOP) ? pos.down() : pos;
+            // не посреди движения игрока — на следующем шаге сервера
+            world.getMinecraftServer().addScheduledTask(() -> TrialManager.finish(p, world, base));
         }
 
         @Override
         public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand,
                                         EnumFacing facing, float hitX, float hitY, float hitZ) {
-            if (!world.isRemote && hand == EnumHand.MAIN_HAND && player instanceof EntityPlayerMP) {
-                TrialManager.finish((EntityPlayerMP) player, world, pos);
+            if (hand == EnumHand.MAIN_HAND) {
+                leave(world, pos, player);
             }
             return true;
         }
 
         @Override
+        public void onEntityCollision(World world, BlockPos pos, IBlockState state, net.minecraft.entity.Entity entity) {
+            if (entity instanceof EntityPlayer) {
+                leave(world, pos, (EntityPlayer) entity);
+            }
+        }
+
+        @Override
         public void randomDisplayTick(IBlockState state, World world, BlockPos pos, Random rand) {
-            for (int i = 0; i < 3; i++) {
-                world.spawnParticle(EnumParticleTypes.PORTAL, pos.getX() + rand.nextDouble(), pos.getY() + rand.nextDouble() * 2,
-                        pos.getZ() + rand.nextDouble(), (rand.nextDouble() - 0.5) * 0.5, 0.2, (rand.nextDouble() - 0.5) * 0.5);
+            for (int i = 0; i < 2; i++) {
+                world.spawnParticle(EnumParticleTypes.PORTAL, pos.getX() + 0.5 + (rand.nextDouble() - 0.5) * 0.6, pos.getY() + rand.nextDouble(),
+                        pos.getZ() + 0.5, (rand.nextDouble() - 0.5) * 0.6, 0.1, (rand.nextDouble() - 0.5) * 0.6);
             }
         }
 

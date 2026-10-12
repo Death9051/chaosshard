@@ -84,6 +84,8 @@ public final class TrialLayout {
             }
         }
         world.setBlockState(o.add(0, 0, e[1] + 3), ModBlocks.TRIAL_EXIT.getDefaultState(), 2);
+        world.setBlockState(o.add(0, 1, e[1] + 3), ModBlocks.TRIAL_EXIT.getDefaultState()
+                .withProperty(ru.death.chaosshard.trial.TrialBlocks.Exit.TOP, true), 2);
     }
 
     public static BlockPos[] runePositions(TrialData.Trial t) {

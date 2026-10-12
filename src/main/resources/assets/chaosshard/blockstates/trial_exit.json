@@ -1,7 +1,10 @@
 {
  "variants": {
-  "normal": {
-   "model": "chaosshard:trial_exit"
+  "top=false": {
+   "model": "chaosshard:trial_exit_bottom"
+  },
+  "top=true": {
+   "model": "chaosshard:trial_exit_top"
   }
  }
 }
