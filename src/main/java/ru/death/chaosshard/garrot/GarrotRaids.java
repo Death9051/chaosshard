@@ -137,8 +137,11 @@ public class GarrotRaids {
         }
     }
 
-    /** Особые бойцы (без Ancient Warfare тоже): щитоносцы и знаменосец с 3-го уровня, пиромант на 5-м. */
+    /** Особые бойцы: щитоносцы и знаменосец с 3-го уровня, пиромант на 5-м. С Ancient Warfare — его солдаты в наших скинах. */
     private static void specials(WorldServer world, BlockPos base, EntityPlayerMP target, int level, boolean lead) {
+        if (specialsAW(world, base, target, level, lead)) {
+            return;
+        }
         Random r = world.rand;
         if (level >= 3) {
             for (int i = 0; i < 2; i++) {
@@ -187,6 +190,95 @@ public class GarrotRaids {
         }
     }
 
+    // ------------------------------------------------------------------ Ancient Warfare: особые бойцы в своих скинах
+
+    private static EntityLiving awNpc(WorldServer world, String type) throws Exception {
+        Class<?> cls = Class.forName("net.shadowmage.ancientwarfare.npc.init.AWNPCEntities");
+        java.lang.reflect.Method create = cls.getMethod("createNpc", World.class, String.class, String.class, String.class);
+        return (EntityLiving) create.invoke(null, world, type, "", FACTION);
+    }
+
+    /** Свой скин солдату AW: chaosshard:textures/entity/garrot/<name>.png (развёртка скина игрока 64×64). */
+    private static void skin(EntityLiving npc, String name) {
+        try {
+            Class<?> settingsCls = Class.forName("net.shadowmage.ancientwarfare.npc.skin.NpcSkinSettings");
+            @SuppressWarnings({"unchecked", "rawtypes"})
+            Class<Enum> typeCls = (Class<Enum>) Class.forName("net.shadowmage.ancientwarfare.npc.skin.NpcSkinSettings$SkinType");
+            Object settings = settingsCls.newInstance();
+            @SuppressWarnings("unchecked")
+            Object npcType = Enum.valueOf(typeCls, "NPC_TYPE");
+            settingsCls.getMethod("setSkinType", typeCls).invoke(settings, npcType);
+            settingsCls.getMethod("setRandom", boolean.class).invoke(settings, false);
+            settingsCls.getMethod("setNpcTypeSkin", net.minecraft.util.ResourceLocation.class).invoke(settings,
+                    new net.minecraft.util.ResourceLocation(ru.death.chaosshard.Tags.MOD_ID, "textures/entity/garrot/" + name + ".png"));
+            npc.getClass().getMethod("setSkinSettings", settingsCls).invoke(npc, settings);
+        } catch (Throwable t) {
+            ru.death.chaosshard.ChaosShard.LOG.warn("Скин {} для солдата AW не встал: {}", name, t.toString());
+        }
+    }
+
+    private static boolean specialsAW(WorldServer world, BlockPos base, EntityPlayerMP target, int level, boolean lead) {
+        if (!net.minecraftforge.fml.common.Loader.isModLoaded("ancientwarfarenpc") && !net.minecraftforge.fml.common.Loader.isModLoaded("ancientwarfare")) {
+            return false;
+        }
+        try {
+            Random r = world.rand;
+            if (level >= 3) {
+                for (int i = 0; i < 2; i++) {
+                    EntityLiving s = awNpc(world, "faction.soldier.elite");
+                    if (s == null) {
+                        return false;
+                    }
+                    skin(s, "shieldbearer");
+                    setup(world, s, world.getHeight(base.add(r.nextInt(5) - 2, 0, r.nextInt(5) - 2)), target);
+                    s.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, new ItemStack(Items.IRON_SWORD));
+                    s.setItemStackToSlot(EntityEquipmentSlot.OFFHAND, new ItemStack(Items.SHIELD));
+                    s.setItemStackToSlot(EntityEquipmentSlot.CHEST, new ItemStack(Items.IRON_CHESTPLATE));
+                    s.setItemStackToSlot(EntityEquipmentSlot.LEGS, new ItemStack(Items.IRON_LEGGINGS));
+                    s.getEntityAttribute(SharedMonsterAttributes.KNOCKBACK_RESISTANCE).setBaseValue(0.8);
+                    s.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(45);
+                    s.setHealth(45);
+                    s.setCustomNameTag(TextFormatting.DARK_GRAY + new TextComponentTranslation("chaosshard.garrot.shield").getUnformattedText());
+                }
+                if (lead) {
+                    EntityLiving b = awNpc(world, "faction.soldier");
+                    if (b != null) {
+                        skin(b, "bannerman");
+                        setup(world, b, world.getHeight(base.add(r.nextInt(5) - 2, 0, r.nextInt(5) - 2)), target);
+                        b.setItemStackToSlot(EntityEquipmentSlot.HEAD, new ItemStack(Items.BANNER, 1, 0));
+                        b.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, new ItemStack(Items.IRON_AXE));
+                        b.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(40);
+                        b.setHealth(40);
+                        b.addTag(TAG_BANNER);
+                        b.setGlowing(true);
+                        b.setCustomNameTag(TextFormatting.GOLD + new TextComponentTranslation("chaosshard.garrot.bannerman").getUnformattedText());
+                    }
+                }
+            }
+            if (level >= 5 && lead) {
+                EntityLiving p = awNpc(world, "faction.archer");
+                if (p != null) {
+                    skin(p, "pyromancer");
+                    setup(world, p, world.getHeight(base.add(r.nextInt(5) - 2, 0, r.nextInt(5) - 2)), target);
+                    ItemStack bow = new ItemStack(Items.BOW);
+                    bow.addEnchantment(net.minecraft.init.Enchantments.FLAME, 1);
+                    bow.addEnchantment(net.minecraft.init.Enchantments.POWER, 2);
+                    p.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, bow);
+                    p.addPotionEffect(new net.minecraft.potion.PotionEffect(net.minecraft.init.MobEffects.FIRE_RESISTANCE, 1000000, 0, false, false));
+                    p.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(45);
+                    p.setHealth(45);
+                    p.addTag(TAG_PYRO);
+                    p.setGlowing(true);
+                    p.setCustomNameTag(TextFormatting.RED + new TextComponentTranslation("chaosshard.garrot.pyromancer").getUnformattedText());
+                }
+            }
+            return true;
+        } catch (Throwable t) {
+            ru.death.chaosshard.ChaosShard.LOG.warn("Особые бойцы через Ancient Warfare не вышли, беру ванильных: {}", t.toString());
+            return false;
+        }
+    }
+
     /**
      * Мрачная Армия из Ancient Warfare 2: фракция «evil» (в переводе сборки — Мрачная Армия).
      * Капитан — элитный лидер, отряд — солдаты, лучники (со 2-го уровня), элитные солдаты (с 3-го).
@@ -204,6 +296,9 @@ public class GarrotRaids {
                 EntityLiving captain = (EntityLiving) create.invoke(null, world, "faction.leader.elite", "", FACTION);
                 if (captain == null) {
                     return false;
+                }
+                if (level >= 5) {
+                    skin(captain, "commander");
                 }
                 setup(world, captain, base, target);
                 double hp = 80 + 15 * Math.min(number, 6) + 25 * (level - 1);
