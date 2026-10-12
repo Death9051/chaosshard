@@ -107,8 +107,12 @@ public class WorldProviderAntechamber extends WorldProvider {
 
     private void clearWeather() {
         if (this.world != null) {
-            this.world.setRainStrength(0.0F);
-            this.world.setThunderStrength(0.0F);
+            // setRainStrength/setThunderStrength есть только на клиенте:
+            // на выделенном сервере их вызов роняет загрузку мира.
+            this.world.prevRainingStrength = 0.0F;
+            this.world.rainingStrength = 0.0F;
+            this.world.prevThunderingStrength = 0.0F;
+            this.world.thunderingStrength = 0.0F;
         }
     }
 
