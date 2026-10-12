@@ -31,6 +31,8 @@ jobs:
               unzip -o -q /tmp/mod.jar 'assets/*/lang/en_us.lang' 'assets/*/lang/ru_ru.lang' 'assets/*/recipes/*' 'assets/*/advancements/*' -d "$dir" 2>/dev/null || true
               unzip -o -q /tmp/mod.jar 'mcmod.info' -d "$dir" 2>/dev/null || true
               mkdir -p "/tmp/out/jars"
+              modid=$(unzip -p /tmp/mod.jar mcmod.info 2>/dev/null | grep -o "\"modid\"[^,]*" | head -1 | sed "s/.*: *\"//; s/\"//")
+              echo "$slug $pid $fid $modid" >> /tmp/out/index.txt
               cp /tmp/mod.jar "/tmp/out/jars/${slug}.jar"
             else
               echo "FAIL $slug $url" >> /tmp/out/status.txt
