@@ -25,7 +25,17 @@ public enum Ritual {
     /** Зов тварей: через миг появляются три враждебные твари — ради добычи. */
     SUMMON(1, 0, offer("chaosshard:chaos_essence", 0, 1), offer("minecraft:rotten_flesh", 0, 4), offer("minecraft:bone", 0, 2)),
     /** Порыв Скверны: ближайший Якорь (до 48 блоков) разом оскверняет округу. */
-    CORRUPTION(2, 0, offer("chaosshard:chaos_essence", 0, 4), offer("chaosshard:memory_fragment", 0, 1));
+    CORRUPTION(2, 0, offer("chaosshard:chaos_essence", 0, 4), offer("chaosshard:memory_fragment", 0, 1)),
+    /** Призыв: Скорлупа Хаоса — слуга из песчаного мертвеца. */
+    SERVANT_HUSK(0, 0, offer("chaosshard:chaos_essence", 0, 2), offer("minecraft:rotten_flesh", 0, 8)),
+    /** Призыв: Костяной страж. */
+    SERVANT_BONE(2, 0, offer("chaosshard:chaos_essence", 0, 3), offer("minecraft:bone", 0, 8), offer("minecraft:coal", 0, 4)),
+    /** Призыв: Палач Хаоса. */
+    SERVANT_EXECUTIONER(3, 0, offer("chaosshard:chaos_essence", 0, 4), offer("minecraft:iron_axe", 0, 1), offer("minecraft:emerald", 0, 4));
+
+    public boolean isSummon() {
+        return this == SERVANT_HUSK || this == SERVANT_BONE || this == SERVANT_EXECUTIONER;
+    }
 
     public final int minThread;
     /** Длительность в тиках; 0 — мгновенный. */

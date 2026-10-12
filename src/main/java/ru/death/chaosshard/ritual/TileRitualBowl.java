@@ -147,6 +147,11 @@ public class TileRitualBowl extends TileEntity implements ITickable {
             say(player, Breach.grimoire("chaosshard.ritual.thin", r.minThread));
             return;
         }
+        if (r.isSummon() && ru.death.chaosshard.servant.Servants.count(player) >= ru.death.chaosshard.servant.Servants.limit(player)
+                && !player.isCreative()) {
+            say(player, Breach.grimoire("chaosshard.servant.limit", ru.death.chaosshard.servant.Servants.limit(player)));
+            return;
+        }
         String fail = precheck(r);
         if (fail != null) {
             say(player, Breach.grimoire(fail));
@@ -220,6 +225,17 @@ public class TileRitualBowl extends TileEntity implements ITickable {
                                 40, 0.3, 0.8, 0.3, 0.5);
                     }
                 }
+                break;
+            }
+            case SERVANT_HUSK:
+            case SERVANT_BONE:
+            case SERVANT_EXECUTIONER: {
+                ru.death.chaosshard.servant.Servants.Kind kind = r == Ritual.SERVANT_HUSK ? ru.death.chaosshard.servant.Servants.Kind.HUSK
+                        : r == Ritual.SERVANT_BONE ? ru.death.chaosshard.servant.Servants.Kind.BONE
+                        : ru.death.chaosshard.servant.Servants.Kind.EXECUTIONER;
+                ru.death.chaosshard.servant.Servants.summon(player, kind, pos.add(1, 0, 1));
+                say(player, Breach.grimoire("chaosshard.servant.summoned", ru.death.chaosshard.servant.Servants.count(player),
+                        ru.death.chaosshard.servant.Servants.limit(player)));
                 break;
             }
             case CORRUPTION: {

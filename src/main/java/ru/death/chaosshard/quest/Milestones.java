@@ -69,6 +69,7 @@ public class Milestones {
     public static final String TRIAL_3 = "trial_three";
     public static final String TRIAL_HARD = "trial_hard";
     public static final String LAIR_1 = "lair_1", LAIR_2 = "lair_2", LAIR_3 = "lair_3";
+    public static final String SERVANT = "servant_first", SERVANT_BONE = "servant_bone", SERVANT_EXEC = "servant_exec", SERVANT_3 = "servant_three";
     public static final String VILLAGE_EVOLVED = "village_evolved";
 
     private static final String TAG_AGES = "chaosshard_ages";
