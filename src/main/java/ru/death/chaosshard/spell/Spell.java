@@ -15,7 +15,13 @@ public enum Spell {
     SPRING(1, 1, 20, true),
     RIFT(2, 2, 20, true),
     STARSIGHT(2, 2, 200, false),
-    RECALL(3, 4, 1200, false);
+    RECALL(3, 4, 1200, false),
+    /** Рывок: бросок вперёд по взгляду. */
+    DASH(1, 2, 40, false),
+    /** Стрела Хаоса: удар по первой цели на линии взгляда. */
+    BOLT(1, 3, 30, false),
+    /** Форма Хаоса: боевая форма на 30 секунд. */
+    FORM(2, 6, 1200, false);
 
     public final int minThread;
     public final int hunger;

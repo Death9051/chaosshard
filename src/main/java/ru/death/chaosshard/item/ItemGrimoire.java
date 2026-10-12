@@ -36,20 +36,20 @@ public class ItemGrimoire extends Item {
     }
 
     /**
-     * ПКМ в воздух — открыть записи или прочитать выбранное заклинание.
-     * Shift+ПКМ — сменить заклинание.
+     * Режим «Записи»: ПКМ — книга квестов.
+     * Режим «Магия»: ПКМ — выбранное заклинание (в воздух или по блоку).
+     * Shift+ПКМ в воздух — переключить режим. Колесо заклинаний и окно магии — клавиши (V и G по умолчанию).
      */
     @Override
     public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
         ItemStack stack = player.getHeldItem(hand);
-        Spell spell = SpellCaster.selected(stack);
         if (player.isSneaking()) {
             if (!world.isRemote) {
-                SpellCaster.cycle((EntityPlayerMP) player, stack);
+                SpellCaster.toggleMode((EntityPlayerMP) player, stack);
             }
             return new ActionResult<>(EnumActionResult.SUCCESS, stack);
         }
-        if (spell == Spell.BOOK) {
+        if (!SpellCaster.magicMode(stack)) {
             if (world.isRemote) {
                 if (Loader.isModLoaded("betterquesting")) {
                     ChaosShard.proxy.openGrimoire();
@@ -59,19 +59,21 @@ public class ItemGrimoire extends Item {
             }
             return new ActionResult<>(EnumActionResult.SUCCESS, stack);
         }
-        if (!world.isRemote) {
+        Spell spell = SpellCaster.selected(stack);
+        if (!world.isRemote && spell != Spell.BOOK) {
             SpellCaster.castSelf((EntityPlayerMP) player, spell);
         }
         player.swingArm(hand);
         return new ActionResult<>(EnumActionResult.SUCCESS, stack);
     }
 
-    /** ПКМ по блоку — заклинание по блоку. Записи и смена заклинания уходят в onItemRightClick. */
+    /** ПКМ по блоку — заклинание по блоку (только в режиме «Магия»). */
     @Override
     public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing,
                                       float hitX, float hitY, float hitZ) {
-        Spell spell = SpellCaster.selected(player.getHeldItem(hand));
-        if (player.isSneaking() || spell == Spell.BOOK || !spell.onBlock) {
+        ItemStack stack = player.getHeldItem(hand);
+        Spell spell = SpellCaster.selected(stack);
+        if (player.isSneaking() || !SpellCaster.magicMode(stack) || spell == Spell.BOOK || !spell.onBlock) {
             return EnumActionResult.PASS;
         }
         if (!world.isRemote) {
@@ -105,13 +107,16 @@ public class ItemGrimoire extends Item {
     @SideOnly(Side.CLIENT)
     public void addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, ITooltipFlag flag) {
         tooltip.add(TextFormatting.DARK_PURPLE + "" + TextFormatting.ITALIC + I18n.format("item.chaosshard.grimoire.lore"));
-        Spell spell = SpellCaster.selected(stack);
-        tooltip.add(TextFormatting.LIGHT_PURPLE + I18n.format("item.chaosshard.grimoire.current", I18n.format(spell.key())));
-        if (spell != Spell.BOOK) {
+        boolean magic = SpellCaster.magicMode(stack);
+        tooltip.add(TextFormatting.LIGHT_PURPLE + I18n.format(magic ? "item.chaosshard.grimoire.mode_magic" : "item.chaosshard.grimoire.mode_notes"));
+        if (magic) {
+            Spell spell = SpellCaster.selected(stack);
+            tooltip.add(TextFormatting.LIGHT_PURPLE + I18n.format("item.chaosshard.grimoire.current", I18n.format(spell.key())));
             tooltip.add(TextFormatting.DARK_GRAY + I18n.format(spell.key() + ".desc"));
         }
         tooltip.add(TextFormatting.GRAY + I18n.format("item.chaosshard.grimoire.use"));
         tooltip.add(TextFormatting.GRAY + I18n.format("item.chaosshard.grimoire.cycle"));
+        tooltip.add(TextFormatting.GRAY + I18n.format("item.chaosshard.grimoire.keys"));
         tooltip.add(TextFormatting.GRAY + I18n.format("item.chaosshard.grimoire.craft"));
     }
 }

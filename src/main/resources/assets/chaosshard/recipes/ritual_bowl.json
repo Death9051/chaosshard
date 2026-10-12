@@ -1,0 +1,22 @@
+{
+ "type": "minecraft:crafting_shaped",
+ "pattern": [
+  "V V",
+  "SES",
+  " S "
+ ],
+ "key": {
+  "V": {
+   "item": "chaosshard:veil_shard"
+  },
+  "S": {
+   "item": "chaosshard:chaos_stone"
+  },
+  "E": {
+   "item": "chaosshard:chaos_essence"
+  }
+ },
+ "result": {
+  "item": "chaosshard:ritual_bowl"
+ }
+}

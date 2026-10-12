@@ -314,7 +314,7 @@ public class CommandChaosShard extends CommandBase {
             case "kit": {
                 String[] kit = {
                         "chaosshard:grimoire", "chaosshard:chaos_stone 64", "chaosshard:chaos_crust 64",
-                        "chaosshard:breach_altar", "chaosshard:ritual_spire 4", "chaosshard:breach_book", "chaosshard:memory_fragment 8", "chaosshard:veil_shard 8",
+                        "chaosshard:breach_altar", "chaosshard:ritual_spire 4", "chaosshard:ritual_bowl", "chaosshard:chaos_chalk", "chaosshard:chaos_essence 16", "minecraft:dye 32 15", "chaosshard:breach_book", "chaosshard:memory_fragment 8", "chaosshard:veil_shard 8",
                         "astralsorcery:itemjournal", "astralsorcery:itemwand", "astralsorcery:itemhandtelescope",
                         "astralsorcery:blockaltar 1 0", "astralsorcery:blockwell", "astralsorcery:itemrockcrystalsimple 4",
                         "astralsorcery:itemcraftingcomponent 32 0", "astralsorcery:blockmarble 64 0",

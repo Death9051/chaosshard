@@ -30,6 +30,47 @@ import ru.death.chaosshard.thread.ThreadManager;
 public final class SpellCaster {
 
     private static final String TAG_SPELL = "spell";
+    private static final String TAG_MODE = "mode";
+
+    /** Режим Гримуара: false — записи (книга квестов), true — магия. */
+    public static boolean magicMode(ItemStack stack) {
+        return stack.hasTagCompound() && stack.getTagCompound().getBoolean(TAG_MODE);
+    }
+
+    public static void toggleMode(EntityPlayerMP player, ItemStack stack) {
+        boolean magic = !magicMode(stack);
+        tag(stack).setBoolean(TAG_MODE, magic);
+        if (magic && selected(stack) == Spell.BOOK) {
+            tag(stack).setInteger(TAG_SPELL, Spell.SPROUT.ordinal());
+        }
+        TextComponentTranslation msg = new TextComponentTranslation(magic ? "chaosshard.grimoire.mode.magic" : "chaosshard.grimoire.mode.notes");
+        msg.getStyle().setColor(TextFormatting.LIGHT_PURPLE);
+        status(player, msg);
+        player.world.playSound(null, player.getPosition(), SoundEvents.ITEM_BOOK_PAGE_TURN, SoundCategory.PLAYERS, 0.8F, magic ? 0.7F : 1.1F);
+    }
+
+    /** Выбрать заклинание (из колеса или окна Гримуара). */
+    public static void select(EntityPlayerMP player, ItemStack stack, Spell spell) {
+        if (spell == Spell.BOOK) {
+            return;
+        }
+        if (spell.minThread > ru.death.chaosshard.thread.ThreadBonus.level(player) && !player.isCreative()) {
+            status(player, new TextComponentTranslation("chaosshard.spell.locked", spell.minThread));
+            return;
+        }
+        tag(stack).setInteger(TAG_SPELL, spell.ordinal());
+        tag(stack).setBoolean(TAG_MODE, true);
+        TextComponentTranslation name = new TextComponentTranslation(spell.key());
+        name.getStyle().setColor(TextFormatting.LIGHT_PURPLE);
+        status(player, new TextComponentTranslation("chaosshard.spell.selected", name));
+    }
+
+    private static NBTTagCompound tag(ItemStack stack) {
+        if (!stack.hasTagCompound()) {
+            stack.setTagCompound(new NBTTagCompound());
+        }
+        return stack.getTagCompound();
+    }
     private static final String TAG_COOLDOWNS = "chaosshard_spell_cd";
 
     // ------------------------------------------------------------------ выбор
@@ -78,6 +119,15 @@ public final class SpellCaster {
                 player.addPotionEffect(new PotionEffect(MobEffects.NIGHT_VISION, 20 * 180, 0, true, false));
                 ok = true;
                 break;
+            case DASH:
+                ok = dash(player);
+                break;
+            case BOLT:
+                ok = bolt(player);
+                break;
+            case FORM:
+                ok = form(player);
+                break;
             case RECALL:
                 if (AntechamberDimension.is(player.world) && !ru.death.chaosshard.breach.Breach.hasBreached(player)) {
                     status(player, new TextComponentTranslation("chaosshard.spell.recall.sealed"));
@@ -123,6 +173,80 @@ public final class SpellCaster {
     }
 
     // ------------------------------------------------------------------ эффекты
+
+    /** Рывок: бросок на ~8 блоков по взгляду, падение после рывка не ранит. */
+    private static boolean dash(EntityPlayerMP player) {
+        net.minecraft.util.math.Vec3d look = player.getLookVec();
+        double power = 1.6;
+        player.motionX = look.x * power;
+        player.motionY = Math.max(0.25, look.y * power * 0.6 + 0.2);
+        player.motionZ = look.z * power;
+        player.velocityChanged = true;
+        player.fallDistance = 0;
+        player.addPotionEffect(new PotionEffect(MobEffects.RESISTANCE, 20, 4, true, false));
+        ((WorldServer) player.world).spawnParticle(EnumParticleTypes.PORTAL, player.posX, player.posY + 1, player.posZ,
+                40, 0.4, 0.6, 0.4, 0.6);
+        player.world.playSound(null, player.getPosition(), SoundEvents.ENTITY_ENDERMEN_TELEPORT, SoundCategory.PLAYERS, 0.6F, 1.4F);
+        return true;
+    }
+
+    /** Стрела Хаоса: магический урон первой цели на 24 блока, сила растёт с Нитью. */
+    private static boolean bolt(EntityPlayerMP player) {
+        net.minecraft.util.math.Vec3d start = player.getPositionEyes(1.0F);
+        net.minecraft.util.math.Vec3d look = player.getLookVec();
+        double range = 24;
+        net.minecraft.util.math.Vec3d end = start.add(look.x * range, look.y * range, look.z * range);
+        net.minecraft.util.math.RayTraceResult block = player.world.rayTraceBlocks(start, end, false, true, false);
+        if (block != null) {
+            end = block.hitVec;
+        }
+        net.minecraft.entity.EntityLivingBase target = null;
+        double best = Double.MAX_VALUE;
+        for (net.minecraft.entity.Entity e : player.world.getEntitiesWithinAABBExcludingEntity(player,
+                player.getEntityBoundingBox().expand(look.x * range, look.y * range, look.z * range).grow(1))) {
+            if (!(e instanceof net.minecraft.entity.EntityLivingBase) || !e.canBeCollidedWith()) {
+                continue;
+            }
+            net.minecraft.util.math.RayTraceResult hit = e.getEntityBoundingBox().grow(0.3).calculateIntercept(start, end);
+            if (hit != null) {
+                double d = start.distanceTo(hit.hitVec);
+                if (d < best) {
+                    best = d;
+                    target = (net.minecraft.entity.EntityLivingBase) e;
+                }
+            }
+        }
+        WorldServer ws = (WorldServer) player.world;
+        net.minecraft.util.math.Vec3d stop = target != null ? target.getPositionVector().add(0, target.height / 2, 0) : end;
+        double len = start.distanceTo(stop);
+        for (double t = 0; t < len; t += 0.5) {
+            ws.spawnParticle(EnumParticleTypes.SPELL_WITCH, start.x + look.x * t, start.y + look.y * t - 0.2, start.z + look.z * t,
+                    2, 0.05, 0.05, 0.05, 0.0);
+        }
+        player.world.playSound(null, player.getPosition(), SoundEvents.EVOCATION_ILLAGER_CAST_SPELL, SoundCategory.PLAYERS, 0.8F, 1.6F);
+        if (target == null) {
+            return true;
+        }
+        float dmg = 6.0F + 1.5F * ru.death.chaosshard.thread.ThreadBonus.level(player);
+        target.attackEntityFrom(net.minecraft.util.DamageSource.causeIndirectMagicDamage(player, player), dmg);
+        ws.spawnParticle(EnumParticleTypes.DRAGON_BREATH, stop.x, stop.y, stop.z, 20, 0.3, 0.3, 0.3, 0.02);
+        return true;
+    }
+
+    /** Форма Хаоса: 30 секунд силы, скорости, защиты и прыгучести. */
+    private static boolean form(EntityPlayerMP player) {
+        int t = 20 * 30;
+        int amp = ru.death.chaosshard.thread.ThreadBonus.level(player) >= 4 ? 2 : 1;
+        player.addPotionEffect(new PotionEffect(MobEffects.STRENGTH, t, amp, false, true));
+        player.addPotionEffect(new PotionEffect(MobEffects.SPEED, t, 1, false, true));
+        player.addPotionEffect(new PotionEffect(MobEffects.RESISTANCE, t, 0, false, true));
+        player.addPotionEffect(new PotionEffect(MobEffects.JUMP_BOOST, t, 1, false, true));
+        player.addPotionEffect(new PotionEffect(MobEffects.HASTE, t, 1, false, true));
+        ((WorldServer) player.world).spawnParticle(EnumParticleTypes.DRAGON_BREATH, player.posX, player.posY + 1, player.posZ,
+                80, 0.5, 1.0, 0.5, 0.05);
+        player.world.playSound(null, player.getPosition(), SoundEvents.ENTITY_WITHER_SPAWN, SoundCategory.PLAYERS, 0.4F, 1.6F);
+        return true;
+    }
 
     /** Росток: корка → трава, хаосит → земля. */
     private static boolean sprout(World world, BlockPos pos) {

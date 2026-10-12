@@ -53,7 +53,6 @@ knowledge.astralsorcery.fragment.constellation.chaos.showup.description=Созв
 # Гримуар
 item.chaosshard.grimoire.name=Гримуар
 item.chaosshard.grimoire.lore=Записная книжка Осколка. Связана с сетью других Гримуаров
-item.chaosshard.grimoire.use=ПКМ — открыть записи или прочитать заклинание
 item.chaosshard.grimoire.craft=В верстаке — Преобразование: хаосит и корка становятся тем, что нужно. Сам Гримуар не тратится.
 chaosshard.grimoire.no_bq=Записи не открываются: не установлен Better Questing.
 
@@ -65,7 +64,6 @@ chaosshard.command.debug.usage=/oh debug [report|reset|kit]
 
 # Заклинания Гримуара
 item.chaosshard.grimoire.current=Заклинание: %s
-item.chaosshard.grimoire.cycle=Shift+ПКМ — сменить заклинание
 chaosshard.spell.selected=Страница заклинания: %s
 chaosshard.spell.need_block=Это заклинание нужно направить на блок
 chaosshard.spell.locked=Нить пока слишком тонкая для этого (нужен уровень %s)
@@ -245,3 +243,77 @@ chaosshard.garrot.retreat.2=Хм. Капитан был молод. И, каже
 chaosshard.garrot.retreat.3=…Ладно. Признаю: ты досадная помеха. Мы ещё встретимся — лично. И тогда посмотрим, кто чей.
 chaosshard.surge.end=Всплеск Хаоса угас.
 chaosshard.surge.next=Всплеск Хаоса сменился: %s на %s мин
+
+# ---- Магия: режимы Гримуара
+item.chaosshard.grimoire.use=ПКМ — записи (режим «Записи») или выбранное заклинание (режим «Магия»)
+item.chaosshard.grimoire.cycle=Shift+ПКМ в воздух — сменить режим
+item.chaosshard.grimoire.mode_magic=Режим: Магия
+item.chaosshard.grimoire.mode_notes=Режим: Записи
+item.chaosshard.grimoire.keys=V (с Гримуаром в руке) — колесо заклинаний, G — страницы магии и ритуалов
+chaosshard.grimoire.mode.magic=Гримуар раскрыт на страницах магии
+chaosshard.grimoire.mode.notes=Гримуар раскрыт на записях
+chaosshard.grimoire.need_hand=Возьми Гримуар в руку
+key.categories.chaosshard=Осколок Хаоса
+key.chaosshard.spell_wheel=Колесо заклинаний
+key.chaosshard.grimoire_magic=Магия Гримуара
+# ---- Новые заклинания
+chaosshard.spell.dash=Рывок
+chaosshard.spell.dash.desc=ПКМ — бросок вперёд по взгляду, падение после него не ранит (Нить 1)
+chaosshard.spell.bolt=Стрела Хаоса
+chaosshard.spell.bolt.desc=ПКМ — удар магией по первой цели на линии взгляда, до 24 блоков. Сила растёт с Нитью (Нить 1)
+chaosshard.spell.form=Форма Хаоса
+chaosshard.spell.form.desc=ПКМ — 30 секунд силы, скорости, защиты, прыгучести и спешки (Нить 2)
+chaosshard.spell.sprout.lore=Первое, что Гримуар показывает каждому Осколку. Жизнь из пыли — дёшево и полезно.
+chaosshard.spell.bridge.lore=Хаос не любит пустоту под ногами. Он её заполняет.
+chaosshard.spell.spring.lore=Вода приходит из ниоткуда. Ниоткуда — это из Хаоса.
+chaosshard.spell.rift.lore=Камень Хаоса слушается своих. Остальное — пока нет.
+chaosshard.spell.starsight.lore=Глаза, привыкшие к Преддверию, видят в любой темноте.
+chaosshard.spell.recall.lore=Нить тянет домой. Иногда — очень вовремя.
+chaosshard.spell.dash.lore=Шаг сквозь складку мира. Короткий — длинные пока рвут.
+chaosshard.spell.bolt.lore=Сгусток Хаоса без формы и жалости.
+chaosshard.spell.form.lore=Ненадолго тело вспоминает, из чего сделано на самом деле.
+# ---- Окно магии
+chaosshard.magic.tab.spells=Заклинания
+chaosshard.magic.tab.rituals=Ритуалы
+chaosshard.magic.wheel=Выбери страницу
+chaosshard.magic.choose=Выбрать
+chaosshard.magic.chosen=✔ Выбрано
+chaosshard.magic.thread=Нить: %s
+chaosshard.magic.need_thread=Нужна Нить: %s
+chaosshard.magic.hunger=Голод: −%s окорочка
+chaosshard.magic.cooldown=Перезарядка: %s
+chaosshard.magic.cooldown.none=нет
+chaosshard.magic.sec=%s с
+chaosshard.magic.min=%s мин
+chaosshard.magic.target.block=Направляется на блок
+chaosshard.magic.target.air=Читается в воздух
+chaosshard.magic.offerings=Подношения в Чашу:
+chaosshard.magic.duration=Длится: %s
+chaosshard.magic.instant=мгновенно
+chaosshard.magic.howto=Круг Хаоса
+chaosshard.magic.howto.text=Чаша ритуала — в центр. Мелом Хаоса нарисовать 8 знаков: через клетку от Чаши, по сторонам и по диагоналям. Положить в Чашу подношения (ПКМ предметом, Shift — всю стопку; пустой рукой — забрать). Затем ПКМ Гримуаром по Чаше. Лишнее в Чаше сорвёт ритуал. Стёртый знак обрывает долгий ритуал.
+chaosshard.magic.legend=Чаша и знаки
+# ---- Ритуалы
+chaosshard.ritual.growth=Рост
+chaosshard.ritual.growth.desc=10 минут растения в 8 блоках вокруг Чаши растут сами — как от костной муки.
+chaosshard.ritual.sky=Смена неба
+chaosshard.ritual.sky.desc=Ясно — пойдёт дождь, дождь — прояснится. Не работает в Преддверии.
+chaosshard.ritual.ward=Оберег
+chaosshard.ritual.ward.desc=Игровые сутки (20 минут) враждебные твари не появляются в 32 блоках от Чаши. Спавнеры работают.
+chaosshard.ritual.storm=Буря Хаоса
+chaosshard.ritual.storm.desc=30 секунд молнии бьют по враждебным тварям в 24 блоках от Чаши.
+chaosshard.ritual.summon=Зов тварей
+chaosshard.ritual.summon.desc=На знаках круга появляются три враждебные твари — ради добычи. Будь готов.
+chaosshard.ritual.corruption=Порыв Скверны
+chaosshard.ritual.corruption.desc=Ближайший Якорь Хаоса (до 48 блоков) разом оскверняет до 400 блоков вокруг себя.
+chaosshard.ritual.busy=Ритуал уже идёт.
+chaosshard.ritual.no_circle=Круг не замкнут: знаков мела %s из %s.
+chaosshard.ritual.unknown=Такого ритуала нет. Проверь подношения в окне магии (G).
+chaosshard.ritual.thin=Нить слишком тонкая для этого ритуала (нужен уровень %s).
+chaosshard.ritual.no_sky=Здесь нет неба, которое можно сменить.
+chaosshard.ritual.no_anchor=Рядом нет Якоря Хаоса (до 48 блоков).
+chaosshard.ritual.started=Ритуал «%s» начат.
+chaosshard.ritual.corruption.done=Скверна рванулась вперёд: осквернено %s блоков.
+item.chaosshard.chaos_chalk.name=Мел Хаоса
+tile.chaosshard.chalk_rune.name=Знак мела
+tile.chaosshard.ritual_bowl.name=Чаша ритуала

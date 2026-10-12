@@ -1,0 +1,268 @@
+{
+ "parent": "block/block",
+ "ambientocclusion": false,
+ "textures": {
+  "particle": "chaosshard:blocks/spire_stone",
+  "stone": "chaosshard:blocks/spire_stone",
+  "trim": "chaosshard:blocks/spire_trim",
+  "inner": "chaosshard:blocks/chalk_rune_bowl"
+ },
+ "elements": [
+  {
+   "from": [
+    4,
+    0,
+    4
+   ],
+   "to": [
+    12,
+    1.5,
+    12
+   ],
+   "faces": {
+    "north": {
+     "texture": "#trim"
+    },
+    "south": {
+     "texture": "#trim"
+    },
+    "east": {
+     "texture": "#trim"
+    },
+    "west": {
+     "texture": "#trim"
+    },
+    "down": {
+     "texture": "#trim"
+    },
+    "up": {
+     "texture": "#trim"
+    }
+   }
+  },
+  {
+   "from": [
+    6.5,
+    1.5,
+    6.5
+   ],
+   "to": [
+    9.5,
+    4,
+    9.5
+   ],
+   "faces": {
+    "north": {
+     "texture": "#stone"
+    },
+    "south": {
+     "texture": "#stone"
+    },
+    "east": {
+     "texture": "#stone"
+    },
+    "west": {
+     "texture": "#stone"
+    },
+    "down": {
+     "texture": "#stone"
+    },
+    "up": {
+     "texture": "#stone"
+    }
+   }
+  },
+  {
+   "from": [
+    5,
+    4,
+    5
+   ],
+   "to": [
+    11,
+    5,
+    11
+   ],
+   "faces": {
+    "north": {
+     "texture": "#trim"
+    },
+    "south": {
+     "texture": "#trim"
+    },
+    "east": {
+     "texture": "#trim"
+    },
+    "west": {
+     "texture": "#trim"
+    },
+    "down": {
+     "texture": "#trim"
+    },
+    "up": {
+     "texture": "#trim"
+    }
+   }
+  },
+  {
+   "from": [
+    3,
+    5,
+    3
+   ],
+   "to": [
+    13,
+    6,
+    13
+   ],
+   "faces": {
+    "north": {
+     "texture": "#stone"
+    },
+    "south": {
+     "texture": "#stone"
+    },
+    "east": {
+     "texture": "#stone"
+    },
+    "west": {
+     "texture": "#stone"
+    },
+    "down": {
+     "texture": "#stone"
+    },
+    "up": {
+     "texture": "#inner"
+    }
+   }
+  },
+  {
+   "from": [
+    3,
+    6,
+    3
+   ],
+   "to": [
+    13,
+    8.5,
+    4
+   ],
+   "faces": {
+    "north": {
+     "texture": "#stone"
+    },
+    "south": {
+     "texture": "#stone"
+    },
+    "east": {
+     "texture": "#stone"
+    },
+    "west": {
+     "texture": "#stone"
+    },
+    "down": {
+     "texture": "#stone"
+    },
+    "up": {
+     "texture": "#trim"
+    }
+   }
+  },
+  {
+   "from": [
+    3,
+    6,
+    12
+   ],
+   "to": [
+    13,
+    8.5,
+    13
+   ],
+   "faces": {
+    "north": {
+     "texture": "#stone"
+    },
+    "south": {
+     "texture": "#stone"
+    },
+    "east": {
+     "texture": "#stone"
+    },
+    "west": {
+     "texture": "#stone"
+    },
+    "down": {
+     "texture": "#stone"
+    },
+    "up": {
+     "texture": "#trim"
+    }
+   }
+  },
+  {
+   "from": [
+    3,
+    6,
+    4
+   ],
+   "to": [
+    4,
+    8.5,
+    12
+   ],
+   "faces": {
+    "north": {
+     "texture": "#stone"
+    },
+    "south": {
+     "texture": "#stone"
+    },
+    "east": {
+     "texture": "#stone"
+    },
+    "west": {
+     "texture": "#stone"
+    },
+    "down": {
+     "texture": "#stone"
+    },
+    "up": {
+     "texture": "#trim"
+    }
+   }
+  },
+  {
+   "from": [
+    12,
+    6,
+    4
+   ],
+   "to": [
+    13,
+    8.5,
+    12
+   ],
+   "faces": {
+    "north": {
+     "texture": "#stone"
+    },
+    "south": {
+     "texture": "#stone"
+    },
+    "east": {
+     "texture": "#stone"
+    },
+    "west": {
+     "texture": "#stone"
+    },
+    "down": {
+     "texture": "#stone"
+    },
+    "up": {
+     "texture": "#trim"
+    }
+   }
+  }
+ ]
+}

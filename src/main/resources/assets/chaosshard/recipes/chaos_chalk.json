@@ -1,0 +1,22 @@
+{
+ "type": "minecraft:crafting_shapeless",
+ "ingredients": [
+  {
+   "item": "minecraft:dye",
+   "data": 15
+  },
+  {
+   "item": "minecraft:dye",
+   "data": 15
+  },
+  {
+   "item": "chaosshard:chaos_crust"
+  },
+  {
+   "item": "chaosshard:veil_shard"
+  }
+ ],
+ "result": {
+  "item": "chaosshard:chaos_chalk"
+ }
+}
