@@ -76,6 +76,11 @@ public class WorkLumberjack extends EntityAIBase {
             if (t % 40 == 0) {
                 findTree(c, r);
                 stuck[0] = 0;
+                if (base != null) {
+                    Work.claim(m, base);
+                } else {
+                    Work.release(m);
+                }
             }
             if (base == null) {
                 if (t % 60 == 0 && m.getDistanceSq(c) > 9) {
@@ -134,7 +139,7 @@ public class WorkLumberjack extends EntityAIBase {
         double bd = Double.MAX_VALUE;
         for (BlockPos p : BlockPos.getAllInBoxMutable(c.add(-r, -3, -r), c.add(r, 6, r))) {
             IBlockState s = w.getBlockState(p);
-            if (isLog(w, p, s) && ground(w.getBlockState(p.down()))) {
+            if (isLog(w, p, s) && ground(w.getBlockState(p.down())) && !Work.taken(m, p)) {
                 double d = m.getDistanceSq(p);
                 if (d < bd) {
                     List<BlockPos> tree = tree(w, p.toImmutable());

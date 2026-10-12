@@ -39,6 +39,42 @@ public class Work {
 
     private static final Map<UUID, UUID> SELECTED = new HashMap<>();
 
+    // ------------------------------------------------------------------ совместная работа у одного сундука
+
+    /** Чьи цели (растение, дерево) у какого сундука: рабочие одного сундука не идут к одному и тому же. */
+    private static final Map<Long, Map<BlockPos, Object[]>> CLAIMS = new HashMap<>();
+    private static final long CLAIM_TTL = 600;
+
+    /** Занята ли цель другим рабочим этого сундука. */
+    public static boolean taken(Entity m, BlockPos target) {
+        BlockPos c = chest(m);
+        if (c == null) {
+            return false;
+        }
+        Map<BlockPos, Object[]> map = CLAIMS.get(c.toLong());
+        if (map == null) {
+            return false;
+        }
+        Object[] cl = map.get(target);
+        return cl != null && !m.getUniqueID().equals(cl[0]) && m.world.getTotalWorldTime() - (Long) cl[1] < CLAIM_TTL;
+    }
+
+    public static void claim(Entity m, BlockPos target) {
+        BlockPos c = chest(m);
+        if (c != null && target != null) {
+            Map<BlockPos, Object[]> map = CLAIMS.computeIfAbsent(c.toLong(), k -> new HashMap<>());
+            map.entrySet().removeIf(e -> m.getUniqueID().equals(e.getValue()[0]));
+            map.put(target.toImmutable(), new Object[]{m.getUniqueID(), m.world.getTotalWorldTime()});
+        }
+    }
+
+    public static void release(Entity m) {
+        BlockPos c = chest(m);
+        if (c != null && CLAIMS.containsKey(c.toLong())) {
+            CLAIMS.get(c.toLong()).entrySet().removeIf(e -> m.getUniqueID().equals(e.getValue()[0]));
+        }
+    }
+
     public static void select(EntityPlayer p, Entity servant) {
         SELECTED.put(p.getUniqueID(), servant.getUniqueID());
     }

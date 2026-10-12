@@ -75,6 +75,11 @@ public class WorkReaper extends EntityAIBase {
             if (t % 40 == 0) {
                 target = find(c, r);
                 stuck[0] = 0;
+                if (target != null) {
+                    Work.claim(m, target);
+                } else {
+                    Work.release(m);
+                }
             }
             if (target == null) {
                 if (t % 60 == 0 && m.getDistanceSq(c) > 9) {
@@ -103,7 +108,7 @@ public class WorkReaper extends EntityAIBase {
         double bd = Double.MAX_VALUE;
         for (BlockPos p : BlockPos.getAllInBoxMutable(c.add(-r, -3, -r), c.add(r, 3, r))) {
             IBlockState s = w.getBlockState(p);
-            if (mature(w, p, s)) {
+            if (mature(w, p, s) && !Work.taken(m, p)) {
                 double d = m.getDistanceSq(p);
                 if (d < bd) {
                     bd = d;
