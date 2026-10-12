@@ -53,7 +53,7 @@ class BeastPage {
     void draw(int sel, int mx, int my, GuiButton reset) {
         hoverLines = null;
         perkCells.clear();
-        int left = gui.left(), top = gui.top(), row = gui.row(), listW = gui.listW();
+        int left = gui.left(), top = gui.top(), listW = gui.listW();
         // список
         RenderHelper.enableGUIStandardItemLighting();
         for (int row = 0; row < ROWS; row++) {

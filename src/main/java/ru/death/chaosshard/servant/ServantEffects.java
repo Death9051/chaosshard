@@ -107,7 +107,7 @@ public class ServantEffects {
                         x -> x != t && x instanceof IMob && !Servants.isServant(x))) {
                     o.attackEntityFrom(DamageSource.causeMobDamage(m), amount * 0.5F);
                 }
-                ((WorldServer) t.world).spawnParticle(EnumParticleTypes.SWEEP_ATTACK, t.posX, t.posY + 1, t.posZ, 1, 0, 0, 0, 0);
+                ((WorldServer) t.world).spawnParticle(EnumParticleTypes.SWEEP_ATTACK, t.posX, t.posY + 1, t.posZ, 1, 0.0, 0.0, 0.0, 0.0);
             } finally {
                 sweeping = false;
             }
