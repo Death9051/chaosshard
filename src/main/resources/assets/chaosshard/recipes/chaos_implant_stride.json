@@ -1,0 +1,34 @@
+{
+ "conditions": [
+  {
+   "type": "forge:mod_loaded",
+   "modid": "cyberware"
+  }
+ ],
+ "type": "minecraft:crafting_shaped",
+ "pattern": [
+  "ASA",
+  "NEN",
+  "ASA"
+ ],
+ "key": {
+  "A": {
+   "item": "cyberware:component",
+   "data": 0
+  },
+  "S": {
+   "item": "minecraft:slime_ball"
+  },
+  "N": {
+   "item": "cyberware:component",
+   "data": 7
+  },
+  "E": {
+   "item": "chaosshard:chaos_essence"
+  }
+ },
+ "result": {
+  "item": "chaosshard:chaos_implant",
+  "data": 9
+ }
+}

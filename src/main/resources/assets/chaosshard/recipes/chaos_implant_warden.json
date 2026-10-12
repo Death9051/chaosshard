@@ -1,0 +1,36 @@
+{
+ "conditions": [
+  {
+   "type": "forge:mod_loaded",
+   "modid": "cyberware"
+  }
+ ],
+ "type": "minecraft:crafting_shaped",
+ "pattern": [
+  "VDV",
+  "SMS",
+  "VEV"
+ ],
+ "key": {
+  "V": {
+   "item": "chaosshard:veil_shard"
+  },
+  "D": {
+   "item": "chaosshard:desecrated_stone"
+  },
+  "S": {
+   "item": "cyberware:component",
+   "data": 3
+  },
+  "M": {
+   "item": "chaosshard:memory_fragment"
+  },
+  "E": {
+   "item": "chaosshard:chaos_essence"
+  }
+ },
+ "result": {
+  "item": "chaosshard:chaos_implant",
+  "data": 4
+ }
+}

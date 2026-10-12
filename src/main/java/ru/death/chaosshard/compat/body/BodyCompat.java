@@ -60,18 +60,84 @@ public final class BodyCompat {
         }
     }
 
-    /** Панцирь Скверны: на осквернённой земле — регенерация и сопротивление. */
-    static void tickCarapace(EntityPlayerMP player) {
-        if (!has(player, ItemChaosImplant.CARAPACE)) {
-            return;
-        }
-        if (ru.death.chaosshard.anchor.TileAnchor.energyMultiplier(player.world, player.getPosition()) > 1.0) {
+    private static final UUID BONES_HP = UUID.fromString("0b6f2a1c-7e3d-4a55-8c21-5d4e3f2a1b07");
+    private static final UUID BONES_KB = UUID.fromString("0b6f2a1c-7e3d-4a55-8c21-5d4e3f2a1b08");
+
+    /** Раз в секунду: постоянные эффекты имплантов Хаоса. */
+    static void tickImplants(EntityPlayerMP player) {
+        // Панцирь Скверны: на осквернённой земле — регенерация и сопротивление
+        if (has(player, ItemChaosImplant.CARAPACE)
+                && ru.death.chaosshard.anchor.TileAnchor.energyMultiplier(player.world, player.getPosition()) > 1.0) {
             player.addPotionEffect(new PotionEffect(MobEffects.REGENERATION, 60, 0, true, false));
             player.addPotionEffect(new PotionEffect(MobEffects.RESISTANCE, 60, 0, true, false));
+        }
+        // Око Хаоса: ночное зрение и подсветка тварей вокруг
+        if (has(player, ItemChaosImplant.EYE)) {
+            player.addPotionEffect(new PotionEffect(MobEffects.NIGHT_VISION, 400, 0, true, false));
+            if (player.ticksExisted % 60 < 20) {
+                for (net.minecraft.entity.EntityLivingBase e : player.world.getEntitiesWithinAABB(net.minecraft.entity.EntityLivingBase.class,
+                        player.getEntityBoundingBox().grow(16), e -> e instanceof net.minecraft.entity.monster.IMob)) {
+                    e.addPotionEffect(new PotionEffect(MobEffects.GLOWING, 70, 0, true, false));
+                }
+            }
+        }
+        // Дыхание Пустоты: дышать под водой, яд и иссушение не держатся
+        if (has(player, ItemChaosImplant.LUNGS)) {
+            player.addPotionEffect(new PotionEffect(MobEffects.WATER_BREATHING, 60, 0, true, false));
+            player.removePotionEffect(MobEffects.POISON);
+            player.removePotionEffect(MobEffects.WITHER);
+        }
+        // Поступь Бездны: прыжок выше
+        if (has(player, ItemChaosImplant.STRIDE)) {
+            player.addPotionEffect(new PotionEffect(MobEffects.JUMP_BOOST, 60, 1, true, false));
+        }
+        // Остов Хаоса: +2 сердца и устойчивость к отбрасыванию
+        boolean bones = has(player, ItemChaosImplant.BONES);
+        modifier(player, net.minecraft.entity.SharedMonsterAttributes.MAX_HEALTH, BONES_HP, bones ? 4.0 : 0);
+        modifier(player, net.minecraft.entity.SharedMonsterAttributes.KNOCKBACK_RESISTANCE, BONES_KB, bones ? 0.5 : 0);
+    }
+
+    private static void modifier(EntityPlayerMP p, net.minecraft.entity.ai.attributes.IAttribute attr, UUID id, double amount) {
+        IAttributeInstance inst = p.getEntityAttribute(attr);
+        if (inst == null) {
+            return;
+        }
+        AttributeModifier cur = inst.getModifier(id);
+        if (cur != null && cur.getAmount() == amount) {
+            return;
+        }
+        if (cur != null) {
+            inst.removeModifier(id);
+        }
+        if (amount != 0) {
+            inst.applyModifier(new AttributeModifier(id, "chaosshard implant", amount, 0).setSaved(false));
+        }
+        if (attr == net.minecraft.entity.SharedMonsterAttributes.MAX_HEALTH && p.getHealth() > p.getMaxHealth()) {
+            p.setHealth(p.getMaxHealth());
         }
     }
 
     public static final class Events {
+        /** Когти Скверны: удар рукой иссушает цель. */
+        @SubscribeEvent
+        public void onHurt(net.minecraftforge.event.entity.living.LivingHurtEvent event) {
+            if (event.getSource().getImmediateSource() instanceof EntityPlayerMP
+                    && "player".equals(event.getSource().getDamageType())) {
+                EntityPlayerMP p = (EntityPlayerMP) event.getSource().getImmediateSource();
+                if (has(p, ItemChaosImplant.CLAWS)) {
+                    event.getEntityLiving().addPotionEffect(new PotionEffect(MobEffects.WITHER, 60, 0));
+                }
+            }
+        }
+
+        /** Поступь Бездны: падение не ранит. */
+        @SubscribeEvent
+        public void onFall(net.minecraftforge.event.entity.living.LivingFallEvent event) {
+            if (event.getEntityLiving() instanceof EntityPlayerMP && has((EntityPlayerMP) event.getEntityLiving(), ItemChaosImplant.STRIDE)) {
+                event.setDistance(0);
+            }
+        }
+
         @SubscribeEvent
         public void onSurgery(CyberwareSurgeryEvent.Post event) {
             if (!(event.getEntity() instanceof EntityPlayerMP)) {

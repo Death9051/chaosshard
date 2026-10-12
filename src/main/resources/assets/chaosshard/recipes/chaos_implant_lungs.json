@@ -1,0 +1,30 @@
+{
+ "conditions": [
+  {
+   "type": "forge:mod_loaded",
+   "modid": "cyberware"
+  }
+ ],
+ "type": "minecraft:crafting_shaped",
+ "pattern": [
+  "TET",
+  "EPE",
+  "TET"
+ ],
+ "key": {
+  "T": {
+   "item": "cyberware:component",
+   "data": 2
+  },
+  "E": {
+   "item": "chaosshard:chaos_essence"
+  },
+  "P": {
+   "item": "minecraft:prismarine_crystals"
+  }
+ },
+ "result": {
+  "item": "chaosshard:chaos_implant",
+  "data": 6
+ }
+}

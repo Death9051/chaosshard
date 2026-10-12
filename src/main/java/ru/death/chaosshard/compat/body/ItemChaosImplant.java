@@ -14,14 +14,16 @@ import net.minecraft.item.ItemStack;
 public class ItemChaosImplant extends ItemCyberware {
 
     public static final String NAME = "chaos_implant";
-    public static final String[] SUBS = {"core", "receiver", "veins", "carapace"};
-    public static final int CORE = 0, RECEIVER = 1, VEINS = 2, CARAPACE = 3;
+    public static final String[] SUBS = {"core", "receiver", "veins", "carapace", "warden", "eye", "lungs", "bones", "claws", "stride"};
+    public static final int CORE = 0, RECEIVER = 1, VEINS = 2, CARAPACE = 3, WARDEN = 4, EYE = 5, LUNGS = 6, BONES = 7,
+            CLAWS = 8, STRIDE = 9;
 
     public ItemChaosImplant() {
         super(NAME, new ICyberware.EnumSlot[]{ICyberware.EnumSlot.HEART, ICyberware.EnumSlot.CRANIUM,
-                ICyberware.EnumSlot.MUSCLE, ICyberware.EnumSlot.SKIN}, SUBS);
-        setEssenceCost(6, 4, 5, 5);
-        setWeights(1, 1, 1, 1);
+                ICyberware.EnumSlot.MUSCLE, ICyberware.EnumSlot.SKIN, ICyberware.EnumSlot.CRANIUM, ICyberware.EnumSlot.EYES,
+                ICyberware.EnumSlot.LUNGS, ICyberware.EnumSlot.BONE, ICyberware.EnumSlot.HAND, ICyberware.EnumSlot.LEG}, SUBS);
+        setEssenceCost(6, 4, 5, 5, 6, 4, 4, 5, 4, 4);
+        setWeights(1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
     }
 
     /** Ядро Хаоса заменяет сердце: без него (или человеческого сердца) Осколок не живёт. */

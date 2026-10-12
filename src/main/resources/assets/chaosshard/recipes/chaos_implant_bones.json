@@ -1,0 +1,30 @@
+{
+ "conditions": [
+  {
+   "type": "forge:mod_loaded",
+   "modid": "cyberware"
+  }
+ ],
+ "type": "minecraft:crafting_shaped",
+ "pattern": [
+  "BTB",
+  "TDT",
+  "BTB"
+ ],
+ "key": {
+  "B": {
+   "item": "minecraft:bone_block"
+  },
+  "T": {
+   "item": "cyberware:component",
+   "data": 2
+  },
+  "D": {
+   "item": "chaosshard:distorted_starmetal"
+  }
+ },
+ "result": {
+  "item": "chaosshard:chaos_implant",
+  "data": 7
+ }
+}

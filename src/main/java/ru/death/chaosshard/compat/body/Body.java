@@ -33,7 +33,7 @@ public final class Body {
     public static void tick(EntityPlayerMP player) {
         if (cyber()) {
             BodyCompat.updateTolerance(player);
-            BodyCompat.tickCarapace(player);
+            BodyCompat.tickImplants(player);
         }
     }
 
@@ -43,6 +43,11 @@ public final class Body {
 
     public static boolean hasReceiver(EntityPlayer p) {
         return cyber() && BodyCompat.has(p, ItemChaosImplant.RECEIVER);
+    }
+
+    /** Глушитель Порядка: святая земля истончает Нить на уровень меньше. */
+    public static boolean hasWarden(EntityPlayer p) {
+        return cyber() && BodyCompat.has(p, ItemChaosImplant.WARDEN);
     }
 
     public static boolean hasVeins(EntityPlayer p) {

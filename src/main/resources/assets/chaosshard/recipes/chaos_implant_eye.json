@@ -1,0 +1,33 @@
+{
+ "conditions": [
+  {
+   "type": "forge:mod_loaded",
+   "modid": "cyberware"
+  }
+ ],
+ "type": "minecraft:crafting_shaped",
+ "pattern": [
+  "FEF",
+  "VPV",
+  "FEF"
+ ],
+ "key": {
+  "F": {
+   "item": "cyberware:component",
+   "data": 5
+  },
+  "E": {
+   "item": "chaosshard:chaos_essence"
+  },
+  "V": {
+   "item": "chaosshard:veil_shard"
+  },
+  "P": {
+   "item": "minecraft:ender_eye"
+  }
+ },
+ "result": {
+  "item": "chaosshard:chaos_implant",
+  "data": 5
+ }
+}

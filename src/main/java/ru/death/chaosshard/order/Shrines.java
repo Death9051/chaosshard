@@ -79,8 +79,15 @@ public class Shrines {
             return;
         }
         EntityPlayerMP player = (EntityPlayerMP) event.player;
-        int now = nearest(player.world, player.getPosition(), ChaosConfig.order.shrineRadius) != null
-                ? ChaosConfig.order.shrinePenalty : 0;
+        boolean holy = nearest(player.world, player.getPosition(), ChaosConfig.order.shrineRadius) != null;
+        int now = holy ? ChaosConfig.order.shrinePenalty : 0;
+        // Глушитель Порядка (имплант Хаоса) гасит часть света святыни
+        if (now > 0 && ru.death.chaosshard.compat.body.Body.hasWarden(player)) {
+            now = Math.max(0, now - 1);
+        }
+        if (holy) {
+            Milestones.grant(player, Milestones.SHRINE_NEAR);
+        }
         int before = penalty(player.getUniqueID());
         if (now == before) {
             return;
