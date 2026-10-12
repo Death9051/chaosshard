@@ -31,10 +31,17 @@ public enum Ritual {
     /** Призыв: Костяной страж. */
     SERVANT_BONE(2, 0, offer("chaosshard:chaos_essence", 0, 3), offer("minecraft:bone", 0, 8), offer("minecraft:coal", 0, 4)),
     /** Призыв: Палач Хаоса. */
-    SERVANT_EXECUTIONER(3, 0, offer("chaosshard:chaos_essence", 0, 4), offer("minecraft:iron_axe", 0, 1), offer("minecraft:emerald", 0, 4));
+    SERVANT_EXECUTIONER(3, 0, offer("chaosshard:chaos_essence", 0, 4), offer("minecraft:iron_axe", 0, 1), offer("minecraft:emerald", 0, 4)),
+    /** Уникальный слуга: Заяц-добытчик. */
+    SERVANT_HARE(1, 0, offer("chaosshard:chaos_essence", 0, 2), offer("minecraft:rabbit_foot", 0, 1), offer("minecraft:carrot", 0, 8)),
+    /** Уникальный слуга: Кошка. */
+    SERVANT_CAT(2, 0, offer("chaosshard:chaos_essence", 0, 3), offer("minecraft:fish", 0, 8), offer("minecraft:string", 0, 4)),
+    /** Уникальный слуга: Тигр. */
+    SERVANT_TIGER(4, 0, offer("chaosshard:chaos_essence", 0, 6), offer("minecraft:blaze_rod", 0, 4), offer("minecraft:beef", 0, 8));
 
     public boolean isSummon() {
-        return this == SERVANT_HUSK || this == SERVANT_BONE || this == SERVANT_EXECUTIONER;
+        return this == SERVANT_HUSK || this == SERVANT_BONE || this == SERVANT_EXECUTIONER
+                || this == SERVANT_HARE || this == SERVANT_CAT || this == SERVANT_TIGER;
     }
 
     public final int minThread;

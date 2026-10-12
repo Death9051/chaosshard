@@ -57,7 +57,15 @@ public class Servants {
     public enum Kind {
         HUSK("minecraft:husk", "Скорлупа Хаоса", 30, 0),
         BONE("minecraft:wither_skeleton", "Костяной страж", 40, 2),
-        EXECUTIONER("minecraft:vindication_illager", "Палач Хаоса", 50, 3);
+        EXECUTIONER("minecraft:vindication_illager", "Палач Хаоса", 50, 3),
+        HARE("chaosshard:servant_hare", "Заяц", 20, 1),
+        TIGER("chaosshard:servant_tiger", "Тигр", 80, 4),
+        CAT("chaosshard:servant_cat", "Кошка", 24, 2);
+
+        /** Уникальный слуга: у Осколка может быть только один такой. */
+        public boolean unique() {
+            return this == HARE || this == TIGER || this == CAT;
+        }
 
         public final String id, name;
         public final int health, minThread;
@@ -84,6 +92,22 @@ public class Servants {
             }
         }
         return n;
+    }
+
+    /** Есть ли уже у игрока такой уникальный слуга. */
+    public static boolean hasUnique(EntityPlayerMP p, Kind kind) {
+        String id = kind.id;
+        for (WorldServer w : p.getServer().worlds) {
+            for (Entity e : w.loadedEntityList) {
+                if (isServantOf(e, p.getUniqueID()) && e.isEntityAlive()) {
+                    net.minecraft.util.ResourceLocation key = EntityList.getKey(e);
+                    if (key != null && key.toString().equals(id)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     public static boolean isServant(Entity e) {
@@ -116,6 +140,9 @@ public class Servants {
         m.setAlwaysRenderNameTag(false);
         m.enablePersistence();
         m.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(kind.health + 5 * ThreadBonus.level(owner));
+        if (kind.unique()) {
+            m.setCustomNameTag("§d" + kind.name + " §7(" + owner.getName() + ")");
+        }
         m.setHealth(m.getMaxHealth());
         if (kind == Kind.BONE) {
             m.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, new ItemStack(Items.STONE_SWORD));
@@ -130,6 +157,9 @@ public class Servants {
             Milestones.grant(owner, Milestones.SERVANT_BONE);
         } else if (kind == Kind.EXECUTIONER) {
             Milestones.grant(owner, Milestones.SERVANT_EXEC);
+        }
+        if (kind.unique()) {
+            Milestones.grant(owner, "servant_" + kind.name().toLowerCase());
         }
         if (count(owner) >= 3) {
             Milestones.grant(owner, Milestones.SERVANT_3);

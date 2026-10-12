@@ -60,6 +60,13 @@ public class ChaosShard {
         net.minecraftforge.fml.common.network.NetworkRegistry.INSTANCE.registerGuiHandler(this, new ru.death.chaosshard.heart.HeartGuiHandler());
         AntechamberDimension.register();
         ru.death.chaosshard.trial.TrialDimension.register();
+        int eid = 0;
+        net.minecraftforge.fml.common.registry.EntityRegistry.registerModEntity(new net.minecraft.util.ResourceLocation(Tags.MOD_ID, "servant_hare"),
+                ru.death.chaosshard.servant.EntityChaosBeast.Hare.class, "chaosshard.servant_hare", eid++, this, 64, 3, true, 0x8a7a66, 0x6a2fb0);
+        net.minecraftforge.fml.common.registry.EntityRegistry.registerModEntity(new net.minecraft.util.ResourceLocation(Tags.MOD_ID, "servant_tiger"),
+                ru.death.chaosshard.servant.EntityChaosBeast.Tiger.class, "chaosshard.servant_tiger", eid++, this, 80, 3, true, 0xd07020, 0x1a1020);
+        net.minecraftforge.fml.common.registry.EntityRegistry.registerModEntity(new net.minecraft.util.ResourceLocation(Tags.MOD_ID, "servant_cat"),
+                ru.death.chaosshard.servant.EntityChaosBeast.Cat.class, "chaosshard.servant_cat", eid++, this, 64, 3, true, 0x303038, 0xb070ff);
         MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.thread.ThreadEvents());
         MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.antechamber.AntechamberEvents());
         MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.breach.BreachRitual());

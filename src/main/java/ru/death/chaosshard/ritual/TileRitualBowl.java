@@ -147,6 +147,10 @@ public class TileRitualBowl extends TileEntity implements ITickable {
             say(player, Breach.grimoire("chaosshard.ritual.thin", r.minThread));
             return;
         }
+        if (r.isSummon() && servantKind(r).unique() && ru.death.chaosshard.servant.Servants.hasUnique(player, servantKind(r))) {
+            say(player, Breach.grimoire("chaosshard.servant.unique"));
+            return;
+        }
         if (r.isSummon() && ru.death.chaosshard.servant.Servants.count(player) >= ru.death.chaosshard.servant.Servants.limit(player)
                 && !player.isCreative()) {
             say(player, Breach.grimoire("chaosshard.servant.limit", ru.death.chaosshard.servant.Servants.limit(player)));
@@ -186,6 +190,17 @@ public class TileRitualBowl extends TileEntity implements ITickable {
                 return nearestAnchor() != null ? null : "chaosshard.ritual.no_anchor";
             default:
                 return null;
+        }
+    }
+
+    static ru.death.chaosshard.servant.Servants.Kind servantKind(Ritual r) {
+        switch (r) {
+            case SERVANT_BONE: return ru.death.chaosshard.servant.Servants.Kind.BONE;
+            case SERVANT_EXECUTIONER: return ru.death.chaosshard.servant.Servants.Kind.EXECUTIONER;
+            case SERVANT_HARE: return ru.death.chaosshard.servant.Servants.Kind.HARE;
+            case SERVANT_CAT: return ru.death.chaosshard.servant.Servants.Kind.CAT;
+            case SERVANT_TIGER: return ru.death.chaosshard.servant.Servants.Kind.TIGER;
+            default: return ru.death.chaosshard.servant.Servants.Kind.HUSK;
         }
     }
 
@@ -229,10 +244,11 @@ public class TileRitualBowl extends TileEntity implements ITickable {
             }
             case SERVANT_HUSK:
             case SERVANT_BONE:
-            case SERVANT_EXECUTIONER: {
-                ru.death.chaosshard.servant.Servants.Kind kind = r == Ritual.SERVANT_HUSK ? ru.death.chaosshard.servant.Servants.Kind.HUSK
-                        : r == Ritual.SERVANT_BONE ? ru.death.chaosshard.servant.Servants.Kind.BONE
-                        : ru.death.chaosshard.servant.Servants.Kind.EXECUTIONER;
+            case SERVANT_EXECUTIONER:
+            case SERVANT_HARE:
+            case SERVANT_CAT:
+            case SERVANT_TIGER: {
+                ru.death.chaosshard.servant.Servants.Kind kind = servantKind(r);
                 ru.death.chaosshard.servant.Servants.summon(player, kind, pos.add(1, 0, 1));
                 say(player, Breach.grimoire("chaosshard.servant.summoned", ru.death.chaosshard.servant.Servants.count(player),
                         ru.death.chaosshard.servant.Servants.limit(player)));

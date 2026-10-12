@@ -23,7 +23,7 @@ import java.util.List;
  */
 public class GuiGrimoireMagic extends GuiScreen {
 
-    private static final int W = 320, H = 224, LIST_W = 112, ROW = 18;
+    private static final int W = 320, H = 236, LIST_W = 112, ROW = 16;
     private static int tab;          // 0 — заклинания, 1 — ритуалы (запоминается между открытиями)
     private static int selSpell;
     private static int selRitual = -1;  // -1 — страница «Как провести ритуал»
@@ -260,6 +260,9 @@ public class GuiGrimoireMagic extends GuiScreen {
             case SERVANT_HUSK: return new ItemStack(net.minecraft.init.Items.ROTTEN_FLESH);
             case SERVANT_BONE: return new ItemStack(net.minecraft.init.Items.SKULL, 1, 1);
             case SERVANT_EXECUTIONER: return new ItemStack(net.minecraft.init.Items.IRON_AXE);
+            case SERVANT_HARE: return new ItemStack(net.minecraft.init.Items.RABBIT_FOOT);
+            case SERVANT_CAT: return new ItemStack(net.minecraft.init.Items.FISH);
+            case SERVANT_TIGER: return new ItemStack(net.minecraft.init.Items.BLAZE_ROD);
             default: return new ItemStack(ModItems.CHAOS_ESSENCE);
         }
     }
