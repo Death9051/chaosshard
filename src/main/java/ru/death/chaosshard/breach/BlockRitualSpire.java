@@ -43,8 +43,8 @@ public class BlockRitualSpire extends ModBlocks.SimpleBlock {
 
     public static final PropertyEnum<Half> HALF = PropertyEnum.create("half", Half.class);
 
-    private static final AxisAlignedBB LOWER_BOX = new AxisAlignedBB(0.1875, 0, 0.1875, 0.8125, 1, 0.8125);
-    private static final AxisAlignedBB UPPER_BOX = new AxisAlignedBB(0.25, 0, 0.25, 0.75, 1, 0.75);
+    private static final AxisAlignedBB LOWER_BOX = new AxisAlignedBB(0, 0, 0, 1, 1, 1);
+    private static final AxisAlignedBB UPPER_BOX = new AxisAlignedBB(0.125, 0, 0.125, 0.875, 1, 0.875);
 
     public BlockRitualSpire() {
         super(Material.ROCK, SoundType.STONE, 2.0F, 20.0F, 0.0F);
