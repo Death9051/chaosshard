@@ -215,7 +215,11 @@ public class WorkMiner extends EntityAIBase {
         out.add(f.up());
         out.add(f.up(2));
         if (job.type == MineData.SPIRAL) {
-            // ствол целиком 3×3: середину тоже вынимаем — посередине колодец до коренной породы
+            // ствол целиком 3×3: над ступенью — пусто до ступени следующего витка (она на 8 выше, её не трогаем),
+            // середина вынимается вровень со ступенями — колодец не обгоняет лестницу
+            for (int up = 3; up <= 6; up++) {
+                out.add(f.up(up));
+            }
             BlockPos c = center(mine).down(mine.spiralK);
             out.add(c);
             out.add(c.up());

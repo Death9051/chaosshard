@@ -21,6 +21,9 @@ public class CommonProxy {
         return "?";
     }
 
+    public void handleBiomes(int x, int z, byte[] biomes) {
+    }
+
     public void handleThreadSync(int points) {
     }
 

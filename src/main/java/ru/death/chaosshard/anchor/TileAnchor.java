@@ -3,7 +3,6 @@ package ru.death.chaosshard.anchor;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.play.server.SPacketChunkData;
 import net.minecraft.server.management.PlayerChunkMapEntry;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumParticleTypes;
@@ -638,17 +637,9 @@ public class TileAnchor extends TileEntity implements ITickable {
         return world.getMinecraftServer().getPlayerList().getPlayerByUUID(owner);
     }
 
-    /** Отправить игрокам чанки со сменённым биомом, чтобы цвет травы и неба обновился. */
+    /** Отправить игрокам новые биомы, чтобы цвет травы и неба обновился. */
     private void resendChunks() {
-        WorldServer ws = (WorldServer) world;
-        for (long key : dirtyChunks) {
-            int cx = (int) (key & 0xFFFFFFFFL), cz = (int) (key >>> 32);
-            PlayerChunkMapEntry entry = ws.getPlayerChunkMap().getEntry(cx, cz);
-            Chunk chunk = world.getChunk(cx, cz);
-            if (entry != null && entry.isSentToPlayers()) {
-                entry.sendPacket(new SPacketChunkData(chunk, 65535));
-            }
-        }
+        Corruption.resendChunks((WorldServer) world, dirtyChunks);
         dirtyChunks.clear();
     }
 

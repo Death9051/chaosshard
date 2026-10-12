@@ -743,7 +743,7 @@ chaosshard.beast.gui.rename=ЛКМ по имени — переименоват�
 chaosshard.beast.renamed=Теперь его зовут: %s.
 chaosshard.beast.renamed_default=Зверю вернулось имя по виду: %s.
 item.chaosshard.anchor_seal_blood.name=Кровавая печать
-chaosshard.anchor_seal.blood.desc=Кровь: каждая смерть твари в краю питает Скверну (+3 к осквернению за печать).
+chaosshard.anchor_seal.blood.desc=Кровь: любая смерть в пределах Якоря — зверя, жителя, твари, солдата Гаррота — питает Скверну (+3 к осквернению за печать). Не считаются только ты сам и твоя свита.
 
 # вёдра Forge
 item.forge.bucketFilled.name=Ведро: %s

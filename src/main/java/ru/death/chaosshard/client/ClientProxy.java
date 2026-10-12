@@ -89,6 +89,23 @@ public class ClientProxy extends CommonProxy {
     }
 
     @Override
+    public void handleBiomes(int x, int z, byte[] biomes) {
+        Minecraft.getMinecraft().addScheduledTask(() -> {
+            net.minecraft.client.multiplayer.WorldClient w = Minecraft.getMinecraft().world;
+            if (w == null) {
+                return;
+            }
+            net.minecraft.world.chunk.Chunk c = w.getChunkProvider().getLoadedChunk(x, z);
+            if (c == null) {
+                return;
+            }
+            byte[] arr = c.getBiomeArray();
+            System.arraycopy(biomes, 0, arr, 0, Math.min(arr.length, biomes.length));
+            w.markBlockRangeForRenderUpdate(x << 4, 0, z << 4, (x << 4) + 15, 255, (z << 4) + 15);
+        });
+    }
+
+    @Override
     public String clientEntity(int id) {
         Minecraft mc = Minecraft.getMinecraft();
         if (mc.world == null) {

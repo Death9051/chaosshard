@@ -724,4 +724,4 @@ chaosshard.beast.gui.rename=Click the name to rename (Enter to save, Esc to canc
 chaosshard.beast.renamed=Now it is called: %s.
 chaosshard.beast.renamed_default=The beast has its default name again: %s.
 item.chaosshard.anchor_seal_blood.name=Blood Seal
-chaosshard.anchor_seal.blood.desc=Blood: every creature's death in the land feeds the Blight (+3 corruption per seal).
+chaosshard.anchor_seal.blood.desc=Blood: any death within the Anchor's reach — beast, villager, monster, Garrot's soldier — feeds the Blight (+3 corruption per seal). Only you and your retinue don't count.
