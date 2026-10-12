@@ -46,7 +46,7 @@ public final class SpellCaster {
         TextComponentTranslation msg = new TextComponentTranslation(magic ? "chaosshard.grimoire.mode.magic" : "chaosshard.grimoire.mode.notes");
         msg.getStyle().setColor(TextFormatting.LIGHT_PURPLE);
         status(player, msg);
-        player.world.playSound(null, player.getPosition(), SoundEvents.ITEM_BOOK_PAGE_TURN, SoundCategory.PLAYERS, 0.8F, magic ? 0.7F : 1.1F);
+        player.world.playSound(null, player.getPosition(), SoundEvents.BLOCK_ENCHANTMENT_TABLE_USE, SoundCategory.PLAYERS, 0.8F, magic ? 0.7F : 1.1F);
     }
 
     /** Выбрать заклинание (из колеса или окна Гримуара). */
