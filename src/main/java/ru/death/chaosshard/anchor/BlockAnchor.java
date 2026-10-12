@@ -32,6 +32,9 @@ import java.util.Random;
 public class BlockAnchor extends Block {
 
     private static final AxisAlignedBB BOX = new AxisAlignedBB(0.25, 0, 0.25, 0.75, 1.0, 0.75);
+    private static final AxisAlignedBB GROWN_BOX = new AxisAlignedBB(0.0625, 0, 0.0625, 0.9375, 1.0, 0.9375);
+    /** Якорь вырос (уровень 2+): основание колонны. */
+    public static final net.minecraft.block.properties.PropertyBool GROWN = net.minecraft.block.properties.PropertyBool.create("grown");
 
     public BlockAnchor() {
         super(Material.ROCK);
@@ -41,6 +44,33 @@ public class BlockAnchor extends Block {
         setLightLevel(0.6F);
         setHarvestLevel("pickaxe", 1);
         setCreativeTab(ru.death.chaosshard.ChaosTab.TAB);
+        setDefaultState(blockState.getBaseState().withProperty(GROWN, false));
+    }
+
+    @Override
+    protected net.minecraft.block.state.BlockStateContainer createBlockState() {
+        return new net.minecraft.block.state.BlockStateContainer(this, GROWN);
+    }
+
+    @Override
+    public IBlockState getStateFromMeta(int meta) {
+        return getDefaultState().withProperty(GROWN, (meta & 1) == 1);
+    }
+
+    @Override
+    public int getMetaFromState(IBlockState state) {
+        return state.getValue(GROWN) ? 1 : 0;
+    }
+
+    @Override
+    public int damageDropped(IBlockState state) {
+        return 0;
+    }
+
+    @Override
+    public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ,
+                                            int meta, EntityLivingBase placer) {
+        return getDefaultState();
     }
 
     @Override
@@ -107,6 +137,16 @@ public class BlockAnchor extends Block {
             if (data.anchors.remove(pos)) {
                 data.markDirty();
             }
+            // печати выпадают, колонна рассыпается
+            TileEntity te = world.getTileEntity(pos);
+            if (te instanceof TileAnchor) {
+                for (ItemAnchorSeal.Type t : ((TileAnchor) te).getSeals()) {
+                    spawnAsEntity(world, pos, new ItemStack(ru.death.chaosshard.init.ModItems.SEALS.get(t)));
+                }
+            }
+            for (int i = 1; i <= 8 && world.getBlockState(pos.up(i)).getBlock() instanceof BlockAnchorPart; i++) {
+                world.setBlockState(pos.up(i), net.minecraft.init.Blocks.AIR.getDefaultState(), 2);
+            }
         }
         super.breakBlock(world, pos, state);
     }
@@ -121,8 +161,37 @@ public class BlockAnchor extends Block {
             TileEntity te = world.getTileEntity(pos);
             if (te instanceof TileAnchor) {
                 TileAnchor a = (TileAnchor) te;
-                player.sendMessage(Breach.grimoire("chaosshard.anchor.info", a.getOwnerName(), a.radius(), a.getCorrupted(),
-                        ChaosConfig.anchor.captureThreshold));
+                ItemStack held = player.getHeldItem(hand);
+                if (held.getItem() instanceof ItemAnchorSeal) {
+                    if (a.addSeal(((ItemAnchorSeal) held.getItem()).type)) {
+                        if (!player.isCreative()) {
+                            held.shrink(1);
+                        }
+                        world.playSound(null, pos, net.minecraft.init.SoundEvents.BLOCK_END_PORTAL_FRAME_FILL,
+                                net.minecraft.util.SoundCategory.BLOCKS, 0.8F, 0.8F);
+                        player.sendStatusMessage(Breach.grimoire("chaosshard.anchor.seal_added", a.getSeals().size(), a.level()), true);
+                    } else {
+                        player.sendStatusMessage(Breach.grimoire("chaosshard.anchor.seal_full", a.level()), true);
+                    }
+                    return true;
+                }
+                if (held.isEmpty() && player.isSneaking()) {
+                    ItemAnchorSeal.Type t = a.removeSeal();
+                    if (t != null) {
+                        net.minecraftforge.items.ItemHandlerHelper.giveItemToPlayer(player, new ItemStack(ru.death.chaosshard.init.ModItems.SEALS.get(t)));
+                    }
+                    return true;
+                }
+                int next = a.nextThreshold();
+                player.sendMessage(Breach.grimoire("chaosshard.anchor.info", a.getOwnerName(), a.level(), TileAnchor.maxLevel(),
+                        a.radius(), a.radiusCap(), a.getCorrupted(), next < 0 ? "—" : String.valueOf(next)));
+                StringBuilder sb = new StringBuilder();
+                for (ItemAnchorSeal.Type t : a.getSeals()) {
+                    sb.append(sb.length() == 0 ? "" : ", ").append(net.minecraft.util.text.translation.I18n.translateToLocal(
+                            "item.chaosshard.anchor_seal_" + t.name().toLowerCase() + ".name"));
+                }
+                player.sendMessage(Breach.grimoire("chaosshard.anchor.info_seals", a.getSeals().size(), a.level(),
+                        sb.length() == 0 ? "—" : sb.toString()));
                 player.sendMessage(Breach.grimoire(a.isCaptured() ? "chaosshard.anchor.info_captured" : "chaosshard.anchor.info_open"));
             }
         }
@@ -152,7 +221,7 @@ public class BlockAnchor extends Block {
 
     @Override
     public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
-        return BOX;
+        return state.getValue(GROWN) ? GROWN_BOX : BOX;
     }
 
     @Override

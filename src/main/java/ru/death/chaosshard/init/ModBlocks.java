@@ -28,6 +28,8 @@ public final class ModBlocks {
     public static Block RITUAL_SPIRE;
     /** Знак мела — без своего предмета (рисуется Мелом Хаоса). */
     public static Block CHALK;
+    /** Сегменты выросшего Якоря (без предмета). */
+    public static Block ANCHOR_PART;
     public static Block RITUAL_BOWL;
     public static Block ISLAND_HEART;
     public static Block CHAOS_ANCHOR;
@@ -79,6 +81,10 @@ public final class ModBlocks {
         CHALK.setRegistryName(Tags.MOD_ID, "chalk_rune");
         CHALK.setTranslationKey(Tags.MOD_ID + ".chalk_rune");
         event.getRegistry().register(CHALK);
+        ANCHOR_PART = new ru.death.chaosshard.anchor.BlockAnchorPart();
+        ANCHOR_PART.setRegistryName(Tags.MOD_ID, "anchor_part");
+        ANCHOR_PART.setTranslationKey(Tags.MOD_ID + ".chaos_anchor");
+        event.getRegistry().register(ANCHOR_PART);
     }
 
     @SubscribeEvent

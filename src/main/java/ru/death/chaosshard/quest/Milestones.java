@@ -53,6 +53,8 @@ public class Milestones {
     public static final String GARROT_1 = "garrot_1";
     public static final String GARROT_3 = "garrot_3";
     public static final String RITUAL = "ritual_done";
+    public static final String ANCHOR_MAX = "anchor_max";
+    public static final String VILLAGE_EVOLVED = "village_evolved";
 
     private static final String TAG_AGES = "chaosshard_ages";
     private static final String TAG_CAPTURED = "chaosshard_captured";

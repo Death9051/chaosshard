@@ -1,7 +1,10 @@
 {
  "variants": {
-  "normal": {
+  "grown=false": {
    "model": "chaosshard:chaos_anchor"
+  },
+  "grown=true": {
+   "model": "chaosshard:anchor_base_grown"
   }
  }
 }

@@ -60,6 +60,8 @@ public class ChaosEnergy {
             double regen = ChaosConfig.magic.regenPerSecond;
             if (AntechamberDimension.is(player.world)) {
                 regen *= ChaosConfig.magic.antechamberRegenMultiplier;
+            } else {
+                regen *= ru.death.chaosshard.anchor.TileAnchor.energyMultiplier(player.world, player.getPosition());
             }
             player.getEntityData().setFloat(TAG, (float) Math.min(max, now + regen));
         }

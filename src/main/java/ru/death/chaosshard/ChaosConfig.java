@@ -78,6 +78,13 @@ public final class ChaosConfig {
         @Config.Comment("Очки Нити владельцу за каждую дань")
         public int tributeThread = 8;
 
+        @Config.Comment({"Уровни Знака покровителя 1..5: опыт за каждую отбитую попытку Скверны в пределах деревни.",
+                "Со 2-го уровня Скверна подходит на блок ближе за уровень, а Знак кормится этой каймой."})
+        public int[] sigilLevels = {0, 200, 600, 1500, 3000};
+
+        @Config.Comment("Очки Нити владельцу за уровень Знака (2..5)")
+        public int sigilLevelThread = 40;
+
         @Config.Comment("Очки Нити за деревню, поглощённую Скверной")
         public int fallenVillageReward = 60;
 
@@ -231,14 +238,25 @@ public final class ChaosConfig {
         public int spreadInterval = 40;
         public int attemptsPerSpread = 4;
 
-        @Config.Comment("Начальный и наибольший радиус Скверны; +1 к радиусу за каждые N осквернённых блоков")
+        @Config.Comment("Начальный радиус Скверны; +1 к радиусу за каждые N осквернённых блоков (не больше потолка уровня)")
         public int startRadius = 4;
-        public int maxRadius = 32;
         public int blocksPerRadius = 25;
 
-        @Config.Comment("Сколько блоков осквернить, чтобы край считался захваченным, и награда Нитью")
-        public int captureThreshold = 300;
-        public int captureReward = 150;
+        @Config.Comment({"Уровни Якоря 1..5: сколько блоков осквернить для уровня. 2-й уровень — край захвачен.",
+                "На 5-м уровне радиус больше половины минимального расстояния между Якорями — края смыкаются."})
+        public int[] levelThresholds = {0, 300, 800, 1600, 3000};
+
+        @Config.Comment("Потолок радиуса Скверны на уровнях 1..5")
+        public int[] levelRadius = {16, 24, 36, 48, 60};
+
+        @Config.Comment("Награда Нитью за достижение уровней 1..5 (2-й — захват края)")
+        public int[] levelReward = {0, 150, 60, 100, 200};
+
+        @Config.Comment("Дополнительных попыток Скверны за каждый уровень выше первого")
+        public int attemptsPerLevel = 2;
+
+        @Config.Comment("Энергия Хаоса на осквернённой земле восстанавливается во столько раз быстрее")
+        public double energyRegenMultiplier = 2.0;
 
         @Config.Comment("Захваченный край понемногу питает Нить владельца: очков и интервал (тиков)")
         public int passiveThread = 5;

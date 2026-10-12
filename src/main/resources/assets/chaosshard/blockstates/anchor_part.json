@@ -1,0 +1,10 @@
+{
+ "variants": {
+  "top=false": {
+   "model": "chaosshard:anchor_part_mid"
+  },
+  "top=true": {
+   "model": "chaosshard:anchor_part_top"
+  }
+ }
+}

@@ -43,6 +43,16 @@ public class VillageData extends WorldSavedData {
         return false;
     }
 
+    /** Знак, стоящий в этой деревне, или null. */
+    public BlockPos sigilOf(Village v) {
+        for (BlockPos s : sigils) {
+            if (v.isBlockPosWithinSqVillageRadius(s)) {
+                return s;
+            }
+        }
+        return null;
+    }
+
     public boolean isFallen(Village v) {
         for (BlockPos f : fallen) {
             if (v.isBlockPosWithinSqVillageRadius(f)) {

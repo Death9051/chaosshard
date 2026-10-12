@@ -113,7 +113,17 @@ public class BlockPatronSigil extends Block {
         if (!world.isRemote) {
             TileEntity te = world.getTileEntity(pos);
             if (te instanceof TilePatronSigil) {
-                ((TilePatronSigil) te).giveTo(player);
+                TilePatronSigil sg = (TilePatronSigil) te;
+                if (player.isSneaking()) {
+                    int next = sg.nextThreshold();
+                    player.sendMessage(Breach.grimoire("chaosshard.village.info", sg.level(), TilePatronSigil.maxLevel(), sg.getXp(),
+                            next < 0 ? "—" : String.valueOf(next), TilePatronSigil.shrink(sg.level()), sg.getBorder()));
+                    if (sg.isEvolved()) {
+                        player.sendMessage(Breach.grimoire("chaosshard.village.info_evolved"));
+                    }
+                } else {
+                    sg.giveTo(player);
+                }
             }
         }
         return true;

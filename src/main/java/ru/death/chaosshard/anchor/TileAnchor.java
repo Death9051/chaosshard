@@ -86,8 +86,170 @@ public class TileAnchor extends TileEntity implements ITickable {
         return ownerName;
     }
 
+    /**
+     * Множитель восстановления энергии Хаоса для игрока в этой точке: на земле любого Якоря — energyRegenMultiplier,
+     * и ещё +1 за каждую печать «Родник» на этом Якоре. Вне Якорей — 1.
+     */
+    public static double energyMultiplier(net.minecraft.world.World world, BlockPos at) {
+        double best = 1.0;
+        for (BlockPos p : AnchorData.get(world).anchors) {
+            if (!world.isBlockLoaded(p)) {
+                continue;
+            }
+            TileEntity te = world.getTileEntity(p);
+            if (!(te instanceof TileAnchor)) {
+                continue;
+            }
+            TileAnchor a = (TileAnchor) te;
+            double dx = p.getX() - at.getX(), dz = p.getZ() - at.getZ();
+            int r = a.radius();
+            if (dx * dx + dz * dz <= (double) r * r) {
+                best = Math.max(best, ChaosConfig.anchor.energyRegenMultiplier + a.seals(ItemAnchorSeal.Type.WELL));
+            }
+        }
+        return best;
+    }
+
+    // ------------------------------------------------------------------ уровни
+
+    /** Уровень (1..5) по числу осквернённых блоков. */
+    public int level() {
+        int[] t = ChaosConfig.anchor.levelThresholds;
+        int lvl = 1;
+        for (int i = 1; i < t.length; i++) {
+            if (corrupted >= t[i]) {
+                lvl = i + 1;
+            }
+        }
+        return lvl;
+    }
+
+    public static int maxLevel() {
+        return ChaosConfig.anchor.levelThresholds.length;
+    }
+
+    /** Сколько осквернить до следующего уровня (−1 — уровень последний). */
+    public int nextThreshold() {
+        int[] t = ChaosConfig.anchor.levelThresholds;
+        int l = level();
+        return l < t.length ? t[l] : -1;
+    }
+
+    public int radiusCap() {
+        int[] r = ChaosConfig.anchor.levelRadius;
+        int base = r.length == 0 ? 32 : r[Math.min(level(), r.length) - 1];
+        return base + 6 * seals(ItemAnchorSeal.Type.REACH);
+    }
+
     public int radius() {
-        return Math.min(ChaosConfig.anchor.maxRadius, ChaosConfig.anchor.startRadius + corrupted / ChaosConfig.anchor.blocksPerRadius);
+        return Math.min(radiusCap(), ChaosConfig.anchor.startRadius + corrupted / ChaosConfig.anchor.blocksPerRadius
+                + 6 * seals(ItemAnchorSeal.Type.REACH));
+    }
+
+    // ------------------------------------------------------------------ печати
+
+    private final java.util.List<ItemAnchorSeal.Type> seals = new java.util.ArrayList<>();
+
+    public java.util.List<ItemAnchorSeal.Type> getSeals() {
+        return seals;
+    }
+
+    public int seals(ItemAnchorSeal.Type type) {
+        int n = 0;
+        for (ItemAnchorSeal.Type t : seals) {
+            if (t == type) {
+                n++;
+            }
+        }
+        return n;
+    }
+
+    /** Навесить печать; false — нет места (печатей не больше уровня). */
+    public boolean addSeal(ItemAnchorSeal.Type type) {
+        if (seals.size() >= level()) {
+            return false;
+        }
+        seals.add(type);
+        changed();
+        return true;
+    }
+
+    public ItemAnchorSeal.Type removeSeal() {
+        if (seals.isEmpty()) {
+            return null;
+        }
+        ItemAnchorSeal.Type t = seals.remove(seals.size() - 1);
+        changed();
+        return t;
+    }
+
+    private int shownLevel = 0;
+
+    private void changed() {
+        markDirty();
+        if (world != null && !world.isRemote) {
+            net.minecraft.block.state.IBlockState st = world.getBlockState(pos);
+            world.notifyBlockUpdate(pos, st, st, 3);
+        }
+    }
+
+    /** Колонна: основание + (уровень − 1) сегментов, верхний — остриё. Препятствия (кроме мягких блоков) останавливают рост. */
+    public void growColumn() {
+        int lvl = level();
+        net.minecraft.block.state.IBlockState base = world.getBlockState(pos);
+        if (base.getBlock() instanceof BlockAnchor) {
+            boolean grown = lvl >= 2;
+            if (base.getValue(BlockAnchor.GROWN) != grown) {
+                world.setBlockState(pos, base.withProperty(BlockAnchor.GROWN, grown), 2);
+            }
+        }
+        int height = lvl - 1;
+        for (int i = 1; i <= height; i++) {
+            BlockPos p = pos.up(i);
+            boolean top = i == height;
+            net.minecraft.block.state.IBlockState want = ru.death.chaosshard.init.ModBlocks.ANCHOR_PART.getDefaultState()
+                    .withProperty(BlockAnchorPart.TOP, top);
+            net.minecraft.block.state.IBlockState have = world.getBlockState(p);
+            if (have == want) {
+                continue;
+            }
+            boolean ours = have.getBlock() instanceof BlockAnchorPart;
+            boolean soft = world.isAirBlock(p) || have.getBlock().isReplaceable(world, p) || have.getMaterial() == net.minecraft.block.material.Material.LEAVES
+                    || have.getMaterial() == net.minecraft.block.material.Material.PLANTS || have.getMaterial() == net.minecraft.block.material.Material.VINE;
+            if (!ours && !soft) {
+                break;
+            }
+            world.setBlockState(p, want, 3);
+            if (!ours) {
+                ((WorldServer) world).spawnParticle(EnumParticleTypes.DRAGON_BREATH, p.getX() + 0.5, p.getY() + 0.5, p.getZ() + 0.5,
+                        20, 0.3, 0.4, 0.3, 0.02);
+            }
+        }
+    }
+
+    private void onLevelUp(int lvl) {
+        int[] rw = ChaosConfig.anchor.levelReward;
+        int reward = lvl - 1 < rw.length ? rw[lvl - 1] : 0;
+        EntityPlayerMP p = ownerOnline();
+        if (lvl == 2) {
+            checkCapture();
+        } else if (p != null) {
+            if (reward > 0) {
+                ThreadManager.addPoints(p, reward);
+            }
+            p.sendMessage(Breach.grimoire("chaosshard.anchor.level_up", pos.getX(), pos.getZ(), lvl, radiusCap(), reward));
+            if (lvl >= maxLevel()) {
+                ru.death.chaosshard.quest.Milestones.grant(p, ru.death.chaosshard.quest.Milestones.ANCHOR_MAX);
+            }
+        }
+        world.playSound(null, pos, SoundEvents.BLOCK_END_PORTAL_SPAWN, SoundCategory.BLOCKS, 0.5F, 0.6F + 0.1F * lvl);
+        growColumn();
+        BlockPos tip = pos.up(Math.max(0, lvl - 1));
+        ru.death.chaosshard.network.ChaosNetwork.CHANNEL.sendToAllAround(
+                new ru.death.chaosshard.network.PacketHeartBolt(tip.getX() + 0.5, tip.getY() + 0.9, tip.getZ() + 0.5,
+                        tip.getX() + 0.5, tip.getY() + 8, tip.getZ() + 0.5, 0xB070FF),
+                new net.minecraftforge.fml.common.network.NetworkRegistry.TargetPoint(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 96));
+        changed();
     }
 
     @Override
@@ -98,16 +260,19 @@ public class TileAnchor extends TileEntity implements ITickable {
         if (++timer >= ChaosConfig.anchor.spreadInterval) {
             timer = 0;
             int done = 0;
-            for (int i = 0; i < ChaosConfig.anchor.attemptsPerSpread; i++) {
+            int attempts = (int) Math.round((ChaosConfig.anchor.attemptsPerSpread + (level() - 1) * ChaosConfig.anchor.attemptsPerLevel)
+                    * (1 + 0.5 * seals(ItemAnchorSeal.Type.FURY)));
+            for (int i = 0; i < attempts; i++) {
                 if (spreadOnce(world.rand)) {
                     done++;
                 }
             }
             if (done > 0) {
-                corrupted += done;
-                markDirty();
-                checkCapture();
+                addCorrupted(done);
             }
+        }
+        if (timer % 200 == 100) {
+            growColumn();
         }
         if (timer % 20 == 5 && captured) {
             tickArmy();
@@ -127,7 +292,8 @@ public class TileAnchor extends TileEntity implements ITickable {
         if (timer % 200 == 0 && !dirtyChunks.isEmpty()) {
             resendChunks();
         }
-        if (captured && ChaosConfig.anchor.passiveThread > 0 && ++passiveTimer >= ChaosConfig.anchor.passiveInterval) {
+        if (captured && ChaosConfig.anchor.passiveThread > 0
+                && (passiveTimer += 1 + seals(ItemAnchorSeal.Type.HARVEST)) >= ChaosConfig.anchor.passiveInterval) {
             passiveTimer = 0;
             EntityPlayerMP p = ownerOnline();
             if (p != null) {
@@ -144,11 +310,35 @@ public class TileAnchor extends TileEntity implements ITickable {
                 done++;
             }
         }
-        corrupted += done;
-        markDirty();
-        checkCapture();
+        addCorrupted(done);
         resendChunks();
         return done;
+    }
+
+    private void addCorrupted(int n) {
+        int before = level();
+        corrupted += n;
+        markDirty();
+        int after = level();
+        for (int l = before + 1; l <= after; l++) {
+            onLevelUp(l);
+        }
+        if (after != shownLevel) {
+            shownLevel = after;
+            changed();
+        }
+    }
+
+    /** Для отладки: сразу выставить число осквернённых блоков (уровни засчитываются). */
+    public void setCorrupted(int n) {
+        int before = level();
+        corrupted = Math.max(0, n);
+        int after = level();
+        for (int l = before + 1; l <= after; l++) {
+            onLevelUp(l);
+        }
+        growColumn();
+        changed();
     }
 
     /** Одна попытка: поверхность случайного столбца в круге либо случайный блок в объёме (деревья, камень). */
@@ -162,7 +352,12 @@ public class TileAnchor extends TileEntity implements ITickable {
             return false;
         }
         // Святая земля и деревни под покровительством Скверне не по зубам
-        if (ru.death.chaosshard.order.Shrines.protects(world, x, z) || ru.death.chaosshard.village.VillageFate.protects(world, x, z)) {
+        if (ru.death.chaosshard.order.Shrines.protects(world, x, z)) {
+            return false;
+        }
+        BlockPos sigil = ru.death.chaosshard.village.VillageFate.protector(world, x, z);
+        if (sigil != null) {
+            ru.death.chaosshard.village.VillageFate.repelled(world, sigil);
             return false;
         }
         boolean changed = false;
@@ -188,7 +383,7 @@ public class TileAnchor extends TileEntity implements ITickable {
     }
 
     private void checkCapture() {
-        if (captured || corrupted < ChaosConfig.anchor.captureThreshold) {
+        if (captured || level() < 2) {
             return;
         }
         captured = true;
@@ -196,8 +391,9 @@ public class TileAnchor extends TileEntity implements ITickable {
         world.playSound(null, pos, SoundEvents.ENTITY_WITHER_SPAWN, SoundCategory.BLOCKS, 0.6F, 0.7F);
         EntityPlayerMP p = ownerOnline();
         if (p != null) {
-            ThreadManager.addPoints(p, ChaosConfig.anchor.captureReward);
-            p.sendMessage(Breach.grimoire("chaosshard.anchor.captured", pos.getX(), pos.getZ(), ChaosConfig.anchor.captureReward));
+            int reward = ChaosConfig.anchor.levelReward.length > 1 ? ChaosConfig.anchor.levelReward[1] : 0;
+            ThreadManager.addPoints(p, reward);
+            p.sendMessage(Breach.grimoire("chaosshard.anchor.captured", pos.getX(), pos.getZ(), reward));
         }
     }
 
@@ -234,6 +430,7 @@ public class TileAnchor extends TileEntity implements ITickable {
         tag.setInteger("passive", passiveTimer);
         tag.setBoolean("counted", counted);
         tag.setInteger("raidTimer", raidTimer);
+        writeSeals(tag);
         return tag;
     }
 
@@ -247,5 +444,61 @@ public class TileAnchor extends TileEntity implements ITickable {
         passiveTimer = tag.getInteger("passive");
         counted = tag.getBoolean("counted");
         raidTimer = tag.hasKey("raidTimer") ? tag.getInteger("raidTimer") : -1;
+        readSeals(tag);
+    }
+
+    private void writeSeals(NBTTagCompound tag) {
+        int[] arr = new int[seals.size()];
+        for (int i = 0; i < arr.length; i++) {
+            arr[i] = seals.get(i).ordinal();
+        }
+        tag.setIntArray("seals", arr);
+    }
+
+    private void readSeals(NBTTagCompound tag) {
+        seals.clear();
+        for (int o : tag.getIntArray("seals")) {
+            if (o >= 0 && o < ItemAnchorSeal.Type.values().length) {
+                seals.add(ItemAnchorSeal.Type.values()[o]);
+            }
+        }
+    }
+
+    // ------------------------------------------------------------------ клиент: уровень и печати для отрисовки
+
+    @Override
+    public NBTTagCompound getUpdateTag() {
+        NBTTagCompound tag = super.getUpdateTag();
+        tag.setInteger("corrupted", corrupted);
+        writeSeals(tag);
+        return tag;
+    }
+
+    @Override
+    public void handleUpdateTag(NBTTagCompound tag) {
+        super.handleUpdateTag(tag);
+        corrupted = tag.getInteger("corrupted");
+        readSeals(tag);
+    }
+
+    @Override
+    public net.minecraft.network.play.server.SPacketUpdateTileEntity getUpdatePacket() {
+        return new net.minecraft.network.play.server.SPacketUpdateTileEntity(pos, 0, getUpdateTag());
+    }
+
+    @Override
+    public void onDataPacket(net.minecraft.network.NetworkManager net, net.minecraft.network.play.server.SPacketUpdateTileEntity pkt) {
+        handleUpdateTag(pkt.getNbtCompound());
+    }
+
+    @Override
+    public net.minecraft.util.math.AxisAlignedBB getRenderBoundingBox() {
+        return new net.minecraft.util.math.AxisAlignedBB(pos.add(-2, 0, -2), pos.add(3, 7, 3));
+    }
+
+    @Override
+    public boolean shouldRefresh(net.minecraft.world.World world, BlockPos pos, net.minecraft.block.state.IBlockState oldState,
+                                 net.minecraft.block.state.IBlockState newState) {
+        return oldState.getBlock() != newState.getBlock();
     }
 }

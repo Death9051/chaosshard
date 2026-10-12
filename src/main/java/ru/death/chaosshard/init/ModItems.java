@@ -35,6 +35,8 @@ public final class ModItems {
     public static Item GARROT_BANNER;
     /** Мел Хаоса — рисует знаки ритуального круга. */
     public static Item CHALK;
+    /** Печати Якоря по типам. */
+    public static final java.util.Map<ru.death.chaosshard.anchor.ItemAnchorSeal.Type, Item> SEALS = new java.util.EnumMap<>(ru.death.chaosshard.anchor.ItemAnchorSeal.Type.class);
 
     public static final List<Item> ALL = new ArrayList<>();
 
@@ -52,6 +54,9 @@ public final class ModItems {
         GARROT_BANNER = add(new ru.death.chaosshard.item.ItemLore("chaosshard.garrot_banner.lore", false), "garrot_banner");
         DISTORTED_STARMETAL = add(new ru.death.chaosshard.item.ItemLore("chaosshard.distorted_starmetal.lore", true), "distorted_starmetal");
         CHALK = add(new ru.death.chaosshard.ritual.ItemChalk(), "chaos_chalk");
+        for (ru.death.chaosshard.anchor.ItemAnchorSeal.Type t : ru.death.chaosshard.anchor.ItemAnchorSeal.Type.values()) {
+            SEALS.put(t, add(new ru.death.chaosshard.anchor.ItemAnchorSeal(t), "anchor_seal_" + t.name().toLowerCase()));
+        }
         for (ru.death.chaosshard.heart.ItemHeartModule.Type t : ru.death.chaosshard.heart.ItemHeartModule.Type.values()) {
             add(new ru.death.chaosshard.heart.ItemHeartModule(t), "heart_module_" + t.name().toLowerCase());
         }

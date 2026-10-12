@@ -93,6 +93,20 @@ public final class Corruption {
         return true;
     }
 
+    /** Блок уже осквернён (результат одного из правил). */
+    public static boolean isCorrupted(IBlockState state) {
+        Block b = state.getBlock();
+        if (b == ModBlocks.CHAOS_CRUST || b == ModBlocks.CHAOS_STONE) {
+            return true;
+        }
+        for (IBlockState to : rules().values()) {
+            if (to.getBlock() == b && b != Blocks.AIR) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     /** Сменить биом столбца на осквернённый. true — если сменился. */
     public static boolean corruptBiome(World world, BlockPos pos) {
         if (!ChaosConfig.anchor.changeBiomes) {

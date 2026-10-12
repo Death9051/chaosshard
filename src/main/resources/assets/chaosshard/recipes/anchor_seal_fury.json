@@ -1,0 +1,22 @@
+{
+ "type": "forge:ore_shaped",
+ "pattern": [
+  "VEV",
+  "ECE",
+  "VEV"
+ ],
+ "key": {
+  "V": {
+   "item": "chaosshard:veil_shard"
+  },
+  "E": {
+   "item": "chaosshard:chaos_essence"
+  },
+  "C": {
+   "item": "minecraft:blaze_powder"
+  }
+ },
+ "result": {
+  "item": "chaosshard:anchor_seal_fury"
+ }
+}

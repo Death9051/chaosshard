@@ -22,19 +22,50 @@ public final class VillageFate {
 
     /** Скверна не трогает деревню под покровительством. */
     public static boolean protects(World world, int x, int z) {
+        return protector(world, x, z) != null;
+    }
+
+    /**
+     * Знак, который защищает точку (x, z), или null. Граница защиты — радиус деревни + 8,
+     * со 2-го уровня Знака она сжимается на блок за уровень: Скверна подходит ближе.
+     */
+    public static BlockPos protector(World world, int x, int z) {
         VillageData data = VillageData.get(world);
         if (data.sigils.isEmpty()) {
-            return false;
+            return null;
         }
         for (Village v : world.getVillageCollection().getVillageList()) {
+            BlockPos sigil = data.sigilOf(v);
+            if (sigil == null) {
+                continue;
+            }
             BlockPos c = v.getCenter();
             double dx = c.getX() - x, dz = c.getZ() - z;
-            double r = v.getVillageRadius() + 8;
-            if (dx * dx + dz * dz <= r * r && data.isPatron(v)) {
-                return true;
+            double r = v.getVillageRadius() + 8 - TilePatronSigil.shrink(levelOf(world, sigil));
+            if (dx * dx + dz * dz <= r * r) {
+                return sigil;
             }
         }
-        return false;
+        return null;
+    }
+
+    public static int levelOf(World world, BlockPos sigil) {
+        if (!world.isBlockLoaded(sigil)) {
+            return 1;
+        }
+        net.minecraft.tileentity.TileEntity te = world.getTileEntity(sigil);
+        return te instanceof TilePatronSigil ? ((TilePatronSigil) te).level() : 1;
+    }
+
+    /** Скверна попыталась войти в деревню и отбита — Знак набирается опыта. */
+    public static void repelled(World world, BlockPos sigil) {
+        if (!world.isBlockLoaded(sigil)) {
+            return;
+        }
+        net.minecraft.tileentity.TileEntity te = world.getTileEntity(sigil);
+        if (te instanceof TilePatronSigil) {
+            ((TilePatronSigil) te).addXp(1);
+        }
     }
 
     /** Якорь с радиусом r накрыл деревни — те, что без покровителя, падают. */
