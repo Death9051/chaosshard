@@ -154,6 +154,11 @@ public class TileAnchor extends TileEntity implements ITickable {
         return idx;
     }
 
+    /** Сколько армия должна простоять у Якоря, чтобы он пал: минута на 1-м уровне, +45 секунд за каждый следующий. */
+    public int siegeLimit() {
+        return SIEGE + 900 * (Math.max(1, level()) - 1);
+    }
+
     /** Солдат Мрачной Армии у Якоря (раз в секунду от каждого — считается раз в секунду). */
     public void siegeTick(EntityPlayerMP warn) {
         long now = world.getTotalWorldTime();
@@ -161,14 +166,16 @@ public class TileAnchor extends TileEntity implements ITickable {
             return;
         }
         lastSiege = now;
+        int limit = siegeLimit();
+        int before = siege * 5 / limit;
         siege += 20;
-        if (siege % 400 == 0 && siege < SIEGE) {
+        if (siege * 5 / limit != before && siege < limit) {
             EntityPlayerMP o = ownerOnline();
             if (o != null) {
-                o.sendStatusMessage(Breach.grimoire("chaosshard.raid.siege", siege * 100 / SIEGE), true);
+                o.sendStatusMessage(Breach.grimoire("chaosshard.raid.siege", siege * 100 / limit), true);
             }
         }
-        if (siege >= SIEGE) {
+        if (siege >= limit) {
             siege = 0;
             fall();
         }
