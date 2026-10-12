@@ -297,9 +297,7 @@ public class GarrotRaids {
                 if (captain == null) {
                     return false;
                 }
-                if (level >= 5) {
-                    skin(captain, "commander");
-                }
+                skin(captain, level >= 5 ? "commander" : "captain");
                 setup(world, captain, base, target);
                 double hp = 80 + 15 * Math.min(number, 6) + 25 * (level - 1);
                 captain.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(hp);
@@ -323,6 +321,7 @@ public class GarrotRaids {
                 }
                 EntityLiving s = (EntityLiving) create.invoke(null, world, type, "", FACTION);
                 if (s != null) {
+                    skin(s, type.equals("faction.archer") ? "archer" : "soldier");
                     setup(world, s, world.getHeight(base.add(r.nextInt(7) - 3, 0, r.nextInt(7) - 3)), target);
                 }
             }
