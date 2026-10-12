@@ -1,0 +1,16 @@
+{
+  "pattern": [
+    "aaa",
+    "aaa",
+    "aaa"
+  ],
+  "key": {
+    "a": {
+      "item": "harvestcraft:beeswaxitem"
+    }
+  },
+  "result": {
+    "item": "harvestcraft:pressedwax"
+  },
+  "type": "forge:ore_shaped"
+}

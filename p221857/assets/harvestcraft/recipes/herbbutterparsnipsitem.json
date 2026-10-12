@@ -1,0 +1,25 @@
+{
+  "result": {
+    "item": "harvestcraft:herbbutterparsnipsitem"
+  },
+
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "toolSaucepan"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropParsnip"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "foodButter"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropSpiceleaf"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

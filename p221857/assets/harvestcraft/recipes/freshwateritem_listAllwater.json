@@ -1,0 +1,14 @@
+{
+  "result": {
+    "item": "harvestcraft:freshwateritem",
+    "count": 8
+  },
+  "group":"harvestcraft_freshwateritem",
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "listAllwater"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

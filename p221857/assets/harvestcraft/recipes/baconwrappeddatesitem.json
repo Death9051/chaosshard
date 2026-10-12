@@ -1,0 +1,21 @@
+{
+  "result": {
+    "item": "harvestcraft:baconwrappeddatesitem"
+  },
+
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "toolBakeware"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropDate"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "listAllporkcooked"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

@@ -1,0 +1,14 @@
+[
+  {
+    "modid": "universaltweaks",
+    "name": "Universal Tweaks",
+    "description": "A one-stop-shop for all bugfixing and tweaking needs",
+    "version": "1.21.0",
+    "mcversion": "1.12.2",
+    "url": "https://github.com/ACGaming/UniversalTweaks",
+    "logoFile": "logo.png",
+    "authorList": [
+      "ACGaming"
+    ]
+  }
+]

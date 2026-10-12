@@ -1,0 +1,33 @@
+{
+  "result": {
+    "item": "harvestcraft:orangechickenitem"
+  },
+
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "toolSaucepan"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropOrange"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "listAllchickenraw"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "listAllsugar"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropRice"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropBroccoli"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

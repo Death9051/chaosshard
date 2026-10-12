@@ -1,0 +1,17 @@
+{
+  "result": {
+    "item": "harvestcraft:plumyogurtitem"
+  },
+
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropPlum"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "foodPlainyogurt"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

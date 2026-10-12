@@ -1,0 +1,12 @@
+{
+  "result": {
+    "item": "harvestcraft:cranberryseeditem"
+  },
+
+  "ingredients": [
+    {
+      "item": "harvestcraft:cranberryitem"
+    }
+  ],
+  "type": "minecraft:crafting_shapeless"
+}

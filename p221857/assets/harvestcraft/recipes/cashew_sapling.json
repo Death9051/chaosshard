@@ -1,0 +1,22 @@
+{
+  "result": {
+    "item": "harvestcraft:cashew_sapling"
+  },
+  "group": "harvestcraft_sapling",
+  "ingredients": [
+    {
+      "item": "harvestcraft:cashewitem"
+    },
+    {
+      "item": "harvestcraft:cashewitem"
+    },
+    {
+      "item": "harvestcraft:cashewitem"
+    },
+    {
+      "item": "minecraft:sapling",
+      "data": 32767
+    }
+  ],
+  "type": "minecraft:crafting_shapeless"
+}

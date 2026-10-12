@@ -1,0 +1,17 @@
+{
+  "result": {
+    "item": "harvestcraft:coconutcreamitem"
+  },
+
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "toolPot"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropCoconut"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

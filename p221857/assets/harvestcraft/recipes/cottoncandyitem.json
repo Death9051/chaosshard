@@ -1,0 +1,32 @@
+{
+  "result": {
+    "item": "harvestcraft:cottoncandyitem"
+  },
+
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "toolMixingbowl"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "listAllsugar"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "listAllwater"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropCotton"
+    },
+    {
+      "item": "minecraft:dye",
+      "data": 32767
+    },
+    {
+      "item": "minecraft:paper"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

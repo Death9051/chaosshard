@@ -1,0 +1,29 @@
+{
+  "result": {
+    "item": "harvestcraft:gingerchickenitem"
+  },
+  "group":"harvestcraft_gingerchickenitem",
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "toolSaucepan"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "listAllchickenraw"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropGinger"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropScallion"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "dropHoney"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

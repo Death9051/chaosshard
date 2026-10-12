@@ -1,0 +1,17 @@
+{
+  "result": {
+    "item": "harvestcraft:coconutyogurtitem"
+  },
+
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropCoconut"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "foodPlainyogurt"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

@@ -1,0 +1,25 @@
+{
+  "result": {
+    "item": "harvestcraft:marshmellowsitem"
+  },
+
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "toolPot"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "listAllsugar"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "listAllwater"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "listAllegg"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

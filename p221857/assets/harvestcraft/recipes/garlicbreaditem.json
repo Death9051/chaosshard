@@ -1,0 +1,21 @@
+{
+  "result": {
+    "item": "harvestcraft:garlicbreaditem"
+  },
+
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropGarlic"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "foodToast"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "foodButter"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

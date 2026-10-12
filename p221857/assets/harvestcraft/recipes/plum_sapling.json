@@ -1,0 +1,22 @@
+{
+  "result": {
+    "item": "harvestcraft:plum_sapling"
+  },
+  "group": "harvestcraft_sapling",
+  "ingredients": [
+    {
+      "item": "harvestcraft:plumitem"
+    },
+    {
+      "item": "harvestcraft:plumitem"
+    },
+    {
+      "item": "harvestcraft:plumitem"
+    },
+    {
+      "item": "minecraft:sapling",
+      "data": 32767
+    }
+  ],
+  "type": "minecraft:crafting_shapeless"
+}

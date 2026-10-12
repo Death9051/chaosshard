@@ -1,0 +1,25 @@
+{
+  "result": {
+    "item": "harvestcraft:chickenparmasanitem"
+  },
+
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "toolBakeware"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "listAllchickencooked"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropTomato"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "foodCheese"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

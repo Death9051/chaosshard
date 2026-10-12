@@ -1,0 +1,12 @@
+{
+  "result": {
+    "item": "harvestcraft:raspberryseeditem"
+  },
+
+  "ingredients": [
+    {
+      "item": "harvestcraft:raspberryitem"
+    }
+  ],
+  "type": "minecraft:crafting_shapeless"
+}

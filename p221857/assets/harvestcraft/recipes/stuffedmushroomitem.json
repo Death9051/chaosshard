@@ -1,0 +1,25 @@
+{
+  "result": {
+    "item": "harvestcraft:stuffedmushroomitem"
+  },
+
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "toolBakeware"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "listAllmushroom"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "foodCheese"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "foodToast"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

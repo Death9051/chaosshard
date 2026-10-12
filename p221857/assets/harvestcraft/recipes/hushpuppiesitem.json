@@ -1,0 +1,29 @@
+{
+  "result": {
+    "item": "harvestcraft:hushpuppiesitem"
+  },
+
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "toolPot"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "foodCornmeal"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "listAllegg"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropOnion"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "foodOliveoil"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

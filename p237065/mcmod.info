@@ -1,0 +1,20 @@
+[
+  {
+    "modid": "contenttweaker",
+    "name": "ContentTweaker",
+    "description": "Custom Minecraft Objects created from CraftTweaker scripts",
+    "version": "1.12.2-4.10.0",
+    "mcversion": "1.12.2",
+    "url": "teamacronymcoders.com",
+    "updateUrl": "",
+    "authorList": [
+      "SkySom"
+    ],
+    "credits": "",
+    "logoFile": "",
+    "screenshots": [],
+    "dependencies": [
+      "base"
+    ]
+  }
+]

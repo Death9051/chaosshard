@@ -1,0 +1,17 @@
+{
+  "result": {
+    "item": "harvestcraft:cheeseburgeritem"
+  },
+
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "foodHamburger"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "foodCheese"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

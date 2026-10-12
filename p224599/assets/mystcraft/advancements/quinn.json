@@ -1,0 +1,20 @@
+{
+    "display": {
+        "icon": {
+            "item": "mystcraft:linkbook"
+        },
+        "title": {
+            "translate": "achievement.myst.quinn"
+        },
+        "description": {
+            "translate": "achievement.myst.quinn.desc"
+        },
+        "hidden": true
+    },
+    "parent": "mystcraft:agebook",
+    "criteria": {
+        "myst_quinn_trigger": {
+            "trigger": "mystcraft:enter_myst_dimension_quinn"
+        }
+    }
+}

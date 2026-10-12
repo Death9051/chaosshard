@@ -1,0 +1,33 @@
+{
+  "result": {
+    "item": "harvestcraft:sunflowerbroccolisaladitem"
+  },
+
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "toolCuttingboard"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropSunflower"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropBroccoli"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "foodMayo"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "listAllsugar"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "listAllporkcooked"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

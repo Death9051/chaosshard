@@ -1,0 +1,41 @@
+{
+  "result": {
+    "item": "harvestcraft:sweetandsourchickenitem"
+  },
+
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "toolSaucepan"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "listAllchickenraw"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "foodBatter"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropPineapple"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropBellpepper"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropOnion"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "foodSweetandsoursauce"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "foodKetchup"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

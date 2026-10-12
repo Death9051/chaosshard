@@ -1,0 +1,12 @@
+{
+    "type": "forge:ore_shaped",
+	"group": "sandstone_defiled",
+    "pattern": [
+        "SS",
+        "SS"
+    ],
+    "key": {
+        "S": { "item": "defiledlands:sand_defiled" }
+    },
+    "result": { "item": "defiledlands:sandstone_defiled" }
+}

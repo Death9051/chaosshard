@@ -1,0 +1,17 @@
+{
+  "result": {
+    "item": "harvestcraft:grilledasparagusitem"
+  },
+
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "toolSkillet"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropAsparagus"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

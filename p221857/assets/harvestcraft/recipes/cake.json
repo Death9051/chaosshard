@@ -1,0 +1,30 @@
+{
+
+  "pattern": [
+    "aaa",
+    "beb",
+    "ccc"
+  ],
+  "key": {
+    "a": {
+      "type": "forge:ore_dict",
+      "ore": "listAllmilk"
+    },
+    "b": {
+      "type": "forge:ore_dict",
+      "ore": "listAllsugar"
+    },
+    "e": {
+      "type": "forge:ore_dict",
+      "ore": "listAllegg"
+    },
+    "c": {
+      "type": "forge:ore_dict",
+      "ore": "flourEqualswheat"
+    }
+  },
+  "result": {
+    "item": "minecraft:cake"
+  },
+  "type": "forge:ore_shaped"
+}

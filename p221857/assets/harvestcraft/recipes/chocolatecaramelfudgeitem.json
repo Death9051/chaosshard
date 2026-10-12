@@ -1,0 +1,21 @@
+{
+  "result": {
+    "item": "harvestcraft:chocolatecaramelfudgeitem"
+  },
+
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "toolBakeware"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "foodChocolatebar"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "foodCaramel"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

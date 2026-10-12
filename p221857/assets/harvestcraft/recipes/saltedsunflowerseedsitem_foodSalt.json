@@ -1,0 +1,17 @@
+{
+  "result": {
+    "item": "harvestcraft:saltedsunflowerseedsitem"
+  },
+  "group":"harvestcraft_saltedsunflowerseedsitem",
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropSunflower"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "foodSalt"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

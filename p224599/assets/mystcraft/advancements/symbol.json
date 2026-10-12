@@ -1,0 +1,26 @@
+{
+    "display": {
+        "icon": {
+            "item": "mystcraft:page"
+        },
+        "title": {
+            "translate": "achievement.myst.symbol"
+        },
+        "description": {
+            "translate": "achievement.myst.symbol.desc"
+        }
+    },
+    "parent": "mystcraft:root",
+    "criteria": {
+        "myst_symbol_page_in_inventory": {
+            "trigger": "minecraft:inventory_changed",
+            "conditions": {
+                "items": [
+                    {
+                        "item": "mystcraft:page"
+                    }
+                ]
+            }
+        }
+    }
+}

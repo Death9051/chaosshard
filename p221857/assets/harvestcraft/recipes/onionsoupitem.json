@@ -1,0 +1,25 @@
+{
+  "result": {
+    "item": "harvestcraft:onionsoupitem"
+  },
+
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "toolPot"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropOnion"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "foodStock"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "foodGrilledcheese"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

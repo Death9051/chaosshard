@@ -1,0 +1,25 @@
+{
+  "result": {
+    "item": "harvestcraft:peachesandcreamoatmealitem"
+  },
+
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "toolMixingbowl"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropOats"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropPeach"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "listAllheavycream"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

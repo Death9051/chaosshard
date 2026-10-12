@@ -1,0 +1,29 @@
+{
+  "result": {
+    "item": "harvestcraft:beetsaladitem"
+  },
+
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "toolMixingbowl"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropBeet"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropLettuce"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "foodVinegar"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "foodCheese"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

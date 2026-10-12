@@ -1,0 +1,21 @@
+{
+  "result": {
+    "item": "harvestcraft:pistachiobakedsalmonitem"
+  },
+
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "toolBakeware"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropPistachio"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "foodSalmonraw"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

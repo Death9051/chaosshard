@@ -1,0 +1,20 @@
+{
+    "type": "minecraft:crafting_shapeless",
+    "ingredients": [
+        {
+            "item": "#INFERNAL_CLAW"
+        },
+        {
+            "item": "#INFERNAL_CLAW"
+        },
+        {
+            "item": "#INFERNAL_CLAW"
+        },
+        {
+            "item": "#SLIME_PEARL"
+        }
+    ],
+    "result": {
+        "item": "xreliquary:infernal_claws"
+    }
+}

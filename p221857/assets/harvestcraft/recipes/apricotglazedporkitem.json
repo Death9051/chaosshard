@@ -1,0 +1,17 @@
+{
+  "result": {
+    "item": "harvestcraft:apricotglazedporkitem"
+  },
+
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "listAllporkcooked"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "foodApricotjelly"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

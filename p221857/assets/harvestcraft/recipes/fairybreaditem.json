@@ -1,0 +1,33 @@
+{
+  "result": {
+    "item": "harvestcraft:fairybreaditem"
+  },
+
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "toolBakeware"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "bread"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "foodButter"
+    },
+    {
+      "item": "minecraft:dye",
+      "data": 1
+    },
+    {
+      "item": "minecraft:dye",
+      "data": 2
+    },
+    {
+      "item": "minecraft:dye",
+      "data": 11
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

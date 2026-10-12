@@ -1,0 +1,22 @@
+{
+  "result": {
+    "item": "harvestcraft:pistachiobutteritem",
+    "count": 2
+  },
+
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "toolMortarandpestle"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropPistachio"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "foodOliveoil"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

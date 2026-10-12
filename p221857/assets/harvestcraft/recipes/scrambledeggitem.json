@@ -1,0 +1,17 @@
+{
+  "result": {
+    "item": "harvestcraft:scrambledeggitem"
+  },
+
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "toolSaucepan"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "listAllegg"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

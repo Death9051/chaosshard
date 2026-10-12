@@ -1,0 +1,13 @@
+{
+  "result": {
+    "item": "harvestcraft:oliveoilitem"
+  },
+  "group":"harvestcraft_oliveoilitem",
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "foodSesameoil"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

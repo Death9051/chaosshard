@@ -1,0 +1,21 @@
+{
+  "result": {
+    "item": "harvestcraft:pinacoladaitem"
+  },
+
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "toolJuicer"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropCoconut"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropPineapple"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

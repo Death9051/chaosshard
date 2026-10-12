@@ -1,0 +1,25 @@
+{
+  "result": {
+    "item": "harvestcraft:mochaicecreamitem"
+  },
+
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "toolMixingbowl"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "listAllicecream"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropCoffee"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "foodCocoapowder"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

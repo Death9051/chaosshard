@@ -1,0 +1,36 @@
+Archive:  /tmp/mod.jar
+  Length      Date    Time    Name
+---------  ---------- -----   ----
+        0  2021-05-13 16:00   META-INF/
+       25  2021-05-13 16:00   META-INF/MANIFEST.MF
+        0  2021-05-13 16:00   com/
+        0  2021-05-13 16:00   com/blamejared/
+        0  2021-05-13 16:00   com/blamejared/mtlib/
+        0  2021-05-13 16:00   com/blamejared/mtlib/helpers/
+     8095  2021-05-13 16:00   com/blamejared/mtlib/helpers/InputHelper.class
+     7052  2021-05-13 16:00   com/blamejared/mtlib/helpers/LogHelper.class
+     5436  2021-05-13 16:00   com/blamejared/mtlib/helpers/ReflectionHelper.class
+     2726  2021-05-13 16:00   com/blamejared/mtlib/helpers/StackHelper.class
+     2505  2021-05-13 16:00   com/blamejared/mtlib/helpers/StringHelper.class
+     1330  2021-05-13 16:00   com/blamejared/mtlib/MTLib.class
+        0  2021-05-13 16:00   com/blamejared/mtlib/reference/
+      462  2021-05-13 16:00   com/blamejared/mtlib/reference/Reference.class
+        0  2021-05-13 16:00   com/blamejared/mtlib/utils/
+     1142  2021-05-13 16:00   com/blamejared/mtlib/utils/BaseAction.class
+     1273  2021-05-13 16:00   com/blamejared/mtlib/utils/BaseAddForestry.class
+     1613  2021-05-13 16:00   com/blamejared/mtlib/utils/BaseCraftingAddition.class
+     2532  2021-05-13 16:00   com/blamejared/mtlib/utils/BaseCraftingRemoval.class
+     2445  2021-05-13 16:00   com/blamejared/mtlib/utils/BaseListAddition.class
+     2868  2021-05-13 16:00   com/blamejared/mtlib/utils/BaseListModification.class
+     2461  2021-05-13 16:00   com/blamejared/mtlib/utils/BaseListRemoval.class
+     3001  2021-05-13 16:00   com/blamejared/mtlib/utils/BaseMapAddition.class
+     2051  2021-05-13 16:00   com/blamejared/mtlib/utils/BaseMapModification.class
+     2508  2021-05-13 16:00   com/blamejared/mtlib/utils/BaseMapRemoval.class
+     1355  2021-05-13 16:00   com/blamejared/mtlib/utils/BaseMultiModification.class
+     1865  2021-05-13 16:00   com/blamejared/mtlib/utils/BaseRemoveForestry.class
+      481  2021-05-13 16:00   com/blamejared/mtlib/utils/BaseUndoable.class
+      284  2021-05-13 16:00   mcmod.info
+     1328  2021-05-13 16:00   META-INF/fml_cache_annotation.json
+     1037  2021-05-13 16:00   META-INF/fml_cache_class_versions.json
+---------                     -------
+    55875                     31 files

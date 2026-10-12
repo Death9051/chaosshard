@@ -1,0 +1,17 @@
+{
+  "result": {
+    "item": "harvestcraft:toastedcoconutitem"
+  },
+
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropCoconut"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "toolBakeware"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

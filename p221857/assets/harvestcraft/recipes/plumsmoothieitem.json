@@ -1,0 +1,24 @@
+{
+  "result": {
+    "item": "harvestcraft:plumsmoothieitem"
+  },
+
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "toolJuicer"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropPlum"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropPlum"
+    },
+    {
+      "item": "minecraft:snowball"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

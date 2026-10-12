@@ -1,0 +1,24 @@
+{
+  "result": {
+    "item": "harvestcraft:gooseberrysmoothieitem"
+  },
+
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "toolJuicer"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropGooseberry"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropGooseberry"
+    },
+    {
+      "item": "minecraft:snowball"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

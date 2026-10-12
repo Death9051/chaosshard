@@ -1,0 +1,21 @@
+{
+  "result": {
+    "item": "harvestcraft:batteritem"
+  },
+
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "toolMixingbowl"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "foodFlour"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "listAllegg"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

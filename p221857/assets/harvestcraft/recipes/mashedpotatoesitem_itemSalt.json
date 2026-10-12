@@ -1,0 +1,21 @@
+{
+  "result": {
+    "item": "harvestcraft:mashedpotatoesitem"
+  },
+  "group":"harvestcraft_mashedpotatoesitem",
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "toolMixingbowl"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "foodButteredpotato"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "itemSalt"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

@@ -1,0 +1,16 @@
+[
+    {
+        "modid": "chameleon_morph",
+        "name": "Chameleon",
+        "description": "Loads animated Blockbench models as Metamorph morphs",
+        "version": "1.2.2",
+        "mcversion": "1.12.2",
+        "url": "",
+        "updateUrl": "https://raw.githubusercontent.com/mchorse/chameleon/master/version.json",
+        "authorList": ["mchorse"],
+        "credits": "Gecko and Eliot Lash for GeckoLib, and Jannis for Blockbench",
+        "logoFile": "",
+        "screenshots": [],
+        "dependencies": []
+    }
+]

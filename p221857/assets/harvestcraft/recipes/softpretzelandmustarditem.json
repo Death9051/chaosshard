@@ -1,0 +1,17 @@
+{
+  "result": {
+    "item": "harvestcraft:softpretzelandmustarditem"
+  },
+
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "foodSoftpretzel"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "foodMustard"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

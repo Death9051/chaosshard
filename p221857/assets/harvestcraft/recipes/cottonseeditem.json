@@ -1,0 +1,12 @@
+{
+  "result": {
+    "item": "harvestcraft:cottonseeditem"
+  },
+
+  "ingredients": [
+    {
+      "item": "harvestcraft:cottonitem"
+    }
+  ],
+  "type": "minecraft:crafting_shapeless"
+}

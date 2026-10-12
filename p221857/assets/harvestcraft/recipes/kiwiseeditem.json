@@ -1,0 +1,12 @@
+{
+  "result": {
+    "item": "harvestcraft:kiwiseeditem"
+  },
+
+  "ingredients": [
+    {
+      "item": "harvestcraft:kiwiitem"
+    }
+  ],
+  "type": "minecraft:crafting_shapeless"
+}

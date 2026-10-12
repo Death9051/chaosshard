@@ -1,0 +1,17 @@
+{
+  "result": {
+    "item": "harvestcraft:blackberryyogurtitem"
+  },
+
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropBlackberry"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "foodPlainyogurt"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

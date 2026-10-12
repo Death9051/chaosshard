@@ -1,0 +1,17 @@
+{
+  "result": {
+    "item": "harvestcraft:popcornitem"
+  },
+
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropCorn"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "toolBakeware"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

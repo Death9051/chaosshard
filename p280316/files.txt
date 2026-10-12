@@ -1,0 +1,39 @@
+Archive:  /tmp/mod.jar
+  Length      Date    Time    Name
+---------  ---------- -----   ----
+     2430  2019-04-07 21:08   META-INF/MANIFEST.MF
+     2636  2019-04-07 21:08   META-INF/MINECRAF.SF
+     1425  2019-04-07 21:08   META-INF/MINECRAF.RSA
+        0  2019-04-07 21:08   META-INF/
+     7015  2019-04-07 21:08   META-INF/fml_cache_annotation.json
+      899  2019-04-07 21:08   META-INF/fml_cache_class_versions.json
+    26461  2019-04-07 21:08   LICENSE
+        0  2019-04-07 21:08   assets/
+        0  2019-04-07 21:08   assets/itemstages/
+        0  2019-04-07 21:08   assets/itemstages/lang/
+      461  2019-04-07 21:08   assets/itemstages/lang/en_US.lang
+      387  2019-04-07 21:08   mcmod.info
+        0  2019-04-07 21:08   net/
+        0  2019-04-07 21:08   net/darkhax/
+        0  2019-04-07 21:08   net/darkhax/itemstages/
+     1784  2019-04-07 21:08   net/darkhax/itemstages/ConfigurationHandler.class
+    16759  2019-04-07 21:08   net/darkhax/itemstages/ItemStages.class
+     2944  2019-04-07 21:08   net/darkhax/itemstages/StageCompare.class
+        0  2019-04-07 21:08   net/darkhax/itemstages/commands/
+     2327  2019-04-07 21:08   net/darkhax/itemstages/commands/CommandDumpJeiStages.class
+        0  2019-04-07 21:08   net/darkhax/itemstages/compat/
+        0  2019-04-07 21:08   net/darkhax/itemstages/compat/crt/
+     1923  2019-04-07 21:08   net/darkhax/itemstages/compat/crt/ActionAddItemRestriction.class
+     3160  2019-04-07 21:08   net/darkhax/itemstages/compat/crt/ActionItemStage.class
+     1350  2019-04-07 21:08   net/darkhax/itemstages/compat/crt/ActionRemoveRestriction.class
+     1437  2019-04-07 21:08   net/darkhax/itemstages/compat/crt/ActionRenameItem.class
+     2657  2019-04-07 21:08   net/darkhax/itemstages/compat/crt/ActionStageEnchant.class
+     2726  2019-04-07 21:08   net/darkhax/itemstages/compat/crt/ActionStageEnchantByLevel.class
+     1609  2019-04-07 21:08   net/darkhax/itemstages/compat/crt/ActionStageLiquid.class
+     1176  2019-04-07 21:08   net/darkhax/itemstages/compat/crt/ActionStageRecipeCategory.class
+     1135  2019-04-07 21:08   net/darkhax/itemstages/compat/crt/ActionStageTooltip.class
+     3660  2019-04-07 21:08   net/darkhax/itemstages/compat/crt/ItemStagesCrT.class
+        0  2019-04-07 21:08   net/darkhax/itemstages/compat/jei/
+     6876  2019-04-07 21:08   net/darkhax/itemstages/compat/jei/PluginItemStages.class
+---------                     -------
+    93237                     34 files

@@ -1,0 +1,20 @@
+{
+  "result": {
+    "item": "harvestcraft:spidereyesoupitem"
+  },
+
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "toolPot"
+    },
+    {
+      "item": "minecraft:spider_eye"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "foodStock"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

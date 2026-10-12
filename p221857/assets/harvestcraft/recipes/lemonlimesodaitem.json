@@ -1,0 +1,29 @@
+{
+  "result": {
+    "item": "harvestcraft:lemonlimesodaitem"
+  },
+
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "toolPot"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "foodBubblywater"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "listAllsugar"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropLemon"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "foodLimejuice"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

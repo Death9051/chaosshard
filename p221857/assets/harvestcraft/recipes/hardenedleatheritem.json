@@ -1,0 +1,16 @@
+{
+  "result": {
+    "item": "harvestcraft:hardenedleatheritem"
+  },
+
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "materialPressedwax"
+    },
+    {
+      "item": "minecraft:leather"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

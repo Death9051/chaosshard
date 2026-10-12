@@ -1,0 +1,25 @@
+{
+  "result": {
+    "item": "harvestcraft:strawberryjellysandwichitem"
+  },
+
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "toolCuttingboard"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "listAllnutbutter"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "foodStrawberryjelly"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "bread"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

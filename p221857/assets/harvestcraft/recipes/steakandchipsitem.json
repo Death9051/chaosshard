@@ -1,0 +1,21 @@
+{
+  "result": {
+    "item": "harvestcraft:steakandchipsitem"
+  },
+
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "toolSkillet"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "listAllbeefraw"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "foodFries"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

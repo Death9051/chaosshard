@@ -1,0 +1,12 @@
+{
+  "result": {
+    "item": "harvestcraft:bambooshootseeditem"
+  },
+
+  "ingredients": [
+    {
+      "item": "harvestcraft:bambooshootitem"
+    }
+  ],
+  "type": "minecraft:crafting_shapeless"
+}

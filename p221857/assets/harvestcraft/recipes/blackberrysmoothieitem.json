@@ -1,0 +1,24 @@
+{
+  "result": {
+    "item": "harvestcraft:blackberrysmoothieitem"
+  },
+
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "toolJuicer"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropBlackberry"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropBlackberry"
+    },
+    {
+      "item": "minecraft:snowball"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

@@ -1,0 +1,17 @@
+{
+  "result": {
+    "item": "harvestcraft:baconmushroomburgeritem"
+  },
+  "group":"harvestcraft_baconmushroomburgeritem",
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "foodBaconcheeseburger"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropWhitemushroom"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

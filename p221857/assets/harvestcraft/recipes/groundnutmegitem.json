@@ -1,0 +1,17 @@
+{
+  "result": {
+    "item": "harvestcraft:groundnutmegitem"
+  },
+
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "toolMortarandpestle"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropNutmeg"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

@@ -1,0 +1,25 @@
+{
+  "result": {
+    "item": "harvestcraft:potatosoupitem"
+  },
+  "group":"harvestcraft_potatosoupitem",
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "toolPot"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropPotato"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "dustSalt"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "foodStock"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

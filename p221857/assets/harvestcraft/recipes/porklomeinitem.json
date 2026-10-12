@@ -1,0 +1,41 @@
+{
+  "result": {
+    "item": "harvestcraft:porklomeinitem"
+  },
+
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "toolPot"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "listAllporkraw"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "foodPasta"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropOnion"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropCarrot"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropCabbage"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropGarlic"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "foodSoysauce"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

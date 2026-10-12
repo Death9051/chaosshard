@@ -1,0 +1,17 @@
+{
+  "result": {
+    "item": "harvestcraft:plainyogurtitem"
+  },
+  "group":"harvestcraft_plainyogurtitem",
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "toolPot"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "listAllmilk"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

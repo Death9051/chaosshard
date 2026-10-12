@@ -1,0 +1,16 @@
+[
+{
+  "modid": "waystones",
+  "name": "Waystones",
+  "description": "Teleport back to activated waystones. For Survival, Adventure or Servers.",
+  "version": "4.1.0",
+  "mcversion": "1.12.2",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["BlayTheNinth"],
+  "credits": "Developed by BlayTheNinth. Includes item icons by @JoeCreates released under CC-BY-SA 3.0",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]

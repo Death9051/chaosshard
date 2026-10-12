@@ -1,0 +1,29 @@
+{
+  "result": {
+    "item": "harvestcraft:candiedwalnutsitem"
+  },
+
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "toolSaucepan"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropWalnut"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "foodVanilla"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "foodGroundcinnamon"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "listAllsugar"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

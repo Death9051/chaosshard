@@ -1,0 +1,37 @@
+{
+  "result": {
+    "item": "harvestcraft:kohlundpinkelitem"
+  },
+
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "toolPot"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "listAllporkraw"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "foodPinkel"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropPotato"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "foodBlackpepper"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "foodPorksausage"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropKale"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

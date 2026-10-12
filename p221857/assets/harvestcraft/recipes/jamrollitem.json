@@ -1,0 +1,25 @@
+{
+  "result": {
+    "item": "harvestcraft:jamrollitem"
+  },
+
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "toolBakeware"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "foodChocolatebar"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "foodFlour"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "foodRaspberryjelly"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

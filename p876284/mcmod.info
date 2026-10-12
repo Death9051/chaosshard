@@ -1,0 +1,15 @@
+[
+{
+  "modid": "advancedbackups",
+  "name": "Advanced Backups",
+  "description": "Powerful backup mod.",
+  "version": "3.7.1",
+  "url": "https://github.com/HeatherComputer/AdvancedBackups",
+  "updateUrl": "",
+  "authorList": ["Heather White"],
+  "credits": "",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]

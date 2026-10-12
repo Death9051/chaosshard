@@ -1,0 +1,36 @@
+Archive:  /tmp/mod.jar
+  Length      Date    Time    Name
+---------  ---------- -----   ----
+        0  2020-04-02 18:37   META-INF/
+       25  2020-04-02 18:37   META-INF/MANIFEST.MF
+        0  2020-04-02 18:37   cofh/
+        0  2020-04-02 18:37   cofh/redstoneflux/
+        0  2020-04-02 18:37   cofh/redstoneflux/api/
+      201  2020-04-02 18:37   cofh/redstoneflux/api/IEnergyConnection.class
+      320  2020-04-02 18:37   cofh/redstoneflux/api/IEnergyContainerItem.class
+      270  2020-04-02 18:37   cofh/redstoneflux/api/IEnergyHandler.class
+      240  2020-04-02 18:37   cofh/redstoneflux/api/IEnergyProvider.class
+      240  2020-04-02 18:37   cofh/redstoneflux/api/IEnergyReceiver.class
+      248  2020-04-02 18:37   cofh/redstoneflux/api/IEnergyStorage.class
+        0  2020-04-02 18:37   cofh/redstoneflux/impl/
+     2901  2020-04-02 18:37   cofh/redstoneflux/impl/EnergyStorage.class
+     2703  2020-04-02 18:37   cofh/redstoneflux/impl/ItemEnergyContainer.class
+      826  2020-04-02 18:37   cofh/redstoneflux/impl/ItemEnergyContainerCap.class
+     1840  2020-04-02 18:37   cofh/redstoneflux/impl/TileEnergyHandler.class
+        0  2020-04-02 18:37   cofh/redstoneflux/internal/
+     4401  2020-04-02 18:37   cofh/redstoneflux/internal/OldAPIChecker.class
+      289  2020-04-02 18:37   cofh/redstoneflux/package-info.class
+     1060  2020-04-02 18:37   cofh/redstoneflux/RedstoneFlux.class
+      600  2020-04-02 18:37   cofh/redstoneflux/RedstoneFluxProps.class
+        0  2020-04-02 18:37   cofh/redstoneflux/util/
+     1695  2020-04-02 18:37   cofh/redstoneflux/util/EnergyContainerItemWrapper$1.class
+     2420  2020-04-02 18:37   cofh/redstoneflux/util/EnergyContainerItemWrapper.class
+        0  2020-04-02 18:37   assets/
+        0  2020-04-02 18:37   assets/redstoneflux/
+        0  2020-04-02 18:37   assets/redstoneflux/textures/
+    16089  2020-04-02 18:37   assets/redstoneflux/textures/logo.png
+      464  2020-04-02 18:37   mcmod.info
+     2950  2020-04-02 18:37   META-INF/fml_cache_annotation.json
+      787  2020-04-02 18:37   META-INF/fml_cache_class_versions.json
+---------                     -------
+    40569                     31 files

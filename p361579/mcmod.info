@@ -1,0 +1,7 @@
+[{
+  "modid": "spark",
+  "name": "spark",
+  "description": "spark is a performance profiling plugin/mod for Minecraft clients, servers and proxies.",
+  "version": "1.5.2",
+  "authors": ["Luck"]
+}]

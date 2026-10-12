@@ -1,0 +1,26 @@
+{
+    "display": {
+        "icon": {
+            "item": "mystcraft:unlinkedbook"
+        },
+        "title": {
+            "translate": "achievement.myst.linkbook"
+        },
+        "description": {
+            "translate": "achievement.myst.linkbook.desc"
+        }
+    },
+    "parent": "mystcraft:root",
+    "criteria": {
+        "myst_unlinked_book_in_inventory": {
+            "trigger": "minecraft:inventory_changed",
+            "conditions": {
+                "items": [
+                    {
+                        "item": "mystcraft:unlinkedbook"
+                    }
+                ]
+            }
+        }
+    }
+}

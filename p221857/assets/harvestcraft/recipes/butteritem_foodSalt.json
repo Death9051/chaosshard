@@ -1,0 +1,21 @@
+{
+  "result": {
+    "item": "harvestcraft:butteritem"
+  },
+  "group":"harvestcraft_butteritem",
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "toolSaucepan"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "listAllheavycream"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "foodSalt"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

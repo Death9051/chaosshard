@@ -1,0 +1,25 @@
+{
+  "result": {
+    "item": "harvestcraft:pickledonionsitem"
+  },
+  "group":"harvestcraft_pickledonionsitem",
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "toolPot"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropOnion"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "foodSalt"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "foodVinegar"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

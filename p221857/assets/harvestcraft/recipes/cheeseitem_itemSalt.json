@@ -1,0 +1,21 @@
+{
+  "result": {
+    "item": "harvestcraft:cheeseitem"
+  },
+  "group":"harvestcraft_cheeseitem",
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "toolPot"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "listAllmilk"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "itemSalt"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

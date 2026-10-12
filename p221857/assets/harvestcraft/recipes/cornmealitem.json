@@ -1,0 +1,17 @@
+{
+  "result": {
+    "item": "harvestcraft:cornmealitem"
+  },
+
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "toolMortarandpestle"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropCorn"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

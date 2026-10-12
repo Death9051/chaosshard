@@ -1,0 +1,33 @@
+{
+  "result": {
+    "item": "harvestcraft:salsaitem"
+  },
+
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "toolMixingbowl"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropTomato"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropOnion"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropSpiceleaf"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropLime"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropGarlic"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

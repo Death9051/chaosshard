@@ -1,0 +1,25 @@
+{
+  "result": {
+    "item": "harvestcraft:spicymustardporkitem"
+  },
+  "group":"harvestcraft_spicymustardporkitem",
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "toolSaucepan"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "foodMustard"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "listAllporkraw"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "dustSalt"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

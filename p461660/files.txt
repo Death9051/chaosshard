@@ -1,0 +1,51 @@
+Archive:  /tmp/mod.jar
+  Length      Date    Time    Name
+---------  ---------- -----   ----
+        0  2024-11-04 21:36   META-INF/
+       25  2024-11-04 21:36   META-INF/MANIFEST.MF
+        0  2024-11-04 21:36   yalter/
+        0  2024-11-04 21:36   yalter/mousetweaks/
+        0  2024-11-04 21:36   yalter/mousetweaks/api/
+      776  2024-11-04 21:36   yalter/mousetweaks/api/IMTModGuiContainer.class
+      483  2024-11-04 21:36   yalter/mousetweaks/api/IMTModGuiContainer2.class
+      742  2024-11-04 21:36   yalter/mousetweaks/api/IMTModGuiContainer2Ex.class
+      430  2024-11-04 21:36   yalter/mousetweaks/api/MouseTweaksDisableWheelTweak.class
+      408  2024-11-04 21:36   yalter/mousetweaks/api/MouseTweaksIgnore.class
+      291  2024-11-04 21:36   yalter/mousetweaks/api/package-info.class
+        0  2024-11-04 21:36   yalter/mousetweaks/handlers/
+     1207  2024-11-04 21:36   yalter/mousetweaks/handlers/GuiContainerCreativeHandler.class
+     6422  2024-11-04 21:36   yalter/mousetweaks/handlers/GuiContainerHandler.class
+     2806  2024-11-04 21:36   yalter/mousetweaks/handlers/IMTModGuiContainer2ExHandler.class
+     4468  2024-11-04 21:36   yalter/mousetweaks/handlers/IMTModGuiContainer2Handler.class
+     2949  2024-11-04 21:36   yalter/mousetweaks/handlers/IMTModGuiContainerHandler.class
+        0  2024-11-04 21:36   yalter/mousetweaks/impl/
+     1245  2024-11-04 21:36   yalter/mousetweaks/impl/GuiContainerID.class
+      697  2024-11-04 21:36   yalter/mousetweaks/impl/IGuiScreenHandler.class
+      462  2024-11-04 21:36   yalter/mousetweaks/impl/IMouseState.class
+     1251  2024-11-04 21:36   yalter/mousetweaks/impl/MouseButton.class
+     1132  2024-11-04 21:36   yalter/mousetweaks/impl/Obfuscation.class
+    11208  2024-11-04 21:36   yalter/mousetweaks/Main.class
+     3363  2024-11-04 21:36   yalter/mousetweaks/MouseState.class
+     6042  2024-11-04 21:36   yalter/mousetweaks/MouseTweaks.class
+      769  2024-11-04 21:36   yalter/mousetweaks/MTConfig$1.class
+     1759  2024-11-04 21:36   yalter/mousetweaks/MTConfig$ScrollHandling.class
+     2212  2024-11-04 21:36   yalter/mousetweaks/MTConfig$ScrollItemScaling.class
+     2316  2024-11-04 21:36   yalter/mousetweaks/MTConfig$WheelScrollDirection.class
+     1749  2024-11-04 21:36   yalter/mousetweaks/MTConfig$WheelSearchOrder.class
+     3149  2024-11-04 21:36   yalter/mousetweaks/MTConfig.class
+        0  2024-11-04 21:36   yalter/mousetweaks/reflect/
+     6447  2024-11-04 21:36   yalter/mousetweaks/reflect/Reflection.class
+     2938  2024-11-04 21:36   yalter/mousetweaks/reflect/ReflectionCache.class
+     1210  2024-11-04 21:36   yalter/mousetweaks/SimpleMouseState.class
+        0  2024-11-04 21:36   yalter/mousetweaks/util/
+     1656  2024-11-04 21:36   yalter/mousetweaks/util/Constants.class
+      474  2024-11-04 21:36   yalter/mousetweaks/util/MTLog.class
+      763  2024-11-04 21:36   yalter/mousetweaks/util/ObfuscatedName$1.class
+     1023  2024-11-04 21:36   yalter/mousetweaks/util/ObfuscatedName.class
+   138421  2024-11-04 21:36   curseforge_logo.png
+      557  2024-11-04 21:36   mcmod.info
+    21036  2024-11-04 21:36   mousetweaks_logo.png
+       90  2024-11-04 21:36   pack.mcmeta
+      434  2024-11-04 21:36   yalter/mousetweaks/Tags.class
+---------                     -------
+   233410                     46 files

@@ -1,0 +1,22 @@
+{
+  "result": {
+    "item": "harvestcraft:chestnutbutteritem",
+    "count": 2
+  },
+
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "toolMortarandpestle"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropChestnut"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "foodOliveoil"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

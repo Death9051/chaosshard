@@ -1,0 +1,25 @@
+{
+  "result": {
+    "item": "harvestcraft:broccolindipitem"
+  },
+
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "toolMixingbowl"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropBroccoli"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropOnion"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "listAllheavycream"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

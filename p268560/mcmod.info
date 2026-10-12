@@ -1,0 +1,35 @@
+[
+  {
+    "modid": "mekanism",
+    "name": "Mekanism",
+    "description": "Tools and Machines",
+    "version": "1.12.2-9.8.3.390",
+    "mcversion": "1.12.2",
+    "authorList": [
+      "aidancbrady",
+      "thommy101",
+      "thiakil",
+      "pupnewfster",
+      "dizzyd"
+    ],
+    "credits": "unpairedbracket, CyanideX and many others",
+    "useDependencyInformation": true,
+    "dependencies": [
+      "forge",
+      "redstoneflux",
+      "mcmultipart",
+      "jei",
+      "buildcraftcore",
+      "ic2",
+      "computercraft",
+      "galaticraft api",
+      "metallurgy",
+      "crafttweaker",
+      "cofhcore",
+      "cyclicmagic"
+    ],
+    "requiredMods": [
+      "forge@[14.23.5.2768,)"
+    ]
+  }
+]

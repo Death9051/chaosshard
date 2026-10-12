@@ -1,0 +1,12 @@
+{
+    "type": "forge:ore_shaped",
+	"group": "stone_defiled",
+    "pattern": [
+        "S",
+		"S"
+    ],
+    "key": {
+        "S": { "item": "defiledlands:stone_defiled_slab", "data": 0 }
+    },
+    "result": { "item": "defiledlands:stone_defiled" }
+}

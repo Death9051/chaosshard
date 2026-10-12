@@ -1,0 +1,25 @@
+{
+  "result": {
+    "item": "harvestcraft:sausageinbreaditem"
+  },
+
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "foodMaplesausage"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "bread"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "foodKetchup"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropOnion"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

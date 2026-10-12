@@ -1,0 +1,12 @@
+{
+  "result": {
+    "item": "harvestcraft:gingerseeditem"
+  },
+
+  "ingredients": [
+    {
+      "item": "harvestcraft:gingeritem"
+    }
+  ],
+  "type": "minecraft:crafting_shapeless"
+}

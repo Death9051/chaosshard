@@ -1,0 +1,25 @@
+{
+  "result": {
+    "item": "harvestcraft:fishsandwichitem"
+  },
+
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "toolSkillet"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "listAllfishraw"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "foodMayo"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "bread"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

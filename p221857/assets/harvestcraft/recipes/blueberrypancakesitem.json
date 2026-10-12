@@ -1,0 +1,17 @@
+{
+  "result": {
+    "item": "harvestcraft:blueberrypancakesitem"
+  },
+
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropBlueberry"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "foodPancakes"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

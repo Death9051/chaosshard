@@ -1,0 +1,19 @@
+{
+  "result": {
+    "item": "harvestcraft:bubblywateritem"
+  },
+
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "toolPot"
+    },
+    {
+      "item": "harvestcraft:freshwateritem"
+    },
+    {
+      "item": "harvestcraft:freshwateritem"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

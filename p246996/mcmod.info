@@ -1,0 +1,21 @@
+[
+    {
+      "modid": "base",
+      "name": "B.A.S.E",
+      "description": "Library Mod for the Team Acronym Coders",
+      "version": "1.12.2-3.14.0",
+      "mcversion": "1.12.2",
+      "url": "http://minecraft.curseforge.com/projects/b-a-s-e",
+      "updateUrl": "http://minecraft.curseforge.com/projects/b-a-s-e/files",
+      "authorList": [
+          "SkySom",
+          "Lanse505",
+          "Jared",
+          "EwyBoy"
+      ],
+      "credits": "",
+      "logoFile": "",
+      "screenshots": [],
+      "dependencies": []
+    }
+]

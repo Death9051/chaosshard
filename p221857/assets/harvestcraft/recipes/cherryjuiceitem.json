@@ -1,0 +1,21 @@
+{
+  "result": {
+    "item": "harvestcraft:cherryjuiceitem"
+  },
+
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "toolJuicer"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropCherry"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropCherry"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

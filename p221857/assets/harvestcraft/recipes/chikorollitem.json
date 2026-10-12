@@ -1,0 +1,41 @@
+{
+  "result": {
+    "item": "harvestcraft:chikorollitem"
+  },
+
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "toolPot"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "foodOliveoil"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "foodDough"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "listAllchickencooked"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropCarrot"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropCabbage"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropLeek"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropOnion"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

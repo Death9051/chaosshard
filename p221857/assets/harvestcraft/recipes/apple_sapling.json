@@ -1,0 +1,25 @@
+{
+  "result": {
+    "item": "harvestcraft:apple_sapling"
+  },
+  "group": "harvestcraft_sapling",
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropApple"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropApple"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropApple"
+    },
+    {
+      "item": "minecraft:sapling",
+      "data": 32767
+    }
+  ],
+  "type": "minecraft:crafting_shapeless"
+}

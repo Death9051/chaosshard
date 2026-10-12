@@ -1,0 +1,25 @@
+{
+
+  "pattern": [
+    "aba",
+    "bcb",
+    "aba"
+  ],
+  "key": {
+    "a": {
+      "type": "forge:ore_dict",
+      "ore": "plankWood"
+    },
+    "b": {
+      "item": "minecraft:log",
+      "data": 32767
+    },
+    "c": {
+      "item": "minecraft:emerald"
+    }
+  },
+  "result": {
+    "item": "harvestcraft:shippingbin"
+  },
+  "type": "forge:ore_shaped"
+}

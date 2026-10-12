@@ -1,0 +1,21 @@
+{
+  "result": {
+    "item": "harvestcraft:hotdogitem"
+  },
+
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "toolPot"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "listAllporkraw"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "bread"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

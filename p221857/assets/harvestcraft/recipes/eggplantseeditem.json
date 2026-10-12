@@ -1,0 +1,12 @@
+{
+  "result": {
+    "item": "harvestcraft:eggplantseeditem"
+  },
+
+  "ingredients": [
+    {
+      "item": "harvestcraft:eggplantitem"
+    }
+  ],
+  "type": "minecraft:crafting_shapeless"
+}

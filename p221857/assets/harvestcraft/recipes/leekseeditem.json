@@ -1,0 +1,12 @@
+{
+  "result": {
+    "item": "harvestcraft:leekseeditem"
+  },
+
+  "ingredients": [
+    {
+      "item": "harvestcraft:leekitem"
+    }
+  ],
+  "type": "minecraft:crafting_shapeless"
+}

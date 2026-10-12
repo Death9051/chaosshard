@@ -1,0 +1,25 @@
+{
+  "result": {
+    "item": "harvestcraft:sundayroastitem"
+  },
+
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "toolBakeware"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "foodRoastchicken"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "foodRoastpotatoes"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "listAllgreenveggie"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

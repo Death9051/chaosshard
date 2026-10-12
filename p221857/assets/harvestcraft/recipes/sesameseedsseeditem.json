@@ -1,0 +1,12 @@
+{
+  "result": {
+    "item": "harvestcraft:sesameseedsseeditem"
+  },
+
+  "ingredients": [
+    {
+      "item": "harvestcraft:sesameseedsitem"
+    }
+  ],
+  "type": "minecraft:crafting_shapeless"
+}

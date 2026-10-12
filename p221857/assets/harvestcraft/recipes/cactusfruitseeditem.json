@@ -1,0 +1,12 @@
+{
+  "result": {
+    "item": "harvestcraft:cactusfruitseeditem"
+  },
+
+  "ingredients": [
+    {
+      "item": "harvestcraft:cactusfruititem"
+    }
+  ],
+  "type": "minecraft:crafting_shapeless"
+}

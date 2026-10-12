@@ -1,0 +1,21 @@
+{
+
+  "pattern": [
+    "aba",
+    "aba",
+    "aba"
+  ],
+  "key": {
+    "a": {
+      "type": "forge:ore_dict",
+      "ore": "plankWood"
+    },
+    "b": {
+      "item": "minecraft:item_frame"
+    }
+  },
+  "result": {
+    "item": "harvestcraft:apiary"
+  },
+  "type": "forge:ore_shaped"
+}

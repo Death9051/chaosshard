@@ -1,0 +1,22 @@
+{
+  "result": {
+    "item": "harvestcraft:pistachio_sapling"
+  },
+  "group": "harvestcraft_sapling",
+  "ingredients": [
+    {
+      "item": "harvestcraft:pistachioitem"
+    },
+    {
+      "item": "harvestcraft:pistachioitem"
+    },
+    {
+      "item": "harvestcraft:pistachioitem"
+    },
+    {
+      "item": "minecraft:sapling",
+      "data": 32767
+    }
+  ],
+  "type": "minecraft:crafting_shapeless"
+}

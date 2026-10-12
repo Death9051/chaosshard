@@ -1,0 +1,17 @@
+{
+  "result": {
+    "item": "harvestcraft:raisinsitem"
+  },
+
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropGrape"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "toolBakeware"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

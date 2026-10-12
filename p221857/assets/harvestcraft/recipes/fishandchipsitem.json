@@ -1,0 +1,17 @@
+{
+  "result": {
+    "item": "harvestcraft:fishandchipsitem"
+  },
+
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "foodFishsticks"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "foodFries"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

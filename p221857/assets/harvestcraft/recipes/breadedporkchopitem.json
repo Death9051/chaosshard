@@ -1,0 +1,21 @@
+{
+  "result": {
+    "item": "harvestcraft:breadedporkchopitem"
+  },
+
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "toolSkillet"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "listAllporkraw"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "foodBatter"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

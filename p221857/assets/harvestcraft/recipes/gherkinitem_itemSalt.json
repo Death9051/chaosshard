@@ -1,0 +1,29 @@
+{
+  "result": {
+    "item": "harvestcraft:gherkinitem"
+  },
+  "group":"harvestcraft_gherkinitem",
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "toolPot"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "foodVinegar"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "itemSalt"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropSpiceleaf"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropCucumber"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

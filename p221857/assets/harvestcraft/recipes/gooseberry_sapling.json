@@ -1,0 +1,22 @@
+{
+  "result": {
+    "item": "harvestcraft:gooseberry_sapling"
+  },
+  "group": "harvestcraft_sapling",
+  "ingredients": [
+    {
+      "item": "harvestcraft:gooseberryitem"
+    },
+    {
+      "item": "harvestcraft:gooseberryitem"
+    },
+    {
+      "item": "harvestcraft:gooseberryitem"
+    },
+    {
+      "item": "minecraft:sapling",
+      "data": 32767
+    }
+  ],
+  "type": "minecraft:crafting_shapeless"
+}

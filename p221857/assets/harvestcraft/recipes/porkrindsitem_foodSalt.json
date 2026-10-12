@@ -1,0 +1,29 @@
+{
+  "result": {
+    "item": "harvestcraft:porkrindsitem"
+  },
+
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "toolPot"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "foodOliveoil"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "materialPigskin"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "foodSalt"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "foodBlackpepper"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

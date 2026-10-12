@@ -1,0 +1,12 @@
+{
+  "result": {
+    "item": "harvestcraft:garlicseeditem"
+  },
+
+  "ingredients": [
+    {
+      "item": "harvestcraft:garlicitem"
+    }
+  ],
+  "type": "minecraft:crafting_shapeless"
+}

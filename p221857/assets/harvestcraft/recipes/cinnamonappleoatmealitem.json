@@ -1,0 +1,25 @@
+{
+  "result": {
+    "item": "harvestcraft:cinnamonappleoatmealitem"
+  },
+
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "toolMixingbowl"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropOats"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "foodGroundcinnamon"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropApple"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

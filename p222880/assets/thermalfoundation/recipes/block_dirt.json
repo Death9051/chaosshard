@@ -1,0 +1,26 @@
+{
+	"type": "forge:ore_shapeless",
+	"result": {
+		"item": "minecraft:dirt",
+		"data": 0,
+		"count": 2
+	},
+	"ingredients": [
+		{
+			"item": "thermalfoundation:material",
+			"data": 816
+		},
+		{
+			"item": "thermalfoundation:material",
+			"data": 816
+		},
+		{
+			"type": "forge:ore_dict",
+			"ore": "crystalSlag"
+		},
+		{
+			"type": "forge:ore_dict",
+			"ore": "crystalSlag"
+		}
+	]
+}

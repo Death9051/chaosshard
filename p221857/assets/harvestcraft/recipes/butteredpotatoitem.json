@@ -1,0 +1,16 @@
+{
+  "result": {
+    "item": "harvestcraft:butteredpotatoitem"
+  },
+
+  "ingredients": [
+    {
+      "item": "minecraft:baked_potato"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "foodButter"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

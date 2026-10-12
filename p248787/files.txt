@@ -1,0 +1,45 @@
+Archive:  /tmp/mod.jar
+  Length      Date    Time    Name
+---------  ---------- -----   ----
+        0  2020-06-23 21:26   META-INF/
+       25  2020-06-23 21:26   META-INF/MANIFEST.MF
+        0  2020-06-23 21:26   betterwithmods/
+        0  2020-06-23 21:26   betterwithmods/api/
+      813  2020-06-23 21:26   betterwithmods/api/FeatureEnabledEvent.class
+      297  2020-06-23 21:26   betterwithmods/api/package-info.class
+        0  2020-06-23 21:26   squeek/
+        0  2020-06-23 21:26   squeek/appleskin/
+     2507  2020-06-23 21:26   squeek/appleskin/AppleSkin.class
+        0  2020-06-23 21:26   squeek/appleskin/client/
+     3311  2020-06-23 21:26   squeek/appleskin/client/DebugInfoHandler.class
+        0  2020-06-23 21:26   squeek/appleskin/client/gui/
+     1529  2020-06-23 21:26   squeek/appleskin/client/gui/GuiFactory.class
+     9008  2020-06-23 21:26   squeek/appleskin/client/HUDOverlayHandler.class
+     9206  2020-06-23 21:26   squeek/appleskin/client/TooltipOverlayHandler.class
+        0  2020-06-23 21:26   squeek/appleskin/helpers/
+     2837  2020-06-23 21:26   squeek/appleskin/helpers/AppleCoreHelper.class
+      793  2020-06-23 21:26   squeek/appleskin/helpers/BetterWithModsHelper$BWMFoodValues.class
+     1944  2020-06-23 21:26   squeek/appleskin/helpers/BetterWithModsHelper.class
+     1139  2020-06-23 21:26   squeek/appleskin/helpers/FoodHelper$BasicFoodValues.class
+     1671  2020-06-23 21:26   squeek/appleskin/helpers/FoodHelper.class
+     1839  2020-06-23 21:26   squeek/appleskin/helpers/HungerHelper.class
+      702  2020-06-23 21:26   squeek/appleskin/helpers/KeyHelper.class
+     4358  2020-06-23 21:26   squeek/appleskin/ModConfig.class
+      714  2020-06-23 21:26   squeek/appleskin/ModInfo.class
+        0  2020-06-23 21:26   squeek/appleskin/network/
+     1488  2020-06-23 21:26   squeek/appleskin/network/MessageExhaustionSync$1.class
+     2514  2020-06-23 21:26   squeek/appleskin/network/MessageExhaustionSync.class
+     1700  2020-06-23 21:26   squeek/appleskin/network/MessageSaturationSync$1.class
+     2514  2020-06-23 21:26   squeek/appleskin/network/MessageSaturationSync.class
+     1276  2020-06-23 21:26   squeek/appleskin/network/NetworkHelper.class
+     4128  2020-06-23 21:26   squeek/appleskin/network/SyncHandler.class
+        0  2020-06-23 21:26   assets/
+        0  2020-06-23 21:26   assets/appleskin/
+        0  2020-06-23 21:26   assets/appleskin/textures/
+      480  2020-06-23 21:26   assets/appleskin/textures/icons.png
+      301  2020-06-23 21:26   mcmod.info
+       96  2020-06-23 21:26   pack.mcmeta
+     5839  2020-06-23 21:26   META-INF/fml_cache_annotation.json
+     1094  2020-06-23 21:26   META-INF/fml_cache_class_versions.json
+---------                     -------
+    64123                     40 files

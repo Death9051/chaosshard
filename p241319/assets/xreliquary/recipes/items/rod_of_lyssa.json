@@ -1,0 +1,20 @@
+{
+    "type": "minecraft:crafting_shapeless",
+    "ingredients": [
+        {
+            "item": "#INFERNAL_CLAW"
+        },
+        {
+            "item": "#BAT_WING"
+        },
+        {
+            "item": "#NEBULOUS_HEART"
+        },
+        {
+            "item": "minecraft:fishing_rod"
+        }
+    ],
+    "result": {
+        "item": "xreliquary:rod_of_lyssa"
+    }
+}

@@ -1,0 +1,22 @@
+{
+  "result": {
+    "item": "waystones:return_scroll",
+    "count": 3
+  },
+  "type": "forge:ore_shaped",
+  "pattern": [
+    "GEG",
+    "PPP"
+  ],
+  "key": {
+    "G": {
+      "item": "#GOLD_NUGGET"
+    },
+    "E": {
+      "item": "#ENDER_PEARL"
+    },
+    "P": {
+      "item": "#PAPER"
+    }
+  }
+}

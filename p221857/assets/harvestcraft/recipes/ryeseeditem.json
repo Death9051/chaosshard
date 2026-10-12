@@ -1,0 +1,12 @@
+{
+  "result": {
+    "item": "harvestcraft:ryeseeditem"
+  },
+
+  "ingredients": [
+    {
+      "item": "harvestcraft:ryeitem"
+    }
+  ],
+  "type": "minecraft:crafting_shapeless"
+}

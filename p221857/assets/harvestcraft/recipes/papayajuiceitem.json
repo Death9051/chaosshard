@@ -1,0 +1,21 @@
+{
+  "result": {
+    "item": "harvestcraft:papayajuiceitem"
+  },
+
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "toolJuicer"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropPapaya"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropPapaya"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

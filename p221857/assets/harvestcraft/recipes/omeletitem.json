@@ -1,0 +1,25 @@
+{
+  "result": {
+    "item": "harvestcraft:omeletitem"
+  },
+
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "toolSkillet"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "listAllegg"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropBellpepper"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropOnion"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

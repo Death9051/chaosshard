@@ -1,0 +1,13 @@
+[
+    {
+        "modid": "mclib",
+        "name": "McLib",
+        "description": "McHorse's library mod",
+        "version": "2.4.3-1.12.2",
+        "mcversion": "1.12.2",
+        "url": "https://www.curseforge.com/minecraft/mc-mods/mchorses-mclib/",
+        "updateJSON": "https://raw.githubusercontent.com/mchorse/mclib/1.12/version.json",
+        "authorList": ["mchorse"],
+        "credits": "Ernio for networking code I still use to this day!"
+    }
+]

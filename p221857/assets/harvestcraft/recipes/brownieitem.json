@@ -1,0 +1,37 @@
+{
+  "result": {
+    "item": "harvestcraft:brownieitem"
+  },
+
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "toolBakeware"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropWalnut"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "foodBatter"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "foodButter"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "listAllsugar"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "foodCocoapowder"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "foodVanilla"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

@@ -1,0 +1,17 @@
+{
+  "result": {
+    "item": "harvestcraft:mustarditem"
+  },
+
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "toolJuicer"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropMustard"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

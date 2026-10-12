@@ -1,0 +1,16 @@
+[
+{
+  "modid": "defiledlands",
+  "name": "Defiled Lands",
+  "description": "Adds defiled lands, akin to Terraria's corruption.",
+  "version": "1.12.2-1.4.3",
+  "mcversion": "1.12.2",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["Lykrast"],
+  "credits": "Rhodox for making the Painterly Pack and allowing me to use textures from it",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]

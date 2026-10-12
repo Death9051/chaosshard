@@ -1,0 +1,17 @@
+{
+
+  "pattern": [
+    "a a",
+    "aaa",
+    "aaa"
+  ],
+  "key": {
+    "a": {
+      "item": "harvestcraft:hardenedleatheritem"
+    }
+  },
+  "result": {
+    "item": "harvestcraft:hardenedleatherchestitem"
+  },
+  "type": "minecraft:crafting_shaped"
+}

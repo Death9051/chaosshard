@@ -1,0 +1,24 @@
+{
+  "result": {
+    "item": "harvestcraft:icecreamitem"
+  },
+  "group":"harvestcraft_icecreamitem",
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "toolMixingbowl"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "listAllmilk"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "itemSalt"
+    },
+    {
+      "item": "minecraft:snowball"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

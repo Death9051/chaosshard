@@ -1,0 +1,16 @@
+{
+  "result": {
+    "item": "harvestcraft:vanillaitem"
+  },
+
+  "ingredients": [
+    {
+      "item": "harvestcraft:vanillabeanitem"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "toolBakeware"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

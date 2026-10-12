@@ -1,0 +1,25 @@
+{
+  "result": {
+    "item": "harvestcraft:sweetteaitem"
+  },
+
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "toolPot"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "foodTea"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "listAllsugar"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropLemon"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

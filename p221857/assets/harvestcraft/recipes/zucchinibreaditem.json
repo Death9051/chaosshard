@@ -1,0 +1,29 @@
+{
+  "result": {
+    "item": "harvestcraft:zucchinibreaditem"
+  },
+
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "toolBakeware"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropZucchini"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "foodDough"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "foodGroundcinnamon"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropWalnut"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

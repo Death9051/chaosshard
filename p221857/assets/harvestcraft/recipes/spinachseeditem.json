@@ -1,0 +1,12 @@
+{
+  "result": {
+    "item": "harvestcraft:spinachseeditem"
+  },
+
+  "ingredients": [
+    {
+      "item": "harvestcraft:spinachitem"
+    }
+  ],
+  "type": "minecraft:crafting_shapeless"
+}

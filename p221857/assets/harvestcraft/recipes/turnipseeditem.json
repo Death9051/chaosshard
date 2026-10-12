@@ -1,0 +1,12 @@
+{
+  "result": {
+    "item": "harvestcraft:turnipseeditem"
+  },
+
+  "ingredients": [
+    {
+      "item": "harvestcraft:turnipitem"
+    }
+  ],
+  "type": "minecraft:crafting_shapeless"
+}

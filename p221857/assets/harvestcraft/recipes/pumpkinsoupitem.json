@@ -1,0 +1,25 @@
+{
+  "result": {
+    "item": "harvestcraft:pumpkinsoupitem"
+  },
+
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "toolPot"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropPumpkin"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "listAllheavycream"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "foodStock"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

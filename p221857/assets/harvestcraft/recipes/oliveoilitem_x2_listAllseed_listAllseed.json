@@ -1,0 +1,22 @@
+{
+  "result": {
+    "item": "harvestcraft:oliveoilitem",
+    "count": 2
+  },
+  "group":"harvestcraft_oliveoilitem",
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "toolJuicer"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "listAllseed"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "listAllseed"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

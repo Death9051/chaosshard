@@ -1,0 +1,12 @@
+{
+  "result": {
+    "item": "harvestcraft:broccoliseeditem"
+  },
+
+  "ingredients": [
+    {
+      "item": "harvestcraft:broccoliitem"
+    }
+  ],
+  "type": "minecraft:crafting_shapeless"
+}

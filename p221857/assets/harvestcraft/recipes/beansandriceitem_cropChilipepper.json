@@ -1,0 +1,29 @@
+{
+  "result": {
+    "item": "harvestcraft:beansandriceitem"
+  },
+  "group":"harvestcraft_beansandriceitem",
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "toolPot"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropBean"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropRice"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropChilipepper"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "listAllporkcooked"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

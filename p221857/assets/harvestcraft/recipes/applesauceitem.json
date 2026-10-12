@@ -1,0 +1,17 @@
+{
+  "result": {
+    "item": "harvestcraft:applesauceitem"
+  },
+
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "toolPot"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropApple"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

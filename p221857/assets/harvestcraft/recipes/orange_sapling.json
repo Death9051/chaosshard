@@ -1,0 +1,22 @@
+{
+  "result": {
+    "item": "harvestcraft:orange_sapling"
+  },
+  "group": "harvestcraft_sapling",
+  "ingredients": [
+    {
+      "item": "harvestcraft:orangeitem"
+    },
+    {
+      "item": "harvestcraft:orangeitem"
+    },
+    {
+      "item": "harvestcraft:orangeitem"
+    },
+    {
+      "item": "minecraft:sapling",
+      "data": 32767
+    }
+  ],
+  "type": "minecraft:crafting_shapeless"
+}

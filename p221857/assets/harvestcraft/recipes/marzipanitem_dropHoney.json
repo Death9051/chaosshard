@@ -1,0 +1,21 @@
+{
+  "result": {
+    "item": "harvestcraft:marzipanitem"
+  },
+
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "toolMortarandpestle"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "dropHoney"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropAlmond"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

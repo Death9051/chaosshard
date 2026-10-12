@@ -1,0 +1,12 @@
+[{
+	"modid": "jei",
+	"name": "Had Enough Items",
+	"version": "4.35.0",
+	"mcversion": "1.12.2",
+	"description": "Simple recipe and item helper.",
+	"authorList": ["mezz", "Rongmario"],
+	"credits": "",
+	"url": "https://github.com/CleanroomMC/HadEnoughItems",
+	"updateJSON": "",
+	"logoFile": "assets/jei/logo.png"
+}]

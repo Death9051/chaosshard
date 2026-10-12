@@ -1,0 +1,21 @@
+{
+    "type": "minecraft:crafting_shapeless",
+    "ingredients": [
+        {
+            "item": "#MOLTEN_CORE"
+        },
+        {
+            "item": "minecraft:gold_ingot"
+        },
+        {
+            "item": "minecraft:blaze_rod"
+        },
+        {
+            "type": "xreliquary:item_empty_nbt",
+            "item": "xreliquary:void_tear"
+        }
+    ],
+    "result": {
+        "item": "xreliquary:sojourner_staff"
+    }
+}

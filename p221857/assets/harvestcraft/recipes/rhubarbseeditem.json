@@ -1,0 +1,12 @@
+{
+  "result": {
+    "item": "harvestcraft:rhubarbseeditem"
+  },
+
+  "ingredients": [
+    {
+      "item": "harvestcraft:rhubarbitem"
+    }
+  ],
+  "type": "minecraft:crafting_shapeless"
+}

@@ -1,0 +1,14 @@
+Archive:  /tmp/mod.jar
+  Length      Date    Time    Name
+---------  ---------- -----   ----
+        0  2024-03-26 13:07   META-INF/
+      148  2024-03-26 13:07   META-INF/MANIFEST.MF
+        0  2024-03-26 13:07   com/
+        0  2024-03-26 13:07   com/cleanroommc/
+        0  2024-03-26 13:07   com/cleanroommc/configanytime/
+     6263  2024-03-26 13:07   com/cleanroommc/configanytime/ConfigAnytime.class
+     1146  2024-03-26 13:07   com/cleanroommc/configanytime/ConfigAnytimePlugin.class
+      341  2024-03-26 13:07   mcmod.info
+      297  2024-03-26 13:07   com/cleanroommc/configanytime/Tags.class
+---------                     -------
+     8195                     9 files

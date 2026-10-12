@@ -1,0 +1,17 @@
+[
+{
+  "modid": "cyclopscore",
+  "name": "Cyclops Core",
+  "description": "Coremod for EvilCraft, Integrated Dynamics and others.",
+  "version": "1.12.2-1.6.7",
+  "mcversion": "1.12.2",
+  "logoFile": "assets/cyclopscore/textures/logo.png",
+  "url": "https://minecraft.curseforge.com/projects/cyclops-core",
+  "updateUrl": "https://minecraft.curseforge.com/projects/cyclops-core/files",
+  "authorList": [ "rubensworks (aka kroeserr)", "immortaleeb (aka _EeB_)" ],
+  "credits": "kroeserr, _EeB_",
+  "parent": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]

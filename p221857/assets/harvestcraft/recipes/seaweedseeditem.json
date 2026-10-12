@@ -1,0 +1,12 @@
+{
+  "result": {
+    "item": "harvestcraft:seaweedseeditem"
+  },
+
+  "ingredients": [
+    {
+      "item": "harvestcraft:seaweeditem"
+    }
+  ],
+  "type": "minecraft:crafting_shapeless"
+}

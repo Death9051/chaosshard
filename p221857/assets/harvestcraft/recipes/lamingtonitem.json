@@ -1,0 +1,25 @@
+{
+  "result": {
+    "item": "harvestcraft:lamingtonitem"
+  },
+
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "toolBakeware"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "foodDough"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "foodChocolatebar"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "foodToastedcoconut"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

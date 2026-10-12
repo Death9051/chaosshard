@@ -1,0 +1,21 @@
+{
+  "result": {
+    "item": "harvestcraft:trailmixitem"
+  },
+  "group":"harvestcraft_trailmixitem",
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropSunflower"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "foodRaisins"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "foodChocolatebar"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

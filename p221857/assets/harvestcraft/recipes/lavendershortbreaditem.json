@@ -1,0 +1,21 @@
+{
+  "result": {
+    "item": "harvestcraft:lavendershortbreaditem"
+  },
+
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "toolBakeware"
+    },
+    {
+      "item": "minecraft:dye",
+      "data": 5
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "foodDough"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

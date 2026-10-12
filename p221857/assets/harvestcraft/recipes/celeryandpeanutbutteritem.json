@@ -1,0 +1,17 @@
+{
+  "result": {
+    "item": "harvestcraft:celeryandpeanutbutteritem"
+  },
+
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropCelery"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "listAllnutbutter"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

@@ -1,0 +1,14 @@
+{
+    "type": "forge:ore_shaped",
+    "pattern": [
+        "UUU",
+        "UGU",
+        "UEU"
+    ],
+    "key": {
+        "U": { "ore": "ingotUmbrium", "type": "forge:ore_dict" },
+        "G": { "ore": "blockGlass", "type": "forge:ore_dict" },
+        "E": { "item": "defiledlands:scuttler_eye" }
+    },
+    "result": { "item": "defiledlands:book_wyrm_analyzer" }
+}

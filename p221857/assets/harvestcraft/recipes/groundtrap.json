@@ -1,0 +1,30 @@
+{
+
+  "pattern": [
+    "aba",
+    "cdc",
+    "aca"
+  ],
+  "key": {
+    "a": {
+      "type": "forge:ore_dict",
+      "ore": "stickWood"
+    },
+    "b": {
+      "item": "minecraft:trapdoor"
+    },
+    "c": {
+      "type": "forge:ore_dict",
+      "ore": "string"
+    },
+    "d": {
+      "item": "minecraft:chest",
+      "data": 32767
+    }
+  },
+  "result": {
+    "item": "harvestcraft:groundtrap"
+  },
+  "type": "forge:ore_shaped"
+}
+

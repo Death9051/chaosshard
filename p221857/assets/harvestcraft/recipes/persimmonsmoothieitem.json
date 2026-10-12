@@ -1,0 +1,24 @@
+{
+  "result": {
+    "item": "harvestcraft:persimmonsmoothieitem"
+  },
+
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "toolJuicer"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropPersimmon"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropPersimmon"
+    },
+    {
+      "item": "minecraft:snowball"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

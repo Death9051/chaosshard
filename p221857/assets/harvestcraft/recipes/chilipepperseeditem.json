@@ -1,0 +1,12 @@
+{
+  "result": {
+    "item": "harvestcraft:chilipepperseeditem"
+  },
+
+  "ingredients": [
+    {
+      "item": "harvestcraft:chilipepperitem"
+    }
+  ],
+  "type": "minecraft:crafting_shapeless"
+}

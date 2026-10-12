@@ -1,0 +1,29 @@
+{
+  "result": {
+    "item": "harvestcraft:pineappleupsidedowncakeitem"
+  },
+
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "toolBakeware"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropPineapple"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "foodDough"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropCherry"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropWalnut"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

@@ -1,0 +1,22 @@
+{
+  "result": {
+    "item": "harvestcraft:peppercorn_sapling"
+  },
+  "group": "harvestcraft_sapling",
+  "ingredients": [
+    {
+      "item": "harvestcraft:peppercornitem"
+    },
+    {
+      "item": "harvestcraft:peppercornitem"
+    },
+    {
+      "item": "harvestcraft:peppercornitem"
+    },
+    {
+      "item": "minecraft:sapling",
+      "data": 32767
+    }
+  ],
+  "type": "minecraft:crafting_shapeless"
+}

@@ -1,0 +1,17 @@
+{
+  "result": {
+    "item": "harvestcraft:strawberrysaladitem"
+  },
+
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropStrawberry"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "foodFruitsalad"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

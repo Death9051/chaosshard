@@ -1,0 +1,29 @@
+{
+  "result": {
+    "item": "harvestcraft:heartybreakfastitem"
+  },
+
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "listAllporkcooked"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "foodFriedegg"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "foodToast"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "foodPotatocakes"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "foodChocolatemilk"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

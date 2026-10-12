@@ -1,0 +1,33 @@
+{
+  "result": {
+    "item": "harvestcraft:summersquashwithradishitem"
+  },
+
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "toolMixingbowl"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropRadish"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropZucchini"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropPumpkin"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropSpiceleaf"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "foodOliveoil"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

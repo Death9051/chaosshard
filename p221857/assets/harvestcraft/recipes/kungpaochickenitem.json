@@ -1,0 +1,45 @@
+{
+  "result": {
+    "item": "harvestcraft:kungpaochickenitem"
+  },
+
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "toolSaucepan"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "listAllchickenraw"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropOrange"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropGinger"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropGarlic"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "listAllsugar"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "foodOliveoil"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropPeppercorn"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropPeanut"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

@@ -1,0 +1,17 @@
+{
+  "result": {
+    "item": "harvestcraft:ketchupitem"
+  },
+
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "toolJuicer"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropTomato"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

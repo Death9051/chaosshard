@@ -1,0 +1,21 @@
+{
+  "result": {
+    "item": "harvestcraft:hamburgeritem"
+  },
+
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "toolSkillet"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "listAllbeefraw"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "foodToast"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

@@ -1,0 +1,52 @@
+Archive:  /tmp/mod.jar
+  Length      Date    Time    Name
+---------  ---------- -----   ----
+        0  2021-07-29 12:13   META-INF/
+       52  2021-07-29 12:13   META-INF/MANIFEST.MF
+        0  2021-07-29 12:13   com/
+        0  2021-07-29 12:13   com/blamejared/
+        0  2021-07-29 12:13   com/blamejared/recipestages/
+        0  2021-07-29 12:13   com/blamejared/recipestages/proxy/
+     1084  2021-07-29 12:13   com/blamejared/recipestages/proxy/CommonProxy.class
+     3895  2021-07-29 12:13   com/blamejared/recipestages/proxy/ClientProxy.class
+     3709  2021-07-29 12:13   com/blamejared/recipestages/RecipeStages.class
+        0  2021-07-29 12:13   com/blamejared/recipestages/compat/
+     4078  2021-07-29 12:13   com/blamejared/recipestages/compat/StagedRecipeCategory.class
+     1386  2021-07-29 12:13   com/blamejared/recipestages/compat/StagedRecipeFactory.class
+     2792  2021-07-29 12:13   com/blamejared/recipestages/compat/JEIPlugin.class
+     2610  2021-07-29 12:13   com/blamejared/recipestages/compat/StagedRecipeWrapperShaped.class
+     1944  2021-07-29 12:13   com/blamejared/recipestages/compat/StagedRecipeWrapperShapeless.class
+        0  2021-07-29 12:13   com/blamejared/recipestages/config/
+     1131  2021-07-29 12:13   com/blamejared/recipestages/config/Configurations.class
+        0  2021-07-29 12:13   com/blamejared/recipestages/recipes/
+     7348  2021-07-29 12:13   com/blamejared/recipestages/recipes/RecipeStage.class
+        0  2021-07-29 12:13   com/blamejared/recipestages/handlers/
+     4616  2021-07-29 12:13   com/blamejared/recipestages/handlers/Recipes$ActionSetOutputStages.class
+     1820  2021-07-29 12:13   com/blamejared/recipestages/handlers/Recipes$ActionSetStage.class
+     1294  2021-07-29 12:13   com/blamejared/recipestages/handlers/Recipes$ActionSetPack.class
+      960  2021-07-29 12:13   com/blamejared/recipestages/handlers/Recipes$ActionSetPrinting.class
+     5201  2021-07-29 12:13   com/blamejared/recipestages/handlers/Recipes$ActionBaseAddRecipe.class
+     4493  2021-07-29 12:13   com/blamejared/recipestages/handlers/Recipes$ActionSetModidStages.class
+     2200  2021-07-29 12:13   com/blamejared/recipestages/handlers/Recipes$ActionAddShapelessRecipe.class
+     1296  2021-07-29 12:13   com/blamejared/recipestages/handlers/Recipes$ActionSetCrafter.class
+      243  2021-07-29 12:13   com/blamejared/recipestages/handlers/Recipes$1.class
+     4583  2021-07-29 12:13   com/blamejared/recipestages/handlers/Recipes$ActionSetRegexStages.class
+     2708  2021-07-29 12:13   com/blamejared/recipestages/handlers/Recipes$ActionAddShapedRecipe.class
+    14287  2021-07-29 12:13   com/blamejared/recipestages/handlers/Recipes.class
+     4297  2021-07-29 12:13   com/blamejared/recipestages/handlers/Recipes$ActionSetNameStages.class
+        0  2021-07-29 12:13   com/blamejared/recipestages/reference/
+      490  2021-07-29 12:13   com/blamejared/recipestages/reference/Reference.class
+        0  2021-07-29 12:13   com/blamejared/recipestages/events/
+     1382  2021-07-29 12:13   com/blamejared/recipestages/events/ClientEventHandler.class
+     1868  2021-07-29 12:13   com/blamejared/recipestages/events/CommonEventHandler.class
+        0  2021-07-29 12:13   assets/
+        0  2021-07-29 12:13   assets/recipestages/
+        0  2021-07-29 12:13   assets/recipestages/lang/
+       67  2021-07-29 12:13   assets/recipestages/lang/zh_CN.lang
+       69  2021-07-29 12:13   assets/recipestages/lang/en_US.lang
+      197  2021-07-29 12:13   mcmod.info
+       77  2021-07-29 12:13   recipestages_at.cfg
+    10773  2021-07-29 12:13   META-INF/fml_cache_annotation.json
+     1706  2021-07-29 12:13   META-INF/fml_cache_class_versions.json
+---------                     -------
+    94656                     47 files

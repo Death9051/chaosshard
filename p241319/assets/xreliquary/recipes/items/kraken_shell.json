@@ -1,0 +1,20 @@
+{
+    "type": "minecraft:crafting_shapeless",
+    "ingredients": [
+        {
+            "item": "#SHELL_FRAGMENT"
+        },
+        {
+            "item": "#SHELL_FRAGMENT"
+        },
+        {
+            "item": "#SHELL_FRAGMENT"
+        },
+        {
+            "item": "#NEBULOUS_HEART"
+        }
+    ],
+    "result": {
+        "item": "xreliquary:kraken_shell"
+    }
+}

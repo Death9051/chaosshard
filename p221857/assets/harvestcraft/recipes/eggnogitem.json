@@ -1,0 +1,29 @@
+{
+  "result": {
+    "item": "harvestcraft:eggnogitem"
+  },
+
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "toolJuicer"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "listAllegg"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "foodGroundnutmeg"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropCinnamon"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "listAllheavycream"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

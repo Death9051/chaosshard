@@ -1,0 +1,29 @@
+{
+  "result": {
+    "item": "harvestcraft:turnipsoupitem"
+  },
+
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "toolPot"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropTurnip"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropPumpkin"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "foodButter"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "foodStock"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

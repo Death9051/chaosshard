@@ -1,0 +1,17 @@
+{
+
+  "pattern": [
+    "aaa",
+    "aaa",
+    "aaa"
+  ],
+  "key": {
+    "a": {
+      "item" : "harvestcraft:honeyitem"
+    }
+  },
+  "result": {
+    "item": "harvestcraft:honey"
+  },
+  "type": "minecraft:crafting_shaped"
+}

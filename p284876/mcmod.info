@@ -1,0 +1,29 @@
+[
+    {
+        "modid": "dimdoors",
+        "name": "Dimensional Doors",
+        "description": "Bend and twist reality itself, creating pocket dimensions, rifts, and much more",
+        "version": "3.2.3",
+        "credits": "Created by StevenRS11 | Coded by StevenRS11 & SenseiKiwi | Logo and Testing by Jaitsu | Updates by Zixiken & Waterpicker | Maintained and debugged by The_Computerizer | Extra fixes by IcarussOne",
+        "logoFile": "dimdoors_logo.png",
+        "mcversion": "1.12.2",
+        "url": "https://github.com/DimensionalDevelopment/DimDoors",
+        "updateUrl": "",
+        "authorList": [
+            "StevenRS11",
+            "SenseiKiwi",
+            "Zixiken",
+            "WaterPicker",
+            "Robijnvogel",
+            "ZombieHDGaming",
+            "Runemoro",
+            "The_Computerizer",
+            "IcarussOne"
+        ],
+        "parent": "",
+        "screenshots": [],
+        "dependencies": [
+            "forge"
+        ]
+    }
+]

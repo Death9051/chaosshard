@@ -1,0 +1,21 @@
+{
+  "result": {
+    "item": "harvestcraft:porklettucewrapitem"
+  },
+
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "toolCuttingboard"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropLettuce"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "listAllporkcooked"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

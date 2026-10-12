@@ -1,0 +1,12 @@
+{
+  "result": {
+    "item": "harvestcraft:mustardseeditem"
+  },
+
+  "ingredients": [
+    {
+      "item": "harvestcraft:mustardseedsitem"
+    }
+  ],
+  "type": "minecraft:crafting_shapeless"
+}

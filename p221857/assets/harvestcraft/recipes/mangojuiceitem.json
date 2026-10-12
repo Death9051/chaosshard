@@ -1,0 +1,21 @@
+{
+  "result": {
+    "item": "harvestcraft:mangojuiceitem"
+  },
+
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "toolJuicer"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropMango"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropMango"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

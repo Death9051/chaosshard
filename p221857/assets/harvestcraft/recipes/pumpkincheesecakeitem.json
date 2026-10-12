@@ -1,0 +1,17 @@
+{
+  "result": {
+    "item": "harvestcraft:pumpkincheesecakeitem"
+  },
+
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropPumpkin"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "foodCheesecake"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

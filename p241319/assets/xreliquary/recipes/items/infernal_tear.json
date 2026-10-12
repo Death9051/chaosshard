@@ -1,0 +1,21 @@
+{
+    "type": "minecraft:crafting_shapeless",
+    "ingredients": [
+        {
+            "type": "xreliquary:item_empty_nbt",
+            "item": "xreliquary:void_tear"
+        },
+        {
+            "item": "xreliquary:witch_hat"
+        },
+        {
+            "item": "#MOLTEN_CORE"
+        },
+        {
+            "item": "#INFERNAL_CLAW"
+        }
+    ],
+    "result": {
+        "item": "xreliquary:infernal_tear"
+    }
+}

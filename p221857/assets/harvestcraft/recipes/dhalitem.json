@@ -1,0 +1,41 @@
+{
+  "result": {
+    "item": "harvestcraft:dhalitem"
+  },
+
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "toolPot"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropPeas"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "foodGarammasala"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropCurryleaf"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropMustard"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropOnion"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropTomato"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropGarlic"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

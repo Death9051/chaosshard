@@ -1,0 +1,17 @@
+{
+  "result": {
+    "item": "harvestcraft:coffeeitem"
+  },
+
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropCoffee"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "toolPot"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

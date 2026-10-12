@@ -1,0 +1,12 @@
+{
+  "result": {
+    "item": "harvestcraft:coffeeseeditem"
+  },
+
+  "ingredients": [
+    {
+      "item": "harvestcraft:coffeebeanitem"
+    }
+  ],
+  "type": "minecraft:crafting_shapeless"
+}

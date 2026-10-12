@@ -1,0 +1,30 @@
+{
+  "result": {
+    "item": "harvestcraft:meringueitem",
+    "count": 5
+  },
+
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "toolMixingbowl"
+    },
+{
+      "type": "forge:ore_dict",
+      "ore": "listAllegg"
+    },
+{
+      "type": "forge:ore_dict",
+      "ore": "listAllsugar"
+    },
+{
+      "type": "forge:ore_dict",
+      "ore": "foodCornmeal"
+    },
+{
+      "type": "forge:ore_dict",
+      "ore": "cropLemon"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}

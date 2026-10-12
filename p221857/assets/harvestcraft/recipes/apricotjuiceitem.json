@@ -1,0 +1,21 @@
+{
+  "result": {
+    "item": "harvestcraft:apricotjuiceitem"
+  },
+
+  "ingredients": [
+    {
+      "type": "forge:ore_dict",
+      "ore": "toolJuicer"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropApricot"
+    },
+    {
+      "type": "forge:ore_dict",
+      "ore": "cropApricot"
+    }
+  ],
+  "type": "forge:ore_shapeless"
+}
