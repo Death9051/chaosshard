@@ -143,6 +143,17 @@ public final class Corruption {
         return ForgeRegistries.BIOMES.getValue(new ResourceLocation("defiledlands", id));
     }
 
+    /** Отправить игрокам заново чанки со сменённым биомом. */
+    public static void resendChunks(net.minecraft.world.WorldServer ws, java.util.Set<Long> keys) {
+        for (long key : keys) {
+            int cx = (int) (key & 0xFFFFFFFFL), cz = (int) (key >>> 32);
+            net.minecraft.server.management.PlayerChunkMapEntry entry = ws.getPlayerChunkMap().getEntry(cx, cz);
+            if (entry != null && entry.isSentToPlayers()) {
+                entry.sendPacket(new net.minecraft.network.play.server.SPacketChunkData(ws.getChunk(cx, cz), 65535));
+            }
+        }
+    }
+
     /** Сбросить кэш правил (после смены конфига). */
     public static void reset() {
         rules = null;

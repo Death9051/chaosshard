@@ -37,26 +37,112 @@ public final class VillageEvolution {
         ADEPT = new VillagerRegistry.VillagerProfession(PROFESSION, Tags.MOD_ID + ":textures/entity/villager_adept.png",
                 "minecraft:textures/entity/zombie_villager/zombie_villager.png");
         event.getRegistry().register(ADEPT);
-        VillagerRegistry.VillagerCareer career = new VillagerRegistry.VillagerCareer(ADEPT, "chaos_adept");
-        // 1-я ступень: мел и Осколки за изумруды, изумруды за гниль
-        career.addTrade(1,
-                new EntityVillager.ListItemForEmeralds(ModItems.CHALK, new EntityVillager.PriceInfo(3, 5)),
-                new EntityVillager.ListItemForEmeralds(ModItems.VEIL_SHARD, new EntityVillager.PriceInfo(5, 8)),
-                new EntityVillager.EmeraldForItems(net.minecraft.init.Items.ROTTEN_FLESH, new EntityVillager.PriceInfo(18, 24)));
-        // 2-я: Эссенция и Обрывки памяти, изумруды за кости
-        career.addTrade(2,
-                new EntityVillager.ListItemForEmeralds(ModItems.CHAOS_ESSENCE, new EntityVillager.PriceInfo(6, 9)),
-                new EntityVillager.ListItemForEmeralds(ModItems.MEMORY_FRAGMENT, new EntityVillager.PriceInfo(9, 14)),
-                new EntityVillager.EmeraldForItems(net.minecraft.init.Items.BONE, new EntityVillager.PriceInfo(10, 14)));
-        // 3-я: жемчуг Края, хаосит пачкой
-        career.addTrade(3,
-                new EntityVillager.ListItemForEmeralds(net.minecraft.init.Items.ENDER_PEARL, new EntityVillager.PriceInfo(4, 7)),
-                new EntityVillager.ListItemForEmeralds(Item.getItemFromBlock(ru.death.chaosshard.init.ModBlocks.CHAOS_STONE),
-                        new EntityVillager.PriceInfo(-16, -12)));
-        // 4-я: печати Якоря
+        // Четыре ремесла Адептов — Обитель торгует почти всем, что нужно. Ремесло выпадает каждому жителю случайно.
+        VillagerRegistry.VillagerCareer keeper = new VillagerRegistry.VillagerCareer(ADEPT, "chaos_keeper");
+        keeper.addTrade(1, sell(ModItems.CHALK, 3, 5), sell(ModItems.VEIL_SHARD, 5, 8), buy(net.minecraft.init.Items.ROTTEN_FLESH, 18, 24));
+        keeper.addTrade(2, sell(ModItems.CHAOS_ESSENCE, 6, 9), sell(ModItems.MEMORY_FRAGMENT, 9, 14), buy(net.minecraft.init.Items.BONE, 10, 14));
+        keeper.addTrade(3, sell(net.minecraft.init.Items.ENDER_PEARL, 4, 7), bulk(Item.getItemFromBlock(ru.death.chaosshard.init.ModBlocks.CHAOS_STONE), 12, 16),
+                bulk(Item.getItemFromBlock(ru.death.chaosshard.init.ModBlocks.CHAOS_CRUST), 8, 12));
         for (Item seal : ModItems.SEALS.values()) {
-            career.addTrade(4, new EntityVillager.ListItemForEmeralds(seal, new EntityVillager.PriceInfo(24, 32)));
+            keeper.addTrade(4, sell(seal, 24, 32));
         }
+
+        VillagerRegistry.VillagerCareer smith = new VillagerRegistry.VillagerCareer(ADEPT, "chaos_smith");
+        smith.addTrade(1, buy(net.minecraft.init.Items.COAL, 14, 18), bulk(net.minecraft.init.Items.IRON_INGOT, 2, 3),
+                new OreForEmeralds("ingotCopper", 2, 4), new OreForEmeralds("ingotTin", 2, 4));
+        smith.addTrade(2, sell(net.minecraft.init.Items.GOLD_INGOT, 1, 2), new OreForEmeralds("ingotLead", 2, 3),
+                new OreForEmeralds("ingotSilver", 1, 2), enchanted(net.minecraft.init.Items.IRON_PICKAXE, 7, 10),
+                enchanted(net.minecraft.init.Items.IRON_SWORD, 7, 10));
+        smith.addTrade(3, sell(net.minecraft.init.Items.DIAMOND, 8, 12), new OreForEmeralds("ingotNickel", 1, 2),
+                new OreForEmeralds("ingotOsmium", 2, 3), new OreForEmeralds("ingotAluminum", 2, 4),
+                enchanted(net.minecraft.init.Items.IRON_CHESTPLATE, 10, 14));
+        smith.addTrade(4, enchanted(net.minecraft.init.Items.DIAMOND_PICKAXE, 16, 22), enchanted(net.minecraft.init.Items.DIAMOND_SWORD, 14, 20),
+                enchanted(net.minecraft.init.Items.DIAMOND_CHESTPLATE, 20, 28), sell(ModItems.DISTORTED_STARMETAL, 10, 14));
+
+        VillagerRegistry.VillagerCareer scribe = new VillagerRegistry.VillagerCareer(ADEPT, "chaos_scribe");
+        scribe.addTrade(1, buy(net.minecraft.init.Items.PAPER, 24, 30), sell(net.minecraft.init.Items.BOOK, 1, 2),
+                bulk(Item.getItemFromBlock(net.minecraft.init.Blocks.GLASS), 4, 6), bulk(net.minecraft.init.Items.DYE, 3, 5));
+        scribe.addTrade(2, new EntityVillager.ListEnchantedBookForEmeralds(), new OreForEmeralds("gemLapis", 4, 6),
+                sell(net.minecraft.init.Items.EXPERIENCE_BOTTLE, 2, 4), sell(Item.getItemFromBlock(net.minecraft.init.Blocks.BOOKSHELF), 3, 5));
+        scribe.addTrade(3, new EntityVillager.ListEnchantedBookForEmeralds(), sell(net.minecraft.init.Items.ENDER_EYE, 7, 10),
+                sell(net.minecraft.init.Items.NAME_TAG, 12, 18), new OreForEmeralds("dustRedstone", 4, 8));
+        scribe.addTrade(4, new EntityVillager.ListEnchantedBookForEmeralds(), new EntityVillager.ListEnchantedBookForEmeralds(),
+                sell(ModItems.MEMORY_FRAGMENT, 8, 12), new OreForEmeralds("gemQuartz", 6, 10));
+
+        VillagerRegistry.VillagerCareer grower = new VillagerRegistry.VillagerCareer(ADEPT, "chaos_grower");
+        grower.addTrade(1, buy(net.minecraft.init.Items.WHEAT, 18, 22), buy(net.minecraft.init.Items.POTATO, 15, 19),
+                bulk(net.minecraft.init.Items.BREAD, 3, 5), bulk(net.minecraft.init.Items.COOKED_BEEF, 3, 5));
+        grower.addTrade(2, bulk(Item.getItemFromBlock(net.minecraft.init.Blocks.SAPLING), 3, 5), bulk(net.minecraft.init.Items.WHEAT_SEEDS, 8, 12),
+                bulk(Item.getItemFromBlock(net.minecraft.init.Blocks.WOOL), 2, 4), bulk(net.minecraft.init.Items.LEATHER, 2, 4));
+        grower.addTrade(3, bulk(net.minecraft.init.Items.STRING, 5, 8), sell(net.minecraft.init.Items.SLIME_BALL, 2, 4),
+                bulk(net.minecraft.init.Items.COOKED_PORKCHOP, 4, 6), bulk(net.minecraft.init.Items.SUGAR, 6, 10));
+        grower.addTrade(4, bulk(net.minecraft.init.Items.GOLDEN_CARROT, 2, 4), sell(net.minecraft.init.Items.CAKE, 1, 2),
+                bulk(Item.getItemFromBlock(net.minecraft.init.Blocks.MYCELIUM), 2, 3), bulk(net.minecraft.init.Items.NETHER_WART, 4, 8));
+    }
+
+    /** Продаёт 1 предмет за изумруды (min..max). */
+    private static EntityVillager.ITradeList sell(Item item, int min, int max) {
+        return new EntityVillager.ListItemForEmeralds(item, new EntityVillager.PriceInfo(min, max));
+    }
+
+    /** Продаёт пачку (min..max штук) за 1 изумруд. */
+    private static EntityVillager.ITradeList bulk(Item item, int min, int max) {
+        return new EntityVillager.ListItemForEmeralds(item, new EntityVillager.PriceInfo(-max, -min));
+    }
+
+    /** Покупает min..max штук за 1 изумруд. */
+    private static EntityVillager.ITradeList buy(Item item, int min, int max) {
+        return new EntityVillager.EmeraldForItems(item, new EntityVillager.PriceInfo(min, max));
+    }
+
+    private static EntityVillager.ITradeList enchanted(Item item, int min, int max) {
+        return new EntityVillager.ListEnchantedItemForEmeralds(item, new EntityVillager.PriceInfo(min, max));
+    }
+
+    /** Пачка предмета из оредикта за 1 изумруд; если такого металла в сборке нет — сделка не появляется. */
+    private static final class OreForEmeralds implements EntityVillager.ITradeList {
+        private final String ore;
+        private final int min, max;
+
+        OreForEmeralds(String ore, int min, int max) {
+            this.ore = ore;
+            this.min = min;
+            this.max = max;
+        }
+
+        @Override
+        public void addMerchantRecipe(net.minecraft.entity.IMerchant merchant, net.minecraft.village.MerchantRecipeList list, java.util.Random rand) {
+            List<net.minecraft.item.ItemStack> ores = net.minecraftforge.oredict.OreDictionary.getOres(ore, false);
+            if (ores.isEmpty()) {
+                return;
+            }
+            net.minecraft.item.ItemStack out = ores.get(0).copy();
+            if (out.getMetadata() == net.minecraftforge.oredict.OreDictionary.WILDCARD_VALUE) {
+                out.setItemDamage(0);
+            }
+            out.setCount(min + rand.nextInt(max - min + 1));
+            list.add(new net.minecraft.village.MerchantRecipe(new net.minecraft.item.ItemStack(net.minecraft.init.Items.EMERALD), out));
+        }
+    }
+
+    /** Вся деревня (радиус + 8) становится биомом Скверны; блоки и дома не трогаются. */
+    public static void corruptBiome(World world, BlockPos sigil) {
+        Village v = world.getVillageCollection().getNearestVillage(sigil, 32);
+        BlockPos c = v != null ? v.getCenter() : sigil;
+        int r = (v != null ? v.getVillageRadius() : 32) + 8;
+        java.util.Set<Long> chunks = new java.util.HashSet<>();
+        for (int dx = -r; dx <= r; dx++) {
+            for (int dz = -r; dz <= r; dz++) {
+                if (dx * dx + dz * dz > r * r) {
+                    continue;
+                }
+                BlockPos col = new BlockPos(c.getX() + dx, 64, c.getZ() + dz);
+                if (world.isBlockLoaded(col) && Corruption.corruptBiome(world, col)) {
+                    chunks.add(net.minecraft.util.math.ChunkPos.asLong(col.getX() >> 4, col.getZ() >> 4));
+                }
+            }
+        }
+        Corruption.resendChunks((WorldServer) world, chunks);
     }
 
     /** Обратить жителей деревни, в которой стоит Знак. Возвращает, сколько обращено сейчас. */

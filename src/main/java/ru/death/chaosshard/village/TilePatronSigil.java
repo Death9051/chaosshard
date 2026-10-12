@@ -113,6 +113,7 @@ public class TilePatronSigil extends TileEntity implements ITickable {
         if (lvl >= maxLevel() && !evolved) {
             evolved = true;
             markDirty();
+            VillageEvolution.corruptBiome(world, pos);
             int n = VillageEvolution.evolve(world, pos);
             if (p != null) {
                 p.sendMessage(Breach.grimoire("chaosshard.village.evolved", pos.getX(), pos.getZ(), n));
