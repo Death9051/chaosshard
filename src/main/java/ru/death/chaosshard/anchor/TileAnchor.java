@@ -52,6 +52,12 @@ public class TileAnchor extends TileEntity implements ITickable {
     private int siege;
     private long lastSiege;
 
+    public void setRaidTimer(int t) {
+        raidTimer = t;
+        raidWarned = false;
+        markDirty();
+    }
+
     public int raidTimer() {
         return raidTimer;
     }

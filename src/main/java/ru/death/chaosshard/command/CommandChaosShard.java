@@ -80,7 +80,17 @@ public class CommandChaosShard extends CommandBase {
                 String sub = args.length >= 2 ? args[1] : "list";
                 World w = sender.getEntityWorld();
                 ru.death.chaosshard.anchor.AnchorData data = ru.death.chaosshard.anchor.AnchorData.get(w);
-                if ("raid".equals(sub)) {
+                if ("warn".equals(sub)) {
+                    // набег с предупреждением: через минуту с небольшим
+                    BlockPos near = data.nearest(sender.getPosition(), null);
+                    if (near == null || !(w.getTileEntity(near) instanceof ru.death.chaosshard.anchor.TileAnchor)) {
+                        throw new CommandException("chaosshard.command.anchor.none");
+                    }
+                    ru.death.chaosshard.anchor.TileAnchor a = (ru.death.chaosshard.anchor.TileAnchor) w.getTileEntity(near);
+                    for (ru.death.chaosshard.anchor.TileAnchor t : ru.death.chaosshard.anchor.AnchorClusters.cluster(w, a)) {
+                        t.setRaidTimer(ru.death.chaosshard.anchor.TileAnchor.WARN + 40);
+                    }
+                } else if ("raid".equals(sub)) {
                     BlockPos near = data.nearest(sender.getPosition(), null);
                     if (near == null || !(w.getTileEntity(near) instanceof ru.death.chaosshard.anchor.TileAnchor)) {
                         throw new CommandException("chaosshard.command.anchor.none");
@@ -462,7 +472,7 @@ public class CommandChaosShard extends CommandBase {
             return getListOfStringsMatchingLastWord(args, "info", "place", "grow", "tier");
         }
         if (args.length == 2 && "anchor".equals(args[0])) {
-            return getListOfStringsMatchingLastWord(args, "list", "spread", "level", "raid");
+            return getListOfStringsMatchingLastWord(args, "list", "spread", "level", "raid", "warn");
         }
         if (args.length == 2 && "servant".equals(args[0])) {
             return getListOfStringsMatchingLastWord(args, "husk", "bone", "executioner", "reaper", "lumberjack", "miner", "up");
