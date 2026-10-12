@@ -168,7 +168,7 @@ public final class AutoTest {
                 }
             }
         } catch (Exception e) {
-            ChaosShard.LOGGER.warn("[autotest] не прочитал вехи из jar", e);
+            ChaosShard.LOG.warn("[autotest] не прочитал вехи из jar", e);
         }
         return new int[]{ok, skip};
     }
