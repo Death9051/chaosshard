@@ -85,6 +85,10 @@ public class Shrines {
         if (now > 0 && ru.death.chaosshard.compat.body.Body.hasWarden(player)) {
             now = Math.max(0, now - 1);
         }
+        // Тень Нити (перк Хаоса) — ещё на уровень меньше
+        if (now > 0 && ru.death.chaosshard.stars.Perks.shadow(player)) {
+            now = Math.max(0, now - 1);
+        }
         if (holy) {
             Milestones.grant(player, Milestones.SHRINE_NEAR);
         }

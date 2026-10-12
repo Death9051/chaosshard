@@ -28,7 +28,7 @@ import ru.death.chaosshard.thread.ThreadCapability;
         name = Tags.MOD_NAME,
         version = Tags.VERSION,
         acceptedMinecraftVersions = "[1.12.2]",
-        dependencies = "required-after:forge@[14.23.5.2847,);after:mixinbooter;after:astralsorcery;after:gamestages;after:tconstruct"
+        dependencies = "required-after:forge@[14.23.5.2847,);after:mixinbooter;after:astralsorcery;after:gamestages;after:tconstruct;after:cyberware;after:metamorph"
 )
 public class ChaosShard {
 

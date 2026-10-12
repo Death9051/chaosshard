@@ -363,7 +363,9 @@ public final class SpellCaster {
     private static void setCooldown(EntityPlayer player, Spell spell) {
         NBTTagCompound data = player.getEntityData();
         NBTTagCompound cd = data.getCompoundTag(TAG_COOLDOWNS);
-        cd.setLong(spell.name(), player.world.getTotalWorldTime() + spell.cooldown);
+        int cooldown = player instanceof EntityPlayerMP && ru.death.chaosshard.stars.Perks.well(player)
+                ? (int) (spell.cooldown * 0.75) : spell.cooldown;
+        cd.setLong(spell.name(), player.world.getTotalWorldTime() + cooldown);
         data.setTag(TAG_COOLDOWNS, cd);
     }
 

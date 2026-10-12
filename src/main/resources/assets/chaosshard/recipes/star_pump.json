@@ -1,0 +1,34 @@
+{
+ "conditions": [
+  {
+   "type": "forge:mod_loaded",
+   "modid": "astralsorcery"
+  }
+ ],
+ "type": "forge:ore_shaped",
+ "pattern": [
+  "DCD",
+  "EWE",
+  "DSD"
+ ],
+ "key": {
+  "D": {
+   "item": "chaosshard:distorted_starmetal"
+  },
+  "C": {
+   "item": "astralsorcery:itemrockcrystalsimple"
+  },
+  "E": {
+   "item": "chaosshard:chaos_essence"
+  },
+  "W": {
+   "item": "astralsorcery:blockwell"
+  },
+  "S": {
+   "item": "chaosshard:chaos_stone"
+  }
+ },
+ "result": {
+  "item": "chaosshard:star_pump"
+ }
+}

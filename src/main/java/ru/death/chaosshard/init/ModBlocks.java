@@ -31,6 +31,7 @@ public final class ModBlocks {
     /** Сегменты выросшего Якоря (без предмета). */
     public static Block ANCHOR_PART;
     public static Block RITUAL_BOWL;
+    public static Block STAR_PUMP;
     public static Block ISLAND_HEART;
     public static Block CHAOS_ANCHOR;
     public static Block HEART_HARVESTER;
@@ -72,6 +73,9 @@ public final class ModBlocks {
             SEEDS.add(add(new ru.death.chaosshard.debug.BlockStructureSeed(k), "seed_" + k.name().toLowerCase()));
         }
         RITUAL_BOWL = add(new ru.death.chaosshard.ritual.BlockRitualBowl(), "ritual_bowl");
+        STAR_PUMP = add(new ru.death.chaosshard.pump.BlockStarPump(), "star_pump");
+        net.minecraftforge.fml.common.registry.GameRegistry.registerTileEntity(ru.death.chaosshard.pump.TileStarPump.class,
+                new net.minecraft.util.ResourceLocation(Tags.MOD_ID, "star_pump"));
         net.minecraftforge.fml.common.registry.GameRegistry.registerTileEntity(ru.death.chaosshard.ritual.TileRitualBowl.class,
                 new net.minecraft.util.ResourceLocation(Tags.MOD_ID, "ritual_bowl"));
         for (Block block : ALL) {

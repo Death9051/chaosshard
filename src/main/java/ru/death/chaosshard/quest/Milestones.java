@@ -63,6 +63,8 @@ public class Milestones {
     public static final String POCKET_DUNGEON = "pocket_dungeon";
     public static final String POCKET_PERSONAL = "pocket_personal";
     public static final String LIMBO = "limbo";
+    public static final String CHAOS_PERK = "chaos_perk";
+    public static final String PUMP = "star_pump";
     public static final String VILLAGE_EVOLVED = "village_evolved";
 
     private static final String TAG_AGES = "chaosshard_ages";

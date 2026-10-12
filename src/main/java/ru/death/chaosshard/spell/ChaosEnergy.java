@@ -23,7 +23,8 @@ public class ChaosEnergy {
 
     public static int max(EntityPlayer player) {
         int core = ru.death.chaosshard.compat.body.Body.hasCore(player) ? ChaosConfig.body.coreEnergy : 0;
-        return ChaosConfig.magic.energyBase + ChaosConfig.magic.energyPerLevel * ThreadBonus.level(player) + core;
+        int perks = (ru.death.chaosshard.stars.Perks.spark(player) ? 10 : 0) + (ru.death.chaosshard.stars.Perks.well(player) ? 30 : 0);
+        return ChaosConfig.magic.energyBase + ChaosConfig.magic.energyPerLevel * ThreadBonus.level(player) + core + perks;
     }
 
     public static float get(EntityPlayer player) {
@@ -68,11 +69,25 @@ public class ChaosEnergy {
             if (ru.death.chaosshard.compat.body.Body.hasCore(player)) {
                 regen *= 1.5;
             }
+            if (ru.death.chaosshard.stars.Perks.night(player)) {
+                regen *= 1.25;
+            }
             player.getEntityData().setFloat(TAG, (float) Math.min(max, now + regen));
         }
         int key = (int) get(player) * 1000 + max;
         if (player.getEntityData().getInteger(TAG_SENT) != key) {
             sync(player);
+        }
+    }
+
+    /** Голод Скверны (перк): убийство возвращает 5 энергии. */
+    @SubscribeEvent
+    public void onKill(net.minecraftforge.event.entity.living.LivingDeathEvent event) {
+        if (event.getSource().getTrueSource() instanceof EntityPlayerMP) {
+            EntityPlayerMP p = (EntityPlayerMP) event.getSource().getTrueSource();
+            if (ru.death.chaosshard.stars.Perks.hunger(p)) {
+                set(p, get(p) + 5);
+            }
         }
     }
 
