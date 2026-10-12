@@ -1,0 +1,13 @@
+# Моды для тестового сервера: slug projectID fileID (то, с чем мод работает в сюжете)
+mixinbooter 419286 7049694
+configanytime 870276 5212709
+cyclopscore 232758 3159497
+evilcraft 74610 2811267
+codechickenlib 242818 2779848
+ancientwarfare 224602 3293318
+defiledlands 273502 2835318
+harvestcraft 221857 2904825
+bookshelf 228525 2836960
+gamestages 268655 2951840
+cyberware 283377 3366534
+lycanitesmobs 224770 5750564
