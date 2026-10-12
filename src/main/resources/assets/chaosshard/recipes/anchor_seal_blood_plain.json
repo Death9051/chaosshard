@@ -1,0 +1,31 @@
+{
+ "conditions": [
+  {
+   "type": "forge:not",
+   "value": {
+    "type": "forge:mod_loaded",
+    "modid": "evilcraft"
+   }
+  }
+ ],
+ "type": "forge:ore_shaped",
+ "pattern": [
+  "VEV",
+  "EPE",
+  "VEV"
+ ],
+ "key": {
+  "V": {
+   "item": "chaosshard:veil_shard"
+  },
+  "E": {
+   "item": "chaosshard:chaos_essence"
+  },
+  "P": {
+   "item": "minecraft:nether_wart_block"
+  }
+ },
+ "result": {
+  "item": "chaosshard:anchor_seal_blood"
+ }
+}

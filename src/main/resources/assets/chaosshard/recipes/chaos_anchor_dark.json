@@ -1,0 +1,39 @@
+{
+ "conditions": [
+  {
+   "type": "forge:mod_loaded",
+   "modid": "evilcraft"
+  }
+ ],
+ "type": "forge:ore_shaped",
+ "pattern": [
+  "VMV",
+  "SIS",
+  "EDE"
+ ],
+ "key": {
+  "V": {
+   "item": "chaosshard:veil_shard"
+  },
+  "M": {
+   "item": "chaosshard:world_shard"
+  },
+  "S": {
+   "item": "chaosshard:chaos_stone"
+  },
+  "I": {
+   "type": "forge:ore_dict",
+   "ore": "blockIron"
+  },
+  "D": {
+   "item": "evilcraft:dark_gem"
+  },
+  "E": {
+   "item": "chaosshard:chaos_essence"
+  }
+ },
+ "result": {
+  "item": "chaosshard:chaos_anchor",
+  "count": 1
+ }
+}

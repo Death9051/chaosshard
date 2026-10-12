@@ -712,3 +712,5 @@ chaosshard.beast.gui.rotate=Hold the mouse button and drag to rotate.
 chaosshard.beast.gui.rename=Click the name to rename (Enter to save, Esc to cancel; empty — default name). A name tag works too.
 chaosshard.beast.renamed=Now it is called: %s.
 chaosshard.beast.renamed_default=The beast has its default name again: %s.
+item.chaosshard.anchor_seal_blood.name=Blood Seal
+chaosshard.anchor_seal.blood.desc=Blood: every creature's death in the land feeds the Blight (+3 corruption per seal).

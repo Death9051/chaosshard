@@ -1,0 +1,28 @@
+{
+ "conditions": [
+  {
+   "type": "forge:mod_loaded",
+   "modid": "evilcraft"
+  }
+ ],
+ "type": "forge:ore_shaped",
+ "pattern": [
+  "VEV",
+  "EPE",
+  "VEV"
+ ],
+ "key": {
+  "V": {
+   "item": "chaosshard:veil_shard"
+  },
+  "E": {
+   "item": "chaosshard:chaos_essence"
+  },
+  "P": {
+   "item": "evilcraft:dark_power_gem"
+  }
+ },
+ "result": {
+  "item": "chaosshard:anchor_seal_blood"
+ }
+}

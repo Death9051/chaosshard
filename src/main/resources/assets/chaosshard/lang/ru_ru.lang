@@ -731,3 +731,5 @@ chaosshard.beast.gui.rotate=Зажми кнопку мыши и веди — п�
 chaosshard.beast.gui.rename=ЛКМ по имени — переименовать (Enter — сохранить, Esc — отмена; пустое имя — имя по виду). Можно и биркой.
 chaosshard.beast.renamed=Теперь его зовут: %s.
 chaosshard.beast.renamed_default=Зверю вернулось имя по виду: %s.
+item.chaosshard.anchor_seal_blood.name=Кровавая печать
+chaosshard.anchor_seal.blood.desc=Кровь: каждая смерть твари в краю питает Скверну (+3 к осквернению за печать).

@@ -193,6 +193,36 @@ public class TileAnchor extends TileEntity implements ITickable {
         ru.death.chaosshard.garrot.GarrotRaids.retreat(world);
     }
 
+    /** Скверна напиталась (Кровавая печать и пр.). */
+    public void feed(int n) {
+        if (n > 0) {
+            addCorrupted(n);
+        }
+    }
+
+    /** Якорь, на чьей земле стоит точка (ближайший из подходящих), или null. */
+    public static TileAnchor covering(net.minecraft.world.World world, BlockPos at) {
+        TileAnchor best = null;
+        double bd = Double.MAX_VALUE;
+        for (BlockPos p : AnchorData.get(world).anchors) {
+            if (!world.isBlockLoaded(p)) {
+                continue;
+            }
+            TileEntity te = world.getTileEntity(p);
+            if (!(te instanceof TileAnchor)) {
+                continue;
+            }
+            double dx = p.getX() - at.getX(), dz = p.getZ() - at.getZ();
+            double d = dx * dx + dz * dz;
+            int r = ((TileAnchor) te).radius();
+            if (d <= (double) r * r && d < bd) {
+                bd = d;
+                best = (TileAnchor) te;
+            }
+        }
+        return best;
+    }
+
     /** Набег отбит: Якорь крепнет. */
     public void repelled(int lvl) {
         addCorrupted(50 * lvl);
@@ -554,6 +584,10 @@ public class TileAnchor extends TileEntity implements ITickable {
         boolean changed = false;
         if (rand.nextBoolean()) {
             BlockPos top = world.getHeight(new BlockPos(x, 0, z)).down();
+            // Скверна будит здешнюю тьму: стоячая вода темнеет в кровь (EvilCraft)
+            if (DarkCorruption.waterToBlood(world, top, rand)) {
+                return true;
+            }
             for (int d = 0; d < 3; d++) {
                 changed |= Corruption.corrupt(world, top.down(d));
             }
@@ -568,7 +602,9 @@ public class TileAnchor extends TileEntity implements ITickable {
             }
         } else {
             int y = pos.getY() - 6 + rand.nextInt(18);
-            changed = Corruption.corrupt(world, new BlockPos(x, y, z));
+            BlockPos deep = new BlockPos(x, y, z);
+            // в осквернённом камне вызревает тёмная руда (EvilCraft)
+            changed = DarkCorruption.darkOre(world, deep, rand) || Corruption.corrupt(world, deep);
         }
         return changed;
     }
