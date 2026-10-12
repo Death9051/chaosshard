@@ -8,7 +8,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import ru.death.chaosshard.servant.BeastData;
 import ru.death.chaosshard.servant.Beasts;
 
-/** Клиент → сервер: взять перк зверя (action 0), сбросить перки (1), переименовать (2). */
+/** Клиент → сервер: взять перк зверя (action 0), сбросить перки (1), переименовать (2), позвать (3). */
 public class PacketBeastAction implements IMessage {
 
     private int beast, action, perk;
@@ -60,6 +60,8 @@ public class PacketBeastAction implements IMessage {
                     Beasts.buyPerk(p, all[m.beast], m.perk);
                 } else if (m.action == 1) {
                     Beasts.resetPerks(p, all[m.beast]);
+                } else if (m.action == 3) {
+                    Beasts.recall(p, all[m.beast]);
                 } else if (m.action == 2) {
                     Beasts.rename(p, all[m.beast], m.text);
                 }

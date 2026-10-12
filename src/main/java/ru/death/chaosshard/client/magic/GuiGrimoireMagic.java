@@ -32,7 +32,7 @@ public class GuiGrimoireMagic extends GuiScreen {
     private final ItemStack grimoire;
     private final List<Spell> spells = new ArrayList<>();
     private int left, top;
-    private GuiButton choose, reset;
+    private GuiButton choose, reset, call;
     private final BeastPage beasts = new BeastPage(this);
 
     public GuiGrimoireMagic(ItemStack grimoire) {
@@ -63,6 +63,9 @@ public class GuiGrimoireMagic extends GuiScreen {
         reset = new GuiButton(2, 0, 0, 96, 20, I18n.format("chaosshard.beast.gui.reset"));
         reset.visible = false;
         buttonList.add(reset);
+        call = new GuiButton(3, 0, 0, 60, 20, I18n.format("chaosshard.beast.gui.call"));
+        call.visible = false;
+        buttonList.add(call);
         updateButton();
     }
 
@@ -79,6 +82,11 @@ public class GuiGrimoireMagic extends GuiScreen {
 
     @Override
     protected void actionPerformed(GuiButton button) {
+        if (button.id == 3 && tab == 2 && selBeast >= 0 && selBeast < 3) {
+            ChaosNetwork.CHANNEL.sendToServer(new ru.death.chaosshard.network.PacketBeastAction(
+                    ru.death.chaosshard.servant.BeastData.Beast.values()[selBeast], 3, 0));
+            return;
+        }
         if (button.id == 2 && tab == 2 && selBeast >= 0 && selBeast < 3) {
             ChaosNetwork.CHANNEL.sendToServer(new ru.death.chaosshard.network.PacketBeastAction(
                     ru.death.chaosshard.servant.BeastData.Beast.values()[selBeast], 1, 0));
@@ -184,12 +192,13 @@ public class GuiGrimoireMagic extends GuiScreen {
         Gui.drawRect(left + LIST_W + 4, top + 6, left + LIST_W + 5, top + H - 6, 0xFF4A3A60);
 
         reset.visible = false;
+        call.visible = false;
         if (tab == 0) {
             drawSpells(mx, my);
         } else if (tab == 1) {
             drawRituals(mx, my);
         } else {
-            beasts.draw(selBeast, mx, my, reset);
+            beasts.draw(selBeast, mx, my, reset, call);
         }
         // уровень Нити внизу списка
         drawString(fontRenderer, I18n.format("chaosshard.magic.thread", MagicUi.threadLevel()), left + 8, top + H - 14, 0x9A8FB0);

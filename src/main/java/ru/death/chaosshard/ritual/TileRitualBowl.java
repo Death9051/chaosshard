@@ -166,8 +166,7 @@ public class TileRitualBowl extends TileEntity implements ITickable {
             say(player, Breach.grimoire("chaosshard.servant.unique"));
             return;
         }
-        if (r.isSummon() && !servantKind(r).unique() && ru.death.chaosshard.servant.Servants.count(player) >= ru.death.chaosshard.servant.Servants.limit(player)
-                && !player.isCreative()) {
+        if (r.isSummon() && !servantKind(r).unique() && ru.death.chaosshard.servant.Servants.count(player) >= ru.death.chaosshard.servant.Servants.limit(player)) {
             say(player, Breach.grimoire("chaosshard.servant.limit", ru.death.chaosshard.servant.Servants.limit(player)));
             return;
         }

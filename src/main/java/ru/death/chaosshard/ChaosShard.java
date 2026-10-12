@@ -70,6 +70,18 @@ public class ChaosShard {
                 ru.death.chaosshard.servant.EntityChaosBeast.Tiger.class, "chaosshard.servant_tiger", eid++, this, 80, 3, true, 0xd07020, 0x1a1020);
         net.minecraftforge.fml.common.registry.EntityRegistry.registerModEntity(new net.minecraft.util.ResourceLocation(Tags.MOD_ID, "servant_cat"),
                 ru.death.chaosshard.servant.EntityChaosBeast.Cat.class, "chaosshard.servant_cat", eid++, this, 64, 3, true, 0x303038, 0xb070ff);
+        net.minecraftforge.fml.common.registry.EntityRegistry.registerModEntity(new net.minecraft.util.ResourceLocation(Tags.MOD_ID, "servant_husk"),
+                ru.death.chaosshard.servant.entity.ServantEntities.Husk.class, "chaosshard.servant_husk", eid++, this, 64, 3, true, 0x6b5a3a, 0x6a2fb0);
+        net.minecraftforge.fml.common.registry.EntityRegistry.registerModEntity(new net.minecraft.util.ResourceLocation(Tags.MOD_ID, "servant_bone"),
+                ru.death.chaosshard.servant.entity.ServantEntities.Bone.class, "chaosshard.servant_bone", eid++, this, 64, 3, true, 0x1c1a22, 0x8040d0);
+        net.minecraftforge.fml.common.registry.EntityRegistry.registerModEntity(new net.minecraft.util.ResourceLocation(Tags.MOD_ID, "servant_executioner"),
+                ru.death.chaosshard.servant.entity.ServantEntities.Executioner.class, "chaosshard.servant_executioner", eid++, this, 64, 3, true, 0x3a3040, 0xb070ff);
+        net.minecraftforge.fml.common.registry.EntityRegistry.registerModEntity(new net.minecraft.util.ResourceLocation(Tags.MOD_ID, "servant_reaper"),
+                ru.death.chaosshard.servant.entity.ServantEntities.Reaper.class, "chaosshard.servant_reaper", eid++, this, 64, 3, true, 0x8a7a3a, 0x6a2fb0);
+        net.minecraftforge.fml.common.registry.EntityRegistry.registerModEntity(new net.minecraft.util.ResourceLocation(Tags.MOD_ID, "servant_lumberjack"),
+                ru.death.chaosshard.servant.entity.ServantEntities.Lumberjack.class, "chaosshard.servant_lumberjack", eid++, this, 64, 3, true, 0x5a4026, 0x6a2fb0);
+        net.minecraftforge.fml.common.registry.EntityRegistry.registerModEntity(new net.minecraft.util.ResourceLocation(Tags.MOD_ID, "servant_miner"),
+                ru.death.chaosshard.servant.entity.ServantEntities.Miner.class, "chaosshard.servant_miner", eid++, this, 64, 3, true, 0x505058, 0x6a2fb0);
         MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.thread.ThreadEvents());
         MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.antechamber.AntechamberEvents());
         MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.breach.BreachRitual());

@@ -217,6 +217,55 @@ public class Beasts {
         return e.returnAt > 0 ? Math.max(1, e.returnAt - p.world.getTotalWorldTime()) : 0;
     }
 
+    public static final int RECALL_TICKS = 1200;
+    private static final java.util.Map<String, Long> RECALL = new java.util.HashMap<>();
+
+    /** Позвать знакомого зверя из Гримуара: живого — к себе, отпущенного — заново. */
+    public static void recall(EntityPlayerMP p, Beast b) {
+        Entry e = entry(p.world, p.getUniqueID(), b);
+        if (!e.known) {
+            return;
+        }
+        if (e.returnAt > 0) {
+            p.sendStatusMessage(Breach.grimoire("chaosshard.beast.recall.thread"), true);
+            return;
+        }
+        long now = p.world.getTotalWorldTime();
+        String key = p.getUniqueID() + "/" + b.key();
+        Long ready = RECALL.get(key);
+        if (ready != null && now < ready && !p.isCreative()) {
+            p.sendStatusMessage(Breach.grimoire("chaosshard.beast.recall.wait", (ready - now) / 20 + 1), true);
+            return;
+        }
+        RECALL.put(key, now + RECALL_TICKS);
+        EntityChaosBeast found = null;
+        if (e.entity != null) {
+            for (WorldServer w : p.getServer().worlds) {
+                net.minecraft.entity.Entity x = w.getEntityFromUuid(e.entity);
+                if (x instanceof EntityChaosBeast && x.isEntityAlive()) {
+                    found = (EntityChaosBeast) x;
+                    break;
+                }
+            }
+        }
+        if (found != null && found.world == p.world) {
+            BlockPos at = p.getPosition().offset(p.getHorizontalFacing().getOpposite(), 2);
+            found.getEntityData().removeTag(Servants.TAG_GUARD);
+            found.detachHome();
+            found.getNavigator().clearPath();
+            found.setPositionAndUpdate(at.getX() + 0.5, at.getY(), at.getZ() + 0.5);
+            WorldServer ws = (WorldServer) p.world;
+            ws.spawnParticle(EnumParticleTypes.PORTAL, found.posX, found.posY + 0.5, found.posZ, 60, 0.4, 0.8, 0.4, 0.8);
+            p.world.playSound(null, at, SoundEvents.ENTITY_ENDERMEN_TELEPORT, SoundCategory.NEUTRAL, 0.8F, 0.8F);
+            p.sendStatusMessage(Breach.grimoire("chaosshard.beast.recall.done", title(b, e)), true);
+            return;
+        }
+        if (found != null) {
+            found.setDead();
+        }
+        comeBack(p, b, e);
+    }
+
     private static void comeBack(EntityPlayerMP p, Beast b, Entry e) {
         e.returnAt = 0;
         BlockPos at = p.getPosition().offset(p.getHorizontalFacing().getOpposite(), 2);
@@ -283,6 +332,7 @@ public class Beasts {
         }
         // зверь у Осколка один: если это не тот, что записан, — это старая копия
         if (e.entity != null && !e.entity.equals(beast.getUniqueID())) {
+            beast.setDead();
             event.setCanceled(true);
             return;
         }

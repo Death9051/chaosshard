@@ -29,6 +29,20 @@ public class ClientProxy extends CommonProxy {
                 rm -> new ru.death.chaosshard.servant.client.RenderChaosBeast<>(rm, new ru.death.chaosshard.servant.client.ModelTiger(), 0.8F, "tiger"));
         net.minecraftforge.fml.client.registry.RenderingRegistry.registerEntityRenderingHandler(ru.death.chaosshard.servant.EntityChaosBeast.Cat.class,
                 rm -> new ru.death.chaosshard.servant.client.RenderChaosBeast<>(rm, new ru.death.chaosshard.servant.client.ModelCat(), 0.35F, "cat"));
+        {
+            net.minecraftforge.fml.client.registry.RenderingRegistry.registerEntityRenderingHandler(ru.death.chaosshard.servant.entity.ServantEntities.Husk.class,
+                    rm -> new ru.death.chaosshard.servant.client.ServantRenders.Husk(rm, "husk"));
+            net.minecraftforge.fml.client.registry.RenderingRegistry.registerEntityRenderingHandler(ru.death.chaosshard.servant.entity.ServantEntities.Reaper.class,
+                    rm -> new ru.death.chaosshard.servant.client.ServantRenders.Husk(rm, "reaper"));
+            net.minecraftforge.fml.client.registry.RenderingRegistry.registerEntityRenderingHandler(ru.death.chaosshard.servant.entity.ServantEntities.Lumberjack.class,
+                    rm -> new ru.death.chaosshard.servant.client.ServantRenders.Husk(rm, "lumberjack"));
+            net.minecraftforge.fml.client.registry.RenderingRegistry.registerEntityRenderingHandler(ru.death.chaosshard.servant.entity.ServantEntities.Miner.class,
+                    rm -> new ru.death.chaosshard.servant.client.ServantRenders.Husk(rm, "miner"));
+            net.minecraftforge.fml.client.registry.RenderingRegistry.registerEntityRenderingHandler(ru.death.chaosshard.servant.entity.ServantEntities.Bone.class,
+                    ru.death.chaosshard.servant.client.ServantRenders.Bone::new);
+            net.minecraftforge.fml.client.registry.RenderingRegistry.registerEntityRenderingHandler(ru.death.chaosshard.servant.entity.ServantEntities.Executioner.class,
+                    ru.death.chaosshard.servant.client.ServantRenders.Executioner::new);
+        }
         MagicKeys.register();
         MinecraftForge.EVENT_BUS.register(new MagicKeys());
         if (ChaosShard.astralLoaded && ChaosConfig.stars.enabled) {

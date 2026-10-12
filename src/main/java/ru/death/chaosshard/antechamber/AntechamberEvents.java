@@ -16,6 +16,55 @@ import ru.death.chaosshard.init.ModItems;
  */
 public class AntechamberEvents {
 
+    /** В Преддверии никто не появляется сам: ни ванильные, ни модовые спавнеры. */
+    @SubscribeEvent
+    public void onCheckSpawn(net.minecraftforge.event.entity.living.LivingSpawnEvent.CheckSpawn event) {
+        if (AntechamberDimension.is(event.getWorld()) && event.getSpawner() == null) {
+            event.setResult(net.minecraftforge.fml.common.eventhandler.Event.Result.DENY);
+        }
+    }
+
+    /**
+     * Lycanites Mobs ставит существ своими спавнерами, минуя CheckSpawn. Своих (приручённых, призванных) пускаем,
+     * диких — нет.
+     */
+    @SubscribeEvent
+    public void onJoin(net.minecraftforge.event.entity.EntityJoinWorldEvent event) {
+        net.minecraft.entity.Entity e = event.getEntity();
+        if (e.world.isRemote || !AntechamberDimension.is(e.world) || !(e instanceof net.minecraft.entity.EntityLiving)) {
+            return;
+        }
+        net.minecraft.util.ResourceLocation key = net.minecraft.entity.EntityList.getKey(e);
+        if (key == null || !"lycanitesmobs".equals(key.getNamespace())) {
+            return;
+        }
+        if (e instanceof net.minecraft.entity.IEntityOwnable && ((net.minecraft.entity.IEntityOwnable) e).getOwnerId() != null) {
+            return;
+        }
+        if (ru.death.chaosshard.servant.Servants.isServant(e) || flag(e, "isMinion") || flag(e, "isTemporary")) {
+            return;
+        }
+        e.setDead();
+        event.setCanceled(true);
+    }
+
+    private static boolean flag(Object o, String field) {
+        try {
+            for (Class<?> c = o.getClass(); c != null; c = c.getSuperclass()) {
+                try {
+                    java.lang.reflect.Field f = c.getDeclaredField(field);
+                    f.setAccessible(true);
+                    return f.getBoolean(o);
+                } catch (NoSuchFieldException ignored) {
+                    // выше по иерархии
+                }
+            }
+        } catch (Exception ignored) {
+            // нет — значит нет
+        }
+        return false;
+    }
+
     private static final String TAG_ARRIVED = "chaosshard_arrived";
     private static final String TAG_GRIMOIRE = "chaosshard_grimoire_given";
 

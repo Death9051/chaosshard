@@ -50,7 +50,7 @@ class BeastPage {
         }
     }
 
-    void draw(int sel, int mx, int my, GuiButton reset) {
+    void draw(int sel, int mx, int my, GuiButton reset, GuiButton call) {
         hoverLines = null;
         perkCells.clear();
         int left = gui.left(), top = gui.top(), listW = gui.listW();
@@ -185,11 +185,22 @@ class BeastPage {
         int spent = Integer.bitCount(t.getInteger("perks"));
         gui.text(tr("chaosshard.beast.gui.cost", 2 * (spent + 1)), sx, sy, SOFT);
         sy += 12;
+        int bxCur = sx;
+        if (t.getLong("ret") == 0) {
+            call.visible = true;
+            call.x = sx;
+            call.y = sy;
+            call.width = gui.font().getStringWidth(call.displayString) + 14;
+            bxCur = sx + call.width + 4;
+            if (mx >= call.x && mx < call.x + call.width && my >= call.y && my < call.y + 20) {
+                hoverLines = split(tr("chaosshard.beast.gui.call.desc"));
+            }
+        }
         if (spent > 0) {
             reset.visible = true;
-            reset.x = sx;
+            reset.x = bxCur;
             reset.y = sy;
-            reset.width = Math.min(sw, 110);
+            reset.width = Math.min(sx + sw - bxCur, 110);
             if (mx >= reset.x && mx < reset.x + reset.width && my >= reset.y && my < reset.y + 20) {
                 hoverLines = split(tr("chaosshard.beast.gui.reset.desc"));
             }

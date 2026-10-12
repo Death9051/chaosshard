@@ -63,15 +63,15 @@ public class Servants {
     public static final String TAG_DIR = "chaosshard_dir";
 
     public enum Kind {
-        HUSK("minecraft:husk", "Скорлупа Хаоса", 30, 0),
-        BONE("minecraft:wither_skeleton", "Костяной страж", 40, 2),
-        EXECUTIONER("minecraft:vindication_illager", "Палач Хаоса", 50, 3),
+        HUSK("chaosshard:servant_husk", "Скорлупа Хаоса", 30, 0),
+        BONE("chaosshard:servant_bone", "Костяной страж", 40, 2),
+        EXECUTIONER("chaosshard:servant_executioner", "Палач Хаоса", 50, 3),
         HARE("chaosshard:servant_hare", "Заяц", 20, 1),
         TIGER("chaosshard:servant_tiger", "Тигр", 80, 4),
         CAT("chaosshard:servant_cat", "Кошка", 24, 2),
-        REAPER("minecraft:husk", "Жнец", 26, 1),
-        LUMBERJACK("minecraft:husk", "Лесоруб", 30, 1),
-        MINER("minecraft:husk", "Рудокоп", 34, 2);
+        REAPER("chaosshard:servant_reaper", "Жнец", 26, 1),
+        LUMBERJACK("chaosshard:servant_lumberjack", "Лесоруб", 30, 1),
+        MINER("chaosshard:servant_miner", "Рудокоп", 34, 2);
 
         /** Уникальный слуга: у Осколка может быть только один такой. */
         public boolean unique() {
@@ -124,7 +124,7 @@ public class Servants {
             return null;
         }
         for (Kind kind : Kind.values()) {
-            if (!kind.gatherer() && kind.id.equals(key.toString())) {
+            if (kind.id.equals(key.toString())) {
                 return kind;
             }
         }
@@ -248,6 +248,11 @@ public class Servants {
         }
         EntityCreature m = (EntityCreature) e;
         Kind kind = kindOf(m);
+        if (kind != null && !kind.unique() && !kind.id.equals(String.valueOf(EntityList.getKey(m)))) {
+            migrate(m, kind);
+            event.setCanceled(true);
+            return;
+        }
         m.tasks.taskEntries.clear();
         m.targetTasks.taskEntries.clear();
         m.setCanPickUpLoot(false);
@@ -285,6 +290,21 @@ public class Servants {
         if (!(m instanceof EntityChaosBeast)) {
             ServantGear.refresh(m, owner(m));
         }
+    }
+
+    /** Слуга из старой версии (ванильный хаск, скелет, поборник) — пересадить в своё тело. */
+    private static void migrate(EntityCreature old, Kind kind) {
+        NBTTagCompound tag = old.writeToNBT(new NBTTagCompound());
+        World world = old.world;
+        old.setDead();
+        world.getMinecraftServer().addScheduledTask(() -> {
+            Entity n = EntityList.createEntityByIDFromName(new ResourceLocation(kind.id), world);
+            if (n == null) {
+                return;
+            }
+            n.readFromNBT(tag);
+            world.spawnEntity(n);
+        });
     }
 
     /** Следовать за владельцем (если не стережёт место). Далеко отстал — переместиться к нему. */
