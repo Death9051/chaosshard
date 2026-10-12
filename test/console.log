@@ -1,0 +1,71 @@
+2026-10-12 19:07:10,778 main WARN Disabling terminal, you're running in an unsupported environment.
+[19:07:11] [main/INFO] [LaunchWrapper]: Loading tweak class name net.minecraftforge.fml.common.launcher.FMLServerTweaker
+[19:07:11] [main/INFO] [LaunchWrapper]: Using primary tweak class name net.minecraftforge.fml.common.launcher.FMLServerTweaker
+[19:07:11] [main/INFO] [LaunchWrapper]: Calling tweak class net.minecraftforge.fml.common.launcher.FMLServerTweaker
+[19:07:11] [main/INFO] [FML]: Forge Mod Loader version 14.23.5.2860 for Minecraft 1.12.2 loading
+[19:07:11] [main/INFO] [FML]: Java is OpenJDK 64-Bit Server VM, version 1.8.0_504, running on Linux:amd64:6.17.0-1022-azure, installed at /usr/lib/jvm/temurin-8-jdk-amd64/jre
+[19:07:11] [main/INFO] [FML]: Searching /home/runner/work/chaosshard/chaosshard/server/./mods for mods
+[19:07:11] [main/WARN] [FML]: Found FMLCorePluginContainsFMLMod marker in configanytime.jar. This is not recommended, @Mods should be in a separate jar from the coremod.
+[19:07:11] [main/WARN] [FML]: The coremod com.cleanroommc.configanytime.ConfigAnytimePlugin does not have a MCVersion annotation, it may cause issues with this version of Minecraft
+[19:07:11] [main/WARN] [FML]: The coremod ConfigAnytimePlugin (com.cleanroommc.configanytime.ConfigAnytimePlugin) is not signed!
+[19:07:11] [main/INFO] [FML]: Loading tweaker org.spongepowered.asm.launch.MixinTweaker from mixinbooter.jar
+[19:07:11] [main/INFO] [LaunchWrapper]: Loading tweak class name net.minecraftforge.fml.common.launcher.FMLInjectionAndSortingTweaker
+[19:07:11] [main/INFO] [LaunchWrapper]: Loading tweak class name org.spongepowered.asm.launch.MixinTweaker
+[19:07:11] [main/INFO] [mixin]: SpongePowered MIXIN Subsystem Version=0.8.7 Source=file:/home/runner/work/chaosshard/chaosshard/server/./mods/mixinbooter.jar Service=LaunchWrapper Env=SERVER
+[19:07:11] [main/WARN] [FML]: The coremod zone.rong.mixinbooter.MixinBooterPlugin does not have a MCVersion annotation, it may cause issues with this version of Minecraft
+[19:07:11] [main/WARN] [FML]: The coremod MixinBooter (zone.rong.mixinbooter.MixinBooterPlugin) is not signed!
+[19:07:11] [main/INFO] [MixinBooter]: Initializing Mixins...
+[19:07:11] [main/INFO] [mixin]: Compatibility level set to JAVA_8
+[19:07:11] [main/INFO] [MixinBooter]: Initializing MixinExtras...
+[19:07:11] [main/INFO] [MixinBooter]: Gathering present mods...
+[19:07:11] [main/INFO] [MixinBooter]: Finished gathering 2 coremods...
+[19:07:11] [main/INFO] [LaunchWrapper]: Loading tweak class name net.minecraftforge.fml.common.launcher.FMLDeobfTweaker
+[19:07:11] [main/INFO] [LaunchWrapper]: Calling tweak class net.minecraftforge.fml.common.launcher.FMLInjectionAndSortingTweaker
+[19:07:11] [main/INFO] [LaunchWrapper]: Calling tweak class net.minecraftforge.fml.common.launcher.FMLInjectionAndSortingTweaker
+[19:07:11] [main/INFO] [LaunchWrapper]: Calling tweak class net.minecraftforge.fml.relauncher.CoreModManager$FMLPluginWrapper
+[19:07:13] [main/INFO] [FML]: Found valid fingerprint for Minecraft Forge. Certificate fingerprint e3c3d50c7c986df74c645c0ac54639741c90a557
+[19:07:13] [main/INFO] [LaunchWrapper]: Calling tweak class net.minecraftforge.fml.relauncher.CoreModManager$FMLPluginWrapper
+[19:07:13] [main/INFO] [LaunchWrapper]: Calling tweak class net.minecraftforge.fml.relauncher.CoreModManager$FMLPluginWrapper
+[19:07:13] [main/INFO] [LaunchWrapper]: Calling tweak class org.spongepowered.asm.launch.MixinTweaker
+[19:07:13] [main/INFO] [mixin]: Initialised Mixin FML Remapper Adapter with net.minecraftforge.fml.common.asm.transformers.deobf.FMLDeobfuscatingRemapper@2b4c3c29
+[19:07:13] [main/INFO] [LaunchWrapper]: Calling tweak class net.minecraftforge.fml.common.launcher.FMLDeobfTweaker
+[19:07:13] [main/INFO] [LaunchWrapper]: Loading tweak class name net.minecraftforge.fml.common.launcher.TerminalTweaker
+[19:07:13] [main/INFO] [LaunchWrapper]: Loading tweak class name org.spongepowered.asm.mixin.EnvironmentStateTweaker
+[19:07:13] [main/INFO] [LaunchWrapper]: Calling tweak class net.minecraftforge.fml.common.launcher.TerminalTweaker
+[19:07:13] [main/INFO] [LaunchWrapper]: Calling tweak class org.spongepowered.asm.mixin.EnvironmentStateTweaker
+[19:07:13] [main/INFO] [MixinExtras|Service]: Initializing MixinExtras via com.llamalad7.mixinextras.service.MixinExtrasServiceImpl(version=0.5.0).
+[19:07:14] [main/INFO] [LaunchWrapper]: Launching wrapped minecraft {net.minecraft.server.MinecraftServer}
+[19:07:17] [Server thread/INFO] [minecraft/DedicatedServer]: Starting minecraft server version 1.12.2
+[19:07:17] [Server thread/INFO] [FML]: MinecraftForge v14.23.5.2860 Initialized
+[19:07:17] [Server thread/INFO] [FML]: Starts to replace vanilla recipe ingredients with ore ingredients.
+[19:07:17] [Server thread/INFO] [FML]: Invalid recipe found with multiple oredict ingredients in the same ingredient...
+[19:07:18] [Server thread/INFO] [FML]: Replaced 1227 ore ingredients
+[19:07:18] [Server thread/INFO] [FML]: Config directory created successfully
+[19:07:18] [Server thread/INFO] [MixinBooter]: Initializing MixinBooter's Mod Container.
+[19:07:18] [Server thread/INFO] [FML]: Searching /home/runner/work/chaosshard/chaosshard/server/./mods for mods
+[19:07:19] [Server thread/WARN] [FML]: Mod codechickenlib is missing the required element 'version' and a version.properties file could not be found. Falling back to metadata version 3.2.3.358
+[19:07:19] [Server thread/INFO] [FML]: Forge Mod Loader has identified 22 mods to load
+[19:07:19] [Server thread/WARN] [FML]: Missing English translation for FML: assets/fml/lang/en_us.lang
+[19:07:19] [Server thread/WARN] [FML]: Missing English translation for ancientwarfareautomation: assets/ancientwarfareautomation/lang/en_us.lang
+[19:07:19] [Server thread/WARN] [FML]: Missing English translation for ancientwarfarenpc: assets/ancientwarfarenpc/lang/en_us.lang
+[19:07:19] [Server thread/WARN] [FML]: Missing English translation for ancientwarfarestructure: assets/ancientwarfarestructure/lang/en_us.lang
+[19:07:19] [Server thread/WARN] [FML]: Missing English translation for ancientwarfarevehicle: assets/ancientwarfarevehicle/lang/en_us.lang
+[19:07:19] [Server thread/WARN] [FML]: Missing English translation for codechickenlib: assets/codechickenlib/lang/en_us.lang
+[19:07:19] [Server thread/WARN] [FML]: Missing English translation for configanytime: assets/configanytime/lang/en_us.lang
+[19:07:19] [Server thread/FATAL] [FML]: net.minecraftforge.fml.common.MissingModsException: Mod defiledlands (Defiled Lands) requires [baubles]
+[19:07:19] [Server thread/ERROR] [minecraft/MinecraftServer]: Encountered an unexpected exception
+net.minecraftforge.fml.common.MissingModsException: Mod defiledlands (Defiled Lands) requires [baubles]
+	at net.minecraftforge.fml.common.Loader.sortModList(Loader.java:266) ~[Loader.class:?]
+	at net.minecraftforge.fml.common.Loader.loadMods(Loader.java:572) ~[Loader.class:?]
+	at net.minecraftforge.fml.server.FMLServerHandler.beginServerLoading(FMLServerHandler.java:98) ~[FMLServerHandler.class:?]
+	at net.minecraftforge.fml.common.FMLCommonHandler.onServerStart(FMLCommonHandler.java:333) ~[FMLCommonHandler.class:?]
+	at net.minecraft.server.dedicated.DedicatedServer.func_71197_b(DedicatedServer.java:125) ~[nz.class:?]
+	at net.minecraft.server.MinecraftServer.run(MinecraftServer.java:486) [MinecraftServer.class:?]
+	at java.lang.Thread.run(Thread.java:750) [?:1.8.0_504]
+[19:07:19] [Server thread/ERROR] [minecraft/MinecraftServer]: This crash report has been saved to: /home/runner/work/chaosshard/chaosshard/server/./crash-reports/crash-2026-10-12_19.07.19-server.txt
+[19:07:19] [Server thread/INFO] [minecraft/MinecraftServer]: Stopping server
+[19:07:19] [Server thread/INFO] [minecraft/MinecraftServer]: Saving worlds
+[19:07:19] [Server thread/INFO] [FML]: The state engine was in incorrect state CONSTRUCTING and forced into state SERVER_STOPPED. Errors may have been discarded.
+[19:07:19] [Server Shutdown Thread/INFO] [minecraft/MinecraftServer]: Stopping server
+[19:07:19] [Server Shutdown Thread/INFO] [minecraft/MinecraftServer]: Saving worlds
+код выхода: 0
