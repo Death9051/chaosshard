@@ -28,6 +28,7 @@ public final class AstralCompat {
 
     public static void subscribeEarly() {
         MinecraftForge.EVENT_BUS.register(new AstralCompat());
+        MinecraftForge.EVENT_BUS.register(ChaosPerks.class);
     }
 
     @SubscribeEvent

@@ -34,7 +34,7 @@ import java.awt.Point;
  *
  * Каждый перк можно взять только с нужным уровнем Нити.
  */
-@Mod.EventBusSubscriber(modid = Tags.MOD_ID)
+/** Подписывается вручную из AstralCompat — только когда Astral Sorcery загружен (иначе сервер падает на чужих классах). */
 public final class ChaosPerks {
 
     public static ChaosPerk SPARK, NIGHT, SHADOW, HUNGER, WELL;
