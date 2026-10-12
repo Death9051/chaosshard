@@ -36,7 +36,7 @@ jobs:
         run: |
           git fetch origin ci-logs
           mkdir -p /tmp/jar
-          for f in $(git ls-tree --name-only origin/ci-logs | grep '^chaosshard-.*\.jar$'); do git show "origin/ci-logs:$f" > "/tmp/jar/$f"; done
+          for f in $(git ls-tree --name-only origin/ci-logs | grep '^chaosshard-.*\.jar$' | grep -v -- '-dev\|-sources'); do git show "origin/ci-logs:$f" > "/tmp/jar/$f"; done
           ls -la /tmp/jar
 
       - name: Кэш сервера Forge
