@@ -121,6 +121,9 @@ public final class SelfTest {
                 "memory_page", "breach_book", "breach_altar", "heart_module_pulse", "heart_module_capacity",
                 "heart_module_rich", "heart_module_fertile", "heart_harvester", "chaos_anchor", "transmute_essence", "transmute_distorted"};
         for (String e : expect) {
+            if ("chaos_anchor".equals(e) && Loader.isModLoaded("evilcraft")) {
+                e = "chaos_anchor_dark";
+            }
             check(names.contains(e), "рецепт " + e);
         }
         if (Loader.isModLoaded("mystcraft")) {
