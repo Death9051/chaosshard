@@ -23,15 +23,17 @@ import java.util.List;
  */
 public class GuiGrimoireMagic extends GuiScreen {
 
-    private static final int W = 320, H = 236, LIST_W = 112, ROW = 16;
-    private static int tab;          // 0 — заклинания, 1 — ритуалы (запоминается между открытиями)
+    private static final int W = 344, H = 244, LIST_W = 112, ROW = 16;
+    private static int tab;          // 0 — заклинания, 1 — ритуалы, 2 — слуги (запоминается между открытиями)
+    private static int selBeast = -1;  // -1 — страница «Отголоски»
     private static int selSpell;
     private static int selRitual = -1;  // -1 — страница «Как провести ритуал»
 
     private final ItemStack grimoire;
     private final List<Spell> spells = new ArrayList<>();
     private int left, top;
-    private GuiButton choose;
+    private GuiButton choose, reset;
+    private final BeastPage beasts = new BeastPage(this);
 
     public GuiGrimoireMagic(ItemStack grimoire) {
         this.grimoire = grimoire;
@@ -57,6 +59,9 @@ public class GuiGrimoireMagic extends GuiScreen {
         buttonList.clear();
         choose = new GuiButton(1, left + W - 96, top + H - 26, 86, 20, I18n.format("chaosshard.magic.choose"));
         buttonList.add(choose);
+        reset = new GuiButton(2, 0, 0, 96, 20, I18n.format("chaosshard.beast.gui.reset"));
+        reset.visible = false;
+        buttonList.add(reset);
         updateButton();
     }
 
@@ -73,6 +78,11 @@ public class GuiGrimoireMagic extends GuiScreen {
 
     @Override
     protected void actionPerformed(GuiButton button) {
+        if (button.id == 2 && tab == 2 && selBeast >= 0) {
+            ChaosNetwork.CHANNEL.sendToServer(new ru.death.chaosshard.network.PacketBeastAction(
+                    ru.death.chaosshard.servant.BeastData.Beast.values()[selBeast], 1, 0));
+            return;
+        }
         if (button.id == 1 && tab == 0) {
             ChaosNetwork.CHANNEL.sendToServer(new PacketSelectSpell(spells.get(selSpell)));
             mc.displayGuiScreen(null);
@@ -92,7 +102,7 @@ public class GuiGrimoireMagic extends GuiScreen {
     protected void mouseClicked(int mx, int my, int button) throws java.io.IOException {
         super.mouseClicked(mx, my, button);
         // вкладки
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < 3; i++) {
             int tx = left + 6 + i * 84;
             if (mx >= tx && mx < tx + 80 && my >= top - 16 && my < top) {
                 tab = i;
@@ -107,8 +117,14 @@ public class GuiGrimoireMagic extends GuiScreen {
                 selSpell = row;
             } else if (tab == 1 && row >= 0 && row <= Ritual.values().length) {
                 selRitual = row - 1;
+            } else if (tab == 2 && row >= 0 && row <= 3) {
+                selBeast = row - 1;
             }
             updateButton();
+            return;
+        }
+        if (tab == 2 && selBeast >= 0) {
+            beasts.click(ru.death.chaosshard.servant.BeastData.Beast.values()[selBeast], mx, my);
         }
     }
 
@@ -116,8 +132,9 @@ public class GuiGrimoireMagic extends GuiScreen {
     public void drawScreen(int mx, int my, float pt) {
         drawDefaultBackground();
         // вкладки
-        String[] tabs = {I18n.format("chaosshard.magic.tab.spells"), I18n.format("chaosshard.magic.tab.rituals")};
-        for (int i = 0; i < 2; i++) {
+        String[] tabs = {I18n.format("chaosshard.magic.tab.spells"), I18n.format("chaosshard.magic.tab.rituals"),
+                I18n.format("chaosshard.magic.tab.servants")};
+        for (int i = 0; i < 3; i++) {
             int tx = left + 6 + i * 84;
             MagicUi.frame(tx, top - 16, 80, 18);
             if (i == tab) {
@@ -128,10 +145,13 @@ public class GuiGrimoireMagic extends GuiScreen {
         MagicUi.frame(left, top, W, H);
         Gui.drawRect(left + LIST_W + 4, top + 6, left + LIST_W + 5, top + H - 6, 0xFF4A3A60);
 
+        reset.visible = false;
         if (tab == 0) {
             drawSpells(mx, my);
-        } else {
+        } else if (tab == 1) {
             drawRituals(mx, my);
+        } else {
+            beasts.draw(selBeast, mx, my, reset);
         }
         // уровень Нити внизу списка
         drawString(fontRenderer, I18n.format("chaosshard.magic.thread", MagicUi.threadLevel()), left + 8, top + H - 14, 0x9A8FB0);
@@ -143,7 +163,24 @@ public class GuiGrimoireMagic extends GuiScreen {
             drawString(fontRenderer, I18n.format("chaosshard.magic.energy", e, m), ex, ey, 0xB89CFF);
         }
         super.drawScreen(mx, my, pt);
+        if (tab == 2) {
+            beasts.tooltip(mx, my);
+        }
     }
+
+    // ------------------------------------------------------------------ для страницы слуг
+
+    int left() { return left; }
+    int top() { return top; }
+    int pageW() { return W; }
+    int pageH() { return H; }
+    int listW() { return LIST_W; }
+    int row() { return ROW; }
+    net.minecraft.client.gui.FontRenderer font() { return fontRenderer; }
+    net.minecraft.client.renderer.RenderItem items() { return itemRender; }
+    void text(String t, int x, int y, int c) { drawString(fontRenderer, t, x, y, c); }
+    int paragraph(String t, int x, int y, int w, int c) { return para(t, x, y, w, c); }
+    void hover(java.util.List<String> lines, int x, int y) { drawHoveringText(lines, x, y); }
 
     // ------------------------------------------------------------------ заклинания
 
@@ -263,6 +300,9 @@ public class GuiGrimoireMagic extends GuiScreen {
             case SERVANT_HARE: return new ItemStack(net.minecraft.init.Items.RABBIT_FOOT);
             case SERVANT_CAT: return new ItemStack(net.minecraft.init.Items.FISH);
             case SERVANT_TIGER: return new ItemStack(net.minecraft.init.Items.BLAZE_ROD);
+            case ASCEND_HARE: return new ItemStack(net.minecraft.init.Items.GOLDEN_APPLE);
+            case ASCEND_CAT: return new ItemStack(ModItems.VEIL_SHARD);
+            case ASCEND_TIGER: return new ItemStack(ModItems.DRAGON_SCALE);
             default: return new ItemStack(ModItems.CHAOS_ESSENCE);
         }
     }

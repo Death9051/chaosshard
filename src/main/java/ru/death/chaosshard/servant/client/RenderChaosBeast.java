@@ -19,6 +19,12 @@ public class RenderChaosBeast<T extends EntityChaosBeast> extends RenderLiving<T
         this.texture = new ResourceLocation(Tags.MOD_ID, "textures/entity/servant_" + name + ".png");
     }
 
+    @Override
+    protected void preRenderCallback(T entity, float partialTicks) {
+        float g = entity.growth();
+        net.minecraft.client.renderer.GlStateManager.scale(g, g, g);
+    }
+
     @Nullable
     @Override
     protected ResourceLocation getEntityTexture(T entity) {

@@ -125,8 +125,34 @@ public class Servants {
         return e.world.getMinecraftServer().getPlayerList().getPlayerByUUID(e.getEntityData().getUniqueId(TAG_OWNER));
     }
 
-    /** Призвать слугу рядом с точкой. null — не вышло. */
+    /** Призвать слугу рядом с точкой (ритуал). null — не вышло. */
     public static EntityLiving summon(EntityPlayerMP owner, Kind kind, BlockPos at) {
+        EntityLiving m = spawn(owner, kind, at);
+        if (m == null) {
+            return null;
+        }
+        WorldServer ws = (WorldServer) owner.world;
+        ws.spawnParticle(EnumParticleTypes.DRAGON_BREATH, m.posX, m.posY + 1, m.posZ, 40, 0.3, 0.6, 0.3, 0.03);
+        if (m instanceof EntityChaosBeast) {
+            Beasts.onSummoned(owner, (EntityChaosBeast) m);
+        }
+        Milestones.grant(owner, Milestones.SERVANT);
+        if (kind == Kind.BONE) {
+            Milestones.grant(owner, Milestones.SERVANT_BONE);
+        } else if (kind == Kind.EXECUTIONER) {
+            Milestones.grant(owner, Milestones.SERVANT_EXEC);
+        }
+        if (kind.unique()) {
+            Milestones.grant(owner, "servant_" + kind.name().toLowerCase(java.util.Locale.ROOT));
+        }
+        if (count(owner) >= 3) {
+            Milestones.grant(owner, Milestones.SERVANT_3);
+        }
+        return m;
+    }
+
+    /** Создать слугу и поставить в мир, без вех и эффектов. */
+    public static EntityLiving spawn(EntityPlayerMP owner, Kind kind, BlockPos at) {
         World world = owner.world;
         Entity e = EntityList.createEntityByIDFromName(new ResourceLocation(kind.id), world);
         if (!(e instanceof EntityCreature)) {
@@ -136,13 +162,10 @@ public class Servants {
         m.setLocationAndAngles(at.getX() + 0.5, at.getY(), at.getZ() + 0.5, owner.rotationYaw, 0);
         m.onInitialSpawn(world.getDifficultyForLocation(at), null);
         m.getEntityData().setUniqueId(TAG_OWNER, owner.getUniqueID());
-        m.setCustomNameTag("§5" + kind.name + " §7(" + owner.getName() + ")");
+        m.setCustomNameTag((kind.unique() ? "§d" : "§5") + kind.name + " §7(" + owner.getName() + ")");
         m.setAlwaysRenderNameTag(false);
         m.enablePersistence();
         m.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(kind.health + 5 * ThreadBonus.level(owner));
-        if (kind.unique()) {
-            m.setCustomNameTag("§d" + kind.name + " §7(" + owner.getName() + ")");
-        }
         m.setHealth(m.getMaxHealth());
         if (kind == Kind.BONE) {
             m.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, new ItemStack(Items.STONE_SWORD));
@@ -150,19 +173,13 @@ public class Servants {
             m.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, new ItemStack(Items.IRON_AXE));
         }
         m.setDropChance(EntityEquipmentSlot.MAINHAND, 0F);
+        if (m instanceof EntityChaosBeast) {
+            m.getEntityData().setInteger("chaosshard_thread_hp", ThreadBonus.level(owner));
+            Beasts.preSpawn(owner, (EntityChaosBeast) m);
+        }
         world.spawnEntity(m);
-        ((WorldServer) world).spawnParticle(EnumParticleTypes.DRAGON_BREATH, m.posX, m.posY + 1, m.posZ, 40, 0.3, 0.6, 0.3, 0.03);
-        Milestones.grant(owner, Milestones.SERVANT);
-        if (kind == Kind.BONE) {
-            Milestones.grant(owner, Milestones.SERVANT_BONE);
-        } else if (kind == Kind.EXECUTIONER) {
-            Milestones.grant(owner, Milestones.SERVANT_EXEC);
-        }
-        if (kind.unique()) {
-            Milestones.grant(owner, "servant_" + kind.name().toLowerCase());
-        }
-        if (count(owner) >= 3) {
-            Milestones.grant(owner, Milestones.SERVANT_3);
+        if (m instanceof EntityChaosBeast) {
+            m.setHealth(m.getMaxHealth());
         }
         return m;
     }
@@ -301,12 +318,22 @@ public class Servants {
             } else {
                 d.setLong(TAG_GUARD, e.getPosition().toLong());
                 ((EntityCreature) e).setHomePosAndDistance(e.getPosition(), 8);
+                if (e instanceof EntityChaosBeast) {
+                    Beasts.refresh((EntityChaosBeast) e);
+                }
                 p.sendStatusMessage(Breach.grimoire("chaosshard.servant.guard"), true);
             }
             event.setCanceled(true);
         } else if (held.isEmpty() && p.isSneaking()) {
             ((WorldServer) e.world).spawnParticle(EnumParticleTypes.PORTAL, e.posX, e.posY + 1, e.posZ, 40, 0.3, 0.6, 0.3, 0.5);
             e.setDead();
+            if (e instanceof EntityChaosBeast) {
+                BeastData.Entry be = Beasts.entry((EntityChaosBeast) e);
+                if (be != null) {
+                    be.entity = null;
+                    Beasts.changed(e.world, p.getUniqueID());
+                }
+            }
             p.sendStatusMessage(Breach.grimoire("chaosshard.servant.dismiss"), true);
             event.setCanceled(true);
         } else if (held.getItem() == Items.ROTTEN_FLESH || held.getItem() == Items.BONE) {

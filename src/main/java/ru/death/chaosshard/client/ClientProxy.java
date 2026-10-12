@@ -75,6 +75,11 @@ public class ClientProxy extends CommonProxy {
     }
 
     @Override
+    public void handleBeasts(net.minecraft.nbt.NBTTagCompound tag) {
+        Minecraft.getMinecraft().addScheduledTask(() -> ClientBeasts.set(tag));
+    }
+
+    @Override
     public void handleEnergy(int energy, int max) {
         Minecraft.getMinecraft().addScheduledTask(() -> ClientThreadCache.setEnergy(energy, max));
     }

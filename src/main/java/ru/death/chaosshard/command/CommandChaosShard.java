@@ -119,6 +119,18 @@ public class CommandChaosShard extends CommandBase {
                 }
                 break;
             }
+            case "beast": {
+                // /oh beast <hare|cat|tiger> [info|xp <n>|asc|return|reset] — уникальные звери
+                EntityPlayerMP player = getCommandSenderAsPlayer(sender);
+                ru.death.chaosshard.servant.BeastData.Beast b = args.length >= 2 ? ru.death.chaosshard.servant.BeastData.Beast.byKey(args[1]) : null;
+                if (b == null) {
+                    throw new WrongUsageException("/oh beast <hare|cat|tiger> [info|xp <n>|asc|return|reset]");
+                }
+                String what = args.length >= 3 ? args[2] : "info";
+                int n = args.length >= 4 ? parseInt(args[3]) : 0;
+                sender.sendMessage(new net.minecraft.util.text.TextComponentString(ru.death.chaosshard.servant.Beasts.debug(player, b, what, n)));
+                break;
+            }
             case "trial": {
                 // /oh trial [start <ступень>|leave] — Испытания
                 EntityPlayerMP player = getCommandSenderAsPlayer(sender);
@@ -374,7 +386,7 @@ public class CommandChaosShard extends CommandBase {
                         "chaosshard:seed_anchor 2", "chaosshard:seed_island", "chaosshard:seed_shrine 2",
                         // Акт 3 и прочее для проверок
                         "chaosshard:chaos_essence 16", "chaosshard:patron_sigil 2", "chaosshard:heart_module_rich 4",
-                        "chaosshard:heart_module_pulse 4", "chaosshard:chaos_anchor"
+                        "chaosshard:heart_module_pulse 4", "chaosshard:chaos_anchor", "chaosshard:chaos_catch 4"
                 };
                 for (String item : kit) {
                     server.getCommandManager().executeCommand(server, "give " + player.getName() + " " + item);
@@ -410,7 +422,7 @@ public class CommandChaosShard extends CommandBase {
     @Override
     public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos targetPos) {
         if (args.length == 1) {
-            return getListOfStringsMatchingLastWord(args, "nit", "tp", "sky", "grimoire", "debug", "breach", "heart", "quests", "selftest", "anchor", "shrine", "surge", "village", "trial");
+            return getListOfStringsMatchingLastWord(args, "nit", "tp", "sky", "grimoire", "debug", "breach", "heart", "quests", "selftest", "anchor", "shrine", "surge", "village", "trial", "beast");
         }
         if (args.length == 2 && "nit".equals(args[0])) {
             return getListOfStringsMatchingLastWord(args, "get", "set", "add", "resync");
@@ -426,6 +438,12 @@ public class CommandChaosShard extends CommandBase {
         }
         if (args.length == 2 && "anchor".equals(args[0])) {
             return getListOfStringsMatchingLastWord(args, "list", "spread", "level", "raid");
+        }
+        if (args.length == 2 && "beast".equals(args[0])) {
+            return getListOfStringsMatchingLastWord(args, "hare", "cat", "tiger");
+        }
+        if (args.length == 3 && "beast".equals(args[0])) {
+            return getListOfStringsMatchingLastWord(args, "info", "xp", "asc", "return", "reset");
         }
         if (args.length == 2 && "trial".equals(args[0])) {
             return getListOfStringsMatchingLastWord(args, "start", "leave");

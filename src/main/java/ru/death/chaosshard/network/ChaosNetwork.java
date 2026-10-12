@@ -17,6 +17,8 @@ public final class ChaosNetwork {
         CHANNEL.registerMessage(PacketSelectSpell.Handler.class, PacketSelectSpell.class, 3, Side.SERVER);
         CHANNEL.registerMessage(PacketHeartBolt.Handler.class, PacketHeartBolt.class, 4, Side.CLIENT);
         CHANNEL.registerMessage(PacketEnergy.Handler.class, PacketEnergy.class, 5, Side.CLIENT);
+        CHANNEL.registerMessage(PacketBeasts.Handler.class, PacketBeasts.class, 6, Side.CLIENT);
+        CHANNEL.registerMessage(PacketBeastAction.Handler.class, PacketBeastAction.class, 7, Side.SERVER);
     }
 
     private ChaosNetwork() {

@@ -147,6 +147,20 @@ public class TileRitualBowl extends TileEntity implements ITickable {
             say(player, Breach.grimoire("chaosshard.ritual.thin", r.minThread));
             return;
         }
+        if (r.isSummon() && servantKind(r).unique()) {
+            long left = ru.death.chaosshard.servant.Beasts.inThread(player, ru.death.chaosshard.servant.BeastData.Beast.of(servantKind(r)));
+            if (left > 0) {
+                say(player, Breach.grimoire("chaosshard.beast.in_thread", (left / 20 + 59) / 60));
+                return;
+            }
+        }
+        if (r.isAscend()) {
+            String why = ru.death.chaosshard.servant.Beasts.canAscend(player, r.ascendBeast(), pos);
+            if (why != null) {
+                say(player, Breach.grimoire(why));
+                return;
+            }
+        }
         if (r.isSummon() && servantKind(r).unique() && ru.death.chaosshard.servant.Servants.hasUnique(player, servantKind(r))) {
             say(player, Breach.grimoire("chaosshard.servant.unique"));
             return;
@@ -254,6 +268,11 @@ public class TileRitualBowl extends TileEntity implements ITickable {
                         ru.death.chaosshard.servant.Servants.limit(player)));
                 break;
             }
+            case ASCEND_HARE:
+            case ASCEND_CAT:
+            case ASCEND_TIGER:
+                ru.death.chaosshard.servant.Beasts.ascend(player, r.ascendBeast());
+                break;
             case CORRUPTION: {
                 TileAnchor a = nearestAnchor();
                 if (a != null) {

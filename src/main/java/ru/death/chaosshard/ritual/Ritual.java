@@ -37,7 +37,26 @@ public enum Ritual {
     /** Уникальный слуга: Кошка. */
     SERVANT_CAT(2, 0, offer("chaosshard:chaos_essence", 0, 3), offer("minecraft:fish", 0, 8), offer("minecraft:string", 0, 4)),
     /** Уникальный слуга: Тигр. */
-    SERVANT_TIGER(4, 0, offer("chaosshard:chaos_essence", 0, 6), offer("minecraft:blaze_rod", 0, 4), offer("minecraft:beef", 0, 8));
+    SERVANT_TIGER(4, 0, offer("chaosshard:chaos_essence", 0, 6), offer("minecraft:blaze_rod", 0, 4), offer("minecraft:beef", 0, 8)),
+    /** Вознесение Зайца: 5-й уровень. */
+    ASCEND_HARE(3, 0, offer("chaosshard:chaos_essence", 0, 8), offer("minecraft:golden_apple", 0, 2), offer("minecraft:rabbit_foot", 0, 2)),
+    /** Вознесение Кошки: 5-й уровень. */
+    ASCEND_CAT(3, 0, offer("chaosshard:chaos_essence", 0, 8), offer("chaosshard:veil_shard", 0, 4), offer("minecraft:fish", 1, 4)),
+    /** Вознесение Тигра: 5-й уровень. */
+    ASCEND_TIGER(4, 0, offer("chaosshard:chaos_essence", 0, 8), offer("chaosshard:dragon_scale", 0, 2), offer("minecraft:blaze_rod", 0, 4));
+
+    public boolean isAscend() {
+        return this == ASCEND_HARE || this == ASCEND_CAT || this == ASCEND_TIGER;
+    }
+
+    public ru.death.chaosshard.servant.BeastData.Beast ascendBeast() {
+        switch (this) {
+            case ASCEND_HARE: return ru.death.chaosshard.servant.BeastData.Beast.HARE;
+            case ASCEND_CAT: return ru.death.chaosshard.servant.BeastData.Beast.CAT;
+            case ASCEND_TIGER: return ru.death.chaosshard.servant.BeastData.Beast.TIGER;
+            default: return null;
+        }
+    }
 
     public boolean isSummon() {
         return this == SERVANT_HUSK || this == SERVANT_BONE || this == SERVANT_EXECUTIONER

@@ -36,6 +36,10 @@ public class CommonProxy {
     public void handleHeartBolt(ru.death.chaosshard.network.PacketHeartBolt bolt) {
     }
 
+    /** Звери пришли на клиент. */
+    public void handleBeasts(net.minecraft.nbt.NBTTagCompound tag) {
+    }
+
     /** Энергия Хаоса пришла на клиент. */
     public void handleEnergy(int energy, int max) {
     }
