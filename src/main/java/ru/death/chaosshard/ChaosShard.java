@@ -81,6 +81,7 @@ public class ChaosShard {
         MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.trial.TrialManager());
         MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.servant.Servants());
         MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.servant.Beasts());
+        MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.servant.AltarAscension());
         ru.death.chaosshard.compat.body.Body.init();
         net.minecraftforge.fml.common.registry.GameRegistry.registerWorldGenerator(new ru.death.chaosshard.order.ShrineGen(), 20);
         if (astralLoaded) {

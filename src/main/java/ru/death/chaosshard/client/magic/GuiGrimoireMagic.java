@@ -300,9 +300,6 @@ public class GuiGrimoireMagic extends GuiScreen {
             case SERVANT_HARE: return new ItemStack(net.minecraft.init.Items.RABBIT_FOOT);
             case SERVANT_CAT: return new ItemStack(net.minecraft.init.Items.FISH);
             case SERVANT_TIGER: return new ItemStack(net.minecraft.init.Items.BLAZE_ROD);
-            case ASCEND_HARE: return new ItemStack(net.minecraft.init.Items.GOLDEN_APPLE);
-            case ASCEND_CAT: return new ItemStack(ModItems.VEIL_SHARD);
-            case ASCEND_TIGER: return new ItemStack(ModItems.DRAGON_SCALE);
             default: return new ItemStack(ModItems.CHAOS_ESSENCE);
         }
     }

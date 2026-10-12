@@ -23,6 +23,13 @@ public class BlockBreachAltar extends ModBlocks.SimpleBlock {
     @Override
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand,
                                     EnumFacing facing, float hitX, float hitY, float hitZ) {
+        if (player.getHeldItem(hand).getItem() == ModItems.GRIMOIRE) {
+            // Высокий ритуал: Вознесение зверя
+            if (!world.isRemote && hand == EnumHand.MAIN_HAND) {
+                ru.death.chaosshard.servant.AltarAscension.tryStart((EntityPlayerMP) player, pos);
+            }
+            return true;
+        }
         if (player.getHeldItem(hand).getItem() != ModItems.BREACH_BOOK) {
             if (!world.isRemote && hand == EnumHand.MAIN_HAND) {
                 // Без книги — просто показать, чего не хватает в постройке
