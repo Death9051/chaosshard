@@ -127,6 +127,7 @@ public class WorkMiner extends EntityAIBase {
         if (stand != null && m.getDistanceSq(stand) > 25 && w.isAirBlock(stand) && w.isAirBlock(stand.up())) {
             WorkChunks.touch(m, stand);
             m.setPositionAndUpdate(stand.getX() + 0.5, stand.getY(), stand.getZ() + 0.5);
+            ru.death.chaosshard.servant.Resync.later(m, 3);
         }
         boolean blocked = false;
         for (BlockPos p : col) {

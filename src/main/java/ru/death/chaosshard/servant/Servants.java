@@ -231,6 +231,7 @@ public class Servants {
             Beasts.preSpawn(owner, (EntityChaosBeast) m);
         }
         world.spawnEntity(m);
+        Resync.later(m, 5);
         if (!(m instanceof EntityChaosBeast)) {
             ServantGear.refresh(m, owner);
         }
@@ -334,6 +335,7 @@ public class Servants {
             }
             if (m.getDistanceSq(o) > 24 * 24) {
                 m.setPositionAndUpdate(o.posX, o.posY, o.posZ);
+                Resync.later(m, 3);
             } else {
                 m.getNavigator().tryMoveToEntityLiving(o, 1.15D);
             }

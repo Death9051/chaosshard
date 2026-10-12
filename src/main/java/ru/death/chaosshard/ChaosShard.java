@@ -82,6 +82,7 @@ public class ChaosShard {
                 ru.death.chaosshard.servant.entity.ServantEntities.Lumberjack.class, "chaosshard.servant_lumberjack", eid++, this, 64, 3, true, 0x5a4026, 0x6a2fb0);
         net.minecraftforge.fml.common.registry.EntityRegistry.registerModEntity(new net.minecraft.util.ResourceLocation(Tags.MOD_ID, "servant_miner"),
                 ru.death.chaosshard.servant.entity.ServantEntities.Miner.class, "chaosshard.servant_miner", eid++, this, 64, 3, true, 0x505058, 0x6a2fb0);
+        MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.servant.Resync());
         MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.thread.ThreadEvents());
         MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.antechamber.AntechamberEvents());
         MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.breach.BreachRitual());

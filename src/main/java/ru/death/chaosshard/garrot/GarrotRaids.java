@@ -345,6 +345,7 @@ public class GarrotRaids {
             e.setDropChance(slot, 0.0F);
         }
         world.spawnEntity(e);
+        ru.death.chaosshard.servant.Resync.later(e, 5);
         e.setAttackTarget(target);
     }
 

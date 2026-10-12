@@ -200,6 +200,7 @@ public class Work {
             ((WorldServer) m.world).spawnParticle(EnumParticleTypes.PORTAL, m.posX, m.posY + 1, m.posZ, 20, 0.3, 0.5, 0.3, 0.5);
             WorkChunks.touch(m, at);
             m.setPositionAndUpdate(at.getX() + 0.5, at.getY(), at.getZ() + 0.5);
+            ru.death.chaosshard.servant.Resync.later(m, 3);
         }
         return false;
     }
@@ -236,6 +237,7 @@ public class Work {
             if (m.getDistanceSq(a.getPos()) > 16 * 16) {
                 BlockPos at = w.getHeight(a.getPos().add(2, 0, 2));
                 m.setPositionAndUpdate(at.getX() + 0.5, at.getY(), at.getZ() + 0.5);
+                ru.death.chaosshard.servant.Resync.later(m, 3);
             }
             p.sendMessage(Breach.grimoire("chaosshard.garrison.bound", name, g.size() + 1, limit, c.size()));
             if (p instanceof EntityPlayerMP) {
