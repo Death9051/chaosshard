@@ -30,7 +30,7 @@ jobs:
           ./gradlew --no-daemon --stacktrace build 2>&1 | tee build.log
 
       - name: Готовый jar
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: chaosshard-jar
           path: build/libs/*.jar
