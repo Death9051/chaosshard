@@ -318,8 +318,8 @@ public final class SpellCaster {
                 status(player, new TextComponentTranslation("chaosshard.spell.locked", spell.minThread));
                 return false;
             }
-            if (spell.hunger > 0 && player.getFoodStats().getFoodLevel() < spell.hunger + 1) {
-                status(player, new TextComponentTranslation("chaosshard.spell.hungry"));
+            if (ChaosEnergy.get(player) < spell.energy) {
+                status(player, new TextComponentTranslation("chaosshard.spell.no_energy", spell.energy, (int) ChaosEnergy.get(player)));
                 return false;
             }
         }
@@ -337,7 +337,7 @@ public final class SpellCaster {
             return;
         }
         if (!player.isCreative()) {
-            player.addExhaustion(spell.hunger * 4.0F);
+            ChaosEnergy.spend(player, spell.energy);
         }
         setCooldown(player, spell);
         ru.death.chaosshard.quest.Milestones.grant(player, ru.death.chaosshard.quest.Milestones.SPELL);

@@ -135,6 +135,13 @@ public class GuiGrimoireMagic extends GuiScreen {
         }
         // уровень Нити внизу списка
         drawString(fontRenderer, I18n.format("chaosshard.magic.thread", MagicUi.threadLevel()), left + 8, top + H - 14, 0x9A8FB0);
+        if (tab == 0) {
+            int ex = left + LIST_W + 12, ey = top + H - 22, ew = 100;
+            int e = ru.death.chaosshard.client.ClientThreadCache.energy(), m = ru.death.chaosshard.client.ClientThreadCache.maxEnergy();
+            Gui.drawRect(ex, ey + 10, ex + ew, ey + 13, 0xAA1A0A2A);
+            Gui.drawRect(ex, ey + 10, ex + ew * Math.min(e, m) / Math.max(1, m), ey + 13, 0xFFB070FF);
+            drawString(fontRenderer, I18n.format("chaosshard.magic.energy", e, m), ex, ey, 0xB89CFF);
+        }
         super.drawScreen(mx, my, pt);
     }
 
@@ -169,7 +176,8 @@ public class GuiGrimoireMagic extends GuiScreen {
         drawString(fontRenderer, I18n.format("chaosshard.magic.need_thread", s.minThread), x, y,
                 open ? 0x9AD08A : 0xD07070);
         y += 11;
-        drawString(fontRenderer, I18n.format("chaosshard.magic.hunger", s.hunger / 2.0), x, y, 0xB0A8C0);
+        boolean enough = ru.death.chaosshard.client.ClientThreadCache.energy() >= s.energy;
+        drawString(fontRenderer, I18n.format("chaosshard.magic.cost", s.energy), x, y, enough ? 0xB89CFF : 0xD07070);
         y += 11;
         drawString(fontRenderer, I18n.format("chaosshard.magic.cooldown", cooldown(s.cooldown)), x, y, 0xB0A8C0);
         y += 11;

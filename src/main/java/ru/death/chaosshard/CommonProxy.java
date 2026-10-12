@@ -35,4 +35,8 @@ public class CommonProxy {
     /** Дуга от Сердца (только клиент). */
     public void handleHeartBolt(ru.death.chaosshard.network.PacketHeartBolt bolt) {
     }
+
+    /** Энергия Хаоса пришла на клиент. */
+    public void handleEnergy(int energy, int max) {
+    }
 }

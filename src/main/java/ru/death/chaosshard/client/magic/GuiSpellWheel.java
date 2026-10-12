@@ -115,6 +115,10 @@ public class GuiSpellWheel extends GuiScreen {
             boolean open = MagicUi.unlocked(show);
             drawCenteredString(fontRenderer, name, cx, cy - 4, open ? 0xD9B8FF : 0x7A7288);
             String sub = open ? I18n.format(show.key() + ".desc") : I18n.format("chaosshard.magic.need_thread", show.minThread);
+            if (open) {
+                boolean enough = ru.death.chaosshard.client.ClientThreadCache.energy() >= show.energy;
+                drawCenteredString(fontRenderer, I18n.format("chaosshard.magic.cost", show.energy), cx, cy + 7, enough ? 0xB89CFF : 0xD07070);
+            }
             List<String> lines = fontRenderer.listFormattedStringToWidth(sub, 220);
             int y = cy + (int) r1 + 16;
             for (String l : lines) {

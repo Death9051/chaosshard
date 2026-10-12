@@ -44,6 +44,36 @@ public final class ClientThreadCache {
         return changedAt;
     }
 
+    // ------------------------------------------------------------------ энергия Хаоса
+
+    private static int energy = -1, maxEnergy = 40;
+    private static long energyChangedAt = -1_000_000L;
+
+    static void setEnergy(int e, int max) {
+        if (energy != -1 && e < energy && Minecraft.getMinecraft().world != null) {
+            energyChangedAt = Minecraft.getMinecraft().world.getTotalWorldTime();
+        }
+        energy = e;
+        maxEnergy = Math.max(1, max);
+    }
+
+    public static int energy() {
+        return Math.max(energy, 0);
+    }
+
+    public static int maxEnergy() {
+        return maxEnergy;
+    }
+
+    public static boolean energyKnown() {
+        return energy >= 0;
+    }
+
+    /** Когда энергию последний раз тратили. */
+    public static long energyChangedAt() {
+        return energyChangedAt;
+    }
+
     private ClientThreadCache() {
     }
 }

@@ -69,6 +69,7 @@ public class ChaosShard {
         MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.order.Shrines());
         MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.garrot.GarrotRaids());
         MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.ritual.RitualEvents());
+        MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.spell.ChaosEnergy());
         net.minecraftforge.fml.common.registry.GameRegistry.registerWorldGenerator(new ru.death.chaosshard.order.ShrineGen(), 20);
         if (astralLoaded) {
             MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.stars.PerkBridge());

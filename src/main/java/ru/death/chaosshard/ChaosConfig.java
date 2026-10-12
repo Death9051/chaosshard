@@ -21,6 +21,10 @@ public final class ChaosConfig {
     @Config.LangKey("chaosshard.config.thread")
     public static final ThreadCfg thread = new ThreadCfg();
 
+    @Config.Comment("Магия Гримуара: энергия Хаоса")
+    @Config.LangKey("chaosshard.config.magic")
+    public static final MagicCfg magic = new MagicCfg();
+
     @Config.Comment("Звёзды — связка с Astral Sorcery")
     @Config.LangKey("chaosshard.config.stars")
     public static final StarsCfg stars = new StarsCfg();
@@ -114,6 +118,16 @@ public final class ChaosConfig {
 
         @Config.Comment("Если у игрока нет кровати, после смерти тело Осколка собирается заново в Преддверии")
         public boolean respawnInAntechamber = true;
+    }
+
+    public static final class MagicCfg {
+        @Config.Comment("Запас энергии Хаоса без Нити и прибавка за каждый уровень Нити")
+        public int energyBase = 40;
+        public int energyPerLevel = 20;
+
+        @Config.Comment("Восстановление энергии в секунду и множитель в Преддверии")
+        public double regenPerSecond = 1.0;
+        public double antechamberRegenMultiplier = 2.0;
     }
 
     public static final class ThreadCfg {
