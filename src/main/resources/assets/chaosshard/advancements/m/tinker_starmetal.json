@@ -1,1 +1,24 @@
-{"criteria":{"done":{"trigger":"minecraft:impossible"}}}
+{
+ "parent": "chaosshard:m/root",
+ "display": {
+  "icon": {
+   "item": "astralsorcery:itemcraftingcomponent",
+   "data": 1
+  },
+  "title": {
+   "translate": "advancement.chaosshard.m.tinker_starmetal.title"
+  },
+  "description": {
+   "translate": "advancement.chaosshard.m.tinker_starmetal.desc"
+  },
+  "frame": "task",
+  "show_toast": false,
+  "announce_to_chat": false,
+  "hidden": true
+ },
+ "criteria": {
+  "done": {
+   "trigger": "minecraft:impossible"
+  }
+ }
+}

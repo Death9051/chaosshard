@@ -1,0 +1,21 @@
+{
+ "display": {
+  "icon": {
+   "item": "chaosshard:grimoire"
+  },
+  "title": {
+   "translate": "advancement.chaosshard.m.root.title"
+  },
+  "description": {
+   "translate": "advancement.chaosshard.m.root.desc"
+  },
+  "background": "chaosshard:textures/blocks/chaos_stone.png",
+  "show_toast": false,
+  "announce_to_chat": false
+ },
+ "criteria": {
+  "done": {
+   "trigger": "minecraft:impossible"
+  }
+ }
+}

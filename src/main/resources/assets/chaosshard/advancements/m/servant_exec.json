@@ -1,1 +1,23 @@
-{"criteria":{"done":{"trigger":"minecraft:impossible"}}}
+{
+ "parent": "chaosshard:m/root",
+ "display": {
+  "icon": {
+   "item": "minecraft:iron_axe"
+  },
+  "title": {
+   "translate": "advancement.chaosshard.m.servant_exec.title"
+  },
+  "description": {
+   "translate": "advancement.chaosshard.m.servant_exec.desc"
+  },
+  "frame": "task",
+  "show_toast": false,
+  "announce_to_chat": false,
+  "hidden": true
+ },
+ "criteria": {
+  "done": {
+   "trigger": "minecraft:impossible"
+  }
+ }
+}

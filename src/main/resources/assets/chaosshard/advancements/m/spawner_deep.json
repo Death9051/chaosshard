@@ -1,1 +1,23 @@
-{"criteria":{"done":{"trigger":"minecraft:impossible"}}}
+{
+ "parent": "chaosshard:m/root",
+ "display": {
+  "icon": {
+   "item": "minecraft:obsidian"
+  },
+  "title": {
+   "translate": "advancement.chaosshard.m.spawner_deep.title"
+  },
+  "description": {
+   "translate": "advancement.chaosshard.m.spawner_deep.desc"
+  },
+  "frame": "task",
+  "show_toast": false,
+  "announce_to_chat": false,
+  "hidden": true
+ },
+ "criteria": {
+  "done": {
+   "trigger": "minecraft:impossible"
+  }
+ }
+}

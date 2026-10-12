@@ -1,1 +1,23 @@
-{"criteria":{"done":{"trigger":"minecraft:impossible"}}}
+{
+ "parent": "chaosshard:m/root",
+ "display": {
+  "icon": {
+   "item": "chaosshard:chaos_implant"
+  },
+  "title": {
+   "translate": "advancement.chaosshard.m.chaos_core.title"
+  },
+  "description": {
+   "translate": "advancement.chaosshard.m.chaos_core.desc"
+  },
+  "frame": "task",
+  "show_toast": false,
+  "announce_to_chat": false,
+  "hidden": true
+ },
+ "criteria": {
+  "done": {
+   "trigger": "minecraft:impossible"
+  }
+ }
+}
