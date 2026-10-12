@@ -27,8 +27,57 @@ public class TrialData extends WorldSavedData {
         public int returnDim;
         public BlockPos returnPos = BlockPos.ORIGIN;
         public boolean done;
-        /** Время активации рун (мир, тики), не сохраняется. */
+        /** Облик и порядок комнат. */
+        public int theme;
+        public int[] rooms = new int[0];
+        /** Текущая комната и её состояние: 0 — не начата, 1 — идёт. */
+        public int room, roomState;
+        /** Сколько комнат пройдено быстрее срока (Мир часов). */
+        public int fast;
+        /** Сундуки-засады, уже открытые (Мир долга). */
+        public final java.util.Set<Long> debtOpened = new java.util.HashSet<>();
+
+        // ---- не сохраняется: живое состояние комнаты
         public final long[] runes = new long[4];
+        public long started, roomStart;
+        public int progress, seqPos, showStep;
+        public int[] seq = new int[0];
+        public long nextEvent, lastSafe;
+        public boolean timeUp;
+        public java.util.UUID hunter;
+        public final java.util.Set<Long> trodden = new java.util.HashSet<>();
+
+        public TrialTheme theme() {
+            return TrialTheme.values()[Math.floorMod(theme, TrialTheme.values().length)];
+        }
+
+        public TrialRoom roomType(int i) {
+            return TrialRoom.values()[rooms[i]];
+        }
+
+        /** Границы комнат по z: [z0, z1] внутренности, корридор в 4 блока между ними. */
+        public int[][] bounds() {
+            int[][] b = new int[rooms.length][2];
+            int z = 0;
+            for (int i = 0; i < rooms.length; i++) {
+                b[i][0] = z;
+                b[i][1] = z + roomType(i).length - 1;
+                z = b[i][1] + 5;
+            }
+            return b;
+        }
+
+        /** Комната, в которой лежит точка (по z), или -1 — коридор. */
+        public int roomAt(BlockPos p) {
+            int z = p.getZ() - origin().getZ();
+            int[][] b = bounds();
+            for (int i = 0; i < b.length; i++) {
+                if (z >= b[i][0] && z <= b[i][1]) {
+                    return i;
+                }
+            }
+            return -1;
+        }
 
         public BlockPos origin() {
             return new BlockPos(id * 512, 64, 0);
@@ -46,6 +95,17 @@ public class TrialData extends WorldSavedData {
             t.setInteger("rdim", returnDim);
             t.setLong("rpos", returnPos.toLong());
             t.setBoolean("done", done);
+            t.setInteger("theme", theme);
+            t.setIntArray("rooms", rooms);
+            t.setInteger("room", room);
+            t.setInteger("rstate", roomState);
+            t.setInteger("fast", fast);
+            long[] d = new long[debtOpened.size()];
+            int i = 0;
+            for (long v : debtOpened) d[i++] = v;
+            net.minecraft.nbt.NBTTagList dl = new net.minecraft.nbt.NBTTagList();
+            for (long v : d) dl.appendTag(new net.minecraft.nbt.NBTTagLong(v));
+            t.setTag("debt", dl);
             return t;
         }
 
@@ -59,6 +119,13 @@ public class TrialData extends WorldSavedData {
             r.returnDim = t.getInteger("rdim");
             r.returnPos = BlockPos.fromLong(t.getLong("rpos"));
             r.done = t.getBoolean("done");
+            r.theme = t.getInteger("theme");
+            r.rooms = t.getIntArray("rooms");
+            r.room = t.getInteger("room");
+            r.roomState = t.getInteger("rstate");
+            r.fast = t.getInteger("fast");
+            net.minecraft.nbt.NBTTagList dl = t.getTagList("debt", 4);
+            for (int i = 0; i < dl.tagCount(); i++) r.debtOpened.add(((net.minecraft.nbt.NBTTagLong) dl.get(i)).getLong());
             return r;
         }
     }

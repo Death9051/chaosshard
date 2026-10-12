@@ -167,7 +167,8 @@ public class CommandChaosShard extends CommandBase {
                 break;
             }
             case "trial": {
-                // /oh trial [start <ступень>|leave] — Испытания
+                // /oh trial [start <ступень> [облик] [законы…]|leave] — Испытания
+                // облик: ruins|ice|forge|overgrown; законы: echo hunter price silence debt memory clock
                 EntityPlayerMP player = getCommandSenderAsPlayer(sender);
                 String sub = args.length >= 2 ? args[1] : "start";
                 if ("leave".equals(sub)) {
@@ -175,7 +176,22 @@ public class CommandChaosShard extends CommandBase {
                 } else {
                     int tier = args.length >= 3 ? parseInt(args[2], 1, 3) : 1;
                     net.minecraft.nbt.NBTTagCompound tag = ru.death.chaosshard.trial.ItemTrialKey.roll((tier - 1) * 2, player.world.rand);
-                    ru.death.chaosshard.trial.TrialManager.enter(player, tier, tag.getInteger("cond"));
+                    int theme = tag.getInteger("theme");
+                    int cond = tag.getInteger("cond");
+                    if (args.length >= 4) {
+                        for (ru.death.chaosshard.trial.TrialTheme th : ru.death.chaosshard.trial.TrialTheme.values()) {
+                            if (th.name().equalsIgnoreCase(args[3])) theme = th.ordinal();
+                        }
+                    }
+                    if (args.length >= 5) {
+                        cond = 0;
+                        for (int a = 4; a < args.length; a++) {
+                            for (ru.death.chaosshard.trial.TrialCondition c : ru.death.chaosshard.trial.TrialCondition.values()) {
+                                if (c.name().equalsIgnoreCase(args[a])) cond |= 1 << c.ordinal();
+                            }
+                        }
+                    }
+                    ru.death.chaosshard.trial.TrialManager.enter(player, tier, cond, theme);
                 }
                 break;
             }

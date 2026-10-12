@@ -53,10 +53,11 @@ public class ItemTrialKey extends Item {
         }
         int tier = tag.getInteger("tier");
         int cond = tag.getInteger("cond");
+        int theme = tag.getInteger("theme");
         if (!p.isCreative()) {
             stack.shrink(1);
         }
-        TrialManager.enter(p, tier, cond);
+        TrialManager.enter(p, tier, cond, theme);
         return new ActionResult<>(EnumActionResult.SUCCESS, stack);
     }
 
@@ -72,6 +73,7 @@ public class ItemTrialKey extends Item {
         NBTTagCompound tag = new NBTTagCompound();
         tag.setInteger("tier", tier);
         tag.setInteger("cond", mask);
+        tag.setInteger("theme", r.nextInt(TrialTheme.values().length));
         return tag;
     }
 
@@ -87,6 +89,7 @@ public class ItemTrialKey extends Item {
         NBTTagCompound tag = stack.getTagCompound();
         if (tag != null && tag.hasKey("tier")) {
             tooltip.add(TextFormatting.LIGHT_PURPLE + I18n.format("item.chaosshard.trial_key.tier", tag.getInteger("tier")));
+            tooltip.add(TextFormatting.GRAY + I18n.format(TrialTheme.values()[Math.floorMod(tag.getInteger("theme"), TrialTheme.values().length)].key()));
             for (TrialCondition c : TrialCondition.values()) {
                 if (TrialCondition.has(tag.getInteger("cond"), c)) {
                     tooltip.add(TextFormatting.GRAY + " • " + I18n.format(c.key()));

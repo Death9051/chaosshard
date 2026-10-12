@@ -121,9 +121,8 @@ public final class TrialBlocks {
 
         @Override
         public void updateTick(World world, BlockPos pos, IBlockState state, Random rand) {
-            // руна гаснет через 20 секунд, если проход ещё закрыт
-            TrialData.Trial t = TrialData.get(world).at(pos);
-            if (state.getValue(LIT) && (t == null || t.stage == 2)) {
+            // руна гаснет, пока её комната не пройдена
+            if (state.getValue(LIT) && !TrialManager.keepLit(world, pos)) {
                 world.setBlockState(pos, state.withProperty(LIT, false), 3);
             }
         }
