@@ -140,6 +140,14 @@ public class TileRitualBowl extends TileEntity implements ITickable {
         }
         Ritual r = Ritual.find(items);
         if (r == null) {
+            ru.death.chaosshard.servant.ServantUpgrade up = ru.death.chaosshard.servant.ServantUpgrade.find(items);
+            if (up != null) {
+                if (ru.death.chaosshard.servant.ServantUpgrade.perform(player, up, pos)) {
+                    items.clear();
+                    changed();
+                }
+                return;
+            }
             say(player, Breach.grimoire("chaosshard.ritual.unknown"));
             return;
         }
@@ -158,7 +166,7 @@ public class TileRitualBowl extends TileEntity implements ITickable {
             say(player, Breach.grimoire("chaosshard.servant.unique"));
             return;
         }
-        if (r.isSummon() && ru.death.chaosshard.servant.Servants.count(player) >= ru.death.chaosshard.servant.Servants.limit(player)
+        if (r.isSummon() && !servantKind(r).unique() && ru.death.chaosshard.servant.Servants.count(player) >= ru.death.chaosshard.servant.Servants.limit(player)
                 && !player.isCreative()) {
             say(player, Breach.grimoire("chaosshard.servant.limit", ru.death.chaosshard.servant.Servants.limit(player)));
             return;
@@ -207,6 +215,9 @@ public class TileRitualBowl extends TileEntity implements ITickable {
             case SERVANT_HARE: return ru.death.chaosshard.servant.Servants.Kind.HARE;
             case SERVANT_CAT: return ru.death.chaosshard.servant.Servants.Kind.CAT;
             case SERVANT_TIGER: return ru.death.chaosshard.servant.Servants.Kind.TIGER;
+            case SERVANT_REAPER: return ru.death.chaosshard.servant.Servants.Kind.REAPER;
+            case SERVANT_LUMBERJACK: return ru.death.chaosshard.servant.Servants.Kind.LUMBERJACK;
+            case SERVANT_MINER: return ru.death.chaosshard.servant.Servants.Kind.MINER;
             default: return ru.death.chaosshard.servant.Servants.Kind.HUSK;
         }
     }
@@ -254,7 +265,10 @@ public class TileRitualBowl extends TileEntity implements ITickable {
             case SERVANT_EXECUTIONER:
             case SERVANT_HARE:
             case SERVANT_CAT:
-            case SERVANT_TIGER: {
+            case SERVANT_TIGER:
+            case SERVANT_REAPER:
+            case SERVANT_LUMBERJACK:
+            case SERVANT_MINER: {
                 ru.death.chaosshard.servant.Servants.Kind kind = servantKind(r);
                 ru.death.chaosshard.servant.Servants.summon(player, kind, pos.add(1, 0, 1));
                 say(player, Breach.grimoire("chaosshard.servant.summoned", ru.death.chaosshard.servant.Servants.count(player),

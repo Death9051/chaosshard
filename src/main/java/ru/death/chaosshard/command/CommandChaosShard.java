@@ -119,6 +119,31 @@ public class CommandChaosShard extends CommandBase {
                 }
                 break;
             }
+            case "servant": {
+                // /oh servant <husk|bone|executioner|reaper|lumberjack|miner> — призвать без ритуала
+                // /oh servant up <УЛУЧШЕНИЕ> — дать улучшение слугам этого типа рядом (8 блоков)
+                EntityPlayerMP player = getCommandSenderAsPlayer(sender);
+                if (args.length >= 3 && "up".equals(args[1])) {
+                    ru.death.chaosshard.servant.ServantUpgrade u;
+                    try {
+                        u = ru.death.chaosshard.servant.ServantUpgrade.valueOf(args[2].toUpperCase(java.util.Locale.ROOT));
+                    } catch (IllegalArgumentException ex) {
+                        throw new WrongUsageException("/oh servant up <" + java.util.Arrays.toString(ru.death.chaosshard.servant.ServantUpgrade.values()) + ">");
+                    }
+                    ru.death.chaosshard.servant.ServantUpgrade.perform(player, u, player.getPosition());
+                } else if (args.length >= 2) {
+                    ru.death.chaosshard.servant.Servants.Kind k;
+                    try {
+                        k = ru.death.chaosshard.servant.Servants.Kind.valueOf(args[1].toUpperCase(java.util.Locale.ROOT));
+                    } catch (IllegalArgumentException ex) {
+                        throw new WrongUsageException("/oh servant <husk|bone|executioner|reaper|lumberjack|miner> | up <улучшение>");
+                    }
+                    ru.death.chaosshard.servant.Servants.summon(player, k, player.getPosition().offset(player.getHorizontalFacing(), 2));
+                } else {
+                    throw new WrongUsageException("/oh servant <husk|bone|executioner|reaper|lumberjack|miner> | up <улучшение>");
+                }
+                break;
+            }
             case "beast": {
                 // /oh beast <hare|cat|tiger> [info|xp <n>|asc|return|reset] — уникальные звери
                 EntityPlayerMP player = getCommandSenderAsPlayer(sender);
@@ -422,7 +447,7 @@ public class CommandChaosShard extends CommandBase {
     @Override
     public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos targetPos) {
         if (args.length == 1) {
-            return getListOfStringsMatchingLastWord(args, "nit", "tp", "sky", "grimoire", "debug", "breach", "heart", "quests", "selftest", "anchor", "shrine", "surge", "village", "trial", "beast");
+            return getListOfStringsMatchingLastWord(args, "nit", "tp", "sky", "grimoire", "debug", "breach", "heart", "quests", "selftest", "anchor", "shrine", "surge", "village", "trial", "beast", "servant");
         }
         if (args.length == 2 && "nit".equals(args[0])) {
             return getListOfStringsMatchingLastWord(args, "get", "set", "add", "resync");
@@ -438,6 +463,16 @@ public class CommandChaosShard extends CommandBase {
         }
         if (args.length == 2 && "anchor".equals(args[0])) {
             return getListOfStringsMatchingLastWord(args, "list", "spread", "level", "raid");
+        }
+        if (args.length == 2 && "servant".equals(args[0])) {
+            return getListOfStringsMatchingLastWord(args, "husk", "bone", "executioner", "reaper", "lumberjack", "miner", "up");
+        }
+        if (args.length == 3 && "servant".equals(args[0]) && "up".equals(args[1])) {
+            java.util.List<String> names = new java.util.ArrayList<>();
+            for (ru.death.chaosshard.servant.ServantUpgrade u : ru.death.chaosshard.servant.ServantUpgrade.values()) {
+                names.add(u.name().toLowerCase(java.util.Locale.ROOT));
+            }
+            return getListOfStringsMatchingLastWord(args, names);
         }
         if (args.length == 2 && "beast".equals(args[0])) {
             return getListOfStringsMatchingLastWord(args, "hare", "cat", "tiger");

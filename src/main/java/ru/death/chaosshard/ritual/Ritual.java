@@ -37,13 +37,35 @@ public enum Ritual {
     /** Уникальный слуга: Кошка. */
     SERVANT_CAT(2, 0, offer("chaosshard:chaos_essence", 0, 3), offer("minecraft:fish", 0, 8), offer("minecraft:string", 0, 4)),
     /** Уникальный слуга: Тигр. */
-    SERVANT_TIGER(4, 0, offer("chaosshard:chaos_essence", 0, 6), offer("minecraft:blaze_rod", 0, 4), offer("minecraft:beef", 0, 8));
+    SERVANT_TIGER(4, 0, offer("chaosshard:chaos_essence", 0, 6), offer("minecraft:blaze_rod", 0, 4), offer("minecraft:beef", 0, 8)),
+    /** Добытчик: Жнец. */
+    SERVANT_REAPER(1, 0, offer("chaosshard:chaos_essence", 0, 2), offer("minecraft:wheat_seeds", 0, 16), offer("minecraft:stone_hoe", 0, 1)),
+    /** Добытчик: Лесоруб. */
+    SERVANT_LUMBERJACK(1, 0, offer("chaosshard:chaos_essence", 0, 2), offer("minecraft:sapling", 0, 8), offer("minecraft:stone_axe", 0, 1)),
+    /** Добытчик: Рудокоп. */
+    SERVANT_MINER(2, 0, offer("chaosshard:chaos_essence", 0, 3), offer("minecraft:stone_pickaxe", 0, 1), offer("minecraft:torch", 0, 16));
+
+    /** Ритуал призыва слуги этого типа. */
+    public static Ritual summonFor(ru.death.chaosshard.servant.Servants.Kind k) {
+        switch (k) {
+            case HUSK: return SERVANT_HUSK;
+            case BONE: return SERVANT_BONE;
+            case EXECUTIONER: return SERVANT_EXECUTIONER;
+            case HARE: return SERVANT_HARE;
+            case CAT: return SERVANT_CAT;
+            case TIGER: return SERVANT_TIGER;
+            case REAPER: return SERVANT_REAPER;
+            case LUMBERJACK: return SERVANT_LUMBERJACK;
+            default: return SERVANT_MINER;
+        }
+    }
 
 
 
     public boolean isSummon() {
         return this == SERVANT_HUSK || this == SERVANT_BONE || this == SERVANT_EXECUTIONER
-                || this == SERVANT_HARE || this == SERVANT_CAT || this == SERVANT_TIGER;
+                || this == SERVANT_HARE || this == SERVANT_CAT || this == SERVANT_TIGER
+                || this == SERVANT_REAPER || this == SERVANT_LUMBERJACK || this == SERVANT_MINER;
     }
 
     public final int minThread;

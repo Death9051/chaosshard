@@ -17,6 +17,7 @@ import ru.death.chaosshard.network.PacketBeastAction;
 import ru.death.chaosshard.servant.BeastData;
 import ru.death.chaosshard.servant.BeastData.Beast;
 import ru.death.chaosshard.servant.EntityChaosBeast;
+import ru.death.chaosshard.servant.Servants;
 
 import java.util.ArrayList;
 import java.util.EnumMap;
@@ -26,6 +27,8 @@ import java.util.Map;
 /** Вкладка «Слуги» окна магии: отголоски старых знакомств — Заяц, Кошка, Тигр. */
 class BeastPage {
 
+    /** Строки списка: «Отголоски», 3 зверя, заголовок «Свита», 6 типов слуг. */
+    static final int ROWS = 11, HEADER_ROW = 4;
     private static final int GOLD = 0xFFD27A, OPEN = 0xC9C3D6, DIM = 0x5E566C, ACCENT = 0xD9B8FF, SOFT = 0x9A8FB0;
 
     private final GuiGrimoireMagic gui;
@@ -53,24 +56,36 @@ class BeastPage {
         int left = gui.left(), top = gui.top(), row = gui.row(), listW = gui.listW();
         // список
         RenderHelper.enableGUIStandardItemLighting();
-        for (int i = -1; i < 3; i++) {
-            int y = top + 8 + (i + 1) * row;
-            if (i == sel) {
-                Gui.drawRect(left + 5, y - 1, left + listW, y + row - 2, 0x804A2A70);
+        for (int row = 0; row < ROWS; row++) {
+            int i = row - 1;
+            int y = top + 8 + row * gui.row();
+            if (row == HEADER_ROW) {
+                gui.font().drawString("§o" + tr("chaosshard.servant.gui.retinue"), left + 10, y + 4, SOFT);
+                continue;
             }
-            ItemStack ic = i < 0 ? new ItemStack(ModItems.GRIMOIRE) : icon(Beast.values()[i]);
-            gui.items().renderItemAndEffectIntoGUI(ic, left + 8, y);
+            if (i == sel) {
+                Gui.drawRect(left + 5, y - 1, left + listW, y + row() - 2, 0x804A2A70);
+            }
+            ItemStack ic;
             String name;
             int col;
             if (i < 0) {
+                ic = new ItemStack(ModItems.GRIMOIRE);
                 name = tr("chaosshard.beast.intro");
                 col = OPEN;
-            } else {
+            } else if (i < 3) {
                 Beast b = Beast.values()[i];
+                ic = icon(b);
                 boolean known = ClientBeasts.get(b).getBoolean("known");
                 name = known ? tr("chaosshard.beast." + b.key()) + " §7" + ClientBeasts.level(b) : tr("chaosshard.beast.unknown");
                 col = known ? (ClientBeasts.level(b) >= 5 ? GOLD : OPEN) : DIM;
+            } else {
+                Servants.Kind k = Servants.Kind.COMMON[i - HEADER_ROW];
+                ic = kindIcon(k);
+                name = tr("chaosshard.servant.kind." + k.key());
+                col = k.minThread <= MagicUi.threadLevel() ? OPEN : DIM;
             }
+            gui.items().renderItemAndEffectIntoGUI(ic, left + 8, y);
             gui.font().drawString(gui.font().trimStringToWidth(name, listW - 32), left + 28, y + 4, col);
         }
         RenderHelper.disableStandardItemLighting();
@@ -82,6 +97,10 @@ class BeastPage {
             gui.paragraph(tr("chaosshard.beast.intro.text"), x, y, w, OPEN);
             return;
         }
+        if (sel >= HEADER_ROW) {
+            drawKind(Servants.Kind.COMMON[sel - HEADER_ROW], x, y, w, mx, my);
+            return;
+        }
         Beast b = Beast.values()[sel];
         NBTTagCompound t = ClientBeasts.get(b);
         String title = tr("chaosshard.beast." + b.key());
@@ -89,7 +108,10 @@ class BeastPage {
             gui.text("§l" + title, x, y, SOFT);
             y += 14;
             y = gui.paragraph(tr("chaosshard.beast." + b.key() + ".lore"), x, y, w, 0x8A8098) + 6;
-            gui.paragraph(tr("chaosshard.beast.unknown.text", tr("chaosshard.ritual.servant_" + b.key())), x, y, w, OPEN);
+            y = gui.paragraph(tr("chaosshard.beast.unknown.text", tr("chaosshard.ritual.servant_" + b.key())), x, y, w, OPEN) + 4;
+            ru.death.chaosshard.ritual.Ritual r = ru.death.chaosshard.ritual.Ritual.summonFor(b.kind);
+            int ix = icons(r.offeringStacks(), x, y, mx, my);
+            gui.text(tr("chaosshard.magic.need_thread", r.minThread), ix + 4, y + 4, r.minThread <= MagicUi.threadLevel() ? 0x9AD08A : 0xD07070);
             return;
         }
         int lvl = ClientBeasts.level(b);
@@ -197,6 +219,71 @@ class BeastPage {
                 hoverLines = split((owned ? "§6" : "§d") + tr(pk) + "\n§7" + tr(pk + ".desc") + "\n" + foot);
             }
         }
+    }
+
+    private int row() {
+        return gui.row();
+    }
+
+    static ItemStack kindIcon(Servants.Kind k) {
+        switch (k) {
+            case HUSK: return new ItemStack(Items.ROTTEN_FLESH);
+            case BONE: return new ItemStack(Items.SKULL, 1, 1);
+            case EXECUTIONER: return new ItemStack(Items.IRON_AXE);
+            case REAPER: return new ItemStack(Items.IRON_HOE);
+            case LUMBERJACK: return new ItemStack(Items.STONE_AXE);
+            default: return new ItemStack(Items.IRON_PICKAXE);
+        }
+    }
+
+    /** Страница типа обычного слуги: роль, призыв, сила от Нити, 5 улучшений. */
+    private void drawKind(Servants.Kind k, int x, int y, int w, int mx, int my) {
+        int thread = MagicUi.threadLevel();
+        gui.text("§l" + tr("chaosshard.servant.kind." + k.key()), x, y, k.minThread <= thread ? ACCENT : SOFT);
+        String role = tr(k.gatherer() ? "chaosshard.servant.gui.gatherer" : "chaosshard.servant.gui.fighter");
+        gui.text(role, x + w - gui.font().getStringWidth(role), y, SOFT);
+        y += 13;
+        y = gui.paragraph(tr("chaosshard.servant.kind." + k.key() + ".desc"), x, y, w, OPEN) + 4;
+        // призыв
+        ru.death.chaosshard.ritual.Ritual r = ru.death.chaosshard.ritual.Ritual.summonFor(k);
+        gui.text(tr("chaosshard.servant.gui.summon"), x, y + 4, SOFT);
+        int ix = x + gui.font().getStringWidth(tr("chaosshard.servant.gui.summon")) + 4;
+        ix = icons(r.offeringStacks(), ix, y, mx, my);
+        gui.text(tr("chaosshard.magic.need_thread", r.minThread), ix + 4, y + 4, r.minThread <= thread ? 0x9AD08A : 0xD07070);
+        y += 20;
+        int tier = Math.min(5, thread);
+        gui.text(tr("chaosshard.servant.gui.strength", thread, 15 * tier, tr("chaosshard.servant.gear." + tier)), x, y, 0xB89CFF);
+        y += 11;
+        gui.text(tr("chaosshard.servant.gui.limit", 2 + thread), x, y, 0xB0A8C0);
+        y += 13;
+        gui.text(tr("chaosshard.servant.gui.upgrades"), x, y, SOFT);
+        y += 11;
+        for (ru.death.chaosshard.servant.ServantUpgrade u : ru.death.chaosshard.servant.ServantUpgrade.of(k)) {
+            boolean open = u.minThread <= thread;
+            int iconsX = x + w - 3 * 18;
+            gui.text(gui.font().trimStringToWidth(tr(u.key()), iconsX - x - 4), x, y + 4, open ? OPEN : DIM);
+            if (mx >= x && mx < iconsX && my >= y && my < y + 17) {
+                hoverLines = split("§d" + tr(u.key()) + "\n§7" + tr(u.key() + ".desc") + "\n"
+                        + (open ? "§a" : "§c") + tr("chaosshard.magic.need_thread", u.minThread));
+            }
+            icons(u.offerings(), iconsX, y, mx, my);
+            y += 18;
+        }
+    }
+
+    /** Нарисовать стопки в ряд; наведённая — в подсказку. Возвращает x после последней. */
+    private int icons(List<ItemStack> stacks, int x, int y, int mx, int my) {
+        RenderHelper.enableGUIStandardItemLighting();
+        for (ItemStack s : stacks) {
+            gui.items().renderItemAndEffectIntoGUI(s, x, y);
+            gui.items().renderItemOverlayIntoGUI(gui.font(), s, x, y, null);
+            if (mx >= x && mx < x + 16 && my >= y && my < y + 16) {
+                hoverLines = s.getTooltip(Minecraft.getMinecraft().player, net.minecraft.client.util.ITooltipFlag.TooltipFlags.NORMAL);
+            }
+            x += 18;
+        }
+        RenderHelper.disableStandardItemLighting();
+        return x;
     }
 
     void click(Beast b, int mx, int my) {

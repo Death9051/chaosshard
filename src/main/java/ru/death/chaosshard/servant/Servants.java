@@ -53,6 +53,12 @@ public class Servants {
 
     public static final String TAG_OWNER = "chaosshard_servant";
     public static final String TAG_GUARD = "chaosshard_servant_guard";
+    /** Тип слуги (имя Kind). */
+    public static final String TAG_KIND = "chaosshard_kind";
+    /** Сундук, за которым закреплён добытчик. */
+    public static final String TAG_CHEST = "chaosshard_chest";
+    /** Направление шахты Рудокопа (горизонтальный индекс). */
+    public static final String TAG_DIR = "chaosshard_dir";
 
     public enum Kind {
         HUSK("minecraft:husk", "Скорлупа Хаоса", 30, 0),
@@ -60,11 +66,26 @@ public class Servants {
         EXECUTIONER("minecraft:vindication_illager", "Палач Хаоса", 50, 3),
         HARE("chaosshard:servant_hare", "Заяц", 20, 1),
         TIGER("chaosshard:servant_tiger", "Тигр", 80, 4),
-        CAT("chaosshard:servant_cat", "Кошка", 24, 2);
+        CAT("chaosshard:servant_cat", "Кошка", 24, 2),
+        REAPER("minecraft:husk", "Жнец", 26, 1),
+        LUMBERJACK("minecraft:husk", "Лесоруб", 30, 1),
+        MINER("minecraft:husk", "Рудокоп", 34, 2);
 
         /** Уникальный слуга: у Осколка может быть только один такой. */
         public boolean unique() {
             return this == HARE || this == TIGER || this == CAT;
+        }
+
+        /** Добытчик: работает у сундука. */
+        public boolean gatherer() {
+            return this == REAPER || this == LUMBERJACK || this == MINER;
+        }
+
+        /** Обычные слуги (свита): бойцы и добытчики. */
+        public static final Kind[] COMMON = {HUSK, BONE, EXECUTIONER, REAPER, LUMBERJACK, MINER};
+
+        public String key() {
+            return name().toLowerCase(java.util.Locale.ROOT);
         }
 
         public final String id, name;
@@ -78,15 +99,42 @@ public class Servants {
         }
     }
 
+    /** Обычных слуг (без зверей): 2 + уровень Нити. */
     public static int limit(EntityPlayer p) {
-        return 1 + ThreadBonus.level(p);
+        return 2 + ThreadBonus.level(p);
     }
 
+    /** Тип слуги: из метки, а у старых слуг — по виду сущности. */
+    public static Kind kindOf(Entity e) {
+        if (e == null) {
+            return null;
+        }
+        String k = e.getEntityData().getString(TAG_KIND);
+        if (!k.isEmpty()) {
+            try {
+                return Kind.valueOf(k);
+            } catch (IllegalArgumentException ignored) {
+                // старая метка
+            }
+        }
+        net.minecraft.util.ResourceLocation key = EntityList.getKey(e);
+        if (key == null) {
+            return null;
+        }
+        for (Kind kind : Kind.values()) {
+            if (!kind.gatherer() && kind.id.equals(key.toString())) {
+                return kind;
+            }
+        }
+        return null;
+    }
+
+    /** Обычных слуг у игрока (звери не считаются). */
     public static int count(EntityPlayerMP p) {
         int n = 0;
         for (WorldServer w : p.getServer().worlds) {
             for (Entity e : w.loadedEntityList) {
-                if (isServantOf(e, p.getUniqueID()) && e.isEntityAlive()) {
+                if (isServantOf(e, p.getUniqueID()) && e.isEntityAlive() && !(e instanceof EntityChaosBeast)) {
                     n++;
                 }
             }
@@ -162,6 +210,8 @@ public class Servants {
         m.setLocationAndAngles(at.getX() + 0.5, at.getY(), at.getZ() + 0.5, owner.rotationYaw, 0);
         m.onInitialSpawn(world.getDifficultyForLocation(at), null);
         m.getEntityData().setUniqueId(TAG_OWNER, owner.getUniqueID());
+        m.getEntityData().setString(TAG_KIND, kind.name());
+        m.getEntityData().setString("chaosshard_owner_name", owner.getName());
         m.setCustomNameTag((kind.unique() ? "§d" : "§5") + kind.name + " §7(" + owner.getName() + ")");
         m.setAlwaysRenderNameTag(false);
         m.enablePersistence();
@@ -178,9 +228,10 @@ public class Servants {
             Beasts.preSpawn(owner, (EntityChaosBeast) m);
         }
         world.spawnEntity(m);
-        if (m instanceof EntityChaosBeast) {
-            m.setHealth(m.getMaxHealth());
+        if (!(m instanceof EntityChaosBeast)) {
+            ServantGear.refresh(m, owner);
         }
+        m.setHealth(m.getMaxHealth());
         return m;
     }
 
@@ -193,20 +244,41 @@ public class Servants {
             return;
         }
         EntityCreature m = (EntityCreature) e;
+        Kind kind = kindOf(m);
         m.tasks.taskEntries.clear();
         m.targetTasks.taskEntries.clear();
+        m.setCanPickUpLoot(false);
         m.tasks.addTask(0, new EntityAISwimming(m));
         m.tasks.addTask(2, new EntityAIAttackMelee(m, 1.2D, true));
-        m.tasks.addTask(4, new FollowOwner(m));
-        m.tasks.addTask(6, new EntityAIWanderAvoidWater(m, 0.8D));
-        m.tasks.addTask(7, new EntityAIWatchClosest(m, EntityPlayer.class, 8.0F));
-        m.tasks.addTask(8, new EntityAILookIdle(m));
-        m.targetTasks.addTask(1, new DefendOwner(m));
-        m.targetTasks.addTask(2, new EntityAIHurtByTarget(m, false));
-        m.targetTasks.addTask(3, new EntityAINearestAttackableTarget<>(m, EntityLiving.class, 10, true, false,
-                t -> t instanceof IMob && !isServant(t)));
-        if (m.getEntityData().hasKey(TAG_GUARD)) {
-            m.setHomePosAndDistance(BlockPos.fromLong(m.getEntityData().getLong(TAG_GUARD)), 8);
+        if (kind != null && kind.gatherer()) {
+            // добытчик: работает у сундука, отбивается, только если тронули
+            switch (kind) {
+                case REAPER: m.tasks.addTask(3, new ru.death.chaosshard.servant.work.WorkReaper(m)); break;
+                case LUMBERJACK: m.tasks.addTask(3, new ru.death.chaosshard.servant.work.WorkLumberjack(m)); break;
+                default: m.tasks.addTask(3, new ru.death.chaosshard.servant.work.WorkMiner(m)); break;
+            }
+            m.tasks.addTask(4, new FollowOwner(m));
+            m.tasks.addTask(7, new EntityAIWatchClosest(m, EntityPlayer.class, 8.0F));
+            m.tasks.addTask(8, new EntityAILookIdle(m));
+            m.targetTasks.addTask(1, new EntityAIHurtByTarget(m, false));
+            if (m.getEntityData().hasKey(TAG_CHEST)) {
+                m.setHomePosAndDistance(BlockPos.fromLong(m.getEntityData().getLong(TAG_CHEST)), 32);
+            }
+        } else {
+            m.tasks.addTask(4, new FollowOwner(m));
+            m.tasks.addTask(6, new EntityAIWanderAvoidWater(m, 0.8D));
+            m.tasks.addTask(7, new EntityAIWatchClosest(m, EntityPlayer.class, 8.0F));
+            m.tasks.addTask(8, new EntityAILookIdle(m));
+            m.targetTasks.addTask(1, new DefendOwner(m));
+            m.targetTasks.addTask(2, new EntityAIHurtByTarget(m, false));
+            m.targetTasks.addTask(3, new EntityAINearestAttackableTarget<>(m, EntityLiving.class, 10, true, false,
+                    t -> t instanceof IMob && !isServant(t)));
+            if (m.getEntityData().hasKey(TAG_GUARD)) {
+                m.setHomePosAndDistance(BlockPos.fromLong(m.getEntityData().getLong(TAG_GUARD)), 8);
+            }
+        }
+        if (!(m instanceof EntityChaosBeast)) {
+            ServantGear.refresh(m, owner(m));
         }
     }
 
@@ -221,7 +293,7 @@ public class Servants {
 
         @Override
         public boolean shouldExecute() {
-            if (m.getEntityData().hasKey(TAG_GUARD) || m.getAttackTarget() != null) {
+            if (m.getEntityData().hasKey(TAG_GUARD) || m.getEntityData().hasKey(TAG_CHEST) || m.getAttackTarget() != null) {
                 return false;
             }
             EntityPlayer o = owner(m);
@@ -310,6 +382,19 @@ public class Servants {
         }
         ItemStack held = p.getHeldItemMainhand();
         NBTTagCompound d = e.getEntityData();
+        Kind kind = kindOf(e);
+        if (held.getItem() == ModItems.GRIMOIRE && kind != null && kind.gatherer()) {
+            if (p.isSneaking()) {
+                ru.death.chaosshard.servant.work.Work.unbind((EntityCreature) e);
+                p.sendStatusMessage(Breach.grimoire("chaosshard.work.unbound"), true);
+            } else {
+                ru.death.chaosshard.servant.work.Work.select(p, e);
+                p.sendStatusMessage(Breach.grimoire("chaosshard.work.selected",
+                        new net.minecraft.util.text.TextComponentTranslation("chaosshard.servant.kind." + kind.key())), true);
+            }
+            event.setCanceled(true);
+            return;
+        }
         if (held.getItem() == ModItems.GRIMOIRE) {
             if (d.hasKey(TAG_GUARD)) {
                 d.removeTag(TAG_GUARD);

@@ -78,7 +78,7 @@ public class GuiGrimoireMagic extends GuiScreen {
 
     @Override
     protected void actionPerformed(GuiButton button) {
-        if (button.id == 2 && tab == 2 && selBeast >= 0) {
+        if (button.id == 2 && tab == 2 && selBeast >= 0 && selBeast < 3) {
             ChaosNetwork.CHANNEL.sendToServer(new ru.death.chaosshard.network.PacketBeastAction(
                     ru.death.chaosshard.servant.BeastData.Beast.values()[selBeast], 1, 0));
             return;
@@ -115,15 +115,15 @@ public class GuiGrimoireMagic extends GuiScreen {
             int row = (my - top - 8) / ROW;
             if (tab == 0 && row >= 0 && row < spells.size()) {
                 selSpell = row;
-            } else if (tab == 1 && row >= 0 && row <= Ritual.values().length) {
+            } else if (tab == 1 && row >= 0 && row <= shownRituals().size()) {
                 selRitual = row - 1;
-            } else if (tab == 2 && row >= 0 && row <= 3) {
+            } else if (tab == 2 && row >= 0 && row <= BeastPage.ROWS - 1 && row != BeastPage.HEADER_ROW) {
                 selBeast = row - 1;
             }
             updateButton();
             return;
         }
-        if (tab == 2 && selBeast >= 0) {
+        if (tab == 2 && selBeast >= 0 && selBeast < 3) {
             beasts.click(ru.death.chaosshard.servant.BeastData.Beast.values()[selBeast], mx, my);
         }
     }
@@ -231,8 +231,22 @@ public class GuiGrimoireMagic extends GuiScreen {
 
     // ------------------------------------------------------------------ ритуалы
 
+    /** В списке ритуалов — без призывов: они на вкладке «Слуги». */
+    static List<Ritual> shownRituals() {
+        List<Ritual> out = new ArrayList<>();
+        for (Ritual r : Ritual.values()) {
+            if (!r.isSummon()) {
+                out.add(r);
+            }
+        }
+        return out;
+    }
+
     private void drawRituals(int mx, int my) {
-        Ritual[] all = Ritual.values();
+        Ritual[] all = shownRituals().toArray(new Ritual[0]);
+        if (selRitual >= all.length) {
+            selRitual = -1;
+        }
         RenderHelper.enableGUIStandardItemLighting();
         for (int i = -1; i < all.length; i++) {
             int y = top + 8 + (i + 1) * ROW;
@@ -252,6 +266,7 @@ public class GuiGrimoireMagic extends GuiScreen {
             drawString(fontRenderer, "§l" + I18n.format("chaosshard.magic.howto"), x, y, 0xD9B8FF);
             y += 14;
             y = para(I18n.format("chaosshard.magic.howto.text"), x, y, w - 70, 0xC9C3D6);
+            para(I18n.format("chaosshard.magic.howto.summons"), x, y + 6, w - 70, 0x9A8FB0);
             drawCircle(left + W - 70, top + 26);
             return;
         }
