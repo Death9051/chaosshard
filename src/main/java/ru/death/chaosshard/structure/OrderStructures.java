@@ -153,7 +153,7 @@ public class OrderStructures implements IWorldGenerator {
 
     /** Постройки Акта 4: встают всегда, место уже выбрало Знамение. */
     public static boolean forced(String name) {
-        return name.startsWith("pillar_") || name.equals("monastery") || name.equals("velmor_ward");
+        return name.startsWith("pillar_") || name.equals("monastery") || name.equals("velmor_ward") || name.equals("capital");
     }
 
     /** Найти землю, проверить ровность и воду, поставить. */
@@ -231,6 +231,9 @@ public class OrderStructures implements IWorldGenerator {
             } else if ("seal".equals(m.kind)) {
                 ru.death.chaosshard.hero.Pillars.sealPlaced(world, e, BlueprintPlacer.at(o, m.x, m.y, m.z, e.rot));
             }
+        }
+        if ("capital".equals(e.name)) {
+            ru.death.chaosshard.act5.Crown.placed(world, e, b);
         }
         for (Blueprint.Mark m : b.guards) {
             BlockPos p = BlueprintPlacer.at(o, m.x, m.y, m.z, e.rot);

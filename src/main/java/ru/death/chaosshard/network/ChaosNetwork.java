@@ -22,6 +22,7 @@ public final class ChaosNetwork {
         CHANNEL.registerMessage(PacketBiomes.Handler.class, PacketBiomes.class, 8, Side.CLIENT);
         CHANNEL.registerMessage(PacketCutscene.Handler.class, PacketCutscene.class, 9, Side.CLIENT);
         CHANNEL.registerMessage(PacketCutsceneSkip.Handler.class, PacketCutsceneSkip.class, 10, Side.SERVER);
+        CHANNEL.registerMessage(PacketCredits.Handler.class, PacketCredits.class, 11, Side.CLIENT);
     }
 
     private ChaosNetwork() {

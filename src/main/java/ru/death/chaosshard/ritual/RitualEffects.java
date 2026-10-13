@@ -195,6 +195,8 @@ public final class RitualEffects {
                 return ru.death.chaosshard.order.Shrines.desecrate(world, stone, p,
                         new net.minecraft.item.ItemStack(ru.death.chaosshard.init.ModItems.CHAOS_ESSENCE));
             }
+            case OMEN_CROWN:
+                return ru.death.chaosshard.act5.Crown.omen(p, world, pos);
             case SCENT:
                 return ru.death.chaosshard.plans.MinorPlans.scent(p, world, pos);
             case FALLEN_FEATHER: {

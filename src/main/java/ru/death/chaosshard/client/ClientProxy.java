@@ -49,6 +49,10 @@ public class ClientProxy extends CommonProxy {
                 ru.death.chaosshard.structure.client.RenderOrderKnight::new);
         net.minecraftforge.fml.client.registry.RenderingRegistry.registerEntityRenderingHandler(ru.death.chaosshard.hero.EntityHero.class,
                 ru.death.chaosshard.hero.client.RenderHero::new);
+        net.minecraftforge.fml.client.registry.RenderingRegistry.registerEntityRenderingHandler(ru.death.chaosshard.act5.EntityKing.class,
+                rm -> new ru.death.chaosshard.act5.client.RenderBoss<>(rm, "king", 1.15F));
+        net.minecraftforge.fml.client.registry.RenderingRegistry.registerEntityRenderingHandler(ru.death.chaosshard.act5.EntityArchon.class,
+                rm -> new ru.death.chaosshard.act5.client.RenderBoss<>(rm, "archon", 1.5F));
         net.minecraftforge.fml.client.registry.RenderingRegistry.registerEntityRenderingHandler(ru.death.chaosshard.garrot.EntityGarrot.class,
                 ru.death.chaosshard.garrot.client.RenderGarrot::new);
         net.minecraftforge.fml.client.registry.ClientRegistry.bindTileEntitySpecialRenderer(
@@ -92,6 +96,11 @@ public class ClientProxy extends CommonProxy {
     @Override
     public void handleThreadSync(int points) {
         Minecraft.getMinecraft().addScheduledTask(() -> ClientThreadCache.update(points));
+    }
+
+    @Override
+    public void showCredits() {
+        Minecraft.getMinecraft().addScheduledTask(() -> Minecraft.getMinecraft().displayGuiScreen(new ru.death.chaosshard.act5.client.GuiCredits()));
     }
 
     @Override

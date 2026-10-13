@@ -35,6 +35,8 @@ public final class ModItems {
     public static Item GARROT_BANNER;
     /** Печать Ордена — с капитанов набегов Ордена (Акт 5); три открывают Знамение Короны. */
     public static Item ORDER_SEAL;
+    /** Ключ Разлома — с Короля; ведёт сквозь врата за троном. Корона Лучезарии — трофей. */
+    public static Item RIFT_KEY, ROYAL_CROWN;
     /** Мел Хаоса — рисует знаки ритуального круга. */
     public static Item CHALK;
     /** Ключ обломка — вход в Испытание. */
@@ -77,6 +79,10 @@ public final class ModItems {
         CHAOS_ESSENCE = add(new ru.death.chaosshard.item.ItemLore("chaosshard.chaos_essence.lore", false), "chaos_essence");
         GARROT_BANNER = add(new ru.death.chaosshard.item.ItemLore("chaosshard.garrot_banner.lore", false), "garrot_banner");
         ORDER_SEAL = add(new ru.death.chaosshard.item.ItemLore("chaosshard.order_seal.lore", true), "order_seal");
+        RIFT_KEY = add(new ru.death.chaosshard.item.ItemLore("chaosshard.rift_key.lore", true), "rift_key");
+        RIFT_KEY.setMaxStackSize(1);
+        ROYAL_CROWN = add(new ru.death.chaosshard.item.ItemLore("chaosshard.royal_crown.lore", true), "royal_crown");
+        ROYAL_CROWN.setMaxStackSize(1);
         DISTORTED_STARMETAL = add(new ru.death.chaosshard.item.ItemLore("chaosshard.distorted_starmetal.lore", true), "distorted_starmetal");
         CHALK = add(new ru.death.chaosshard.ritual.ItemChalk(), "chaos_chalk");
         TRIAL_KEY = add(new ru.death.chaosshard.trial.ItemTrialKey(), "trial_key");

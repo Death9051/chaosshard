@@ -44,6 +44,10 @@ public class CommonProxy {
     public void handleCutscene(ru.death.chaosshard.network.PacketCutscene m) {
     }
 
+    /** Титры финала (только клиент). */
+    public void showCredits() {
+    }
+
     public void handleHeartBolt(ru.death.chaosshard.network.PacketHeartBolt bolt) {
     }
 

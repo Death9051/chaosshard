@@ -1,0 +1,23 @@
+{
+ "parent": "chaosshard:m/root",
+ "display": {
+  "icon": {
+   "item": "chaosshard:rift_pylon"
+  },
+  "title": {
+   "translate": "advancement.chaosshard.m.pylon_broken.title"
+  },
+  "description": {
+   "translate": "advancement.chaosshard.m.pylon_broken.desc"
+  },
+  "frame": "task",
+  "show_toast": false,
+  "announce_to_chat": false,
+  "hidden": true
+ },
+ "criteria": {
+  "done": {
+   "trigger": "minecraft:impossible"
+  }
+ }
+}

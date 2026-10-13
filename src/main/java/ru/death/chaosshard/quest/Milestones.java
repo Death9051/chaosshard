@@ -39,6 +39,14 @@ public class Milestones {
     public static final String ANCHOR_HUM = "anchor_hum";
     public static final String WITHER_SLAIN = "wither_slain";
     public static final String ORDER_RAID = "order_raid";
+    public static final String CROWN_OMEN = "crown_omen";
+    public static final String BEACON_OUT = "beacon_out";
+    public static final String CAPITAL_OPEN = "capital_open";
+    public static final String KING_SLAIN = "king_slain";
+    public static final String RIFT_ENTERED = "rift_entered";
+    public static final String PYLON_BROKEN = "pylon_broken";
+    public static final String ARCHON_SLAIN = "archon_slain";
+    public static final String GAME_COMPLETE = "game_complete";
     public static final String DRAGON_SLAIN = "dragon_slain";
     public static final String ANCHOR_WAYSTONE = "anchor_waystone";
     public static final String SERVANT_FED = "servant_fed";

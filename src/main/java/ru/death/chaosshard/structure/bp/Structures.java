@@ -13,6 +13,7 @@ public final class Structures {
         }
         switch (name) {
             case "monastery": return Monastery.build(r);
+            case "capital": return Capital.build(r);
             case "velmor_ward": return VelmorWard.build(r);
             case "crystal_spires": return CrystalSpires.build(r);
             case "greenhouse": return Greenhouse.build(r);

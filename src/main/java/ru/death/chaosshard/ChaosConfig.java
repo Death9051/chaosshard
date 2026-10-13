@@ -110,6 +110,19 @@ public final class ChaosConfig {
         @Config.Comment("Акт 5: когда все Опоры пали и Гаррот склонился — набеги идёт делать сам Орден")
         public boolean orderRaids = true;
 
+        @Config.Comment("Акт 5: Король — здоровье и Нить за победу; маяк столицы гасят столькими Эссенциями, если в этом радиусе нет стражи")
+        public int kingHealth = 1400;
+        public int kingReward = 600;
+        public int beaconEssence = 4;
+        public int beaconGuardRadius = 10;
+
+        @Config.Comment("Акт 5: Разлом — ID измерения (менять только на новом мире), Архонт: здоровье, урон луча, Нить за победу")
+        @Config.RequiresMcRestart
+        public int riftDimensionId = 68;
+        public int archonHealth = 2400;
+        public double archonBeam = 8.0;
+        public int archonReward = 1000;
+
         @Config.Comment("Через сколько тиков после захвата края приходит первый набег")
         public int firstRaidDelay = 2400;
 

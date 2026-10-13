@@ -289,7 +289,43 @@ public class CommandChaosShard extends CommandBase {
                     ru.death.chaosshard.act5.OrderRaids.spawn((net.minecraft.world.WorldServer) pl.world, near, pl, Math.max(1, lvl), pl.world.rand.nextDouble() * Math.PI * 2);
                     break;
                 }
-                sender.sendMessage(new net.minecraft.util.text.TextComponentString("Наступление Ордена: " + (ru.death.chaosshard.act5.OrderRaids.active(ws) ? "идёт" : "ещё нет")));
+                if (args.length >= 2 && "capital".equals(args[1])) {
+                    // поставить столицу в 40 блоках перед игроком
+                    EntityPlayerMP pl = getCommandSenderAsPlayer(sender);
+                    net.minecraft.util.EnumFacing f = pl.getHorizontalFacing();
+                    BlockPos c = ru.death.chaosshard.structure.OrderStructures.ground(pl.world, (int) pl.posX + f.getXOffset() * 40, (int) pl.posZ + f.getZOffset() * 40);
+                    ru.death.chaosshard.structure.OrderStructureData.Entry e = ru.death.chaosshard.structure.OrderStructures.placeNow(
+                            (net.minecraft.world.WorldServer) pl.world, "capital", c, 0, pl.world.rand.nextLong());
+                    sender.sendMessage(new net.minecraft.util.text.TextComponentString(e == null ? "Столица не встала" : "Столица встала: " + c.getX() + " " + c.getY() + " " + c.getZ()));
+                    break;
+                }
+                if (args.length >= 2 && "open".equals(args[1])) {
+                    ru.death.chaosshard.act5.Crown.open(ws);
+                    break;
+                }
+                if (args.length >= 2 && "rift".equals(args[1])) {
+                    EntityPlayerMP pl = getCommandSenderAsPlayer(sender);
+                    ru.death.chaosshard.antechamber.ChaosTeleporter.toPos(pl, ru.death.chaosshard.act5.RiftDimension.id(), ru.death.chaosshard.act5.RiftDimension.arrival());
+                    break;
+                }
+                if (args.length >= 2 && "reset".equals(args[1])) {
+                    ru.death.chaosshard.act5.CapitalData cd = ru.death.chaosshard.act5.CapitalData.get(ws);
+                    cd.state = ru.death.chaosshard.act5.CapitalData.NONE;
+                    cd.introShown = false;
+                    cd.kingSpawned = false;
+                    cd.riftOpen = false;
+                    cd.markDirty();
+                    net.minecraft.world.WorldServer rw = server.getWorld(ru.death.chaosshard.act5.RiftDimension.id());
+                    if (rw != null) {
+                        ru.death.chaosshard.act5.Rift.forget(rw);
+                    }
+                    sender.sendMessage(new net.minecraft.util.text.TextComponentString("Акт 5 сброшен: столица забыта, Разлом ждёт снова"));
+                    break;
+                }
+                ru.death.chaosshard.act5.CapitalData cd = ru.death.chaosshard.act5.CapitalData.get(ws);
+                String[] cs = {"нет", "указана", "стоит", "дворец открыт", "Король пал"};
+                sender.sendMessage(new net.minecraft.util.text.TextComponentString("Наступление Ордена: " + (ru.death.chaosshard.act5.OrderRaids.active(ws) ? "идёт" : "ещё нет")
+                        + "; столица: " + cs[cd.state] + (cd.state > 0 ? " у " + cd.x + " " + cd.z : "") + "; маяков горит " + ru.death.chaosshard.act5.Crown.lit(ws)));
                 break;
             }
             case "pillar": {
@@ -645,7 +681,7 @@ public class CommandChaosShard extends CommandBase {
             return getListOfStringsMatchingLastWord(args, "nit", "tp", "sky", "grimoire", "debug", "breach", "heart", "quests", "selftest", "anchor", "shrine", "surge", "village", "trial", "beast", "servant", "autotest", "structure", "pillar", "garrot", "act5");
         }
         if (args.length == 2 && "act5".equals(args[0])) {
-            return getListOfStringsMatchingLastWord(args, "start", "raid");
+            return getListOfStringsMatchingLastWord(args, "start", "raid", "capital", "open", "rift", "reset");
         }
         if (args.length == 2 && "garrot".equals(args[0])) {
             return getListOfStringsMatchingLastWord(args, "duel", "reset");

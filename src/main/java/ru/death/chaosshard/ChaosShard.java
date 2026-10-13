@@ -64,6 +64,7 @@ public class ChaosShard {
         net.minecraftforge.fml.common.network.NetworkRegistry.INSTANCE.registerGuiHandler(this, new ru.death.chaosshard.heart.HeartGuiHandler());
         AntechamberDimension.register();
         ru.death.chaosshard.trial.TrialDimension.register();
+        ru.death.chaosshard.act5.RiftDimension.register();
         int eid = 0;
         net.minecraftforge.fml.common.registry.EntityRegistry.registerModEntity(new net.minecraft.util.ResourceLocation(Tags.MOD_ID, "servant_hare"),
                 ru.death.chaosshard.servant.EntityChaosBeast.Hare.class, "chaosshard.servant_hare", eid++, this, 64, 3, true, 0x8a7a66, 0x6a2fb0);
@@ -91,6 +92,10 @@ public class ChaosShard {
         net.minecraftforge.fml.common.registry.EntityRegistry.registerModEntity(new net.minecraft.util.ResourceLocation(Tags.MOD_ID, "garrot"),
                 ru.death.chaosshard.garrot.EntityGarrot.class, "chaosshard.garrot", eid++, this, 96, 3, true, 0x1a1720, 0x8a1422);
         MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.garrot.GarrotDuel());
+        net.minecraftforge.fml.common.registry.EntityRegistry.registerModEntity(new net.minecraft.util.ResourceLocation(Tags.MOD_ID, "king"),
+                ru.death.chaosshard.act5.EntityKing.class, "chaosshard.king", eid++, this, 96, 3, true, 0xe8c050, 0x9a1a22);
+        net.minecraftforge.fml.common.registry.EntityRegistry.registerModEntity(new net.minecraft.util.ResourceLocation(Tags.MOD_ID, "archon"),
+                ru.death.chaosshard.act5.EntityArchon.class, "chaosshard.archon", eid++, this, 128, 3, true, 0xf4f2fa, 0x8a5ad8);
         MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.cutscene.CutsceneManager());
         MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.servant.Resync());
         MinecraftForge.EVENT_BUS.register(STRUCTURES);
