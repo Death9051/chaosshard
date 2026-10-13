@@ -79,6 +79,12 @@ public class EntityHero extends EntityMob {
     private int pillarHomeR;
     private boolean returnAfterStun;
     private final java.util.List<double[]> traps = new java.util.ArrayList<>();
+    /** Лиан: какая песнь (-1 — молчит), сколько тянет, сколько урона сбило, пауза, тишина. */
+    private int song = -1, songTicks, songGap, silence;
+    private float songDamage;
+    private int nextSong;
+    /** Элис: рывки цепочкой, передышка, сколько раз звала стражу. */
+    private int chainTimer, chainLeft, chainGap, winded, calls;
     private int flashTimer, dashTimer, dashing, stagger;
     private long lastFrontHint;
 
@@ -106,6 +112,16 @@ public class EntityHero extends EntityMob {
         dataManager.set(HERO, h.ordinal());
         double hp, dmg, armor;
         switch (h) {
+            case LIAN:
+                hp = 520; dmg = 7; armor = 8;
+                setItemStackToSlot(EntityEquipmentSlot.MAINHAND, Trophies.of(Lightbearer.LIAN));
+                break;
+            case ELIS:
+                hp = 900; dmg = 14; armor = 18;
+                setItemStackToSlot(EntityEquipmentSlot.MAINHAND, new ItemStack(Items.GOLDEN_SWORD));
+                setItemStackToSlot(EntityEquipmentSlot.OFFHAND, Trophies.of(Lightbearer.ELIS));
+                getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.34D);
+                break;
             case VELMOR:
                 hp = 650; dmg = 8; armor = 10;
                 setItemStackToSlot(EntityEquipmentSlot.MAINHAND, Trophies.of(Lightbearer.VELMOR));
@@ -144,7 +160,7 @@ public class EntityHero extends EntityMob {
         targetTasks.addTask(1, new EntityAIHurtByTarget(this, true));
         targetTasks.addTask(2, new EntityAINearestAttackableTarget<>(this, EntityPlayer.class, true));
         targetTasks.addTask(3, new EntityAINearestAttackableTarget<>(this, EntityLiving.class, 10, true, false,
-                e -> e != null && ru.death.chaosshard.servant.Servants.kindOf(e) != null));
+                e -> e != null && ru.death.chaosshard.servant.Servants.isServant(e)));
     }
 
     @Override
@@ -157,7 +173,8 @@ public class EntityHero extends EntityMob {
 
     @Override
     public boolean isOnSameTeam(Entity other) {
-        return other instanceof EntityOrderKnight || other instanceof EntityHero || super.isOnSameTeam(other);
+        return other instanceof EntityOrderKnight && !ru.death.chaosshard.servant.Servants.isServant(other)
+                || other instanceof EntityHero || super.isOnSameTeam(other);
     }
 
     @Override
@@ -213,7 +230,40 @@ public class EntityHero extends EntityMob {
                 ((EntityPlayerMP) who).sendStatusMessage(Breach.grimoire("chaosshard.hero.kael.front"), true);
             }
         }
+        if (!world.isRemote && hero() == Lightbearer.LIAN && silence > 0) {
+            amount *= 1.5F;
+        }
+        if (!world.isRemote && hero() == Lightbearer.ELIS) {
+            if (winded > 0) {
+                amount *= 1.5F;
+            } else if (guarded()) {
+                amount *= 0.4F;
+                Entity who = src.getTrueSource();
+                if (who instanceof EntityPlayerMP && world.getTotalWorldTime() - lastLitHint > 300) {
+                    lastLitHint = world.getTotalWorldTime();
+                    ((EntityPlayerMP) who).sendStatusMessage(Breach.grimoire("chaosshard.hero.elis.guarded"), true);
+                }
+            }
+        }
+        float before = getHealth();
         boolean hurt = super.attackEntityFrom(src, amount);
+        if (hurt && !world.isRemote && hero() == Lightbearer.LIAN && song >= 0) {
+            songDamage += before - getHealth();
+            if (songDamage >= songBreak()) {
+                silenced();
+                Entity who = src.getTrueSource();
+                if (who instanceof EntityPlayerMP) {
+                    ru.death.chaosshard.quest.Milestones.grant((EntityPlayerMP) who, "lian_silenced");
+                } else if (who != null && ru.death.chaosshard.servant.Servants.owner(who) instanceof EntityPlayerMP) {
+                    ru.death.chaosshard.quest.Milestones.grant((EntityPlayerMP) ru.death.chaosshard.servant.Servants.owner(who), "lian_silenced");
+                }
+            }
+        }
+        if (hurt && !world.isRemote && hero() == Lightbearer.ELIS && isEntityAlive() && calls < ELIS_CALL_AT.length
+                && getHealth() < getMaxHealth() * ELIS_CALL_AT[calls]) {
+            calls++;
+            callGuard();
+        }
         if (hurt && !world.isRemote && hero() == Lightbearer.VELMOR && isEntityAlive() && escapes < ESCAPE_AT.length
                 && getHealth() < getMaxHealth() * ESCAPE_AT[escapes]) {
             escapes++;
@@ -265,6 +315,10 @@ public class EntityHero extends EntityMob {
             irena(target);
         } else if (hero() == Lightbearer.VELMOR) {
             velmor(target);
+        } else if (hero() == Lightbearer.LIAN) {
+            lian(target);
+        } else if (hero() == Lightbearer.ELIS) {
+            elis(target);
         }
         // вне боя понемногу залечивается
         if (target == null && ticksExisted % 40 == 0 && getHealth() < getMaxHealth()) {
@@ -506,6 +560,224 @@ public class EntityHero extends EntityMob {
 
     public boolean stunned() {
         return stun > 0;
+    }
+
+    // ------------------------------------------------------------------ Лиан
+
+    /** Песни: доблесть (стражу — сила и стойкость), хор (ещё двое стражей), колыбельная (врагов — замедление и слабость). */
+    public static final int SONG_VALOR = 0, SONG_CHOIR = 1, SONG_LULLABY = 2;
+    public static final int SONG_LEN = 100, SONG_LEN2 = 70, SONG_GAP = 120, SILENCE = 160;
+
+    float songBreak() {
+        return phase2 ? 40F : 30F;
+    }
+
+    /**
+     * Лиан поёт, стоя на месте: ноты над головой. Сбить песню можно только уроном — 30 (на второй половине 40)
+     * за время песни. Сбитый Лиан замолкает на 8 секунд и получает в полтора раза больше урона.
+     * Допетая песнь работает: доблесть — страже сила, хор — двое новых стражей, колыбельная — всем врагам замедление.
+     */
+    private void lian(EntityLivingBase target) {
+        WorldServer ws = (WorldServer) world;
+        if (silence > 0) {
+            silence--;
+            if (silence % 6 == 0) {
+                ws.spawnParticle(EnumParticleTypes.SMOKE_NORMAL, posX, posY + 2.4, posZ, 4, 0.2, 0.1, 0.2, 0.01);
+            }
+            return;
+        }
+        if (!phase2 && getHealth() < getMaxHealth() / 2) {
+            phase2 = true;
+            say("phase2");
+        }
+        if (song >= 0) {
+            songTicks++;
+            motionX = motionZ = 0;
+            getNavigator().clearPath();
+            if (songTicks % 4 == 0) {
+                ws.spawnParticle(EnumParticleTypes.NOTE, posX + (rand.nextDouble() - 0.5), posY + 2.5, posZ + (rand.nextDouble() - 0.5), 0,
+                        rand.nextDouble(), 0, 0, 1.0);
+            }
+            if (songTicks % 10 == 0) {
+                world.playSound(null, getPosition(), song == SONG_LULLABY ? SoundEvents.BLOCK_NOTE_FLUTE : song == SONG_CHOIR
+                        ? SoundEvents.BLOCK_NOTE_CHIME : SoundEvents.BLOCK_NOTE_HARP, SoundCategory.HOSTILE, 2.0F,
+                        0.6F + ((songTicks / 10) % 5) * 0.15F);
+            }
+            if (songTicks >= (phase2 ? SONG_LEN2 : SONG_LEN)) {
+                finishSong(ws);
+            }
+            return;
+        }
+        if (target == null || !target.isEntityAlive()) {
+            return;
+        }
+        if (++songGap >= SONG_GAP) {
+            songGap = 0;
+            song = nextSong;
+            nextSong = (nextSong + 1) % 3;
+            songTicks = 0;
+            songDamage = 0;
+            for (EntityPlayer pl : world.getEntitiesWithinAABB(EntityPlayer.class, getEntityBoundingBox().grow(24))) {
+                pl.sendStatusMessage(Breach.grimoire("chaosshard.hero.lian.song" + song, (int) songBreak()), true);
+            }
+        }
+    }
+
+    private void finishSong(WorldServer ws) {
+        int s = song;
+        song = -1;
+        ws.spawnParticle(EnumParticleTypes.NOTE, posX, posY + 2, posZ, 30, 3, 1, 3, 1.0);
+        switch (s) {
+            case SONG_VALOR:
+                for (EntityOrderKnight k : world.getEntitiesWithinAABB(EntityOrderKnight.class, getEntityBoundingBox().grow(16))) {
+                    k.addPotionEffect(new PotionEffect(MobEffects.STRENGTH, 400, 1));
+                    k.addPotionEffect(new PotionEffect(MobEffects.RESISTANCE, 400, 0));
+                }
+                addPotionEffect(new PotionEffect(MobEffects.RESISTANCE, 400, 0));
+                break;
+            case SONG_CHOIR:
+                for (int i = 0; i < 2; i++) {
+                    EntityOrderKnight k = new EntityOrderKnight(world);
+                    k.setup(EntityOrderKnight.GUARD);
+                    k.setLocationAndAngles(posX + rand.nextInt(7) - 3, posY, posZ + rand.nextInt(7) - 3, rand.nextFloat() * 360, 0);
+                    if (hasHome()) {
+                        k.setHomePosAndDistance(getHomePosition(), 16);
+                    }
+                    world.spawnEntity(k);
+                    ws.spawnParticle(EnumParticleTypes.NOTE, k.posX, k.posY + 2, k.posZ, 8, 0.4, 0.4, 0.4, 1.0);
+                }
+                break;
+            default:
+                for (EntityLivingBase e : world.getEntitiesWithinAABB(EntityLivingBase.class, getEntityBoundingBox().grow(16),
+                        x -> x != this && !isOnSameTeam(x) && !(x instanceof EntityOrderKnight) && x.isEntityAlive())) {
+                    e.addPotionEffect(new PotionEffect(MobEffects.SLOWNESS, 200, 1));
+                    e.addPotionEffect(new PotionEffect(MobEffects.WEAKNESS, 200, 0));
+                }
+                break;
+        }
+        say("sang" + s);
+    }
+
+    void silenced() {
+        song = -1;
+        silence = SILENCE;
+        songGap = 0;
+        world.playSound(null, getPosition(), SoundEvents.BLOCK_NOTE_BASEDRUM, SoundCategory.HOSTILE, 2.0F, 0.5F);
+        ((WorldServer) world).spawnParticle(EnumParticleTypes.SMOKE_LARGE, posX, posY + 2.2, posZ, 20, 0.3, 0.2, 0.3, 0.02);
+        say("silenced");
+    }
+
+    public boolean singing() {
+        return song >= 0;
+    }
+
+    public boolean silent() {
+        return silence > 0;
+    }
+
+    /** Для проверок: начать песнь сейчас. */
+    public void startSong(int s) {
+        song = s;
+        songTicks = 0;
+        songDamage = 0;
+        silence = 0;
+    }
+
+    // ------------------------------------------------------------------ Элис
+
+    /** Элис зовёт королевскую стражу на этих долях здоровья. */
+    public static final float[] ELIS_CALL_AT = {0.75F, 0.5F, 0.25F};
+    public static final int CHAIN_EVERY = 140, CHAIN_LEN = 3, WINDED = 40;
+
+    /** Пока рядом жив кто-то из королевской стражи, Элис получает 40% урона. */
+    public boolean guarded() {
+        return !world.getEntitiesWithinAABB(EntityOrderKnight.class, getEntityBoundingBox().grow(24),
+                k -> k.isEntityAlive() && k.getTags().contains(ROYAL)).isEmpty();
+    }
+
+    public static final String ROYAL = "chaosshard_royal";
+
+    /**
+     * Элис: рывки цепочкой по три (каждый бьёт и отбрасывает), после цепочки две секунды переводит дух —
+     * получает в полтора раза больше урона. На 75%, 50% и 25% зовёт королевскую стражу: пока стража жива,
+     * Элис почти неуязвима.
+     */
+    private void elis(EntityLivingBase target) {
+        WorldServer ws = (WorldServer) world;
+        if (winded > 0) {
+            winded--;
+            if (winded % 5 == 0) {
+                ws.spawnParticle(EnumParticleTypes.CLOUD, posX, posY + 1.8, posZ, 3, 0.2, 0.1, 0.2, 0.01);
+            }
+        }
+        if (dashing > 0) {
+            dashing--;
+            ws.spawnParticle(EnumParticleTypes.FIREWORKS_SPARK, posX, posY + 1, posZ, 3, 0.2, 0.4, 0.2, 0.02);
+            for (EntityLivingBase e : world.getEntitiesWithinAABB(EntityLivingBase.class, getEntityBoundingBox().grow(0.8),
+                    x -> x != this && !isOnSameTeam(x) && !(x instanceof EntityOrderKnight) && x.isEntityAlive())) {
+                if (e.hurtResistantTime <= 10) {
+                    e.attackEntityFrom(DamageSource.causeMobDamage(this), 12.0F);
+                    e.knockBack(this, 1.4F, posX - e.posX, posZ - e.posZ);
+                }
+            }
+            return;
+        }
+        if (target == null || !target.isEntityAlive()) {
+            return;
+        }
+        if (chainLeft > 0) {
+            if (--chainGap <= 0) {
+                chainLeft--;
+                chainGap = 12;
+                dashAt(target, 1.7);
+                if (chainLeft == 0) {
+                    winded = WINDED;
+                }
+            }
+            return;
+        }
+        if (winded <= 0 && ++chainTimer >= CHAIN_EVERY && getDistance(target) < 20) {
+            chainTimer = 0;
+            chainLeft = CHAIN_LEN;
+            chainGap = 1;
+            world.playSound(null, getPosition(), SoundEvents.ENTITY_HORSE_GALLOP, SoundCategory.HOSTILE, 2.0F, 1.0F);
+        }
+    }
+
+    private void dashAt(EntityLivingBase target, double speed) {
+        double dx = target.posX - posX, dz = target.posZ - posZ;
+        double len = Math.max(0.01, Math.sqrt(dx * dx + dz * dz));
+        motionX = dx / len * speed;
+        motionZ = dz / len * speed;
+        motionY = 0.2;
+        velocityChanged = true;
+        dashing = 10;
+        world.playSound(null, getPosition(), SoundEvents.ENTITY_ENDERDRAGON_FLAP, SoundCategory.HOSTILE, 1.2F, 1.6F);
+    }
+
+    /** Королевская стража: капитан и двое стражей с королевским знаком. */
+    void callGuard() {
+        say("call" + calls);
+        WorldServer ws = (WorldServer) world;
+        for (int i = 0; i < 3; i++) {
+            EntityOrderKnight k = new EntityOrderKnight(world);
+            k.setup(i == 0 ? EntityOrderKnight.CAPTAIN : EntityOrderKnight.GUARD);
+            k.addTag(ROYAL);
+            k.setCustomNameTag(net.minecraft.util.text.TextFormatting.GOLD
+                    + new TextComponentTranslation("chaosshard.hero.elis.royal").getUnformattedText());
+            double a = i * Math.PI * 2 / 3 + rand.nextDouble();
+            k.setLocationAndAngles(posX + Math.cos(a) * 4, posY, posZ + Math.sin(a) * 4, rand.nextFloat() * 360, 0);
+            if (hasHome()) {
+                k.setHomePosAndDistance(getHomePosition(), 18);
+            }
+            world.spawnEntity(k);
+            ws.spawnParticle(EnumParticleTypes.FIREWORKS_SPARK, k.posX, k.posY + 1, k.posZ, 30, 0.3, 0.8, 0.3, 0.05);
+        }
+        world.playSound(null, getPosition(), SoundEvents.BLOCK_NOTE_BASS, SoundCategory.HOSTILE, 3.0F, 0.5F);
+    }
+
+    public boolean winded() {
+        return winded > 0;
     }
 
     public boolean shielded() {

@@ -136,6 +136,32 @@ public final class HeroScenes {
                         }
                     }
                     break;
+                case LIAN:
+                    // начинает песнь — ноты и мелодия
+                    if (t > 72 && t < 196) {
+                        if (t % 3 == 0) {
+                            w.spawnParticle(EnumParticleTypes.NOTE, hero.posX + (w.rand.nextDouble() - 0.5) * 2, hero.posY + 2.4,
+                                    hero.posZ + (w.rand.nextDouble() - 0.5) * 2, 0, w.rand.nextDouble(), 0, 0, 1.0);
+                        }
+                        if (t % 8 == 0) {
+                            float[] tune = {0.7F, 0.9F, 1.05F, 0.9F, 1.2F, 1.05F, 0.9F, 0.8F};
+                            w.playSound(null, hero.getPosition(), SoundEvents.BLOCK_NOTE_HARP, SoundCategory.HOSTILE, 2.0F, tune[(t / 8) % tune.length]);
+                        }
+                    }
+                    break;
+                case ELIS:
+                    // трубят — и её королевская стража встаёт рядом искрами
+                    if (t == 80 || t == 100) {
+                        w.playSound(null, hero.getPosition(), SoundEvents.BLOCK_NOTE_BASS, SoundCategory.HOSTILE, 3.0F, t == 80 ? 0.5F : 0.75F);
+                    }
+                    if (t > 100 && t < 150 && t % 5 == 0) {
+                        for (int k = 0; k < 3; k++) {
+                            double a = k * Math.PI * 2 / 3 + t * 0.05;
+                            w.spawnParticle(EnumParticleTypes.FIREWORKS_SPARK, hero.posX + Math.cos(a) * 3, hero.posY + 1, hero.posZ + Math.sin(a) * 3,
+                                    4, 0.2, 0.5, 0.2, 0.02);
+                        }
+                    }
+                    break;
                 default:
                     break;
             }

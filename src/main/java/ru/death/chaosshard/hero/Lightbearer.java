@@ -14,7 +14,7 @@ public enum Lightbearer {
     ELIS;
 
     /** Готовые герои: Знамение остальных пока не работает. */
-    public static final int READY = 3;
+    public static final int READY = 5;
 
     public String id() {
         return name().toLowerCase();

@@ -288,6 +288,7 @@ public final class AutoTest {
     private float irenaHp;
     private ru.death.chaosshard.hero.EntityHero velmor;
     private BlockPos sealHere;
+    private ru.death.chaosshard.hero.EntityHero lian;
     private int challengeNit, challengeCorrupt;
 
     /** Подобрать с земли рядом сферу нужного ритуала (true — была). */
@@ -1393,6 +1394,107 @@ public final class AutoTest {
         until("Опора Вельмора рухнула", () -> ru.death.chaosshard.hero.HeroData.get(ow).of(ru.death.chaosshard.hero.Lightbearer.VELMOR).collapseAt == 0,
                 ru.death.chaosshard.hero.Pillars.COLLAPSE_DELAY + 40);
         step("назад на площадку", () -> me.setPosition(base.getX() + 0.5, base.getY() + 1, base.getZ() + 0.5));
+
+        section("Акт 4: Лиан и Элис");
+        step("Знамение Лиана", () -> {
+            me.setPosition(base.getX() + 0.5, base.getY() + 1, base.getZ() + 0.5);
+            me.rotationYaw = 180;   // на север
+            check(useSphere(ru.death.chaosshard.ritual.Ritual.OMEN_LIAN, base), "Знамение Лиана сработало после падения Вельмора");
+            ru.death.chaosshard.hero.HeroData.Pillar p = ru.death.chaosshard.hero.HeroData.get(ow).of(ru.death.chaosshard.hero.Lightbearer.LIAN);
+            me.setPosition(p.x + 0.5, 200, p.z + 0.5);
+        });
+        until("Опора Лиана встала", () -> ru.death.chaosshard.hero.HeroData.get(ow).of(ru.death.chaosshard.hero.Lightbearer.LIAN).state
+                == ru.death.chaosshard.hero.HeroData.STANDING, 1500);
+        step("песнь сбивается уроном", () -> {
+            ru.death.chaosshard.hero.HeroData.Pillar p = ru.death.chaosshard.hero.HeroData.get(ow).of(ru.death.chaosshard.hero.Lightbearer.LIAN);
+            lian = ru.death.chaosshard.hero.Pillars.heroOf(ow, ru.death.chaosshard.hero.Lightbearer.LIAN, p);
+            check(lian != null, "Лиан на Опоре");
+            if (lian == null) return;
+            for (ru.death.chaosshard.structure.EntityOrderKnight k : ow.getEntitiesWithinAABB(ru.death.chaosshard.structure.EntityOrderKnight.class,
+                    new AxisAlignedBB(p.pos()).grow(24, 40, 24))) {
+                k.setDead();
+            }
+            lian.startSong(ru.death.chaosshard.hero.EntityHero.SONG_VALOR);
+            lian.hurtResistantTime = 0;
+            lian.attackEntityFrom(DamageSource.causePlayerDamage(me), 8F);
+            check(lian.singing(), "малый урон песнь не сбил");
+            for (int i = 0; i < 6 && lian.singing(); i++) {
+                lian.hurtResistantTime = 0;
+                lian.attackEntityFrom(DamageSource.causePlayerDamage(me), 20F);
+            }
+            check(!lian.singing() && lian.silent(), "песнь сбита, Лиан молчит");
+            lian.startSong(ru.death.chaosshard.hero.EntityHero.SONG_CHOIR);
+        });
+        sleep(ru.death.chaosshard.hero.EntityHero.SONG_LEN + 20);
+        step("допетый хор — двое новых стражей; Лиан пал — лютня", () -> {
+            if (lian == null) return;
+            ru.death.chaosshard.hero.HeroData.Pillar p = ru.death.chaosshard.hero.HeroData.get(ow).of(ru.death.chaosshard.hero.Lightbearer.LIAN);
+            int guards = ow.getEntitiesWithinAABB(ru.death.chaosshard.structure.EntityOrderKnight.class, lian.getEntityBoundingBox().grow(16)).size();
+            check(guards == 2, "хор привёл стражей: " + guards);
+            kill(lian);
+            check(p.state == ru.death.chaosshard.hero.HeroData.FALLEN, "Опора Лиана пала");
+            check(!ow.getEntitiesWithinAABB(net.minecraft.entity.item.EntityItem.class, lian.getEntityBoundingBox().grow(8),
+                    x -> x.getItem().getItem() == ru.death.chaosshard.init.ModItems.LIAN_LUTE).isEmpty(), "Лютня Лиана у тела");
+            for (ru.death.chaosshard.structure.EntityOrderKnight k : ow.getEntitiesWithinAABB(ru.death.chaosshard.structure.EntityOrderKnight.class,
+                    new AxisAlignedBB(p.pos()).grow(24, 40, 24))) {
+                k.setDead();
+            }
+        });
+        step("Знамение Элис", () -> {
+            me.setPosition(base.getX() + 0.5, base.getY() + 1, base.getZ() + 0.5);
+            me.rotationYaw = 45;
+            check(useSphere(ru.death.chaosshard.ritual.Ritual.OMEN_ELIS, base), "Знамение Элис сработало после падения Лиана");
+            ru.death.chaosshard.hero.HeroData.Pillar p = ru.death.chaosshard.hero.HeroData.get(ow).of(ru.death.chaosshard.hero.Lightbearer.ELIS);
+            me.setPosition(p.x + 0.5, 200, p.z + 0.5);
+        });
+        until("Опора Элис встала", () -> ru.death.chaosshard.hero.HeroData.get(ow).of(ru.death.chaosshard.hero.Lightbearer.ELIS).state
+                == ru.death.chaosshard.hero.HeroData.STANDING, 1500);
+        step("королевская стража прикрывает Элис", () -> {
+            ru.death.chaosshard.hero.HeroData.Pillar p = ru.death.chaosshard.hero.HeroData.get(ow).of(ru.death.chaosshard.hero.Lightbearer.ELIS);
+            ru.death.chaosshard.hero.EntityHero e = ru.death.chaosshard.hero.Pillars.heroOf(ow, ru.death.chaosshard.hero.Lightbearer.ELIS, p);
+            check(e != null, "Элис на Опоре");
+            if (e == null) return;
+            for (ru.death.chaosshard.structure.EntityOrderKnight k : ow.getEntitiesWithinAABB(ru.death.chaosshard.structure.EntityOrderKnight.class,
+                    new AxisAlignedBB(p.pos()).grow(24, 40, 24))) {
+                k.setDead();
+            }
+            check(!e.guarded(), "без стражи не прикрыта");
+            e.setHealth(e.getMaxHealth() * 0.76F);
+            e.hurtResistantTime = 0;
+            e.attackEntityFrom(DamageSource.causePlayerDamage(me), 40F);
+            check(e.guarded(), "на 75% позвала королевскую стражу");
+            float h = e.getHealth();
+            e.hurtResistantTime = 0;
+            e.attackEntityFrom(DamageSource.causePlayerDamage(me), 40F);
+            float guardedLoss = h - e.getHealth();
+            for (ru.death.chaosshard.structure.EntityOrderKnight k : ow.getEntitiesWithinAABB(ru.death.chaosshard.structure.EntityOrderKnight.class,
+                    e.getEntityBoundingBox().grow(30), k -> k.getTags().contains(ru.death.chaosshard.hero.EntityHero.ROYAL))) {
+                k.setDead();
+            }
+            check(!e.guarded(), "стража пала");
+            h = e.getHealth();
+            e.hurtResistantTime = 0;
+            e.attackEntityFrom(DamageSource.causePlayerDamage(me), 40F);
+            float openLoss = h - e.getHealth();
+            check(guardedLoss > 0 && guardedLoss < openLoss * 0.6F, "урон под стражей " + guardedLoss + ", без стражи " + openLoss);
+            kill(e);
+            check(p.state == ru.death.chaosshard.hero.HeroData.FALLEN, "Опора Элис пала");
+            check(ru.death.chaosshard.hero.HeroData.get(ow).fallenCount() == 5, "пали все пять Опор");
+            check(!ow.getEntitiesWithinAABB(net.minecraft.entity.item.EntityItem.class, e.getEntityBoundingBox().grow(8),
+                    x -> x.getItem().getItem() == ru.death.chaosshard.init.ModItems.ELIS_SIGNET).isEmpty(), "Перстень Элис у тела");
+        });
+        step("Перстень Элис: королевская стража служит мне", () -> {
+            me.setHeldItem(EnumHand.MAIN_HAND, new net.minecraft.item.ItemStack(ru.death.chaosshard.init.ModItems.ELIS_SIGNET));
+            me.getHeldItemMainhand().getItem().onItemRightClick(ow, me, EnumHand.MAIN_HAND);
+            List<ru.death.chaosshard.structure.EntityOrderKnight> mine = ow.getEntitiesWithinAABB(ru.death.chaosshard.structure.EntityOrderKnight.class,
+                    me.getEntityBoundingBox().grow(6), k -> Servants.isServantOf(k, me.getUniqueID()));
+            check(mine.size() == 2, "стражей на службе: " + mine.size());
+            ru.death.chaosshard.structure.EntityOrderKnight enemy = new ru.death.chaosshard.structure.EntityOrderKnight(ow);
+            check(!mine.isEmpty() && !enemy.isOnSameTeam(mine.get(0)), "для Ордена они уже чужие");
+            for (ru.death.chaosshard.structure.EntityOrderKnight k : mine) k.setDead();
+            me.setHeldItem(EnumHand.MAIN_HAND, net.minecraft.item.ItemStack.EMPTY);
+            me.setPosition(base.getX() + 0.5, base.getY() + 1, base.getZ() + 0.5);
+        });
 
         section("Акт 4: дуэль с Гарротом и катсцена");
         step("Гаррот приходит: барабаны", () -> {

@@ -49,6 +49,12 @@ public final class VeilPillar {
             case 2: // Вельмор: пурпур Края, синие лучи, огни-жезлы
                 return new Palette(Q, "minecraft:purpur_block", "minecraft:concrete[color=blue]", BRICK, "minecraft:purpur_block",
                         "minecraft:purpur_pillar[axis=y]", "minecraft:purpur_block", "minecraft:end_bricks", LANTERN, "minecraft:end_rod[facing=up]");
+            case 3: // Лиан: праздничный — оранжевый и жёлтый
+                return new Palette(Q, "minecraft:concrete[color=orange]", "minecraft:concrete[color=yellow]", BRICK, Q_CH, Q_LN, Q,
+                        "minecraft:concrete[color=orange]", LANTERN, "minecraft:glowstone");
+            case 4: // Элис: королевский — алый и золото
+                return new Palette(Q, "minecraft:concrete[color=red]", GOLD, BRICK, GOLD, Q_LN, Q, "minecraft:concrete[color=red]",
+                        LANTERN, GOLD);
             default:
                 return new Palette(Q, "minecraft:stone[variant=smooth_diorite]", GOLD, BRICK, Q_CH, Q_LN, Q, GOLD, LANTERN, "minecraft:glowstone");
         }

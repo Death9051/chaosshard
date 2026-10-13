@@ -123,7 +123,7 @@ public class EntityOrderKnight extends EntityMob {
         targetTasks.addTask(1, new EntityAIHurtByTarget(this, true));
         targetTasks.addTask(2, new EntityAINearestAttackableTarget<>(this, EntityPlayer.class, true));
         targetTasks.addTask(3, new EntityAINearestAttackableTarget<>(this, EntityLiving.class, 10, true, false,
-                e -> e != null && ru.death.chaosshard.servant.Servants.kindOf(e) != null));
+                e -> e != null && ru.death.chaosshard.servant.Servants.isServant(e)));
     }
 
     @Override
@@ -137,7 +137,11 @@ public class EntityOrderKnight extends EntityMob {
 
     @Override
     public boolean isOnSameTeam(Entity other) {
-        return other instanceof EntityOrderKnight || super.isOnSameTeam(other);
+        if (other instanceof EntityOrderKnight) {
+            // стражники на службе у Осколка (Перстень Элис) — уже не свои
+            return ru.death.chaosshard.servant.Servants.isServant(this) == ru.death.chaosshard.servant.Servants.isServant(other);
+        }
+        return super.isOnSameTeam(other);
     }
 
     @Override
@@ -148,6 +152,13 @@ public class EntityOrderKnight extends EntityMob {
     @Override
     public void onLivingUpdate() {
         super.onLivingUpdate();
+        // стражник по Перстню Элис: отслужил — уходит
+        if (!world.isRemote && ticksExisted % 20 == 0 && getEntityData().hasKey(ru.death.chaosshard.hero.ItemElisSignet.UNTIL)
+                && world.getTotalWorldTime() > getEntityData().getLong(ru.death.chaosshard.hero.ItemElisSignet.UNTIL)) {
+            ((WorldServer) world).spawnParticle(EnumParticleTypes.FIREWORKS_SPARK, posX, posY + 1, posZ, 30, 0.3, 0.8, 0.3, 0.05);
+            setDead();
+            return;
+        }
         if (world.isRemote || variant() != KEEPER) {
             return;
         }

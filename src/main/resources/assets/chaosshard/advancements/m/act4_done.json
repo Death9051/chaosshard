@@ -1,0 +1,23 @@
+{
+ "parent": "chaosshard:m/root",
+ "display": {
+  "icon": {
+   "item": "minecraft:gold_block"
+  },
+  "title": {
+   "translate": "advancement.chaosshard.m.act4_done.title"
+  },
+  "description": {
+   "translate": "advancement.chaosshard.m.act4_done.desc"
+  },
+  "frame": "task",
+  "show_toast": false,
+  "announce_to_chat": false,
+  "hidden": true
+ },
+ "criteria": {
+  "done": {
+   "trigger": "minecraft:impossible"
+  }
+ }
+}
