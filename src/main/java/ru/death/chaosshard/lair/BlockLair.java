@@ -201,6 +201,9 @@ public class BlockLair extends Block {
             }
         }
         lair.setLevel(next);
+        if (next == 3) {
+            LairData.get(world).setCitadel(p.getUniqueID(), world.provider.getDimension(), pos);
+        }
         world.playSound(null, pos, net.minecraft.init.SoundEvents.BLOCK_END_PORTAL_SPAWN, net.minecraft.util.SoundCategory.BLOCKS, 0.8F, 0.6F);
         ((net.minecraft.world.WorldServer) world).spawnParticle(EnumParticleTypes.DRAGON_BREATH, pos.getX() + 0.5, pos.getY() + 1,
                 pos.getZ() + 0.5, 120, 1.5, 1.5, 1.5, 0.02);

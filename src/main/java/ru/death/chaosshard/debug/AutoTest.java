@@ -582,6 +582,32 @@ public final class AutoTest {
             return !mobs.isEmpty() && mobs.stream().allMatch(e -> e.isPotionActive(net.minecraft.init.MobEffects.INVISIBILITY));
         }, 200);
 
+        section("Обломок: Свет и тень, Зеркало, Обвал, Страж с повадками");
+        step("обломок с новыми комнатами", () -> {
+            TrialData data = TrialData.get(archive);
+            TrialData.Trial t3 = new TrialData.Trial();
+            t3.id = data.nextId++;
+            t3.owner = meA.getUniqueID();
+            t3.tier = 2;
+            t3.theme = TrialTheme.RUINS.ordinal();
+            t3.conditions = (1 << TrialCondition.ECHO.ordinal()) | (1 << TrialCondition.PRICE.ordinal()) | (1 << TrialCondition.CLOCK.ordinal());
+            TrialRoom[] rooms = {TrialRoom.ENTRY, TrialRoom.LIGHTS, TrialRoom.MIRROR, TrialRoom.COLLAPSE, TrialRoom.GUARD, TrialRoom.TREASURE};
+            t3.rooms = new int[rooms.length];
+            for (int i = 0; i < rooms.length; i++) t3.rooms[i] = rooms[i].ordinal();
+            t3.returnDim = 0;
+            t3.returnPos = base;
+            data.trials.put(t3.id, t3);
+            TrialLayout.build(archive, t3);
+            trial = t3;
+            meA.setPosition(t3.origin().getX() + 0.5, t3.origin().getY(), t3.origin().getZ() + 2.5);
+            roomBegan = archive.getTotalWorldTime();
+            roomTicks = 0;
+        });
+        for (int r = 0; r < 6; r++) {
+            final int room = r;
+            until("новая комната " + room + " пройдена", () -> drive(room), 700);
+        }
+
         section("Облики обломков");
         step("каждый облик строится", () -> {
             TrialData data = TrialData.get(archive);
@@ -1902,6 +1928,34 @@ public final class AutoTest {
             });
         }
 
+        section("Цитадель Логова");
+        step("Цитадель жжёт врагов, чинит снаряжение, не пускает тварей", () -> {
+            BlockPos lp = base.add(40, 1, -40);
+            ow.getChunk(lp);
+            ow.setBlockState(lp, ru.death.chaosshard.init.ModBlocks.LAIR.getDefaultState(), 3);
+            ru.death.chaosshard.lair.TileLair tl = (ru.death.chaosshard.lair.TileLair) ow.getTileEntity(lp);
+            if (tl == null) { check(false, "нет сердца логова"); return; }
+            tl.setOwner(me);
+            tl.setLevel(3);
+            ru.death.chaosshard.lair.LairData.get(ow).setCitadel(me.getUniqueID(), 0, lp);
+            Object[] c = ru.death.chaosshard.lair.LairData.get(ow).citadelOf(me.getUniqueID());
+            check(c != null && lp.equals(c[1]), "Цитадель записана за хозяином");
+            check(ru.death.chaosshard.lair.CitadelEvents.inCitadel(ow, lp.getX() + 10, lp.getZ() - 10)
+                    && !ru.death.chaosshard.lair.CitadelEvents.inCitadel(ow, lp.getX() + 40, lp.getZ()), "святилище: в радиусе 24 твари не родятся");
+            net.minecraft.entity.monster.EntityZombie z = new net.minecraft.entity.monster.EntityZombie(ow);
+            z.setPosition(lp.getX() + 4.5, lp.getY(), lp.getZ() + 0.5);
+            ow.spawnEntity(z);
+            float hp = z.getHealth();
+            int hit = tl.citadelGuard();
+            check(hit >= 1 && z.getHealth() < hp, "дыхание Цитадели: задето " + hit + ", " + hp + " → " + z.getHealth());
+            z.setDead();
+            net.minecraft.item.ItemStack sw = new net.minecraft.item.ItemStack(net.minecraft.init.Items.IRON_SWORD);
+            sw.setItemDamage(10);
+            ru.death.chaosshard.lair.TileLair.mend(sw);
+            check(sw.getItemDamage() == 8, "починка снаряжения: " + sw.getItemDamage());
+            ow.setBlockToAir(lp);
+        });
+
         section("Малые планы: Незер, Край, карманы");
         step("огонь Незера роняет Эссенцию, Край — Осколки Завесы", () -> {
             WorldServer nether = net.minecraftforge.common.DimensionManager.getWorld(-1);
@@ -2176,6 +2230,7 @@ public final class AutoTest {
                 z = roomTicks < 20 ? z : o.getZ() + b[1] - 0.5;
                 break;
             case PARKOUR:
+            case COLLAPSE:
                 z = roomTicks < 20 ? z : o.getZ() + b[1] - 0.5;
                 break;
             case TREASURE:
@@ -2220,6 +2275,23 @@ public final class AutoTest {
                             e -> e.isEntityAlive() && e.getEntityData().getBoolean(TrialManager.TAG_RISEN)).isEmpty();
                     check(echo, "Мир эха: павший встал тенью");
                 }
+                if (type == TrialRoom.GUARD && t.conditions != 0) {
+                    EntityLivingBase g = mobs.stream().filter(e -> e.getEntityData().getBoolean(TrialManager.TAG_GUARD)).findFirst().orElse(null);
+                    if (roomTicks == 2 && g != null) {
+                        check(g.getCustomNameTag().contains("("), "Страж с повадками: " + g.getCustomNameTag());
+                    }
+                    if (roomTicks == 3 && g != null) {
+                        kill(g);
+                        return false;
+                    }
+                    if (roomTicks == 5 && TrialCondition.has(t.conditions, TrialCondition.ECHO)) {
+                        check(mobs.stream().filter(e -> e.getEntityData().getBoolean(TrialManager.TAG_RISEN)).count() >= 2,
+                                "Мир эха: Страж распался на эхо");
+                    }
+                    if (roomTicks < 6) {
+                        return false;
+                    }
+                }
                 if (roomTicks > 105 || type == TrialRoom.GUARD) {
                     for (EntityLivingBase e : mobs) kill(e);
                 }
@@ -2234,6 +2306,39 @@ public final class AutoTest {
                 if (t.showStep >= t.seq.length * 2 && t.seqPos == 0) {
                     BlockPos[] p = TrialLayout.sequencePositions(t, room);
                     for (int i : t.seq.clone()) TrialManager.onRune(archive, p[i], meA);
+                }
+                return false;
+            case MIRROR:
+                if (t.showStep >= t.seq.length * 2 && t.seqPos == 0) {
+                    BlockPos[] p = TrialLayout.sequencePositions(t, room);
+                    int[] q = t.seq.clone();
+                    for (int i = q.length - 1; i >= 0; i--) TrialManager.onRune(archive, p[q[i]], meA);
+                }
+                return false;
+            case LIGHTS:
+                if (roomTicks == 10) {
+                    BlockPos[] p = TrialLayout.lightsPositions(t, room);
+                    // перебор: какие руны нажать, чтобы горели все пять
+                    for (int mask = 0; mask < 32; mask++) {
+                        int[] st = t.seq.clone();
+                        for (int i = 0; i < 5; i++) {
+                            if ((mask >> i & 1) == 1) {
+                                for (int k = i - 1; k <= i + 1; k++) if (k >= 0 && k < 5) st[k] ^= 1;
+                            }
+                        }
+                        if (java.util.Arrays.stream(st).allMatch(v -> v == 1)) {
+                            for (int i = 0; i < 5; i++) if ((mask >> i & 1) == 1) TrialManager.onRune(archive, p[i], meA);
+                            break;
+                        }
+                    }
+                }
+                return false;
+            case COLLAPSE:
+                if (roomTicks == 5) {
+                    meA.setPosition(x, y, o.getZ() + (b[0] + b[1]) / 2.0 + 0.5);
+                    meA.onGround = true;
+                    TrialManager.tick(meA, false);
+                    check(TrialManager.collapsing() > 0, "Обвал: плитка под ногами пошла вниз");
                 }
                 return false;
             case OFFERING:

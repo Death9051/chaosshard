@@ -177,7 +177,29 @@ public class TrialManager {
                 }
                 break;
             }
-            case SEQUENCE: {
+            case LIGHTS: {
+                BlockPos[] runes = TrialLayout.lightsPositions(t, room);
+                int idx = -1;
+                for (int i = 0; i < runes.length; i++) {
+                    if (runes[i].equals(pos)) idx = i;
+                }
+                if (idx < 0) {
+                    return;
+                }
+                for (int k = idx - 1; k <= idx + 1; k++) {
+                    if (k >= 0 && k < runes.length) {
+                        t.seq[k] ^= 1;
+                    }
+                }
+                showLights(world, t, room);
+                world.playSound(null, pos, SoundEvents.BLOCK_NOTE_CHIME, SoundCategory.BLOCKS, 1.0F, 0.6F + 0.15F * idx);
+                if (allLit(t)) {
+                    complete(world, t, room, player);
+                }
+                break;
+            }
+            case SEQUENCE:
+            case MIRROR: {
                 if (t.showStep < t.seq.length * 2) {
                     return;   // ещё показывает
                 }
@@ -189,7 +211,9 @@ public class TrialManager {
                 if (idx < 0) {
                     return;
                 }
-                if (t.seq[t.seqPos] == idx) {
+                // Зеркало: повторить показанное задом наперёд
+                int want = t.roomType(room) == TrialRoom.MIRROR ? t.seq[t.seq.length - 1 - t.seqPos] : t.seq[t.seqPos];
+                if (want == idx) {
                     t.seqPos++;
                     world.playSound(null, pos, SoundEvents.BLOCK_NOTE_HARP, SoundCategory.BLOCKS, 1.0F, 0.6F + 0.3F * idx);
                     world.scheduleUpdate(pos, world.getBlockState(pos).getBlock(), 10);
@@ -241,7 +265,44 @@ public class TrialManager {
             return false;
         }
         int room = t.roomAt(pos);
-        return room >= 0 && room < t.room;
+        // руны «Света и тени» гаснут только по правилам загадки
+        return room >= 0 && (room < t.room || room == t.room && t.roomType(room) == TrialRoom.LIGHTS);
+    }
+
+    /** Свет и тень: начать с собранного узора и сбить его случайными нажатиями — так загадка всегда решаема. */
+    static void startLights(World world, TrialData.Trial t, int room) {
+        Random r = new Random(t.id * 211L + room);
+        t.seq = new int[]{1, 1, 1, 1, 1};
+        int presses = 2 + t.tier;
+        for (int n = 0; n < presses; n++) {
+            int idx = r.nextInt(5);
+            for (int k = idx - 1; k <= idx + 1; k++) {
+                if (k >= 0 && k < 5) {
+                    t.seq[k] ^= 1;
+                }
+            }
+        }
+        if (allLit(t)) {
+            t.seq[0] ^= 1;
+            t.seq[1] ^= 1;
+        }
+        showLights(world, t, room);
+    }
+
+    static boolean allLit(TrialData.Trial t) {
+        for (int v : t.seq) {
+            if (v == 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    static void showLights(World world, TrialData.Trial t, int room) {
+        BlockPos[] runes = TrialLayout.lightsPositions(t, room);
+        for (int i = 0; i < runes.length && i < t.seq.length; i++) {
+            light(world, runes[i], t.seq[i] == 1);
+        }
     }
 
     private static void unlightAll(World world, BlockPos[] runes) {
@@ -361,13 +422,26 @@ public class TrialManager {
             spawnAround(world, t, room, 2 + t.tier);
         }
         switch (type) {
-            case ARENA: case GUARD:
+            case ARENA:
                 if (alive(world, t, room) == 0) {
                     complete(world, t, room, p);
                 }
                 break;
             case SEQUENCE:
+            case MIRROR:
                 sequenceTick(world, t, room, now);
+                break;
+            case COLLAPSE:
+                if (z >= b[room][1] - 2 && p.posY >= t.origin().getY() - 1) {
+                    complete(world, t, room, p);
+                }
+                break;
+            case GUARD:
+                if (alive(world, t, room) == 0) {
+                    complete(world, t, room, p);
+                } else {
+                    guardTraits(world, t, room, p, now);
+                }
                 break;
             case HOLD:
                 holdTick(world, t, room, p, now);
@@ -415,6 +489,20 @@ public class TrialManager {
                 t.nextEvent = now + 40;
                 break;
             }
+            case MIRROR: {
+                Random r = new Random(t.id * 173L + room);
+                t.seq = new int[3 + t.tier];
+                for (int i = 0; i < t.seq.length; i++) {
+                    t.seq[i] = r.nextInt(4);
+                }
+                t.seqPos = 0;
+                t.showStep = 0;
+                t.nextEvent = now + 40;
+                break;
+            }
+            case LIGHTS:
+                startLights(world, t, room);
+                break;
             case OFFERING:
                 p.sendMessage(Breach.grimoire("chaosshard.trial.offer_hint", riddle(t, room)));
                 break;
@@ -540,8 +628,11 @@ public class TrialManager {
     /** Паркур: упал в яму — назад на начало комнаты, ценой здоровья. */
     private static void parkourCheck(EntityPlayerMP p, World world, TrialData.Trial t) {
         int room = t.room;
-        if (room >= t.rooms.length || t.roomType(room) != TrialRoom.PARKOUR || t.roomState != 1) {
+        if (room >= t.rooms.length || !t.roomType(room).pit() || t.roomState != 1) {
             return;
+        }
+        if (t.roomType(room) == TrialRoom.COLLAPSE) {
+            collapseStep(p, world, t, room);
         }
         BlockPos o = t.origin();
         if (p.posY < o.getY() - 2.5) {
@@ -550,6 +641,127 @@ public class TrialManager {
             p.fallDistance = 0;
             p.attackEntityFrom(DamageSource.OUT_OF_WORLD, 3 + t.tier);
             p.sendStatusMessage(Breach.grimoire("chaosshard.trial.parkour_fall"), true);
+        }
+    }
+
+    /** Обвал: плитки, на которые наступили — когда упадут и когда вернутся. Ключ — позиция. */
+    private static final java.util.Map<Long, Object[]> COLLAPSING = new java.util.HashMap<>();
+    public static final int COLLAPSE_DELAY = 16, COLLAPSE_BACK = 160;
+
+    /** Шагнул на настил Обвала — плитка (и соседняя по ходу) провалится через миг. */
+    private static void collapseStep(EntityPlayerMP p, World world, TrialData.Trial t, int room) {
+        if (!p.onGround) {
+            return;
+        }
+        BlockPos o = t.origin();
+        int[] b = t.bounds()[room];
+        BlockPos under = new BlockPos(p.posX, o.getY() - 1, p.posZ);
+        int rz = under.getZ() - o.getZ();
+        if (rz < b[0] + 2 || rz > b[1] - 2 || world.isAirBlock(under)) {
+            return;
+        }
+        long now = world.getTotalWorldTime();
+        for (BlockPos q : new BlockPos[]{under, under.east(), under.west()}) {
+            if (!world.isAirBlock(q) && !COLLAPSING.containsKey(q.toLong()) && Math.abs(q.getX() - o.getX()) <= t.roomType(room).half) {
+                COLLAPSING.put(q.toLong(), new Object[]{world, now + COLLAPSE_DELAY, now + COLLAPSE_DELAY + COLLAPSE_BACK,
+                        world.getBlockState(q)});
+                ((WorldServer) world).spawnParticle(EnumParticleTypes.BLOCK_CRACK, q.getX() + 0.5, q.getY() + 1, q.getZ() + 0.5, 6,
+                        0.3, 0.05, 0.3, 0.0, net.minecraft.block.Block.getStateId(world.getBlockState(q)));
+            }
+        }
+    }
+
+    /** Сколько плиток Обвала сейчас ждёт падения или возврата (для автотеста). */
+    public static int collapsing() {
+        return COLLAPSING.size();
+    }
+
+    static void tickCollapse() {
+        for (Iterator<java.util.Map.Entry<Long, Object[]>> it = COLLAPSING.entrySet().iterator(); it.hasNext(); ) {
+            java.util.Map.Entry<Long, Object[]> e = it.next();
+            World w = (World) e.getValue()[0];
+            long now = w.getTotalWorldTime();
+            BlockPos q = BlockPos.fromLong(e.getKey());
+            long fall = (Long) e.getValue()[1], back = (Long) e.getValue()[2];
+            if (now >= back) {
+                if (w.isAirBlock(q)) {
+                    w.setBlockState(q, (net.minecraft.block.state.IBlockState) e.getValue()[3], 2);
+                }
+                it.remove();
+            } else if (now >= fall && !w.isAirBlock(q)) {
+                w.setBlockToAir(q);
+                w.playSound(null, q, SoundEvents.BLOCK_GRAVEL_BREAK, SoundCategory.BLOCKS, 0.8F, 0.7F);
+            }
+        }
+    }
+
+    // ------------------------------------------------------------------ Страж: повадки по законам обломка
+
+    /** Повадки Стража по законам обломка: при появлении. */
+    private static void guardBorn(EntityLiving g, TrialData.Trial t) {
+        StringBuilder traits = new StringBuilder();
+        for (TrialCondition c : TrialCondition.values()) {
+            if (!TrialCondition.has(t.conditions, c)) {
+                continue;
+            }
+            switch (c) {
+                case HUNTER:
+                    g.addPotionEffect(new PotionEffect(MobEffects.SPEED, 1000000, 1, true, false));
+                    break;
+                case SILENCE:
+                    g.removePotionEffect(MobEffects.GLOWING);
+                    g.addPotionEffect(new PotionEffect(MobEffects.INVISIBILITY, 1000000, 0, true, false));
+                    break;
+                case DEBT:
+                    g.addPotionEffect(new PotionEffect(MobEffects.RESISTANCE, 1000000, 1, true, false));
+                    break;
+                default:
+                    break;
+            }
+            traits.append(traits.length() == 0 ? "" : ", ").append(I18n.translateToLocal("chaosshard.trial.guard_trait." + c.name().toLowerCase(java.util.Locale.ROOT)));
+        }
+        if (traits.length() > 0) {
+            g.setCustomNameTag(I18n.translateToLocal("chaosshard.trial.guardian") + " (" + traits + ")");
+        }
+    }
+
+    /** Повадки Стража во время боя: Мир памяти — переносится за спину, Мир часов — ярится. */
+    private static void guardTraits(World world, TrialData.Trial t, int room, EntityPlayerMP p, long now) {
+        for (EntityLivingBase e : roomMobs(world, t, room)) {
+            if (!e.getEntityData().getBoolean(TAG_GUARD)) {
+                continue;
+            }
+            long age = now - t.roomStart;
+            if (TrialCondition.has(t.conditions, TrialCondition.MEMORY) && age > 0 && age % 160 < 10) {
+                net.minecraft.util.math.Vec3d look = p.getLook(1.0F);
+                double x = p.posX - look.x * 2.5, z = p.posZ - look.z * 2.5;
+                if (world.isAirBlock(new BlockPos(x, p.posY, z)) && world.isAirBlock(new BlockPos(x, p.posY + 1, z))) {
+                    ((WorldServer) world).spawnParticle(EnumParticleTypes.PORTAL, e.posX, e.posY + 1, e.posZ, 30, 0.3, 0.6, 0.3, 0.5);
+                    e.setPositionAndUpdate(x, p.posY, z);
+                    world.playSound(null, e.getPosition(), SoundEvents.ENTITY_ENDERMEN_TELEPORT, SoundCategory.HOSTILE, 1.0F, 0.8F);
+                }
+            }
+            if (TrialCondition.has(t.conditions, TrialCondition.CLOCK) && age > 0 && age % 400 < 10) {
+                PotionEffect s = e.getActivePotionEffect(MobEffects.STRENGTH);
+                int amp = s == null ? 0 : Math.min(4, s.getAmplifier() + 1);
+                e.addPotionEffect(new PotionEffect(MobEffects.STRENGTH, 1000000, amp, true, false));
+                ((WorldServer) world).spawnParticle(EnumParticleTypes.VILLAGER_ANGRY, e.posX, e.posY + 2, e.posZ, 6, 0.3, 0.2, 0.3, 0.0);
+            }
+        }
+    }
+
+    /** Мир цены: Страж пьёт жизнь — лечится на половину нанесённого. */
+    @SubscribeEvent
+    public void onGuardHit(net.minecraftforge.event.entity.living.LivingHurtEvent event) {
+        Entity src = event.getSource().getTrueSource();
+        if (!(src instanceof EntityLivingBase) || src.world.isRemote || !TrialDimension.is(src.world)
+                || !src.getEntityData().getBoolean(TAG_GUARD)) {
+            return;
+        }
+        TrialData.Trial t = TrialData.get(src.world).trials.get(src.getEntityData().getInteger(TAG));
+        if (t != null && TrialCondition.has(t.conditions, TrialCondition.PRICE)) {
+            ((EntityLivingBase) src).heal(event.getAmount() * 0.5F);
+            ((WorldServer) src.world).spawnParticle(EnumParticleTypes.DAMAGE_INDICATOR, src.posX, src.posY + 1.5, src.posZ, 4, 0.3, 0.3, 0.3, 0.0);
         }
     }
 
@@ -584,7 +796,8 @@ public class TrialManager {
             return;
         }
         BlockPos under = new BlockPos(p.posX, p.posY - 0.2, p.posZ);
-        if (t.roomAt(under) < 0 || t.roomAt(under) != t.room || under.getY() != t.origin().getY() - 1) {
+        if (t.roomAt(under) < 0 || t.roomAt(under) != t.room || under.getY() != t.origin().getY() - 1
+                || t.roomType(t.room) == TrialRoom.COLLAPSE) {
             return;
         }
         long key = under.toLong();
@@ -712,6 +925,7 @@ public class TrialManager {
                 g.addPotionEffect(new PotionEffect(MobEffects.GLOWING, 1000000, 0, true, false));
                 g.addPotionEffect(new PotionEffect(MobEffects.STRENGTH, 1000000, t.tier - 1, true, false));
                 g.getEntityData().setBoolean(TAG_GUARD, true);
+                guardBorn(g, t);
             }
         }
         world.playSound(null, o.add(0, 1, (b[0] + b[1]) / 2), SoundEvents.ENTITY_WITHER_AMBIENT, SoundCategory.HOSTILE, 0.6F, 0.6F);
@@ -774,7 +988,25 @@ public class TrialManager {
         EntityLivingBase e = event.getEntityLiving();
         World world = e.world;
         if (world.isRemote || !TrialDimension.is(world) || e.getEntityData().getInteger(TAG) == 0
-                || e.getEntityData().getBoolean(TAG_RISEN) || e.getEntityData().getBoolean(TAG_GUARD)) {
+                || e.getEntityData().getBoolean(TAG_RISEN)) {
+            return;
+        }
+        if (e.getEntityData().getBoolean(TAG_GUARD)) {
+            // Мир эха: Страж распадается на два эха
+            TrialData.Trial tg = TrialData.get(world).trials.get(e.getEntityData().getInteger(TAG));
+            ResourceLocation key = EntityList.getKey(e);
+            if (tg != null && key != null && TrialCondition.has(tg.conditions, TrialCondition.ECHO)) {
+                for (int i = 0; i < 2; i++) {
+                    EntityLiving shade = spawn(world, tg, e.getEntityData().getInteger(TAG_ROOM), e.getPosition().add(i * 2 - 1, 0, 0), key.toString());
+                    if (shade != null) {
+                        shade.getEntityData().setBoolean(TAG_RISEN, true);
+                        shade.setCustomNameTag(I18n.translateToLocal("chaosshard.trial.echo"));
+                        shade.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(Math.max(10, e.getMaxHealth() / 3));
+                        shade.setHealth(shade.getMaxHealth());
+                        shade.addPotionEffect(new PotionEffect(MobEffects.GLOWING, 1000000, 0, true, false));
+                    }
+                }
+            }
             return;
         }
         TrialData.Trial t = TrialData.get(world).trials.get(e.getEntityData().getInteger(TAG));
@@ -789,7 +1021,13 @@ public class TrialManager {
 
     @SubscribeEvent
     public void onServerTick(TickEvent.ServerTickEvent event) {
-        if (event.phase != TickEvent.Phase.END || ECHOES.isEmpty()) {
+        if (event.phase != TickEvent.Phase.END) {
+            return;
+        }
+        if (!COLLAPSING.isEmpty()) {
+            tickCollapse();
+        }
+        if (ECHOES.isEmpty()) {
             return;
         }
         for (Iterator<Object[]> it = ECHOES.iterator(); it.hasNext(); ) {

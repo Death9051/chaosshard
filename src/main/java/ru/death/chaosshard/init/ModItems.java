@@ -37,6 +37,8 @@ public final class ModItems {
     public static Item ORDER_SEAL;
     /** Ключ Разлома — с Короля; ведёт сквозь врата за троном. Корона Лучезарии — трофей. */
     public static Item RIFT_KEY, ROYAL_CROWN;
+    /** Печать Цитадели — домой, к своей Цитадели. */
+    public static Item CITADEL_SIGIL;
     /** Мел Хаоса — рисует знаки ритуального круга. */
     public static Item CHALK;
     /** Ключ обломка — вход в Испытание. */
@@ -83,6 +85,8 @@ public final class ModItems {
         RIFT_KEY.setMaxStackSize(1);
         ROYAL_CROWN = add(new ru.death.chaosshard.item.ItemLore("chaosshard.royal_crown.lore", true), "royal_crown");
         ROYAL_CROWN.setMaxStackSize(1);
+        CITADEL_SIGIL = add(new ru.death.chaosshard.lair.ItemCitadelSigil(), "citadel_sigil");
+        CITADEL_SIGIL.setCreativeTab(ru.death.chaosshard.ChaosTab.TAB);
         DISTORTED_STARMETAL = add(new ru.death.chaosshard.item.ItemLore("chaosshard.distorted_starmetal.lore", true), "distorted_starmetal");
         CHALK = add(new ru.death.chaosshard.ritual.ItemChalk(), "chaos_chalk");
         TRIAL_KEY = add(new ru.death.chaosshard.trial.ItemTrialKey(), "trial_key");

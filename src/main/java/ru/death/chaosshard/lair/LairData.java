@@ -15,6 +15,39 @@ public class LairData extends WorldSavedData {
 
     public static final String NAME = "chaosshard_lairs";
     private final Map<String, BlockPos> lairs = new HashMap<>();
+    /** Цитадели: владелец → «измерение@позиция». */
+    private final Map<String, String> citadels = new HashMap<>();
+
+    public void setCitadel(UUID owner, int dim, BlockPos pos) {
+        if (pos == null) {
+            citadels.remove(owner.toString());
+        } else {
+            citadels.put(owner.toString(), dim + "@" + pos.toLong());
+        }
+        markDirty();
+    }
+
+    /** Цитадель владельца: {измерение, позиция} или null. */
+    public Object[] citadelOf(UUID owner) {
+        String v = citadels.get(owner.toString());
+        if (v == null) {
+            return null;
+        }
+        String[] p = v.split("@");
+        return new Object[]{Integer.parseInt(p[0]), BlockPos.fromLong(Long.parseLong(p[1]))};
+    }
+
+    /** Все Цитадели в измерении. */
+    public java.util.List<BlockPos> citadelsIn(int dim) {
+        java.util.List<BlockPos> out = new java.util.ArrayList<>();
+        for (String v : citadels.values()) {
+            String[] p = v.split("@");
+            if (Integer.parseInt(p[0]) == dim) {
+                out.add(BlockPos.fromLong(Long.parseLong(p[1])));
+            }
+        }
+        return out;
+    }
 
     public LairData(String name) {
         super(name);
@@ -54,6 +87,12 @@ public class LairData extends WorldSavedData {
             NBTTagCompound t = list.getCompoundTagAt(i);
             lairs.put(t.getString("k"), BlockPos.fromLong(t.getLong("p")));
         }
+        citadels.clear();
+        NBTTagList cl = nbt.getTagList("c", 10);
+        for (int i = 0; i < cl.tagCount(); i++) {
+            NBTTagCompound t = cl.getCompoundTagAt(i);
+            citadels.put(t.getString("k"), t.getString("v"));
+        }
     }
 
     @Override
@@ -66,6 +105,14 @@ public class LairData extends WorldSavedData {
             list.appendTag(t);
         }
         nbt.setTag("l", list);
+        NBTTagList cl = new NBTTagList();
+        for (Map.Entry<String, String> e : citadels.entrySet()) {
+            NBTTagCompound t = new NBTTagCompound();
+            t.setString("k", e.getKey());
+            t.setString("v", e.getValue());
+            cl.appendTag(t);
+        }
+        nbt.setTag("c", cl);
         return nbt;
     }
 }

@@ -1410,3 +1410,24 @@ chaosshard.credits.31=
 chaosshard.credits.32=§5Chaos thanks you for playing.
 chaosshard.credits.33=
 chaosshard.credits.34=§8(Space — faster, Esc — close. The world remains yours.)
+
+# ---- Trials: new rooms and Guardian traits
+chaosshard.trial.room.lights=Light and Shadow
+chaosshard.trial.room.collapse=Collapse
+chaosshard.trial.room.mirror=Mirror
+chaosshard.trial.start.lights=Five runes by the wall. A touch flips a rune and its neighbours. Light all five.
+chaosshard.trial.start.collapse=The floor here is crust over a chasm. Step on it and it gives way. Don't stand still.
+chaosshard.trial.start.mirror=The runes will flash in order. Repeat it backwards.
+chaosshard.trial.guard_trait.echo=splits into echoes
+chaosshard.trial.guard_trait.hunter=swift
+chaosshard.trial.guard_trait.price=drinks life
+chaosshard.trial.guard_trait.silence=invisible
+chaosshard.trial.guard_trait.debt=armoured
+chaosshard.trial.guard_trait.memory=strikes from behind
+chaosshard.trial.guard_trait.clock=enrages over time
+item.chaosshard.citadel_sigil.name=Citadel Sigil
+item.chaosshard.citadel_sigil.desc=Right-click to return to your Citadel. Once every five minutes.
+chaosshard.citadel.none="You have no Citadel. Build a home first."
+chaosshard.citadel.blocked="There is no road home from here. Get out first."
+advancement.chaosshard.m.citadel_recall.title=Home
+advancement.chaosshard.m.citadel_recall.desc=Returned to the Citadel with a Sigil

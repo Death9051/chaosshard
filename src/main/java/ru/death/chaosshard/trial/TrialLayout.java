@@ -34,7 +34,7 @@ public final class TrialLayout {
         for (int i = 0; i < t.rooms.length; i++) {
             TrialRoom type = t.roomType(i);
             int h = type.half, z0 = b[i][0], z1 = b[i][1];
-            boolean pit = type == TrialRoom.PARKOUR;
+            boolean pit = type.pit();
             int y0 = pit ? -PIT - 1 : -1;
             box(world, o, -h - 1, y0, z0 - 1, h + 1, HEIGHT, z1 + 1, th.wall(), th.wall2(), r);
             fill(world, o, -h, 0, z0, h, HEIGHT - 1, z1, Blocks.AIR.getDefaultState());
@@ -66,10 +66,23 @@ public final class TrialLayout {
                     }
                     break;
                 case SEQUENCE:
+                case MIRROR:
                     for (BlockPos p : sequencePositions(t, i)) {
                         world.setBlockState(p, ModBlocks.TRIAL_RUNE.getDefaultState(), 2);
                     }
                     break;
+                case LIGHTS:
+                    for (BlockPos p : lightsPositions(t, i)) {
+                        world.setBlockState(p, ModBlocks.TRIAL_RUNE.getDefaultState(), 2);
+                    }
+                    break;
+                case COLLAPSE: {
+                    // яма во всю ширину, над ней — тонкий настил из корки: шагнул — через секунду провалится
+                    fill(world, o, -h, -PIT, z0 + 2, h, -1, z1 - 2, Blocks.AIR.getDefaultState());
+                    fill(world, o, -h, -PIT - 1, z0 + 2, h, -PIT - 1, z1 - 2, th.pit());
+                    fill(world, o, -h, -1, z0 + 2, h, -1, z1 - 2, ModBlocks.CHAOS_CRUST.getDefaultState());
+                    break;
+                }
                 case HOLD: {
                     int zc = (z0 + z1) / 2;
                     for (int x = -2; x <= 2; x++) {
@@ -123,7 +136,7 @@ public final class TrialLayout {
             }
             // Мир долга: в комнатах-испытаниях стоит сундук-засада
             if (TrialCondition.has(t.conditions, TrialCondition.DEBT) && h >= 3 && type != TrialRoom.ENTRY
-                    && type != TrialRoom.TREASURE && type != TrialRoom.PARKOUR) {
+                    && type != TrialRoom.TREASURE && !type.pit()) {
                 BlockPos c = o.add(h - 1, 0, z0 + 1);
                 world.setBlockState(c, Blocks.CHEST.getDefaultState(), 2);
                 fillChest(world, c, java.util.Arrays.asList(new ItemStack(ModItems.VEIL_SHARD, 1 + r.nextInt(3)),
@@ -172,6 +185,13 @@ public final class TrialLayout {
         int[] b = t.bounds()[room];
         int h = t.roomType(room).half - 2;
         return new BlockPos[]{o.add(-h, 0, b[0] + 2), o.add(h, 0, b[0] + 2), o.add(-h, 0, b[1] - 2), o.add(h, 0, b[1] - 2)};
+    }
+
+    /** Пять рун у дальней стены: свет и тень. */
+    public static BlockPos[] lightsPositions(TrialData.Trial t, int room) {
+        BlockPos o = t.origin();
+        int z = t.bounds()[room][1];
+        return new BlockPos[]{o.add(-4, 0, z), o.add(-2, 0, z), o.add(0, 0, z), o.add(2, 0, z), o.add(4, 0, z)};
     }
 
     public static BlockPos[] sequencePositions(TrialData.Trial t, int room) {

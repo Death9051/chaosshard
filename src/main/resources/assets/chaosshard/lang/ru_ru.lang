@@ -1433,3 +1433,24 @@ chaosshard.credits.31=
 chaosshard.credits.32=§5Хаос благодарит тебя за игру.
 chaosshard.credits.33=
 chaosshard.credits.34=§8(Пробел — быстрее, Esc — закрыть. Мир остаётся твоим.)
+
+# ---- Испытания: новые комнаты и повадки Стража
+chaosshard.trial.room.lights=Свет и тень
+chaosshard.trial.room.collapse=Обвал
+chaosshard.trial.room.mirror=Зеркало
+chaosshard.trial.start.lights=Пять рун у стены. Касание переключает руну и её соседей. Зажечь все пять.
+chaosshard.trial.start.collapse=Пол здесь — корка над пропастью. Наступил — она проваливается. Не стой.
+chaosshard.trial.start.mirror=Руны вспыхнут по порядку. Повторить задом наперёд.
+chaosshard.trial.guard_trait.echo=распадается эхом
+chaosshard.trial.guard_trait.hunter=быстрый
+chaosshard.trial.guard_trait.price=пьёт жизнь
+chaosshard.trial.guard_trait.silence=невидимый
+chaosshard.trial.guard_trait.debt=в броне
+chaosshard.trial.guard_trait.memory=заходит со спины
+chaosshard.trial.guard_trait.clock=ярится со временем
+item.chaosshard.citadel_sigil.name=Печать Цитадели
+item.chaosshard.citadel_sigil.desc=ПКМ — вернуться в свою Цитадель. Раз в пять минут.
+chaosshard.citadel.none=«У тебя нет Цитадели. Дом надо сначала построить».
+chaosshard.citadel.blocked=«Отсюда дороги домой нет. Сначала выйди».
+advancement.chaosshard.m.citadel_recall.title=Домой
+advancement.chaosshard.m.citadel_recall.desc=Вернулся в Цитадель Печатью

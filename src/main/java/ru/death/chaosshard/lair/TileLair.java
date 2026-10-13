@@ -107,8 +107,15 @@ public class TileLair extends TileEntity implements ITickable {
                 }
             }
         }
-        if (++timer % 100 != 0) {
+        ++timer;
+        if (level >= 3 && timer % 40 == 0) {
+            citadelGuard();
+        }
+        if (timer % 100 != 0) {
             return;
+        }
+        if (level >= 3) {
+            citadelMend();
         }
         // отдых: регенерация в стенах логова
         List<EntityPlayer> players = world.getEntitiesWithinAABB(EntityPlayer.class, new AxisAlignedBB(pos).grow(radius()));
@@ -120,6 +127,51 @@ public class TileLair extends TileEntity implements ITickable {
                 }
             }
         }
+    }
+
+    /** Дыхание Цитадели: до трёх врагов в стенах логова раз в две секунды обжигает драконьим дыханием. */
+    public int citadelGuard() {
+        int n = 0;
+        for (net.minecraft.entity.EntityLivingBase e : world.getEntitiesWithinAABB(net.minecraft.entity.EntityLivingBase.class,
+                new AxisAlignedBB(pos).grow(radius()), x -> x.isEntityAlive() && x instanceof net.minecraft.entity.monster.IMob
+                        && !ru.death.chaosshard.servant.Servants.isServant(x) && x.getDistanceSq(pos) <= (double) radius() * radius())) {
+            if (n >= 3) {
+                break;
+            }
+            e.attackEntityFrom(net.minecraft.util.DamageSource.MAGIC, CITADEL_BREATH);
+            ((net.minecraft.world.WorldServer) world).spawnParticle(net.minecraft.util.EnumParticleTypes.DRAGON_BREATH, e.posX, e.posY + e.height / 2,
+                    e.posZ, 30, 0.4, 0.5, 0.4, 0.02);
+            world.playSound(null, e.getPosition(), net.minecraft.init.SoundEvents.ENTITY_ENDERDRAGON_SHOOT, net.minecraft.util.SoundCategory.BLOCKS, 0.6F, 1.4F);
+            n++;
+        }
+        return n;
+    }
+
+    public static final float CITADEL_BREATH = 6.0F;
+
+    /** Звезда Незера в стенах Цитадели: снаряжение хозяина понемногу чинится. */
+    public int citadelMend() {
+        EntityPlayerMP o = ownerOnline();
+        if (o == null || !covers(o)) {
+            return 0;
+        }
+        int n = 0;
+        for (net.minecraft.item.ItemStack s : o.inventory.mainInventory) {
+            n += mend(s);
+        }
+        for (net.minecraft.item.ItemStack s : o.inventory.armorInventory) {
+            n += mend(s);
+        }
+        n += mend(o.inventory.offHandInventory.get(0));
+        return n;
+    }
+
+    public static int mend(net.minecraft.item.ItemStack s) {
+        if (!s.isEmpty() && s.isItemStackDamageable() && s.isItemDamaged()) {
+            s.setItemDamage(Math.max(0, s.getItemDamage() - 2));
+            return 1;
+        }
+        return 0;
     }
 
     /** Отдаёт энергию и кабелям, которые сами её тянут. */
