@@ -282,6 +282,7 @@ public final class AutoTest {
     private final java.util.Map<String, ru.death.chaosshard.structure.OrderStructureData.Entry> structs = new java.util.HashMap<>();
     private ru.death.chaosshard.structure.OrderStructureData.Entry planned;
     private BlockPos bowlPos, spherePos, pullChest, altarPos, moonPos, shrinePos;
+    private UUID lordId;
     private int challengeNit, challengeCorrupt;
 
     /** Подобрать с земли рядом сферу нужного ритуала (true — была). */
@@ -1213,6 +1214,131 @@ public final class AutoTest {
             me.setPosition(base.getX() + 0.5, base.getY() + 1, base.getZ() + 0.5);
             me.managedPosX = me.posX;
             me.managedPosZ = me.posZ;
+        });
+
+        section("Акт 4: дуэль с Гарротом и катсцена");
+        step("Гаррот приходит: барабаны", () -> {
+            ru.death.chaosshard.garrot.GarrotDuel.clear(ow);
+            ru.death.chaosshard.garrot.GarrotData gd = ru.death.chaosshard.garrot.GarrotData.get(ow);
+            gd.submitted = false;
+            gd.lastDuel = -1000000;
+            me.setPosition(base.getX() + 0.5, base.getY() + 1, base.getZ() + 0.5);
+            me.rotationYaw = me.rotationYawHead = 0;
+            me.rotationPitch = 0;
+            ru.death.chaosshard.garrot.GarrotDuel.start(me);
+            check(ru.death.chaosshard.garrot.GarrotDuel.of(me) != null, "дуэль заведена");
+        });
+        until("катсцена началась", () -> {
+            ru.death.chaosshard.garrot.GarrotDuel.tick(me);
+            ru.death.chaosshard.cutscene.CutsceneManager.tick(me);
+            return ru.death.chaosshard.cutscene.CutsceneManager.playing(me);
+        }, ru.death.chaosshard.garrot.GarrotDuel.WARN + 20);
+        until("Гаррот вышел из портала", () -> {
+            ru.death.chaosshard.cutscene.CutsceneManager.tick(me);
+            ru.death.chaosshard.garrot.GarrotDuel.Duel d = ru.death.chaosshard.garrot.GarrotDuel.of(me);
+            return d != null && d.lord != null && ow.getEntityFromUuid(d.lord) instanceof ru.death.chaosshard.garrot.EntityGarrot;
+        }, 140);
+        step("в сцене Гаррот не дерётся, меня держат на месте", () -> {
+            ru.death.chaosshard.garrot.GarrotDuel.Duel d = ru.death.chaosshard.garrot.GarrotDuel.of(me);
+            ru.death.chaosshard.garrot.EntityGarrot g = (ru.death.chaosshard.garrot.EntityGarrot) ow.getEntityFromUuid(d.lord);
+            check(g.scripted && g.getAttackTarget() == null, "Гаррот по сценарию");
+            float h = g.getHealth();
+            g.attackEntityFrom(DamageSource.causePlayerDamage(me), 50F);
+            check(g.getHealth() == h, "в сцене Гаррот неуязвим");
+            me.setPosition(me.posX + 5, me.posY, me.posZ);
+            ru.death.chaosshard.cutscene.CutsceneManager.tick(me);
+            check(Math.abs(me.posX - (base.getX() + 0.5)) < 0.5, "игрок стоит на месте: " + me.posX);
+            ru.death.chaosshard.cutscene.Cutscene sc = ru.death.chaosshard.garrot.GarrotDuel.sceneFor(ow, d, me);
+            net.minecraft.util.math.Vec3d[] end = sc.at(sc.length);
+            check(end[0].distanceTo(me.getPositionEyes(1F)) < 0.2, "камера кончает сцену в глазах игрока");
+            check(sc.lines.size() == 5, "реплик в сцене: " + sc.lines.size());
+        });
+        step("пропуск сцены — сразу дуэль", () -> {
+            ru.death.chaosshard.cutscene.CutsceneManager.skip(me);
+            ru.death.chaosshard.garrot.GarrotDuel.Duel d = ru.death.chaosshard.garrot.GarrotDuel.of(me);
+            check(!ru.death.chaosshard.cutscene.CutsceneManager.playing(me), "сцена закрыта");
+            check(d != null && d.state == ru.death.chaosshard.garrot.GarrotDuel.STATE_FIGHT, "дуэль началась");
+            ru.death.chaosshard.garrot.EntityGarrot g = (ru.death.chaosshard.garrot.EntityGarrot) ow.getEntityFromUuid(d.lord);
+            check(g != null && !g.scripted && g.getAttackTarget() == me, "Гаррот в бою и бьёт меня");
+        });
+        step("один на один: удары слуги не в счёт, мои — в счёт", () -> {
+            ru.death.chaosshard.garrot.GarrotDuel.Duel d = ru.death.chaosshard.garrot.GarrotDuel.of(me);
+            ru.death.chaosshard.garrot.EntityGarrot g = (ru.death.chaosshard.garrot.EntityGarrot) ow.getEntityFromUuid(d.lord);
+            EntityLiving sv = servants.get(Servants.Kind.EXECUTIONER);
+            float h = g.getHealth();
+            if (sv != null) {
+                g.hurtResistantTime = 0;
+                g.attackEntityFrom(DamageSource.causeMobDamage(sv), 50F);
+                check(g.getHealth() == h, "удар слуги не прошёл");
+            }
+            g.hurtResistantTime = 0;
+            g.attackEntityFrom(DamageSource.causePlayerDamage(me), 50F);
+            check(g.getHealth() < h, "мой удар прошёл: " + h + " → " + g.getHealth());
+        });
+        step("круг не выпускает, секира бьёт перед собой", () -> {
+            ru.death.chaosshard.garrot.GarrotDuel.Duel d = ru.death.chaosshard.garrot.GarrotDuel.of(me);
+            me.setPosition(d.center.x + ChaosConfig.order.duelRadius + 3, d.center.y, d.center.z);
+            me.motionX = 0;
+            ru.death.chaosshard.garrot.GarrotDuel.tick(me);
+            check(me.motionX < 0, "вытолкнуло к центру: " + me.motionX);
+            ru.death.chaosshard.garrot.EntityGarrot g = (ru.death.chaosshard.garrot.EntityGarrot) ow.getEntityFromUuid(d.lord);
+            g.rotationYaw = g.renderYawOffset = g.rotationYawHead = 0;
+            me.setPosition(g.posX, g.posY, g.posZ + 2);
+            me.clearActivePotions();
+            g.cleave(ow);
+            check(me.isPotionActive(net.minecraft.init.MobEffects.SLOWNESS), "секира задела стоящего впереди");
+            me.clearActivePotions();
+            me.setPosition(g.posX, g.posY, g.posZ - 2);
+            g.cleave(ow);
+            check(!me.isPotionActive(net.minecraft.init.MobEffects.SLOWNESS), "за спиной — мимо");
+            me.clearActivePotions();
+        });
+        step("на 8% Гаррот склоняется, а не умирает", () -> {
+            ru.death.chaosshard.garrot.GarrotDuel.Duel d = ru.death.chaosshard.garrot.GarrotDuel.of(me);
+            ru.death.chaosshard.garrot.EntityGarrot g = (ru.death.chaosshard.garrot.EntityGarrot) ow.getEntityFromUuid(d.lord);
+            g.hurtResistantTime = 0;
+            g.attackEntityFrom(DamageSource.causePlayerDamage(me), 100000F);
+            check(g.isEntityAlive() && g.yielded && g.kneeling(), "жив и склонился");
+            check(d.state == ru.death.chaosshard.garrot.GarrotDuel.STATE_YIELD, "дуэль — в поклоне");
+            lordId = d.lord;
+        });
+        until("Гаррот поклялся и ушёл", () -> {
+            ru.death.chaosshard.garrot.GarrotDuel.tick(me);
+            return ru.death.chaosshard.garrot.GarrotDuel.of(me) == null;
+        }, ru.death.chaosshard.garrot.GarrotDuel.YIELD_LEN + 40);
+        step("клятва: набегов нет, Знамёна у ног", () -> {
+            check(ru.death.chaosshard.garrot.GarrotData.get(ow).submitted, "Гаррот склонился (в мире)");
+            Entity g = ow.getEntityFromUuid(lordId);
+            check(g == null || !g.isEntityAlive(), "Гаррот ушёл");
+            int banners = 0;
+            for (net.minecraft.entity.item.EntityItem ei : ow.getEntitiesWithinAABB(net.minecraft.entity.item.EntityItem.class, me.getEntityBoundingBox().grow(32),
+                    x -> x.getItem().getItem() == ru.death.chaosshard.init.ModItems.GARROT_BANNER)) {
+                banners += ei.getItem().getCount();
+                ei.setDead();
+            }
+            check(banners == 6, "Знамён Мрачной армии: " + banners);
+            Advancement a = server.getAdvancementManager().getAdvancement(new ResourceLocation("chaosshard", "m/garrot_duel"));
+            check(a != null, "веха «Гаррот склонился» загружена");
+        });
+        step("Знамя на Якорь — солдаты Гаррота в гарнизоне", () -> {
+            TileAnchor a = (TileAnchor) ow.getTileEntity(anchorPos);
+            if (a == null) { check(false, "Якоря нет"); return; }
+            List<TileAnchor> c = ru.death.chaosshard.anchor.AnchorClusters.cluster(ow, a);
+            int room = ru.death.chaosshard.anchor.AnchorClusters.garrisonLimit(c) - ru.death.chaosshard.anchor.AnchorClusters.garrison(ow, c).size();
+            me.setPosition(anchorPos.getX() + 2.5, anchorPos.getY(), anchorPos.getZ() + 0.5);
+            me.setHeldItem(EnumHand.MAIN_HAND, new net.minecraft.item.ItemStack(ru.death.chaosshard.init.ModItems.GARROT_BANNER, 2));
+            PlayerInteractEvent.RightClickBlock ev = new PlayerInteractEvent.RightClickBlock(me, EnumHand.MAIN_HAND, anchorPos, EnumFacing.UP, new Vec3d(0.5, 1, 0.5));
+            MinecraftForge.EVENT_BUS.post(ev);
+            check(ev.isCanceled(), "Знамя по Якорю сработало");
+            List<ru.death.chaosshard.garrot.EntityGarrot> vs = ow.getEntitiesWithinAABB(ru.death.chaosshard.garrot.EntityGarrot.class,
+                    new AxisAlignedBB(anchorPos).grow(12), x -> x.variant() == ru.death.chaosshard.garrot.EntityGarrot.VASSAL);
+            int want = Math.max(0, Math.min(2, room));
+            check(vs.size() == want, "солдат Гаррота: " + vs.size() + " (места в гарнизоне было " + room + ")");
+            check(vs.stream().allMatch(v -> Servants.isServantOf(v, me.getUniqueID())
+                    && v.getEntityData().getLong(Servants.TAG_ANCHOR) == anchorPos.toLong()), "служат мне и стерегут Якорь");
+            check(want == 0 || me.getHeldItemMainhand().getCount() == 1, "Знамя потрачено: осталось " + me.getHeldItemMainhand().getCount());
+            me.setHeldItem(EnumHand.MAIN_HAND, net.minecraft.item.ItemStack.EMPTY);
+            me.setPosition(base.getX() + 0.5, base.getY() + 1, base.getZ() + 0.5);
         });
 
         section("Самотест");

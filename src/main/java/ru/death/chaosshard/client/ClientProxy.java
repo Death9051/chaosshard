@@ -49,10 +49,13 @@ public class ClientProxy extends CommonProxy {
                 ru.death.chaosshard.structure.client.RenderOrderKnight::new);
         net.minecraftforge.fml.client.registry.RenderingRegistry.registerEntityRenderingHandler(ru.death.chaosshard.hero.EntityHero.class,
                 ru.death.chaosshard.hero.client.RenderHero::new);
+        net.minecraftforge.fml.client.registry.RenderingRegistry.registerEntityRenderingHandler(ru.death.chaosshard.garrot.EntityGarrot.class,
+                ru.death.chaosshard.garrot.client.RenderGarrot::new);
         net.minecraftforge.fml.client.registry.ClientRegistry.bindTileEntitySpecialRenderer(
                 ru.death.chaosshard.ritual.TileRitualSphere.class, new ru.death.chaosshard.ritual.client.SphereRenderer());
         MagicKeys.register();
         MinecraftForge.EVENT_BUS.register(new MagicKeys());
+        MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.cutscene.client.CutsceneClient());
         if (ChaosShard.astralLoaded && ChaosConfig.stars.enabled) {
             MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.stars.client.AstralSkyClient());
         }
@@ -89,6 +92,11 @@ public class ClientProxy extends CommonProxy {
     @Override
     public void handleThreadSync(int points) {
         Minecraft.getMinecraft().addScheduledTask(() -> ClientThreadCache.update(points));
+    }
+
+    @Override
+    public void handleCutscene(ru.death.chaosshard.network.PacketCutscene m) {
+        net.minecraft.client.Minecraft.getMinecraft().addScheduledTask(() -> ru.death.chaosshard.cutscene.client.CutsceneClient.receive(m.scene));
     }
 
     @Override

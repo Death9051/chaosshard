@@ -41,6 +41,9 @@ public class CommonProxy {
     }
 
     /** Дуга от Сердца (только клиент). */
+    public void handleCutscene(ru.death.chaosshard.network.PacketCutscene m) {
+    }
+
     public void handleHeartBolt(ru.death.chaosshard.network.PacketHeartBolt bolt) {
     }
 

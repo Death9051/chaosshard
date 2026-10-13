@@ -138,6 +138,20 @@ public final class ChaosConfig {
 
         @Config.Comment("Акт 4: Знамение ищет место для Опоры на таком расстоянии (ближе / дальше, блоки)")
         public int[] omenDistance = {400, 2400};
+
+        @Config.Comment("Акт 4: Гаррот приходит на дуэль, когда падёт столько Опор")
+        @Config.RangeInt(min = 0, max = 5)
+        public int duelAfterPillars = 3;
+
+        @Config.Comment("Акт 4: радиус круга дуэли (блоки)")
+        @Config.RangeInt(min = 8, max = 48)
+        public int duelRadius = 18;
+
+        @Config.Comment("Акт 4: очки Нити за победу над Гарротом")
+        public int duelReward = 500;
+
+        @Config.Comment("Акт 4: через сколько тиков Гаррот вернётся после проигранной дуэли")
+        public int duelCooldown = 24000;
     }
 
     public static final class AntechamberCfg {

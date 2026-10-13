@@ -20,6 +20,8 @@ public final class ChaosNetwork {
         CHANNEL.registerMessage(PacketBeasts.Handler.class, PacketBeasts.class, 6, Side.CLIENT);
         CHANNEL.registerMessage(PacketBeastAction.Handler.class, PacketBeastAction.class, 7, Side.SERVER);
         CHANNEL.registerMessage(PacketBiomes.Handler.class, PacketBiomes.class, 8, Side.CLIENT);
+        CHANNEL.registerMessage(PacketCutscene.Handler.class, PacketCutscene.class, 9, Side.CLIENT);
+        CHANNEL.registerMessage(PacketCutsceneSkip.Handler.class, PacketCutsceneSkip.class, 10, Side.SERVER);
     }
 
     private ChaosNetwork() {

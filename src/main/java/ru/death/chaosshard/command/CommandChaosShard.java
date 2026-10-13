@@ -238,6 +238,32 @@ public class CommandChaosShard extends CommandBase {
                 sender.sendMessage(new net.minecraft.util.text.TextComponentString(e == null ? "Не встала" : name + " встала: " + c.getX() + " " + c.getY() + " " + c.getZ()));
                 break;
             }
+            case "garrot": {
+                // /oh garrot — состояние; /oh garrot duel — Гаррот приходит сейчас; /oh garrot reset — снова непокорён
+                net.minecraft.world.WorldServer ws = server.getWorld(ru.death.chaosshard.breach.Breach.luchezariyaDim());
+                ru.death.chaosshard.garrot.GarrotData gd = ru.death.chaosshard.garrot.GarrotData.get(ws);
+                if (args.length >= 2 && "duel".equals(args[1])) {
+                    EntityPlayerMP pl = getCommandSenderAsPlayer(sender);
+                    if (ru.death.chaosshard.garrot.GarrotDuel.of(pl) != null) {
+                        throw new CommandException("Дуэль уже идёт");
+                    }
+                    ru.death.chaosshard.garrot.GarrotDuel.start(pl);
+                    break;
+                }
+                if (args.length >= 2 && "reset".equals(args[1])) {
+                    ru.death.chaosshard.garrot.GarrotDuel.clear(ws);
+                    gd.submitted = false;
+                    gd.lastDuel = -1000000;
+                    gd.markDirty();
+                    sender.sendMessage(new net.minecraft.util.text.TextComponentString("Гаррот снова непокорён"));
+                    break;
+                }
+                long left = ru.death.chaosshard.ChaosConfig.order.duelCooldown - (ws.getTotalWorldTime() - gd.lastDuel);
+                sender.sendMessage(new net.minecraft.util.text.TextComponentString("Гаррот: " + (gd.submitted ? "склонился" : "непокорён")
+                        + ", дуэлей " + gd.duels + ", Опор пало " + ru.death.chaosshard.hero.HeroData.get(ws).fallenCount() + "/" + ru.death.chaosshard.ChaosConfig.order.duelAfterPillars
+                        + (left > 0 && !gd.submitted ? ", вернётся через " + left / 20 + " с" : "")));
+                break;
+            }
             case "pillar": {
                 // /oh pillar — состояние Опор; /oh pillar fall <герой> — считать павшей; /oh pillar reset — забыть все
                 net.minecraft.world.WorldServer ws = server.getWorld(ru.death.chaosshard.breach.Breach.luchezariyaDim());
@@ -577,7 +603,10 @@ public class CommandChaosShard extends CommandBase {
     @Override
     public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos targetPos) {
         if (args.length == 1) {
-            return getListOfStringsMatchingLastWord(args, "nit", "tp", "sky", "grimoire", "debug", "breach", "heart", "quests", "selftest", "anchor", "shrine", "surge", "village", "trial", "beast", "servant", "autotest", "structure", "pillar");
+            return getListOfStringsMatchingLastWord(args, "nit", "tp", "sky", "grimoire", "debug", "breach", "heart", "quests", "selftest", "anchor", "shrine", "surge", "village", "trial", "beast", "servant", "autotest", "structure", "pillar", "garrot");
+        }
+        if (args.length == 2 && "garrot".equals(args[0])) {
+            return getListOfStringsMatchingLastWord(args, "duel", "reset");
         }
         if (args.length == 2 && "pillar".equals(args[0])) {
             return getListOfStringsMatchingLastWord(args, "fall", "reset");

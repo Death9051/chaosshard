@@ -73,7 +73,7 @@ public class TileAnchor extends TileEntity implements ITickable {
         if (siege > 0 && world.getTotalWorldTime() - lastSiege > 200) {
             siege = Math.max(0, siege - 20);
         }
-        if (!ru.death.chaosshard.ChaosConfig.order.raids) {
+        if (!ru.death.chaosshard.ChaosConfig.order.raids || ru.death.chaosshard.garrot.GarrotData.get(world).submitted) {
             return;
         }
         java.util.List<TileAnchor> c = AnchorClusters.cluster(world, this);

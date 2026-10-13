@@ -88,6 +88,10 @@ public class ChaosShard {
         net.minecraftforge.fml.common.registry.EntityRegistry.registerModEntity(new net.minecraft.util.ResourceLocation(Tags.MOD_ID, "hero"),
                 ru.death.chaosshard.hero.EntityHero.class, "chaosshard.hero", eid++, this, 96, 3, true, 0xf4f0e0, 0xe8b830);
         MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.hero.Pillars());
+        net.minecraftforge.fml.common.registry.EntityRegistry.registerModEntity(new net.minecraft.util.ResourceLocation(Tags.MOD_ID, "garrot"),
+                ru.death.chaosshard.garrot.EntityGarrot.class, "chaosshard.garrot", eid++, this, 96, 3, true, 0x1a1720, 0x8a1422);
+        MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.garrot.GarrotDuel());
+        MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.cutscene.CutsceneManager());
         MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.servant.Resync());
         MinecraftForge.EVENT_BUS.register(STRUCTURES);
         MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.thread.ThreadEvents());
