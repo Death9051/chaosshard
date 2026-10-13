@@ -271,7 +271,7 @@ public class EntityKing extends EntityMob implements Pose.Posed {
                 double a = decreeCharge * 0.3;
                 for (int k = 0; k < 6; k++) {
                     double r = 6;
-                    ws.spawnParticle(EnumParticleTypes.END_ROD, posX + Math.cos(a + k) * r, posY + 0.2, posZ + Math.sin(a + k) * r, 1, 0, 0, 0, 0);
+                    ws.spawnParticle(EnumParticleTypes.END_ROD, posX + Math.cos(a + k) * r, posY + 0.2, posZ + Math.sin(a + k) * r, 1, 0.0, 0.0, 0.0, 0.0);
                 }
             }
             if (decreeCharge >= DECREE_CHARGE) {
@@ -353,7 +353,7 @@ public class EntityKing extends EntityMob implements Pose.Posed {
                 }
                 if (echoTicks % 3 == 0) {
                     double a = echoTicks * 0.4;
-                    ws.spawnParticle(EnumParticleTypes.END_ROD, posX + Math.cos(a) * 5, posY + 0.2, posZ + Math.sin(a) * 5, 2, 0, 0.1, 0, 0);
+                    ws.spawnParticle(EnumParticleTypes.END_ROD, posX + Math.cos(a) * 5, posY + 0.2, posZ + Math.sin(a) * 5, 2, 0.0, 0.1, 0.0, 0.0);
                 }
                 if (echoTicks >= 30) {
                     for (EntityLivingBase e : world.getEntitiesWithinAABB(EntityLivingBase.class, getEntityBoundingBox().grow(5),

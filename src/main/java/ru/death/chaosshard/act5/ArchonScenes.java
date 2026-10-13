@@ -71,7 +71,7 @@ public final class ArchonScenes {
             }
             if (t == 86) {
                 a.setPose(Pose.RAISE_BOTH, 60);
-                w.playSound(null, a.getPosition(), SoundEvents.BLOCK_BEACON_POWER_SELECT, SoundCategory.HOSTILE, 3.0F, 0.5F);
+                w.playSound(null, a.getPosition(), SoundEvents.ENTITY_ILLAGER_CAST_SPELL, SoundCategory.HOSTILE, 3.0F, 0.5F);
             }
             if (t > 86 && t < 146 && t % 3 == 0) {
                 w.spawnParticle(EnumParticleTypes.END_ROD, a.posX, a.posY + 3.2, a.posZ, 6, 0.6, 0.2, 0.6, 0.03);

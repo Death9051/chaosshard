@@ -259,7 +259,7 @@ public class EntityArchon extends EntityMob implements Pose.Posed {
     public void beam(EntityLivingBase t) {
         beams.add(new double[]{t.posX, t.posY, t.posZ, BEAM_CHARGE});
         setPose(Pose.CAST, 12);
-        world.playSound(null, t.getPosition(), SoundEvents.BLOCK_BEACON_ACTIVATE, SoundCategory.HOSTILE, 1.5F, 1.6F);
+        world.playSound(null, t.getPosition(), SoundEvents.BLOCK_END_PORTAL_FRAME_FILL, SoundCategory.HOSTILE, 1.5F, 1.6F);
     }
 
     void tickBeams(WorldServer ws) {
