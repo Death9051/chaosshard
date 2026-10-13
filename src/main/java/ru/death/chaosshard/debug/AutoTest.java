@@ -81,7 +81,7 @@ public final class AutoTest {
     // общее состояние сценариев
     private WorldServer ow, archive;
     private FakePlayer me, meA;
-    private BlockPos base, anchorPos, chest, genPos;
+    private BlockPos base, anchorPos, chest, genPos, capPos;
     private final Map<Servants.Kind, EntityLiving> servants = new EnumMap<>(Servants.Kind.class);
     private EntityLiving miner;
     private TrialData.Trial trial, trial2;
@@ -1951,6 +1951,127 @@ public final class AutoTest {
         });
         until("отряд Ордена ушёл", () -> ow.getEntitiesWithinAABB(ru.death.chaosshard.structure.EntityOrderKnight.class,
                 new AxisAlignedBB(anchorPos).grow(48), x -> x.isEntityAlive() && x.getTags().contains(ru.death.chaosshard.act5.OrderRaids.TAG_RAID)).isEmpty(), 40);
+
+        section("Акт 5: столица и Король");
+        step("столица встаёт: маяки, барьер, трон, место Разлома", () -> {
+            capPos = ru.death.chaosshard.structure.OrderStructures.ground(ow, base.getX() + 260, base.getZ());
+            ru.death.chaosshard.structure.OrderStructureData.Entry e = ru.death.chaosshard.structure.OrderStructures.placeNow(ow, "capital", capPos, 0, 7L);
+            ru.death.chaosshard.act5.CapitalData cd = ru.death.chaosshard.act5.CapitalData.get(ow);
+            check(e != null && cd.state == ru.death.chaosshard.act5.CapitalData.STANDING, "столица встала");
+            check(cd.beacons.size() == 4 && ru.death.chaosshard.act5.Crown.lit(ow) == 4, "маяков горит: " + ru.death.chaosshard.act5.Crown.lit(ow) + " из " + cd.beacons.size());
+            check(cd.barrier.size() == 25 && cd.barrier.stream().allMatch(p -> ow.getBlockState(p).getBlock() == ModBlocks.CAPITAL_BARRIER), "барьер во входе: " + cd.barrier.size());
+            check(cd.king != null && cd.rift != null, "есть место Короля и Разлома");
+        });
+        step("маяк не погасить при страже; без стражи — Эссенцией", () -> {
+            ru.death.chaosshard.act5.CapitalData cd = ru.death.chaosshard.act5.CapitalData.get(ow);
+            BlockPos b0 = cd.beacons.get(0);
+            net.minecraft.item.ItemStack ess = new net.minecraft.item.ItemStack(ru.death.chaosshard.init.ModItems.CHAOS_ESSENCE, 64);
+            check(ru.death.chaosshard.act5.Crown.snuff(me, b0, ess) == 1, "стража держит свет");
+            for (BlockPos b : cd.beacons) {
+                for (ru.death.chaosshard.structure.EntityOrderKnight k : ru.death.chaosshard.act5.Crown.keepers(ow, b)) {
+                    k.setDead();
+                }
+            }
+            check(ru.death.chaosshard.act5.Crown.snuff(me, b0, new net.minecraft.item.ItemStack(ru.death.chaosshard.init.ModItems.CHAOS_ESSENCE, 2)) == 2, "двух Эссенций мало");
+            check(ru.death.chaosshard.act5.Crown.snuff(me, b0, ess) == 0 && ess.getCount() == 64 - ChaosConfig.order.beaconEssence, "маяк погас, Эссенция потрачена");
+            check(ru.death.chaosshard.act5.Crown.lit(ow) == 3, "горит три");
+            for (int i = 1; i < cd.beacons.size(); i++) {
+                ru.death.chaosshard.act5.Crown.snuff(me, cd.beacons.get(i), ess);
+            }
+            check(cd.state == ru.death.chaosshard.act5.CapitalData.OPEN, "все погасли — дворец открыт");
+            check(cd.barrier.stream().noneMatch(p -> ow.getBlockState(p).getBlock() == ModBlocks.CAPITAL_BARRIER), "барьер рассыпался");
+            check(ru.death.chaosshard.act5.Crown.kingOf(ow) != null, "Король встал");
+        });
+        step("Король: Указ, стража, приёмы Светочей, Ключ Разлома", () -> {
+            ru.death.chaosshard.act5.EntityKing k = ru.death.chaosshard.act5.Crown.kingOf(ow);
+            if (k == null) { check(false, "Короля нет"); return; }
+            k.scripted = false;
+            me.setPosition(k.posX + 3, k.posY, k.posZ);
+            me.removePotionEffect(net.minecraft.init.MobEffects.SLOWNESS);
+            k.decree(ow);
+            check(me.isPotionActive(net.minecraft.init.MobEffects.SLOWNESS), "Указ: на колени");
+            me.removePotionEffect(net.minecraft.init.MobEffects.SLOWNESS);
+            me.removePotionEffect(net.minecraft.init.MobEffects.WEAKNESS);
+            k.startDecree();
+            check(k.charging(), "Указ заряжается");
+            k.hurtResistantTime = 0;
+            k.attackEntityFrom(DamageSource.causePlayerDamage(me), 60F);
+            check(!k.charging() && k.staggered(), "сбит уроном — оглушён");
+            k.hurtResistantTime = 0;
+            k.setHealth(k.getMaxHealth() * 0.8F);
+            k.attackEntityFrom(DamageSource.causePlayerDamage(me), k.getMaxHealth() * 0.1F);
+            int royal = ow.getEntitiesWithinAABB(ru.death.chaosshard.structure.EntityOrderKnight.class, k.getEntityBoundingBox().grow(8),
+                    x -> x.getTags().contains(ru.death.chaosshard.act5.EntityKing.TAG_ROYAL)).size();
+            check(royal == 2, "на 75% — королевская стража: " + royal);
+            k.hurtResistantTime = 0;
+            k.setHealth(k.getMaxHealth() * 0.52F);
+            k.attackEntityFrom(DamageSource.causePlayerDamage(me), k.getMaxHealth() * 0.05F);
+            check(k.phase2(), "с половины — вторая фаза");
+            k.hurtResistantTime = 0;
+            k.attackEntityFrom(DamageSource.causePlayerDamage(me), 100000F);
+            check(!k.isEntityAlive(), "Король пал");
+            ru.death.chaosshard.act5.CapitalData cd = ru.death.chaosshard.act5.CapitalData.get(ow);
+            check(cd.state == ru.death.chaosshard.act5.CapitalData.FALLEN && cd.riftOpen
+                    && ow.getBlockState(cd.rift).getBlock() == ModBlocks.RIFT_GATE, "за троном — врата Разлома");
+            boolean key = !ow.getEntitiesWithinAABB(net.minecraft.entity.item.EntityItem.class, k.getEntityBoundingBox().grow(4),
+                    x -> x.getItem().getItem() == ru.death.chaosshard.init.ModItems.RIFT_KEY).isEmpty();
+            check(key, "Ключ Разлома упал");
+            for (ru.death.chaosshard.structure.EntityOrderKnight x : ow.getEntitiesWithinAABB(ru.death.chaosshard.structure.EntityOrderKnight.class,
+                    new AxisAlignedBB(capPos).grow(48, 32, 48))) {
+                x.setDead();
+            }
+            me.setPosition(base.getX() + 0.5, base.getY() + 1, base.getZ() + 0.5);
+        });
+
+        section("Акт 5: Разлом и Архонт");
+        step("Разлом: арена и пять пилонов, Архонт под их светом", () -> {
+            WorldServer rw = ru.death.chaosshard.act5.Rift.riftWorld();
+            if (rw == null) { check(false, "Разлом не загрузился"); return; }
+            for (int cx = -3; cx <= 2; cx++) {
+                for (int cz = -3; cz <= 2; cz++) {
+                    rw.getChunk(cx, cz);
+                }
+            }
+            ru.death.chaosshard.act5.Rift.forget(rw);
+            check(ru.death.chaosshard.act5.Rift.intactPylons(rw) == 5, "ядер пилонов: " + ru.death.chaosshard.act5.Rift.intactPylons(rw));
+            check(!rw.isAirBlock(ru.death.chaosshard.act5.RiftDimension.center().down()), "пол арены есть");
+            ru.death.chaosshard.act5.EntityArchon a = ru.death.chaosshard.act5.Rift.spawnArchon(rw);
+            a.scripted = false;
+            float h = a.getHealth();
+            a.attackEntityFrom(DamageSource.causePlayerDamage(me), 100F);
+            check(a.getHealth() == h && a.shielded(), "пока целы ядра — неуязвим");
+            for (int i = 0; i < 5; i++) {
+                ru.death.chaosshard.act5.Rift.pylonStrike(rw, i);
+                rw.setBlockToAir(ru.death.chaosshard.act5.RiftDimension.pylon(i));
+            }
+            check(ru.death.chaosshard.act5.Rift.intactPylons(rw) == 0 && a.phase() == 2, "ядра разбиты — вторая фаза");
+            a.hurtResistantTime = 0;
+            a.attackEntityFrom(DamageSource.causePlayerDamage(me), 100F);
+            check(a.getHealth() < h, "теперь урон проходит: " + h + " → " + a.getHealth());
+            a.beam(a);
+            check(a.pendingBeams() == 1, "луч заряжается");
+            int before = ru.death.chaosshard.act5.Rift.tearsActive();
+            ru.death.chaosshard.act5.Rift.tear(rw);
+            for (int i = 0; i < ru.death.chaosshard.act5.EntityArchon.TEAR_WARN + 2; i++) {
+                ru.death.chaosshard.act5.Rift.tickTears(rw);
+            }
+            check(ru.death.chaosshard.act5.Rift.tearsActive() == before + 1, "край арены разорван");
+            ru.death.chaosshard.act5.Rift.reset(rw, a);
+            check(ru.death.chaosshard.act5.Rift.intactPylons(rw) == 5 && a.phase() == 1 && a.getHealth() == a.getMaxHealth()
+                    && ru.death.chaosshard.act5.Rift.tearsActive() == 0, "сброс: пилоны встали, Архонт исцелён, арена цела");
+        });
+        step("Архонт пал — узел развязан", () -> {
+            WorldServer rw = ru.death.chaosshard.act5.Rift.riftWorld();
+            ru.death.chaosshard.act5.EntityArchon a = ru.death.chaosshard.act5.Rift.archon(rw);
+            if (a == null) { check(false, "Архонта нет"); return; }
+            for (int i = 0; i < 5; i++) {
+                rw.setBlockToAir(ru.death.chaosshard.act5.RiftDimension.pylon(i));
+            }
+            a.hurtResistantTime = 0;
+            a.attackEntityFrom(DamageSource.causePlayerDamage(me), 1000000F);
+            check(!a.isEntityAlive() && ru.death.chaosshard.act5.Rift.data(rw).defeated, "Архонт пал, Разлом затих");
+            ru.death.chaosshard.act5.Rift.forget(rw);
+        });
 
         section("Справка: реестры модов сборки");
         step("выписать предметы, блоки, тайлы и существ", () -> {

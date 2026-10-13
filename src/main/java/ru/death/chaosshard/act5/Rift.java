@@ -244,6 +244,10 @@ public final class Rift {
         }
     }
 
+    public static int tearsActive() {
+        return TEARS.size();
+    }
+
     static final List<Tear> TEARS = new ArrayList<>();
 
     public static void tear(WorldServer w) {
@@ -261,7 +265,7 @@ public final class Rift {
         return Math.abs(a) < Math.toRadians(30);
     }
 
-    static void tickTears(WorldServer w) {
+    public static void tickTears(WorldServer w) {
         int R = RiftDimension.ARENA_R + 2;
         for (int i = TEARS.size() - 1; i >= 0; i--) {
             Tear t = TEARS.get(i);
@@ -473,7 +477,7 @@ public final class Rift {
         }
     }
 
-    static WorldServer riftWorld() {
+    public static WorldServer riftWorld() {
         WorldServer w = DimensionManager.getWorld(RiftDimension.id());
         if (w == null) {
             DimensionManager.initDimension(RiftDimension.id());

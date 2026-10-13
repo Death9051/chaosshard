@@ -284,13 +284,18 @@ public class EntityKing extends EntityMob implements Pose.Posed {
             return;
         }
         if (++decreeTimer >= DECREE_EVERY) {
-            decreeTimer = 0;
-            decreeCharge = 0;
-            decreeDamage = 0;
-            setPose(Pose.RAISE_BOTH, DECREE_CHARGE);
-            say("decree");
-            world.playSound(null, getPosition(), SoundEvents.ENTITY_ILLAGER_PREPARE_BLINDNESS, SoundCategory.HOSTILE, 2.0F, 0.6F);
+            startDecree();
         }
+    }
+
+    /** Начать Указ: DECREE_CHARGE тиков заряда, потом удар. */
+    public void startDecree() {
+        decreeTimer = 0;
+        decreeCharge = 0;
+        decreeDamage = 0;
+        setPose(Pose.RAISE_BOTH, DECREE_CHARGE);
+        say("decree");
+        world.playSound(null, getPosition(), SoundEvents.ENTITY_ILLAGER_PREPARE_BLINDNESS, SoundCategory.HOSTILE, 2.0F, 0.6F);
     }
 
     /** Все враги в 20 блоках — на колени. */
