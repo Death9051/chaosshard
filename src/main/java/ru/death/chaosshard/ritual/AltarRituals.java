@@ -346,7 +346,7 @@ public class AltarRituals {
         }
     }
 
-    static void spawnMoonMob(WorldServer w, EntityPlayer near) {
+    public static void spawnMoonMob(WorldServer w, EntityPlayer near) {
         for (int tries = 0; tries < 8; tries++) {
             double a = w.rand.nextDouble() * Math.PI * 2;
             int r = 10 + w.rand.nextInt(7);
