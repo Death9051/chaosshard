@@ -379,6 +379,10 @@ public final class AutoTest {
             TileAnchor a = (TileAnchor) ow.getTileEntity(anchorPos);
             check(a != null, "Якорь поставлен");
             a.setOwner(me);
+            // как при установке игроком: Якорь попадает в список Якорей мира
+            ru.death.chaosshard.anchor.AnchorData ad = ru.death.chaosshard.anchor.AnchorData.get(ow);
+            ad.anchors.add(anchorPos);
+            ad.markDirty();
             a.setCorrupted(ChaosConfig.anchor.levelThresholds[2]);
             int done = a.forceSpread(800);
             check(done > 30, "Скверна расползлась: " + done + " блоков");
