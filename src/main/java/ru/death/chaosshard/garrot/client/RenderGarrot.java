@@ -1,6 +1,5 @@
 package ru.death.chaosshard.garrot.client;
 
-import net.minecraft.client.model.ModelPlayer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.entity.RenderBiped;
 import net.minecraft.client.renderer.entity.RenderManager;
@@ -17,7 +16,7 @@ public class RenderGarrot extends RenderBiped<EntityGarrot> {
     private static final ResourceLocation SHIELD = new ResourceLocation(Tags.MOD_ID, "textures/entity/garrot/shieldbearer.png");
 
     public RenderGarrot(RenderManager rm) {
-        super(rm, new ModelPlayer(0.0F, false), 0.55F);
+        super(rm, new ru.death.chaosshard.hero.client.PoseModel(), 0.55F);
         addLayer(new LayerBipedArmor(this));
     }
 
@@ -33,6 +32,7 @@ public class RenderGarrot extends RenderBiped<EntityGarrot> {
     protected void preRenderCallback(EntityGarrot e, float partialTicks) {
         float s = e.variant() == EntityGarrot.LORD ? 1.15F : 0.9375F;
         GlStateManager.scale(s, s, s);
+        GlStateManager.translate(0F, ru.death.chaosshard.hero.client.PoseModel.kneelDrop(e.pose()), 0F);
         if (e.variant() == EntityGarrot.SHADOW) {
             GlStateManager.enableBlend();
             GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);

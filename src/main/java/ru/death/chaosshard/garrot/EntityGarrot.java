@@ -53,9 +53,11 @@ import java.util.UUID;
  * на 8% здоровья склоняется.
  * SHADOW — тень-двойник с третьей фазы. VASSAL — солдат Мрачной армии на службе (гарнизон Якоря).
  */
-public class EntityGarrot extends EntityCreature {
+public class EntityGarrot extends EntityCreature implements ru.death.chaosshard.hero.Pose.Posed {
 
     public static final int LORD = 0, SHADOW = 1, VASSAL = 2;
+    private static final DataParameter<Byte> POSE = EntityDataManager.createKey(EntityGarrot.class, DataSerializers.BYTE);
+    private int poseTicks;
     private static final DataParameter<Integer> VARIANT = EntityDataManager.createKey(EntityGarrot.class, DataSerializers.VARINT);
     private static final DataParameter<Boolean> KNEEL = EntityDataManager.createKey(EntityGarrot.class, DataSerializers.BOOLEAN);
     private static final UUID RAGE_ID = UUID.fromString("2b6f0d4e-71a3-4a9e-b1c2-5f8e0a7d3c11");
@@ -86,6 +88,7 @@ public class EntityGarrot extends EntityCreature {
     @Override
     protected void entityInit() {
         super.entityInit();
+        dataManager.register(POSE, (byte) 0);
         dataManager.register(VARIANT, LORD);
         dataManager.register(KNEEL, false);
     }
@@ -230,14 +233,30 @@ public class EntityGarrot extends EntityCreature {
 
     public void kneel(boolean on) {
         dataManager.set(KNEEL, on);
-        setSneaking(on);
+        setPose(on ? ru.death.chaosshard.hero.Pose.KNEEL : ru.death.chaosshard.hero.Pose.NONE, 0);
     }
 
     // ------------------------------------------------------------------ бой
 
     @Override
+    public int pose() {
+        return dataManager.get(POSE);
+    }
+
+    /** Встать в позу на ticks тиков (0 — держать, пока не сменят). */
+    public void setPose(int pose, int ticks) {
+        if (pose() != pose) {
+            dataManager.set(POSE, (byte) pose);
+        }
+        poseTicks = ticks;
+    }
+
+    @Override
     public void onLivingUpdate() {
         super.onLivingUpdate();
+        if (!world.isRemote && poseTicks > 0 && --poseTicks == 0) {
+            dataManager.set(POSE, (byte) 0);
+        }
         if (world.isRemote) {
             return;
         }
@@ -294,12 +313,14 @@ public class EntityGarrot extends EntityCreature {
                 windup = -1;
                 cleave(ws);
                 recover = RECOVER;   // секира ушла в землю — время ударить
+                setPose(ru.death.chaosshard.hero.Pose.CHOP, RECOVER);
             }
             return;
         }
         if (++cleaveTimer >= CLEAVE_EVERY && getDistance(target) < 6) {
             cleaveTimer = 0;
             windup = 0;
+            setPose(ru.death.chaosshard.hero.Pose.WINDUP, CLEAVE_WINDUP);
             setSpeed(true);
             world.playSound(null, getPosition(), SoundEvents.ENTITY_IRONGOLEM_ATTACK, SoundCategory.HOSTILE, 1.5F, 0.5F);
             if (target instanceof EntityPlayerMP && world.getTotalWorldTime() - lastHint > 600) {
@@ -359,6 +380,7 @@ public class EntityGarrot extends EntityCreature {
                     world.spawnEntity(sk);
                 }
                 world.playSound(null, getPosition(), SoundEvents.ENTITY_WITHER_SHOOT, SoundCategory.HOSTILE, 1.2F, 0.8F);
+                setPose(ru.death.chaosshard.hero.Pose.CAST, 14);
             }
         }
     }

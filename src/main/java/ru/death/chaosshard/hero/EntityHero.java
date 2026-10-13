@@ -55,8 +55,10 @@ import java.util.UUID;
  * кто в этот миг смотрит на него, слепнет. На половине здоровья зовёт капитанов и начинает
  * рывки; после рывка две секунды открыт со всех сторон.
  */
-public class EntityHero extends EntityMob {
+public class EntityHero extends EntityMob implements ru.death.chaosshard.hero.Pose.Posed {
 
+    private static final DataParameter<Byte> POSE = EntityDataManager.createKey(EntityHero.class, DataSerializers.BYTE);
+    private int poseTicks;
     private static final DataParameter<Integer> HERO = EntityDataManager.createKey(EntityHero.class, DataSerializers.VARINT);
     private static final UUID STAGGER_ID = UUID.fromString("6f1c7e8a-0b9d-4f3a-9c21-7a3e5d2b1c40");
 
@@ -98,6 +100,7 @@ public class EntityHero extends EntityMob {
     @Override
     protected void entityInit() {
         super.entityInit();
+        dataManager.register(POSE, (byte) 0);
         dataManager.register(HERO, 0);
     }
 
@@ -294,8 +297,24 @@ public class EntityHero extends EntityMob {
     // ------------------------------------------------------------------ бой
 
     @Override
+    public int pose() {
+        return dataManager.get(POSE);
+    }
+
+    /** Встать в позу на ticks тиков (0 — держать, пока не сменят). */
+    public void setPose(int pose, int ticks) {
+        if (pose() != pose) {
+            dataManager.set(POSE, (byte) pose);
+        }
+        poseTicks = ticks;
+    }
+
+    @Override
     public void onLivingUpdate() {
         super.onLivingUpdate();
+        if (!world.isRemote && poseTicks > 0 && --poseTicks == 0) {
+            dataManager.set(POSE, (byte) 0);
+        }
         if (world.isRemote) {
             return;
         }
@@ -376,6 +395,7 @@ public class EntityHero extends EntityMob {
         if (++holyTimer >= 100) {
             holyTimer = 0;
             holyCharge = 0;
+            setPose(Pose.RAISE_BOTH, 32);
             world.playSound(null, getPosition(), SoundEvents.BLOCK_NOTE_BELL, SoundCategory.HOSTILE, 2.0F, 1.2F);
         }
         if (!phase2 && getHealth() < getMaxHealth() / 2) {
@@ -395,6 +415,7 @@ public class EntityHero extends EntityMob {
         if (phase2 && ++shieldTimer >= 400) {
             shieldTimer = 0;
             shield = 40;
+            setPose(Pose.PRAY, 40);
             world.playSound(null, getPosition(), SoundEvents.BLOCK_NOTE_CHIME, SoundCategory.HOSTILE, 2.0F, 1.0F);
         }
     }
@@ -454,6 +475,7 @@ public class EntityHero extends EntityMob {
         // огненные стрелы
         if (++boltTimer >= 60 && canEntityBeSeen(target)) {
             boltTimer = 0;
+            setPose(Pose.CAST, 12);
             for (int i = 0; i < 2; i++) {
                 double dx = target.posX - posX, dy = target.posY + target.height / 2 - (posY + 1.8), dz = target.posZ - posZ;
                 net.minecraft.entity.projectile.EntitySmallFireball f = new net.minecraft.entity.projectile.EntitySmallFireball(world, this,
@@ -466,6 +488,7 @@ public class EntityHero extends EntityMob {
         // рунные ловушки под целью
         if (++trapTimer >= 160) {
             trapTimer = 0;
+            setPose(Pose.CAST_DOWN, 16);
             for (int i = 0; i < 3; i++) {
                 double tx = target.posX + (i == 0 ? 0 : rand.nextInt(7) - 3), tz = target.posZ + (i == 0 ? 0 : rand.nextInt(7) - 3);
                 traps.add(new double[]{tx, target.posY, tz, 0});
@@ -514,6 +537,7 @@ public class EntityHero extends EntityMob {
         if (seals.isEmpty()) {
             say("no_seals");
             stun = 100;
+            setPose(Pose.STAGGER, 100);
             return;
         }
         BlockPos seal = seals.get(rand.nextInt(seals.size()));
@@ -524,6 +548,7 @@ public class EntityHero extends EntityMob {
         say("escape");
         BlockPos at = world.getHeight(seal.add(2, 0, 0));
         blink(seal.getX() + 2.5, Math.max(at.getY(), seal.getY() - 1), seal.getZ() + 0.5);
+        setPose(Pose.RAISE, 0);
         away = seal;
         awayTicks = 0;
         setHomePosAndDistance(seal, 4);
@@ -538,6 +563,7 @@ public class EntityHero extends EntityMob {
         if (away != null && away.equals(pos)) {
             away = null;
             stun = 100;
+            setPose(Pose.STAGGER, 100);
             returnAfterStun = true;
             setHealth(Math.max(1, getHealth() - getMaxHealth() * 0.1F));
             say("seal_here");
@@ -545,6 +571,7 @@ public class EntityHero extends EntityMob {
     }
 
     void goHome() {
+        setPose(Pose.NONE, 0);
         away = null;
         awayTicks = 0;
         if (pillarHome != null) {
@@ -614,6 +641,7 @@ public class EntityHero extends EntityMob {
         if (++songGap >= SONG_GAP) {
             songGap = 0;
             song = nextSong;
+            setPose(Pose.LUTE, 0);
             nextSong = (nextSong + 1) % 3;
             songTicks = 0;
             songDamage = 0;
@@ -624,6 +652,7 @@ public class EntityHero extends EntityMob {
     }
 
     private void finishSong(WorldServer ws) {
+        setPose(Pose.RAISE, 20);
         int s = song;
         song = -1;
         ws.spawnParticle(EnumParticleTypes.NOTE, posX, posY + 2, posZ, 30, 3, 1, 3, 1.0);
@@ -659,6 +688,7 @@ public class EntityHero extends EntityMob {
     }
 
     void silenced() {
+        setPose(Pose.CHOKE, 40);
         song = -1;
         silence = SILENCE;
         songGap = 0;
@@ -677,6 +707,7 @@ public class EntityHero extends EntityMob {
 
     /** Для проверок: начать песнь сейчас. */
     public void startSong(int s) {
+        setPose(Pose.LUTE, 0);
         song = s;
         songTicks = 0;
         songDamage = 0;
@@ -732,6 +763,7 @@ public class EntityHero extends EntityMob {
                 dashAt(target, 1.7);
                 if (chainLeft == 0) {
                     winded = WINDED;
+                    setPose(Pose.STAGGER, WINDED);
                 }
             }
             return;
@@ -739,6 +771,7 @@ public class EntityHero extends EntityMob {
         if (winded <= 0 && ++chainTimer >= CHAIN_EVERY && getDistance(target) < 20) {
             chainTimer = 0;
             chainLeft = CHAIN_LEN;
+            setPose(Pose.DASH, CHAIN_LEN * 12 + 10);
             chainGap = 1;
             world.playSound(null, getPosition(), SoundEvents.ENTITY_HORSE_GALLOP, SoundCategory.HOSTILE, 2.0F, 1.0F);
         }
@@ -757,6 +790,7 @@ public class EntityHero extends EntityMob {
 
     /** Королевская стража: капитан и двое стражей с королевским знаком. */
     void callGuard() {
+        setPose(Pose.RAISE, 30);
         say("call" + calls);
         WorldServer ws = (WorldServer) world;
         for (int i = 0; i < 3; i++) {
@@ -802,6 +836,7 @@ public class EntityHero extends EntityMob {
             }
             if (dashing == 0) {
                 stagger = STAGGER;
+                setPose(Pose.STAGGER, STAGGER);
                 setStaggerSlow(true);
                 ws.spawnParticle(EnumParticleTypes.CRIT, posX, posY + 1.2, posZ, 30, 0.4, 0.5, 0.4, 0.1);
                 world.playSound(null, getPosition(), SoundEvents.ITEM_SHIELD_BREAK, SoundCategory.HOSTILE, 1.0F, 0.7F);
@@ -839,6 +874,7 @@ public class EntityHero extends EntityMob {
                 motionY = 0.25;
                 velocityChanged = true;
                 dashing = DASH_TICKS;
+                setPose(Pose.DASH, DASH_TICKS);
                 world.playSound(null, getPosition(), SoundEvents.ENTITY_ENDERDRAGON_FLAP, SoundCategory.HOSTILE, 1.5F, 1.4F);
                 return;
             }
@@ -846,6 +882,7 @@ public class EntityHero extends EntityMob {
         // ослепляющая вспышка: заряд — и кто смотрит на него, слепнет
         flashTimer++;
         if (flashTimer == FLASH_EVERY - FLASH_CHARGE) {
+            setPose(Pose.RAISE, FLASH_CHARGE);
             world.playSound(null, getPosition(), SoundEvents.ENTITY_ILLAGER_PREPARE_BLINDNESS, SoundCategory.HOSTILE, 2.0F, 1.2F);
             for (EntityPlayer pl : world.getEntitiesWithinAABB(EntityPlayer.class, getEntityBoundingBox().grow(20))) {
                 pl.sendStatusMessage(Breach.grimoire("chaosshard.hero.kael.raise"), true);
@@ -857,6 +894,7 @@ public class EntityHero extends EntityMob {
         if (flashTimer >= FLASH_EVERY) {
             flashTimer = 0;
             flash(ws);
+            setPose(Pose.STAGGER, FLASH_OPEN);
             // после вспышки опускает щит — окно для удара спереди
             stagger = FLASH_OPEN;
             setStaggerSlow(true);

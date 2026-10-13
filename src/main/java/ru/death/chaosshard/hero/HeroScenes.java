@@ -97,6 +97,7 @@ public final class HeroScenes {
                 case KAEL:
                     // поднимает клинок к лучу — вспышка
                     if (t == 96) {
+                        hero.setPose(Pose.RAISE, 30);
                         w.playSound(null, hero.getPosition(), SoundEvents.ENTITY_ILLAGER_PREPARE_BLINDNESS, SoundCategory.HOSTILE, 2.0F, 1.2F);
                     }
                     if (t > 96 && t < 118) {
@@ -109,7 +110,9 @@ public final class HeroScenes {
                     break;
                 case IRENA:
                     // молится — вокруг загорается святая земля
-                    hero.setSneaking(t > 72 && t < 140);
+                    if (t == 73) {
+                        hero.setPose(Pose.KNEEL_PRAY, 67);
+                    }
                     if (t > 72 && t < 190 && t % 2 == 0) {
                         double a = t * 0.21;
                         for (int k = 0; k < 3; k++) {
@@ -130,6 +133,7 @@ public final class HeroScenes {
                                 hero.posZ + Math.sin(a) * 1.4, 6, 0.05, 0.05, 0.05, 0.4);
                     }
                     if (t == 110 || t == 150) {
+                        hero.setPose(Pose.RAISE, 14);
                         w.playSound(null, hero.getPosition(), SoundEvents.ENTITY_ENDERMEN_TELEPORT, SoundCategory.HOSTILE, 1.5F, 0.8F);
                         for (BlockPos seal : Pillars.intactSeals(w, Lightbearer.VELMOR)) {
                             w.spawnParticle(EnumParticleTypes.PORTAL, seal.getX() + 0.5, seal.getY() + 1, seal.getZ() + 0.5, 120, 0.5, 1.5, 0.5, 1.0);
@@ -138,6 +142,9 @@ public final class HeroScenes {
                     break;
                 case LIAN:
                     // начинает песнь — ноты и мелодия
+                    if (t == 73) {
+                        hero.setPose(Pose.LUTE, 123);
+                    }
                     if (t > 72 && t < 196) {
                         if (t % 3 == 0) {
                             w.spawnParticle(EnumParticleTypes.NOTE, hero.posX + (w.rand.nextDouble() - 0.5) * 2, hero.posY + 2.4,
@@ -152,6 +159,7 @@ public final class HeroScenes {
                 case ELIS:
                     // трубят — и её королевская стража встаёт рядом искрами
                     if (t == 80 || t == 100) {
+                        hero.setPose(Pose.RAISE, 24);
                         w.playSound(null, hero.getPosition(), SoundEvents.BLOCK_NOTE_BASS, SoundCategory.HOSTILE, 3.0F, t == 80 ? 0.5F : 0.75F);
                     }
                     if (t > 100 && t < 150 && t % 5 == 0) {
@@ -170,7 +178,7 @@ public final class HeroScenes {
         @Override
         public void end(EntityPlayerMP p, boolean skipped, boolean aborted) {
             hero.scripted = false;
-            hero.setSneaking(false);
+            hero.setPose(Pose.NONE, 0);
         }
     }
 

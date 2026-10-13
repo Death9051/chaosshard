@@ -1,6 +1,5 @@
 package ru.death.chaosshard.hero.client;
 
-import net.minecraft.client.model.ModelPlayer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.entity.RenderBiped;
 import net.minecraft.client.renderer.entity.RenderManager;
@@ -22,7 +21,7 @@ public class RenderHero extends RenderBiped<EntityHero> {
     }
 
     public RenderHero(RenderManager rm) {
-        super(rm, new ModelPlayer(0.0F, false), 0.6F);
+        super(rm, new ru.death.chaosshard.hero.client.PoseModel(), 0.6F);
         addLayer(new LayerBipedArmor(this));
     }
 
@@ -34,5 +33,6 @@ public class RenderHero extends RenderBiped<EntityHero> {
     @Override
     protected void preRenderCallback(EntityHero e, float partialTicks) {
         GlStateManager.scale(1.15F, 1.15F, 1.15F);
+        GlStateManager.translate(0F, PoseModel.kneelDrop(e.pose()), 0F);
     }
 }
