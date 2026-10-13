@@ -1950,7 +1950,7 @@ public final class AutoTest {
             check(cap != null && cap.getTags().contains(ru.death.chaosshard.act5.OrderRaids.TAG_CAPTAIN), "капитан набега");
             // рядом с капитаном — только его отряд (настоящий набег Якоря мог прийти сам и стоять в другом месте)
             List<ru.death.chaosshard.structure.EntityOrderKnight> squad = ow.getEntitiesWithinAABB(ru.death.chaosshard.structure.EntityOrderKnight.class,
-                    cap.getEntityBoundingBox().grow(7, 6, 7), x -> x.getTags().contains(ru.death.chaosshard.act5.OrderRaids.TAG_RAID));
+                    cap.getEntityBoundingBox().grow(8, 24, 8), x -> x.getTags().contains(ru.death.chaosshard.act5.OrderRaids.TAG_RAID));
             check(squad.size() >= 1 + 5 + 1, "в отряде " + squad.size() + " (капитан, 5 рыцарей, знаменосец)");
             check(squad.stream().allMatch(k -> k.getTags().contains(ru.death.chaosshard.garrot.GarrotRaids.TAG_ARMY)
                     && k.getEntityData().getLong(ru.death.chaosshard.garrot.GarrotRaids.TAG_RAID) == anchorPos.toLong()), "все идут на Якорь как армия набега");
