@@ -108,7 +108,15 @@ public final class OrderRaids {
         k.addTag(TAG_RAID);
         k.getEntityData().setLong(GarrotRaids.TAG_RAID, anchor.toLong());
         k.getEntityData().setInteger(GarrotRaids.TAG_RAID_LVL, level);
-        world.spawnEntity(k);
+        if (!world.spawnEntity(k)) {
+            // не пустило (чанк, чужой мод) — вторая попытка прямо в точке сбора
+            BlockPos b = world.getHeight(base);
+            world.getChunk(b);
+            k.setLocationAndAngles(b.getX() + 0.5, b.getY(), b.getZ() + 0.5, k.rotationYaw, 0);
+            if (!world.spawnEntity(k)) {
+                ru.death.chaosshard.ChaosShard.LOG.warn("Рыцарь Ордена не появился у {}", b);
+            }
+        }
         k.setAttackTarget(target);
         return k;
     }
