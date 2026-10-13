@@ -1,0 +1,23 @@
+{
+ "parent": "chaosshard:m/root",
+ "display": {
+  "icon": {
+   "item": "minecraft:dragon_breath"
+  },
+  "title": {
+   "translate": "advancement.chaosshard.m.dragon_slain.title"
+  },
+  "description": {
+   "translate": "advancement.chaosshard.m.dragon_slain.desc"
+  },
+  "frame": "task",
+  "show_toast": false,
+  "announce_to_chat": false,
+  "hidden": true
+ },
+ "criteria": {
+  "done": {
+   "trigger": "minecraft:impossible"
+  }
+ }
+}

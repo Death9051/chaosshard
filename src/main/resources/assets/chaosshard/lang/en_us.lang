@@ -1261,3 +1261,19 @@ advancement.chaosshard.m.anchor_waystone.title=Anchor waystone
 advancement.chaosshard.m.anchor_waystone.desc=Quest milestone
 advancement.chaosshard.m.servant_fed.title=Well-fed servants
 advancement.chaosshard.m.servant_fed.desc=Quest milestone
+
+# ---- Minor plans: Nether, End, pockets
+chaosshard.config.plans=Minor plans
+chaosshard.ritual.scent=Thread's Scent
+chaosshard.ritual.scent.desc=Sphere. Break it in the Nether to learn the nearest fortress; in the End, the nearest End city; in Luchezaria, the stronghold with the End portal.
+chaosshard.ritual.scent.none=The Thread smells nothing — the sphere is intact.
+chaosshard.ritual.scent.fortress=The Thread smells a Nether fortress: X %s, Z %s — %s blocks.
+chaosshard.ritual.scent.endcity=The Thread smells an End city: X %s, Z %s — %s blocks.
+chaosshard.ritual.scent.stronghold=The Thread smells a stronghold with the End portal: X %s, Z %s — %s blocks.
+item.chaosshard.ritual_sphere.scent.name=Sphere of the Thread's Scent
+chaosshard.plans.wither=The Wither crumbles. Its hunger was akin to mine — now it is mine. Thread +%s.
+chaosshard.plans.dragon=The keeper of the End has fallen. The Veil is thinnest here, and the Thread rings in it. Thread +%s.
+advancement.chaosshard.m.wither_slain.title=Wither slain
+advancement.chaosshard.m.wither_slain.desc=Quest milestone
+advancement.chaosshard.m.dragon_slain.title=Dragon slain
+advancement.chaosshard.m.dragon_slain.desc=Quest milestone

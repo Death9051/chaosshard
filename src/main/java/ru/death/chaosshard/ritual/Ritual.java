@@ -87,7 +87,11 @@ public enum Ritual {
     /** Порченая святость (сфера): ближайшая святыня Ордена в 64 блоках осквернена. Святая вода — с рыцарей Ордена. */
     HOLY_DEFILE(2, 0, offer("xreliquary:glowing_water", 0, 2), offer("chaosshard:chaos_essence", 0, 2)),
     /** Падшее перо (сфера): мои слуги в 32 блоках — Скорость II, Сопротивление I и Регенерация I на 5 минут. */
-    FALLEN_FEATHER(3, 0, offer("xreliquary:angelic_feather", 0, 1), offer("chaosshard:chaos_essence", 0, 3));
+    FALLEN_FEATHER(3, 0, offer("xreliquary:angelic_feather", 0, 1), offer("chaosshard:chaos_essence", 0, 3)),
+
+    // ---------------------------------------------------------------- Малые планы; только в конец
+    /** Нюх Нити (сфера): в Незере — ближайшая крепость, в Крае — город, в остальных мирах — крепость с порталом в Край. */
+    SCENT(1, 0, offer("chaosshard:chaos_essence", 0, 2), offer("minecraft:ender_eye", 0, 1), offer("minecraft:blaze_powder", 0, 1));
 
     /** Старшие ритуалы — на Алтаре Прорыва, а не в Чаше. */
     public boolean isAltar() {
@@ -130,7 +134,7 @@ public enum Ritual {
     /** Ритуалы с эффектом на месте: запечатываются в сферу, которую ставят, где нужно. */
     public static final Ritual[] SPHERES = {GROWTH, WARD, STORM, CORRUPTION, PULL,
             DUSK, BREED, SIGHT, RECALL, BLOOD_MOON, GREAT_SURGE,
-            OMEN_KAEL, OMEN_IRENA, OMEN_VELMOR, OMEN_LIAN, OMEN_ELIS, HOLY_DEFILE, FALLEN_FEATHER};
+            OMEN_KAEL, OMEN_IRENA, OMEN_VELMOR, OMEN_LIAN, OMEN_ELIS, HOLY_DEFILE, FALLEN_FEATHER, SCENT};
 
     /** Номер сферы (метаданные предмета) или -1. */
     public int sphereIndex() {

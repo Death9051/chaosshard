@@ -1284,3 +1284,19 @@ advancement.chaosshard.m.anchor_waystone.title=Камень у Якоря
 advancement.chaosshard.m.anchor_waystone.desc=Якорь вырастил путевой камень
 advancement.chaosshard.m.servant_fed.title=Сытые слуги
 advancement.chaosshard.m.servant_fed.desc=Слуга поел из сундука
+
+# ---- Малые планы: Незер, Край, карманы
+chaosshard.config.plans=Малые планы
+chaosshard.ritual.scent=Нюх Нити
+chaosshard.ritual.scent.desc=Сфера. Разбей в Незере — Гримуар назовёт ближайшую крепость Незера; в Крае — ближайший город Края; в Лучезарии — крепость с порталом в Край.
+chaosshard.ritual.scent.none=Нить ничего не чует — сфера цела.
+chaosshard.ritual.scent.fortress=Нить чует крепость Незера: X %s, Z %s — %s блоков.
+chaosshard.ritual.scent.endcity=Нить чует город Края: X %s, Z %s — %s блоков.
+chaosshard.ritual.scent.stronghold=Нить чует крепость с порталом в Край: X %s, Z %s — %s блоков.
+item.chaosshard.ritual_sphere.scent.name=Сфера нюха Нити
+chaosshard.plans.wither=Иссушитель рассыпался. Его голод был сродни моему — теперь он мой. Нить +%s.
+chaosshard.plans.dragon=Хранительница Края пала. Здесь Завеса тоньше всего, и Нить звенит в ней. Нить +%s.
+advancement.chaosshard.m.wither_slain.title=Иссушитель повержен
+advancement.chaosshard.m.wither_slain.desc=Убит Иссушитель
+advancement.chaosshard.m.dragon_slain.title=Дракон повержен
+advancement.chaosshard.m.dragon_slain.desc=Убит Дракон Края

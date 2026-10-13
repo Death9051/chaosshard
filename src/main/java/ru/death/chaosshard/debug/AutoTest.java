@@ -1891,6 +1891,44 @@ public final class AutoTest {
             });
         }
 
+        section("Малые планы: Незер, Край, карманы");
+        step("огонь Незера роняет Эссенцию, Край — Осколки Завесы", () -> {
+            WorldServer nether = net.minecraftforge.common.DimensionManager.getWorld(-1);
+            if (nether == null) {
+                net.minecraftforge.common.DimensionManager.initDimension(-1);
+                nether = net.minecraftforge.common.DimensionManager.getWorld(-1);
+            }
+            if (nether == null) { check(false, "Незер не загрузился"); return; }
+            float was = ChaosConfig.plans.netherEssenceChance;
+            ChaosConfig.plans.netherEssenceChance = 1F;
+            net.minecraft.entity.monster.EntityBlaze blaze = new net.minecraft.entity.monster.EntityBlaze(nether);
+            blaze.setPosition(0, 70, 0);
+            ArrayList<net.minecraft.entity.item.EntityItem> drops = new ArrayList<>();
+            net.minecraftforge.event.entity.living.LivingDropsEvent ev = new net.minecraftforge.event.entity.living.LivingDropsEvent(blaze,
+                    DamageSource.causePlayerDamage(me), drops, 0, true);
+            ru.death.chaosshard.plans.MinorPlans.onDrops(ev);
+            ChaosConfig.plans.netherEssenceChance = was;
+            check(drops.stream().anyMatch(d -> d.getItem().getItem() == ru.death.chaosshard.init.ModItems.CHAOS_ESSENCE), "ифрит в Незере уронил Эссенцию");
+            drops.clear();
+            net.minecraft.entity.monster.EntityBlaze home = new net.minecraft.entity.monster.EntityBlaze(ow);
+            ru.death.chaosshard.plans.MinorPlans.onDrops(new net.minecraftforge.event.entity.living.LivingDropsEvent(home,
+                    DamageSource.causePlayerDamage(me), drops, 0, true));
+            check(drops.isEmpty(), "вне Незера — ничего");
+            check(ru.death.chaosshard.plans.MinorPlans.shardMultiplier(ow) == 1.0, "в Лучезарии Осколки как обычно");
+        });
+        step("Иссушитель: Нить и веха", () -> {
+            int before = ru.death.chaosshard.thread.ThreadManager.getPoints(me);
+            ru.death.chaosshard.plans.MinorPlans.slain(me, false);
+            check(ru.death.chaosshard.thread.ThreadManager.getPoints(me) - before == ChaosConfig.plans.witherThread,
+                    "Нить +" + (ru.death.chaosshard.thread.ThreadManager.getPoints(me) - before));
+        });
+        step("«Нюх Нити»", () -> {
+            check(ru.death.chaosshard.ritual.Ritual.SCENT.isSphere() && ru.death.chaosshard.ritual.Ritual.SCENT.available(), "ритуал-сфера есть");
+            boolean found = ru.death.chaosshard.plans.MinorPlans.scent(me, ow, base);
+            line("  крепость с порталом в Лучезарии " + (found ? "найдена" : "не найдена (мир без крепостей)"));
+            check(true, "поиск не падает");
+        });
+
         section("Справка: реестры модов сборки");
         step("выписать предметы, блоки, тайлы и существ", () -> {
             String[] mods = {"xreliquary", "reliquary", "bountifulbaubles", "apotheosis", "waystones", "extrautils2", "cyclicmagic",

@@ -53,6 +53,10 @@ public final class ChaosConfig {
     @Config.LangKey("chaosshard.config.tech")
     public static final TechCfg tech = new TechCfg();
 
+    @Config.Comment("Малые планы: Незер, Край, карманы Dimensional Doors")
+    @Config.LangKey("chaosshard.config.plans")
+    public static final PlansCfg plans = new PlansCfg();
+
     @Config.Comment("Связки с другими модами")
     @Config.LangKey("chaosshard.config.compat")
     public static final CompatCfg compat = new CompatCfg();
@@ -250,6 +254,18 @@ public final class ChaosConfig {
         @Config.Comment("Добавить на небо дополнительные места для созвездий (в Astral их всего 15)")
         @Config.RequiresMcRestart
         public boolean extraSkyPositions = true;
+    }
+
+    public static final class PlansCfg {
+        @Config.Comment("Шанс Эссенции Хаоса с огненных тварей Незера (ифриты, иссушённые скелеты, гасты, магмовые кубы)")
+        public float netherEssenceChance = 0.08F;
+        @Config.Comment("Шанс Осколка Завесы с эндерменов и шалкеров в Крае")
+        public float endVeilChance = 0.06F;
+        @Config.Comment("Во сколько раз чаще Осколки мира в карманах и Лимбе Dimensional Doors")
+        public double pocketShardMultiplier = 2.0;
+        @Config.Comment("Нить за Иссушителя и за Дракона Края")
+        public int witherThread = 300;
+        public int dragonThread = 500;
     }
 
     public static final class TechCfg {
