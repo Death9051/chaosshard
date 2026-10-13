@@ -371,6 +371,7 @@ public class GuiGrimoireMagic extends GuiScreen {
             case RECALL: return new ItemStack(net.minecraft.init.Items.GOLDEN_APPLE);
             case BLOOD_MOON: return new ItemStack(net.minecraft.init.Items.REDSTONE);
             case GREAT_SURGE: return new ItemStack(ModItems.WORLD_SHARD);
+            case CHALLENGE: return new ItemStack(ModItems.CHALLENGE_SPHERE);
             case SERVANT_HUSK: return new ItemStack(net.minecraft.init.Items.ROTTEN_FLESH);
             case SERVANT_BONE: return new ItemStack(net.minecraft.init.Items.SKULL, 1, 1);
             case SERVANT_EXECUTIONER: return new ItemStack(net.minecraft.init.Items.IRON_AXE);

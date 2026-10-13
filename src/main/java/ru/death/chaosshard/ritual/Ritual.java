@@ -61,17 +61,19 @@ public enum Ritual {
     /** Кровавая луна: 5 минут вокруг Алтаря лезут твари, а убитые роняют Эссенцию Хаоса и вдвое больше опыта. */
     BLOOD_MOON(3, 20 * 60 * 5, offer("chaosshard:chaos_essence", 0, 6), offer("minecraft:redstone", 0, 16), offer("minecraft:bone", 0, 16)),
     /** Великий порыв: каждый твой Якорь в 256 блоках разом оскверняет округу. */
-    GREAT_SURGE(4, 0, offer("chaosshard:chaos_essence", 0, 8), offer("chaosshard:world_shard", 0, 2), offer("chaosshard:veil_shard", 0, 4));
+    GREAT_SURGE(4, 0, offer("chaosshard:chaos_essence", 0, 8), offer("chaosshard:world_shard", 0, 2), offer("chaosshard:veil_shard", 0, 4)),
+    /** Вызов: состав собирается из частей (см. ChallengeSpec); в списке Гримуара — основа подношений. */
+    CHALLENGE(3, 0, offer("chaosshard:chaos_essence", 0, 4), offer("chaosshard:veil_shard", 0, 2));
 
     /** Старшие ритуалы — на Алтаре Прорыва, а не в Чаше. */
     public boolean isAltar() {
-        return this == SIGHT || this == RECALL || this == BLOOD_MOON || this == GREAT_SURGE;
+        return this == SIGHT || this == RECALL || this == BLOOD_MOON || this == GREAT_SURGE || this == CHALLENGE;
     }
 
     /** Старший ритуал по подношениям, брошенным на Алтарь. */
     public static Ritual findAltar(List<ItemStack> contents) {
         for (Ritual r : values()) {
-            if (r.isAltar() && r.matches(contents)) {
+            if (r.isAltar() && r != CHALLENGE && r.matches(contents)) {
                 return r;
             }
         }

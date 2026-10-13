@@ -403,7 +403,7 @@ public class Servants {
                 continue;
             }
             // в Испытания свита не ходит — ждёт у входа
-            if (ru.death.chaosshard.trial.TrialDimension.is(p.world)) {
+            if (ru.death.chaosshard.trial.TrialDimension.is(p.world) && !ru.death.chaosshard.challenge.ChallengeManager.inArena(p)) {
                 continue;
             }
             List<Entity> list = new java.util.ArrayList<>(from.loadedEntityList);

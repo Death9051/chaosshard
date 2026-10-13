@@ -54,6 +54,8 @@ public class Milestones {
     public static final String GARROT_3 = "garrot_3";
     public static final String RITUAL = "ritual_done";
     public static final String HIGH_RITUAL = "high_ritual";
+    public static final String CHALLENGE_START = "challenge_start", CHALLENGE = "challenge_won", CHALLENGE_TOP = "challenge_top",
+            CHALLENGE_ENDLESS = "challenge_endless";
     public static final String ANCHOR_MAX = "anchor_max";
     public static final String IMPLANT = "implant_installed";
     public static final String CHAOS_CORE = "chaos_core";

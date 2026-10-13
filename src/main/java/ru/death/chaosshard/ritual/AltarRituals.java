@@ -67,6 +67,7 @@ public class AltarRituals {
         final int dim;
         final Ritual ritual;
         final List<ItemStack> paid;
+        ru.death.chaosshard.challenge.ChallengeSpec challenge;
         int ticks;
 
         Running(BlockPos altar, int dim, Ritual ritual, List<ItemStack> paid) {
@@ -97,7 +98,8 @@ public class AltarRituals {
         for (EntityItem ei : items) {
             stacks.add(ei.getItem());
         }
-        Ritual r = stacks.isEmpty() ? null : Ritual.findAltar(stacks);
+        ru.death.chaosshard.challenge.ChallengeSpec challenge = stacks.isEmpty() ? null : ru.death.chaosshard.challenge.ChallengeSpec.parse(stacks);
+        Ritual r = challenge != null ? Ritual.CHALLENGE : stacks.isEmpty() ? null : Ritual.findAltar(stacks);
         if (r == null) {
             if (!stacks.isEmpty() && !hasBeastNear(p, altar)) {
                 p.sendMessage(Breach.grimoire("chaosshard.altar.unknown"));
@@ -121,7 +123,9 @@ public class AltarRituals {
             paid.add(ei.getItem().copy());
             ei.setDead();
         }
-        RUNNING.put(p.getUniqueID(), new Running(altar, p.dimension, r, paid));
+        Running run = new Running(altar, p.dimension, r, paid);
+        run.challenge = challenge;
+        RUNNING.put(p.getUniqueID(), run);
         p.sendMessage(Breach.grimoire("chaosshard.altar.ritual.start", new TextComponentTranslation(r.key())));
         p.world.playSound(null, altar, SoundEvents.BLOCK_PORTAL_TRIGGER, SoundCategory.BLOCKS, 0.6F, 1.1F);
     }
@@ -177,7 +181,8 @@ public class AltarRituals {
             RUNNING.remove(p.getUniqueID());
             ws.spawnParticle(EnumParticleTypes.END_ROD, cx, cy, cz, 60, 0.4, 0.4, 0.4, 0.15);
             // старший ритуал запечатывается в сферу — её применяют там, где нужно
-            EntityItem ei = new EntityItem(ws, cx, cy, cz, ItemRitualSphere.of(r.ritual, r.ritual.duration));
+            EntityItem ei = new EntityItem(ws, cx, cy, cz, r.challenge != null ? ru.death.chaosshard.challenge.ItemChallengeSphere.of(r.challenge)
+                    : ItemRitualSphere.of(r.ritual, r.ritual.duration));
             ei.motionX = ei.motionY = ei.motionZ = 0;
             ei.setNoPickupDelay();
             ws.spawnEntity(ei);

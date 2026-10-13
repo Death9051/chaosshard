@@ -1,0 +1,133 @@
+{
+ "pools": [
+  {
+   "name": "main",
+   "rolls": 1,
+   "entries": [
+    {
+     "type": "item",
+     "name": "minecraft:bone",
+     "weight": 15,
+     "functions": [
+      {
+       "function": "set_count",
+       "count": {
+        "min": 3,
+        "max": 8
+       }
+      }
+     ],
+     "entryName": "bone"
+    },
+    {
+     "type": "item",
+     "name": "minecraft:string",
+     "weight": 15,
+     "functions": [
+      {
+       "function": "set_count",
+       "count": {
+        "min": 3,
+        "max": 8
+       }
+      }
+     ],
+     "entryName": "string"
+    },
+    {
+     "type": "item",
+     "name": "minecraft:spider_eye",
+     "weight": 10,
+     "functions": [
+      {
+       "function": "set_count",
+       "count": {
+        "min": 1,
+        "max": 3
+       }
+      }
+     ],
+     "entryName": "spider_eye"
+    },
+    {
+     "type": "item",
+     "name": "minecraft:ender_pearl",
+     "weight": 6,
+     "functions": [
+      {
+       "function": "set_count",
+       "count": {
+        "min": 1,
+        "max": 2
+       }
+      }
+     ],
+     "entryName": "ender_pearl"
+    },
+    {
+     "type": "item",
+     "name": "minecraft:gunpowder",
+     "weight": 10,
+     "functions": [
+      {
+       "function": "set_count",
+       "count": {
+        "min": 2,
+        "max": 5
+       }
+      }
+     ],
+     "entryName": "gunpowder"
+    },
+    {
+     "type": "item",
+     "name": "minecraft:slime_ball",
+     "weight": 6,
+     "functions": [
+      {
+       "function": "set_count",
+       "count": {
+        "min": 1,
+        "max": 4
+       }
+      }
+     ],
+     "entryName": "slime_ball"
+    },
+    {
+     "type": "item",
+     "name": "minecraft:leather",
+     "weight": 10,
+     "functions": [
+      {
+       "function": "set_count",
+       "count": {
+        "min": 2,
+        "max": 5
+       }
+      }
+     ],
+     "entryName": "leather"
+    }
+   ]
+  },
+  {
+   "name": "essence",
+   "rolls": 1,
+   "entries": [
+    {
+     "type": "item",
+     "name": "chaosshard:chaos_essence",
+     "weight": 10,
+     "entryName": "chaos_essence"
+    }
+   ],
+   "conditions": [
+    {
+     "condition": "random_chance",
+     "chance": 0.45
+    }
+   ]
+  }
+ ]
+}

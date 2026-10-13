@@ -103,6 +103,7 @@ public class ChaosShard {
         MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.servant.Beasts());
         MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.servant.AltarAscension());
         MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.ritual.AltarRituals());
+        MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.challenge.ChallengeManager());
         MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.servant.ServantEffects());
         MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.servant.work.Work());
         MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.anchor.DarkCorruption());

@@ -1,0 +1,23 @@
+{
+ "parent": "chaosshard:m/root",
+ "display": {
+  "icon": {
+   "item": "chaosshard:challenge_sphere"
+  },
+  "title": {
+   "translate": "advancement.chaosshard.m.challenge_won.title"
+  },
+  "description": {
+   "translate": "advancement.chaosshard.m.challenge_won.desc"
+  },
+  "frame": "task",
+  "show_toast": false,
+  "announce_to_chat": false,
+  "hidden": true
+ },
+ "criteria": {
+  "done": {
+   "trigger": "minecraft:impossible"
+  }
+ }
+}

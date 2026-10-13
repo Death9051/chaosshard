@@ -27,6 +27,10 @@ public final class ModelRegistration {
             ModelLoader.setCustomModelResourceLocation(ru.death.chaosshard.init.ModItems.RITUAL_SPHERE, r.sphereIndex(),
                     new ModelResourceLocation(Tags.MOD_ID + ":ritual_sphere_" + r.name().toLowerCase(), "inventory"));
         }
+        for (ru.death.chaosshard.challenge.ChallengeFaction f : ru.death.chaosshard.challenge.ChallengeFaction.values()) {
+            ModelLoader.setCustomModelResourceLocation(ru.death.chaosshard.init.ModItems.CHALLENGE_SPHERE, f.ordinal(),
+                    new ModelResourceLocation(Tags.MOD_ID + ":challenge_sphere_" + f.name().toLowerCase(), "inventory"));
+        }
         ru.death.chaosshard.compat.body.BodyModels.register();
     }
 

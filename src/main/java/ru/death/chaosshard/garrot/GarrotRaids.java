@@ -192,14 +192,14 @@ public class GarrotRaids {
 
     // ------------------------------------------------------------------ Ancient Warfare: особые бойцы в своих скинах
 
-    private static EntityLiving awNpc(WorldServer world, String type) throws Exception {
+    public static EntityLiving awNpc(WorldServer world, String type) throws Exception {
         Class<?> cls = Class.forName("net.shadowmage.ancientwarfare.npc.init.AWNPCEntities");
         java.lang.reflect.Method create = cls.getMethod("createNpc", World.class, String.class, String.class, String.class);
         return (EntityLiving) create.invoke(null, world, type, "", FACTION);
     }
 
     /** Свой скин солдату AW: chaosshard:textures/entity/garrot/<name>.png (развёртка скина игрока 64×64). */
-    private static void skin(EntityLiving npc, String name) {
+    public static void skin(EntityLiving npc, String name) {
         try {
             Class<?> settingsCls = Class.forName("net.shadowmage.ancientwarfare.npc.skin.NpcSkinSettings");
             @SuppressWarnings({"unchecked", "rawtypes"})

@@ -282,6 +282,7 @@ public final class AutoTest {
     private final java.util.Map<String, ru.death.chaosshard.structure.OrderStructureData.Entry> structs = new java.util.HashMap<>();
     private ru.death.chaosshard.structure.OrderStructureData.Entry planned;
     private BlockPos bowlPos, spherePos, pullChest, altarPos, moonPos;
+    private int challengeNit, challengeCorrupt;
 
     /** Подобрать с земли рядом сферу нужного ритуала (true — была). */
     private boolean takeSphere(BlockPos at, ru.death.chaosshard.ritual.Ritual r) {
@@ -832,6 +833,135 @@ public final class AutoTest {
             check(useSphere(ru.death.chaosshard.ritual.Ritual.GREAT_SURGE, anchorPos.add(5, -1, 0)), "у Якоря — разбита");
             int after = ((TileAnchor) ow.getTileEntity(anchorPos)).getCorrupted();
             check(after > before, "Скверна выросла: " + before + " → " + after);
+        });
+
+        section("Вызов");
+        step("состав Вызова разбирается по подношениям", () -> {
+            List<net.minecraft.item.ItemStack> ok = new ArrayList<>();
+            ok.add(new net.minecraft.item.ItemStack(ru.death.chaosshard.init.ModItems.CHAOS_ESSENCE, 4));
+            ok.add(new net.minecraft.item.ItemStack(ru.death.chaosshard.init.ModItems.VEIL_SHARD, 2));
+            ok.add(new net.minecraft.item.ItemStack(net.minecraft.init.Items.GOLD_INGOT, 4));
+            ok.add(new net.minecraft.item.ItemStack(ru.death.chaosshard.init.ModItems.WORLD_SHARD, 3));
+            ok.add(new net.minecraft.item.ItemStack(net.minecraft.init.Items.BLAZE_POWDER, 1));
+            ok.add(new net.minecraft.item.ItemStack(net.minecraft.init.Items.BONE, 1));
+            ru.death.chaosshard.challenge.ChallengeSpec sp = ru.death.chaosshard.challenge.ChallengeSpec.parse(ok);
+            check(sp != null && sp.faction == ru.death.chaosshard.challenge.ChallengeFaction.ORDER && sp.tier == 3
+                    && sp.mods == (ru.death.chaosshard.challenge.ChallengeMod.FURY.bit() | ru.death.chaosshard.challenge.ChallengeMod.HORDE.bit()),
+                    "Орден, 3-я ступень, Ярость и Орда");
+            check(sp != null && Math.abs(sp.rewardMul() - 1.5) < 1e-6, "награда +50%");
+            ok.add(new net.minecraft.item.ItemStack(net.minecraft.init.Items.ROTTEN_FLESH, 8));
+            check(ru.death.chaosshard.challenge.ChallengeSpec.parse(ok) == null, "две стороны сразу — не Вызов");
+        });
+        step("Вызов на Алтаре складывается в Сферу Вызова", () -> {
+            drop(altarPos, new net.minecraft.item.ItemStack(ru.death.chaosshard.init.ModItems.CHAOS_ESSENCE, 4),
+                    new net.minecraft.item.ItemStack(ru.death.chaosshard.init.ModItems.VEIL_SHARD, 2),
+                    new net.minecraft.item.ItemStack(net.minecraft.init.Items.ROTTEN_FLESH, 8),
+                    new net.minecraft.item.ItemStack(ru.death.chaosshard.init.ModItems.WORLD_SHARD, 1));
+            me.setPosition(altarPos.getX() + 3.5, altarPos.getY(), altarPos.getZ() + 0.5);
+            ru.death.chaosshard.ritual.AltarRituals.tryStart(me, altarPos);
+            check(ru.death.chaosshard.ritual.AltarRituals.isRunning(me), "ритуал Вызова пошёл");
+            for (int i = 0; i < ru.death.chaosshard.ritual.AltarRituals.DURATION + 2; i++) ru.death.chaosshard.ritual.AltarRituals.tick(me);
+            List<net.minecraft.entity.item.EntityItem> got = ow.getEntitiesWithinAABB(net.minecraft.entity.item.EntityItem.class, new AxisAlignedBB(altarPos).grow(3),
+                    x -> x.isEntityAlive() && x.getItem().getItem() == ru.death.chaosshard.init.ModItems.CHALLENGE_SPHERE);
+            ru.death.chaosshard.challenge.ChallengeSpec sp = got.isEmpty() ? null : ru.death.chaosshard.challenge.ItemChallengeSphere.spec(got.get(0).getItem());
+            check(sp != null && sp.faction == ru.death.chaosshard.challenge.ChallengeFaction.WILD && sp.tier == 1, "Сфера Вызова: твари мира, 1-я ступень");
+            got.forEach(net.minecraft.entity.Entity::setDead);
+        });
+        step("арена в архиве строится", () -> {
+            net.minecraft.world.WorldServer arc = server.getWorld(ru.death.chaosshard.trial.TrialDimension.id());
+            BlockPos c = new BlockPos(ru.death.chaosshard.challenge.ChallengeManager.ARENA_X - 99 * 256, ru.death.chaosshard.challenge.ChallengeManager.ARENA_Y, 0);
+            for (ru.death.chaosshard.challenge.ChallengeFaction f : ru.death.chaosshard.challenge.ChallengeFaction.values()) {
+                ru.death.chaosshard.challenge.ChallengeArena.build(arc, c, f);
+                check(!arc.isAirBlock(c.down()) && !arc.isAirBlock(c.add(10, -1, 0)), "арена " + f + ": пол есть");
+                check(arc.getBlockState(c.add(0, 14, 0)).getBlock() == Blocks.BARRIER && arc.isAirBlock(c.add(5, 1, 5)), "арена " + f + ": купол и простор");
+                check(!arc.isAirBlock(c.add(17, 1, 0)), "арена " + f + ": стена");
+            }
+        });
+        step("смерть на арене — проигрыш, а не смерть", () -> {
+            ru.death.chaosshard.challenge.ChallengeSpec sp = new ru.death.chaosshard.challenge.ChallengeSpec();
+            sp.faction = ru.death.chaosshard.challenge.ChallengeFaction.WILD;
+            ru.death.chaosshard.challenge.ChallengeManager.begin(me, sp, me.getPosition(), true, 0);
+            net.minecraftforge.event.entity.living.LivingDeathEvent ev = new net.minecraftforge.event.entity.living.LivingDeathEvent(me, DamageSource.GENERIC);
+            MinecraftForge.EVENT_BUS.post(ev);
+            check(ev.isCanceled(), "смерть отменена (вещи остаются)");
+            check(ru.death.chaosshard.challenge.ChallengeManager.of(me) == null, "Вызов проигран");
+        });
+        step("Цена крови: здоровье само не растёт", () -> {
+            ru.death.chaosshard.challenge.ChallengeSpec sp = new ru.death.chaosshard.challenge.ChallengeSpec();
+            sp.mods = ru.death.chaosshard.challenge.ChallengeMod.BLOOD_PRICE.bit();
+            ru.death.chaosshard.challenge.ChallengeManager.begin(me, sp, me.getPosition(), true, 0);
+            net.minecraftforge.event.entity.living.LivingHealEvent h = new net.minecraftforge.event.entity.living.LivingHealEvent(me, 2F);
+            MinecraftForge.EVENT_BUS.post(h);
+            check(h.isCanceled(), "лечение отменено");
+            ru.death.chaosshard.challenge.ChallengeManager.abort(me);
+        });
+        step("Вызов у Якоря: тварей 1-й ступени", () -> {
+            if (anchorPos == null) { check(false, "Якоря нет"); return; }
+            me.setPosition(anchorPos.getX() + 2.5, anchorPos.getY(), anchorPos.getZ() + 0.5);
+            ru.death.chaosshard.challenge.ChallengeSpec sp = new ru.death.chaosshard.challenge.ChallengeSpec();
+            sp.faction = ru.death.chaosshard.challenge.ChallengeFaction.WILD;
+            sp.tier = 1;
+            me.setHeldItem(EnumHand.MAIN_HAND, ru.death.chaosshard.challenge.ItemChallengeSphere.of(sp));
+            me.getHeldItemMainhand().getItem().onItemUse(me, ow, anchorPos.add(2, -1, 0), EnumHand.MAIN_HAND, EnumFacing.UP, 0.5F, 1F, 0.5F);
+            ru.death.chaosshard.challenge.ChallengeManager.Challenge c = ru.death.chaosshard.challenge.ChallengeManager.of(me);
+            check(c != null && !c.arena && c.center.equals(anchorPos), "Вызов начат у Якоря");
+            check(me.getHeldItemMainhand().isEmpty(), "сфера разбита");
+            if (c != null) c.timer = 2;
+            challengeNit = ru.death.chaosshard.thread.ThreadManager.getPoints(me);
+            challengeCorrupt = ((TileAnchor) ow.getTileEntity(anchorPos)).getCorrupted();
+        });
+        for (int wv = 1; wv <= 3; wv++) {
+            final int waveNo = wv;
+            sleep(5);
+            step("волна " + wv + ": пришли и пали", () -> {
+                ru.death.chaosshard.challenge.ChallengeManager.Challenge c = ru.death.chaosshard.challenge.ChallengeManager.of(me);
+                if (c == null) { check(false, "Вызова нет"); return; }
+                check(c.fighting && c.mobs.size() >= 4, "врагов в волне " + waveNo + ": " + c.mobs.size());
+                for (UUID id : new ArrayList<>(c.mobs)) {
+                    Entity e = ow.getEntityFromUuid(id);
+                    if (e instanceof EntityLivingBase) kill((EntityLivingBase) e);
+                }
+            });
+            until("волна " + wv + " засчитана", () -> {
+                ru.death.chaosshard.challenge.ChallengeManager.Challenge c = ru.death.chaosshard.challenge.ChallengeManager.of(me);
+                if (c == null) return waveNo == 3;
+                if (!c.fighting && c.wave == waveNo) { c.timer = 2; return true; }
+                return false;
+            }, 60);
+        }
+        step("Вызов выдержан: награда, Нить, Якорь окреп", () -> {
+            check(ru.death.chaosshard.challenge.ChallengeManager.of(me) == null, "Вызов завершён");
+            check(ru.death.chaosshard.thread.ThreadManager.getPoints(me) > challengeNit, "Нить выросла: " + challengeNit + " → " + ru.death.chaosshard.thread.ThreadManager.getPoints(me));
+            check(((TileAnchor) ow.getTileEntity(anchorPos)).getCorrupted() > challengeCorrupt, "Якорь окреп");
+            int items = 0;
+            for (int i = 0; i < me.inventory.getSizeInventory(); i++) if (!me.inventory.getStackInSlot(i).isEmpty()) items++;
+            check(items > 0, "дары в сумке: стопок " + items);
+            me.inventory.clear();
+        });
+        step("бесконечный: после волны можно уйти с наградой", () -> {
+            ru.death.chaosshard.challenge.ChallengeSpec sp = new ru.death.chaosshard.challenge.ChallengeSpec();
+            sp.faction = ru.death.chaosshard.challenge.ChallengeFaction.WILD;
+            sp.tier = 0;
+            ru.death.chaosshard.challenge.ChallengeManager.Challenge c = ru.death.chaosshard.challenge.ChallengeManager.begin(me, sp, anchorPos, false, 0);
+            c.timer = 2;
+        });
+        sleep(5);
+        step("бесконечный: волна пала", () -> {
+            ru.death.chaosshard.challenge.ChallengeManager.Challenge c = ru.death.chaosshard.challenge.ChallengeManager.of(me);
+            if (c == null) { check(false, "Вызова нет"); return; }
+            for (UUID id : new ArrayList<>(c.mobs)) {
+                Entity e = ow.getEntityFromUuid(id);
+                if (e instanceof EntityLivingBase) kill((EntityLivingBase) e);
+            }
+        });
+        until("бесконечный: волна засчитана", () -> {
+            ru.death.chaosshard.challenge.ChallengeManager.Challenge c = ru.death.chaosshard.challenge.ChallengeManager.of(me);
+            return c != null && !c.fighting && c.wave == 1;
+        }, 60);
+        step("бесконечный: уход с наградой", () -> {
+            ru.death.chaosshard.challenge.ChallengeManager.cashOut(me);
+            check(ru.death.chaosshard.challenge.ChallengeManager.of(me) == null, "Вызов закрыт с наградой");
+            me.inventory.clear();
         });
 
         section("Постройки Ордена в Лучезарии");

@@ -1,0 +1,128 @@
+{
+ "pools": [
+  {
+   "name": "main",
+   "rolls": {
+    "min": 2,
+    "max": 3
+   },
+   "entries": [
+    {
+     "type": "item",
+     "name": "chaosshard:veil_shard",
+     "weight": 15,
+     "functions": [
+      {
+       "function": "set_count",
+       "count": {
+        "min": 2,
+        "max": 4
+       }
+      }
+     ],
+     "entryName": "veil_shard"
+    },
+    {
+     "type": "item",
+     "name": "minecraft:gold_block",
+     "weight": 10,
+     "functions": [
+      {
+       "function": "set_count",
+       "count": {
+        "min": 1,
+        "max": 2
+       }
+      }
+     ],
+     "entryName": "gold_block"
+    },
+    {
+     "type": "item",
+     "name": "minecraft:emerald",
+     "weight": 12,
+     "functions": [
+      {
+       "function": "set_count",
+       "count": {
+        "min": 2,
+        "max": 5
+       }
+      }
+     ],
+     "entryName": "emerald"
+    },
+    {
+     "type": "item",
+     "name": "minecraft:golden_apple",
+     "weight": 8,
+     "entryName": "golden_apple"
+    },
+    {
+     "type": "item",
+     "name": "minecraft:book",
+     "weight": 8,
+     "functions": [
+      {
+       "function": "enchant_with_levels",
+       "levels": 25,
+       "treasure": true
+      }
+     ],
+     "entryName": "book"
+    },
+    {
+     "type": "item",
+     "name": "minecraft:diamond",
+     "weight": 6,
+     "functions": [
+      {
+       "function": "set_count",
+       "count": {
+        "min": 1,
+        "max": 2
+       }
+      }
+     ],
+     "entryName": "diamond"
+    },
+    {
+     "type": "item",
+     "name": "minecraft:experience_bottle",
+     "weight": 10,
+     "functions": [
+      {
+       "function": "set_count",
+       "count": {
+        "min": 3,
+        "max": 8
+       }
+      }
+     ],
+     "entryName": "experience_bottle"
+    }
+   ]
+  },
+  {
+   "name": "essence",
+   "rolls": 1,
+   "entries": [
+    {
+     "type": "item",
+     "name": "chaosshard:chaos_essence",
+     "weight": 1,
+     "functions": [
+      {
+       "function": "set_count",
+       "count": {
+        "min": 1,
+        "max": 3
+       }
+      }
+     ],
+     "entryName": "chaos_essence"
+    }
+   ]
+  }
+ ]
+}

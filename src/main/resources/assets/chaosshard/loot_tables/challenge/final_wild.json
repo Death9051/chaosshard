@@ -1,0 +1,148 @@
+{
+ "pools": [
+  {
+   "name": "main",
+   "rolls": {
+    "min": 2,
+    "max": 3
+   },
+   "entries": [
+    {
+     "type": "item",
+     "name": "minecraft:ender_pearl",
+     "weight": 12,
+     "functions": [
+      {
+       "function": "set_count",
+       "count": {
+        "min": 3,
+        "max": 6
+       }
+      }
+     ],
+     "entryName": "ender_pearl"
+    },
+    {
+     "type": "item",
+     "name": "minecraft:blaze_rod",
+     "weight": 8,
+     "functions": [
+      {
+       "function": "set_count",
+       "count": {
+        "min": 2,
+        "max": 4
+       }
+      }
+     ],
+     "entryName": "blaze_rod"
+    },
+    {
+     "type": "item",
+     "name": "minecraft:ghast_tear",
+     "weight": 5,
+     "functions": [
+      {
+       "function": "set_count",
+       "count": {
+        "min": 1,
+        "max": 2
+       }
+      }
+     ],
+     "entryName": "ghast_tear"
+    },
+    {
+     "type": "item",
+     "name": "minecraft:nether_wart",
+     "weight": 8,
+     "functions": [
+      {
+       "function": "set_count",
+       "count": {
+        "min": 3,
+        "max": 8
+       }
+      }
+     ],
+     "entryName": "nether_wart"
+    },
+    {
+     "type": "item",
+     "name": "minecraft:diamond",
+     "weight": 6,
+     "functions": [
+      {
+       "function": "set_count",
+       "count": {
+        "min": 1,
+        "max": 2
+       }
+      }
+     ],
+     "entryName": "diamond"
+    },
+    {
+     "type": "item",
+     "name": "minecraft:experience_bottle",
+     "weight": 10,
+     "functions": [
+      {
+       "function": "set_count",
+       "count": {
+        "min": 3,
+        "max": 8
+       }
+      }
+     ],
+     "entryName": "experience_bottle"
+    },
+    {
+     "type": "item",
+     "name": "minecraft:golden_apple",
+     "weight": 6,
+     "entryName": "golden_apple"
+    }
+   ]
+  },
+  {
+   "name": "essence",
+   "rolls": 1,
+   "entries": [
+    {
+     "type": "item",
+     "name": "chaosshard:chaos_essence",
+     "weight": 1,
+     "functions": [
+      {
+       "function": "set_count",
+       "count": {
+        "min": 2,
+        "max": 4
+       }
+      }
+     ],
+     "entryName": "chaos_essence"
+    }
+   ]
+  },
+  {
+   "name": "shard",
+   "rolls": 1,
+   "entries": [
+    {
+     "type": "item",
+     "name": "chaosshard:world_shard",
+     "weight": 10,
+     "entryName": "world_shard"
+    }
+   ],
+   "conditions": [
+    {
+     "condition": "random_chance",
+     "chance": 0.3
+    }
+   ]
+  }
+ ]
+}
