@@ -61,7 +61,7 @@ public class EntityGarrot extends EntityCreature {
     private static final UUID RAGE_ID = UUID.fromString("2b6f0d4e-71a3-4a9e-b1c2-5f8e0a7d3c11");
     private static final UUID WINDUP_ID = UUID.fromString("9c4e2a10-3d5b-4f71-8e02-6a1b7c9d0e22");
 
-    public static final int CLEAVE_EVERY = 120, CLEAVE_WINDUP = 22, STEP_EVERY = 200, VOLLEY_EVERY = 100;
+    public static final int CLEAVE_EVERY = 160, CLEAVE_WINDUP = 30, STEP_EVERY = 260, VOLLEY_EVERY = 120, RECOVER = 40;
     public static final float YIELD_AT = 0.08F;
 
     private final BossInfoServer bossInfo = new BossInfoServer(new TextComponentTranslation("entity.chaosshard.garrot.name"),
@@ -72,7 +72,7 @@ public class EntityGarrot extends EntityCreature {
     public boolean yielded;
     /** С кем дуэль: остальные его не ранят. */
     public UUID duelist;
-    private int cleaveTimer, windup = -1, stepTimer, volleyTimer, life;
+    private int cleaveTimer, windup = -1, stepTimer, volleyTimer, life, recover;
     private boolean phase2, phase3, empowered;
     private long lastHint;
 
@@ -275,6 +275,16 @@ public class EntityGarrot extends EntityCreature {
             return;
         }
         WorldServer ws = (WorldServer) world;
+        // после удара секирой — передышка: стоит, не бьёт
+        if (recover > 0) {
+            if (--recover == 0) {
+                setSpeed(false);
+            }
+            if (recover % 5 == 0) {
+                ws.spawnParticle(EnumParticleTypes.CLOUD, posX, posY + 2.2, posZ, 2, 0.2, 0.1, 0.2, 0.01);
+            }
+            return;
+        }
         // замах секирой → удар конусом перед собой
         if (windup >= 0) {
             windup++;
@@ -282,8 +292,8 @@ public class EntityGarrot extends EntityCreature {
             ws.spawnParticle(EnumParticleTypes.SMOKE_LARGE, posX, posY + 2.3, posZ, 3, 0.3, 0.1, 0.3, 0.01);
             if (windup >= CLEAVE_WINDUP) {
                 windup = -1;
-                setSpeed(false);
                 cleave(ws);
+                recover = RECOVER;   // секира ушла в землю — время ударить
             }
             return;
         }

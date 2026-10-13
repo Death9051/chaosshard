@@ -61,7 +61,7 @@ public class EntityHero extends EntityMob {
     private static final UUID STAGGER_ID = UUID.fromString("6f1c7e8a-0b9d-4f3a-9c21-7a3e5d2b1c40");
 
     /** Каэль: как часто вспышка и сколько её заряжать, как часто рывок. */
-    public static final int FLASH_EVERY = 160, FLASH_CHARGE = 30, DASH_EVERY = 110, DASH_TICKS = 14, STAGGER = 40;
+    public static final int FLASH_EVERY = 180, FLASH_CHARGE = 30, DASH_EVERY = 140, DASH_TICKS = 14, STAGGER = 80, FLASH_OPEN = 50;
     /** Сколько урона проходит сквозь щит спереди. */
     public static final float FRONT_PASS = 0.1F;
 
@@ -357,7 +357,7 @@ public class EntityHero extends EntityMob {
                 double a = rand.nextDouble() * Math.PI * 2;
                 ws.spawnParticle(EnumParticleTypes.END_ROD, posX + Math.cos(a) * 5, posY + 0.1, posZ + Math.sin(a) * 5, 1, 0, 0.05, 0, 0.0);
             }
-            if (holyCharge >= 20) {
+            if (holyCharge >= 30) {
                 holyCharge = -1;
                 ws.spawnParticle(EnumParticleTypes.FIREWORKS_SPARK, posX, posY + 0.3, posZ, 80, 2.5, 0.2, 2.5, 0.05);
                 world.playSound(null, getPosition(), SoundEvents.ENTITY_ILLAGER_CAST_SPELL, SoundCategory.HOSTILE, 1.5F, 1.4F);
@@ -392,9 +392,9 @@ public class EntityHero extends EntityMob {
                 ws.spawnParticle(EnumParticleTypes.FIREWORKS_SPARK, k.posX, k.posY + 1, k.posZ, 30, 0.3, 0.8, 0.3, 0.05);
             }
         }
-        if (phase2 && ++shieldTimer >= 300) {
+        if (phase2 && ++shieldTimer >= 400) {
             shieldTimer = 0;
-            shield = 60;
+            shield = 40;
             world.playSound(null, getPosition(), SoundEvents.BLOCK_NOTE_CHIME, SoundCategory.HOSTILE, 2.0F, 1.0F);
         }
     }
@@ -440,7 +440,7 @@ public class EntityHero extends EntityMob {
         }
         double d = getDistance(target);
         // отскок от того, кто подошёл вплотную
-        if (++blinkTimer >= 100 && d < 3.5) {
+        if (++blinkTimer >= 160 && d < 2.5) {
             blinkTimer = 0;
             for (int i = 0; i < 8; i++) {
                 double a = rand.nextDouble() * Math.PI * 2, r = 7 + rand.nextInt(4);
@@ -452,7 +452,7 @@ public class EntityHero extends EntityMob {
             }
         }
         // огненные стрелы
-        if (++boltTimer >= 40 && canEntityBeSeen(target)) {
+        if (++boltTimer >= 60 && canEntityBeSeen(target)) {
             boltTimer = 0;
             for (int i = 0; i < 2; i++) {
                 double dx = target.posX - posX, dy = target.posY + target.height / 2 - (posY + 1.8), dz = target.posZ - posZ;
@@ -513,7 +513,7 @@ public class EntityHero extends EntityMob {
         java.util.List<BlockPos> seals = Pillars.intactSeals(world, Lightbearer.VELMOR);
         if (seals.isEmpty()) {
             say("no_seals");
-            stun = 60;
+            stun = 100;
             return;
         }
         BlockPos seal = seals.get(rand.nextInt(seals.size()));
@@ -537,7 +537,7 @@ public class EntityHero extends EntityMob {
     public void onSealBroken(BlockPos pos) {
         if (away != null && away.equals(pos)) {
             away = null;
-            stun = 60;
+            stun = 100;
             returnAfterStun = true;
             setHealth(Math.max(1, getHealth() - getMaxHealth() * 0.1F));
             say("seal_here");
@@ -566,7 +566,7 @@ public class EntityHero extends EntityMob {
 
     /** Песни: доблесть (стражу — сила и стойкость), хор (ещё двое стражей), колыбельная (врагов — замедление и слабость). */
     public static final int SONG_VALOR = 0, SONG_CHOIR = 1, SONG_LULLABY = 2;
-    public static final int SONG_LEN = 100, SONG_LEN2 = 70, SONG_GAP = 120, SILENCE = 160;
+    public static final int SONG_LEN = 140, SONG_LEN2 = 100, SONG_GAP = 140, SILENCE = 240;
 
     float songBreak() {
         return phase2 ? 40F : 30F;
@@ -687,7 +687,7 @@ public class EntityHero extends EntityMob {
 
     /** Элис зовёт королевскую стражу на этих долях здоровья. */
     public static final float[] ELIS_CALL_AT = {0.75F, 0.5F, 0.25F};
-    public static final int CHAIN_EVERY = 140, CHAIN_LEN = 3, WINDED = 40;
+    public static final int CHAIN_EVERY = 200, CHAIN_LEN = 3, WINDED = 80;
 
     /** Пока рядом жив кто-то из королевской стражи, Элис получает 40% урона. */
     public boolean guarded() {
@@ -857,6 +857,9 @@ public class EntityHero extends EntityMob {
         if (flashTimer >= FLASH_EVERY) {
             flashTimer = 0;
             flash(ws);
+            // после вспышки опускает щит — окно для удара спереди
+            stagger = FLASH_OPEN;
+            setStaggerSlow(true);
         }
     }
 
