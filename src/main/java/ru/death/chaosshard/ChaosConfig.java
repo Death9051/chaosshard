@@ -385,6 +385,15 @@ public final class ChaosConfig {
 
         @Config.Comment("Champions: очков Нити за убитого чемпиона на каждый ранг")
         public int championThread = 8;
+
+        @Config.Comment("Lycanite's Mobs: на захваченной Скверной земле селятся демоны — Осколка не трогают, Орден бьют")
+        public boolean defiledDemons = true;
+        @Config.Comment("Как часто (тики) Якорь подселяет демона и сколько их держит: база + уровень Якоря")
+        public int demonInterval = 600;
+        public int demonsBase = 1;
+
+        @Config.Comment("Lycanite's Mobs: капитан Ордена в бою зовёт стражей света")
+        public boolean orderLight = true;
     }
 
     public static final class BreachCfg {

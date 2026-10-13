@@ -1753,15 +1753,16 @@ public final class AutoTest {
                         "ритуалы на святой воде и пере доступны");
                 check(ru.death.chaosshard.ritual.Ritual.find(ru.death.chaosshard.ritual.Ritual.HOLY_DEFILE.offeringStacks())
                         == ru.death.chaosshard.ritual.Ritual.HOLY_DEFILE, "Чаша узнаёт «Порченую святость»");
-                EntityLiving sv = servants.get(Servants.Kind.EXECUTIONER);
-                if (sv == null || !sv.isEntityAlive()) {
-                    line("  (слуги для пера нет — пропуск)");
+                EntityLiving sv = Servants.spawn(me, Servants.Kind.HUSK, base.add(-6, 1, 6));
+                if (sv == null) {
+                    check(false, "слуга для пера не появился");
                     return;
                 }
                 sv.removePotionEffect(net.minecraft.init.MobEffects.SPEED);
                 boolean ok = ru.death.chaosshard.ritual.RitualEffects.use(me, ow, sv.getPosition(), ru.death.chaosshard.ritual.Ritual.FALLEN_FEATHER);
                 net.minecraft.potion.PotionEffect sp = sv.getActivePotionEffect(net.minecraft.init.MobEffects.SPEED);
                 check(ok && sp != null && sp.getAmplifier() == 1, "«Падшее перо»: слуга получил Скорость II");
+                sv.setDead();
             });
         }
         step("сундуки Ордена и реликвии Светочей", () -> {
@@ -1783,6 +1784,54 @@ public final class AutoTest {
             int want = (Loader.isModLoaded("xreliquary") ? 1 : 0) + (Loader.isModLoaded("bountifulbaubles") ? 1 : 0);
             check(n == want, "Каэль оставил реликвий: " + n + " из " + want);
         });
+
+        section("Мир и мобы: Lycanite, подземелья");
+        step("сундуки подземелий прячут вещи Хаоса", () -> {
+            net.minecraft.world.storage.loot.LootTable t = ow.getLootTableManager().getLootTableFromLocation(
+                    new ResourceLocation("minecraft", "chests/simple_dungeon"));
+            check(t.getPool("chaosshard_dungeon") != null, "пул Хаоса в сундуке подземелья");
+        });
+        if (Loader.isModLoaded("lycanitesmobs")) {
+            step("демоны Скверны: селятся у Якоря, Осколка не трогают, Орден бьют", () -> {
+                TileAnchor a = (TileAnchor) ow.getTileEntity(anchorPos);
+                if (a == null || !a.isCaptured()) { check(false, "нет захваченного Якоря"); return; }
+                boolean made = false;
+                for (int i = 0; i < 20 && !made; i++) {
+                    made = ru.death.chaosshard.compat.world.WildChaos.populate(ow, a);
+                }
+                List<EntityLiving> ds = ow.getEntitiesWithinAABB(EntityLiving.class, new AxisAlignedBB(anchorPos).grow(a.radius(), 32, a.radius()),
+                        x -> x.getTags().contains(ru.death.chaosshard.compat.world.WildChaos.TAG_DEMON));
+                check(!ds.isEmpty(), "демонов у Якоря: " + ds.size());
+                if (ds.isEmpty()) return;
+                EntityLiving d = ds.get(0);
+                line("  демон: " + net.minecraft.entity.EntityList.getKey(d));
+                d.setAttackTarget(me);
+                check(d.getAttackTarget() == null, "на Осколка не нападает");
+                ru.death.chaosshard.structure.EntityOrderKnight k = new ru.death.chaosshard.structure.EntityOrderKnight(ow);
+                k.setPosition(d.posX + 2, d.posY, d.posZ);
+                ow.spawnEntity(k);
+                d.setAttackTarget(k);
+                check(d.getAttackTarget() == k, "на рыцаря Ордена — нападает");
+                d.setAttackTarget(null);
+                k.setDead();
+                for (EntityLiving x : ds) x.setDead();
+            });
+            step("капитан Ордена зовёт стражей света", () -> {
+                ru.death.chaosshard.structure.EntityOrderKnight cap = new ru.death.chaosshard.structure.EntityOrderKnight(ow);
+                cap.setPosition(base.getX() - 10.5, base.getY() + 1, base.getZ() - 10.5);
+                ow.spawnEntity(cap);
+                int n = ru.death.chaosshard.compat.world.WildChaos.callLight(cap, me);
+                List<EntityLiving> ls = ow.getEntitiesWithinAABB(EntityLiving.class, cap.getEntityBoundingBox().grow(6),
+                        x -> x.getTags().contains(ru.death.chaosshard.compat.world.WildChaos.TAG_LIGHT));
+                check(n > 0 && ls.size() == n, "стражей света: " + ls.size());
+                for (EntityLiving l : ls) {
+                    l.setAttackTarget(cap);
+                    check(l.getAttackTarget() == null, "страж не бьёт своих: " + net.minecraft.entity.EntityList.getKey(l));
+                    l.setDead();
+                }
+                cap.setDead();
+            });
+        }
 
         section("Справка: реестры модов сборки");
         step("выписать предметы, блоки, тайлы и существ", () -> {
