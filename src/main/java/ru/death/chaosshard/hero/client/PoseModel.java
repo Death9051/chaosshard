@@ -91,6 +91,48 @@ public class PoseModel extends ModelPlayer {
         return b.dropLast;
     }
 
+    /**
+     * Броня повторяет позу: модель брони сама считает обычную анимацию, а потом получает то же отклонение,
+     * что основная модель посчитала в этом кадре (основная рисуется раньше слоёв).
+     */
+    public static void applyTo(net.minecraft.client.model.ModelBiped m, Entity e) {
+        Blend b = BLENDS.get(e);
+        if (b == null) {
+            return;
+        }
+        ModelRenderer[] ps = {m.bipedHead, m.bipedBody, m.bipedRightArm, m.bipedLeftArm, m.bipedRightLeg, m.bipedLeftLeg};
+        for (int i = 0; i < ps.length; i++) {
+            ps[i].rotateAngleX += b.last[i * 3];
+            ps[i].rotateAngleY += b.last[i * 3 + 1];
+            ps[i].rotateAngleZ += b.last[i * 3 + 2];
+        }
+        net.minecraft.client.model.ModelBase.copyModelAngles(m.bipedHead, m.bipedHeadwear);
+    }
+
+    /** Модель брони, которая встаёт в позу вместе с телом. */
+    public static class Armor extends net.minecraft.client.model.ModelBiped {
+        public Armor(float scale) {
+            super(scale);
+        }
+
+        @Override
+        public void setRotationAngles(float limbSwing, float limbSwingAmount, float age, float headYaw, float headPitch, float scale, Entity e) {
+            super.setRotationAngles(limbSwing, limbSwingAmount, age, headYaw, headPitch, scale, e);
+            applyTo(this, e);
+        }
+    }
+
+    /** Слой брони с моделями, которые повторяют позу. */
+    public static net.minecraft.client.renderer.entity.layers.LayerBipedArmor armorLayer(net.minecraft.client.renderer.entity.RenderLivingBase<?> r) {
+        return new net.minecraft.client.renderer.entity.layers.LayerBipedArmor(r) {
+            @Override
+            protected void initArmor() {
+                this.modelLeggings = new Armor(0.5F);
+                this.modelArmor = new Armor(1.0F);
+            }
+        };
+    }
+
     private void read(float[] out) {
         for (int i = 0; i < parts.length; i++) {
             out[i * 3] = parts[i].rotateAngleX;

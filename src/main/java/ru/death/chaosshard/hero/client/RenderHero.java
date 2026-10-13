@@ -3,7 +3,6 @@ package ru.death.chaosshard.hero.client;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.entity.RenderBiped;
 import net.minecraft.client.renderer.entity.RenderManager;
-import net.minecraft.client.renderer.entity.layers.LayerBipedArmor;
 import net.minecraft.util.ResourceLocation;
 import ru.death.chaosshard.Tags;
 import ru.death.chaosshard.hero.EntityHero;
@@ -22,7 +21,7 @@ public class RenderHero extends RenderBiped<EntityHero> {
 
     public RenderHero(RenderManager rm) {
         super(rm, new ru.death.chaosshard.hero.client.PoseModel(), 0.6F);
-        addLayer(new LayerBipedArmor(this));
+        addLayer(ru.death.chaosshard.hero.client.PoseModel.armorLayer(this));
     }
 
     @Override

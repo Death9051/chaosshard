@@ -3,7 +3,6 @@ package ru.death.chaosshard.garrot.client;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.entity.RenderBiped;
 import net.minecraft.client.renderer.entity.RenderManager;
-import net.minecraft.client.renderer.entity.layers.LayerBipedArmor;
 import net.minecraft.util.ResourceLocation;
 import ru.death.chaosshard.Tags;
 import ru.death.chaosshard.garrot.EntityGarrot;
@@ -17,7 +16,7 @@ public class RenderGarrot extends RenderBiped<EntityGarrot> {
 
     public RenderGarrot(RenderManager rm) {
         super(rm, new ru.death.chaosshard.hero.client.PoseModel(), 0.55F);
-        addLayer(new LayerBipedArmor(this));
+        addLayer(ru.death.chaosshard.hero.client.PoseModel.armorLayer(this));
     }
 
     @Override
