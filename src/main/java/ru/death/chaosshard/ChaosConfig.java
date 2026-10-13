@@ -245,6 +245,13 @@ public final class ChaosConfig {
 
         @Config.Comment("Показывать шкалу Нити на экране (при приседании и несколько секунд после изменения)")
         public boolean showHud = true;
+
+        @Config.Comment({"Перелив: Нить сверх последнего порога не копится, а уходит в прокачку.",
+                "Каждое очко избытка даёт столько опыта каждому знакомому зверю."})
+        public int overflowBeastXp = 1;
+
+        @Config.Comment("Каждое очко избытка Нити даёт столько опыта перков Astral Sorcery")
+        public int overflowAstralExp = 25;
     }
 
     public static final class StarsCfg {

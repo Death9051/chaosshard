@@ -1931,6 +1931,33 @@ public final class AutoTest {
             });
         }
 
+        section("Нить: перелив сверх 5-го уровня");
+        step("избыток Нити уходит зверям и в перки Astral", () -> {
+            int cap = ru.death.chaosshard.thread.ThreadManager.cap();
+            int keep = ru.death.chaosshard.thread.ThreadManager.getPoints(me);
+            ru.death.chaosshard.servant.BeastData.Entry he = ru.death.chaosshard.servant.Beasts.entry(ow, me.getUniqueID(), ru.death.chaosshard.servant.BeastData.Beast.HARE);
+            boolean wasKnown = he.known, wasAsc = he.ascended;
+            int wasXp = he.xp;
+            he.known = true;
+            he.ascended = false;
+            he.xp = 0;
+            double astral0 = ChaosShard.astralLoaded ? ru.death.chaosshard.compat.astral.AstralOverflow.exp(me) : 0;
+            ru.death.chaosshard.thread.ThreadManager.setPoints(me, cap - 10);
+            ru.death.chaosshard.thread.ThreadManager.addPoints(me, 110);
+            check(ru.death.chaosshard.thread.ThreadManager.getPoints(me) == cap, "Нить упёрлась в потолок: " + ru.death.chaosshard.thread.ThreadManager.getPoints(me));
+            check(he.xp >= 100 * ChaosConfig.thread.overflowBeastXp, "зверю перелилось: " + he.xp);
+            if (ChaosShard.astralLoaded) {
+                double astral1 = ru.death.chaosshard.compat.astral.AstralOverflow.exp(me);
+                check(astral1 - astral0 >= 100.0 * ChaosConfig.thread.overflowAstralExp, "перкам Astral: +" + (astral1 - astral0));
+            }
+            ru.death.chaosshard.thread.ThreadManager.addPoints(me, -50);
+            check(ru.death.chaosshard.thread.ThreadManager.getPoints(me) == cap - 50, "потеря Нити ниже потолка работает как раньше");
+            he.known = wasKnown;
+            he.ascended = wasAsc;
+            he.xp = wasXp;
+            ru.death.chaosshard.thread.ThreadManager.setPoints(me, keep);
+        });
+
         section("Цитадель Логова");
         step("Цитадель жжёт врагов, чинит снаряжение, не пускает тварей", () -> {
             BlockPos lp = base.add(40, 1, -40);

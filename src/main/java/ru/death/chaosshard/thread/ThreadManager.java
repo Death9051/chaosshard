@@ -55,7 +55,41 @@ public final class ThreadManager {
         if (delta > 0 && ru.death.chaosshard.compat.body.Body.hasReceiver(player)) {
             delta = (int) Math.ceil(delta * 1.25);
         }
-        setPoints(player, getPoints(player) + delta);
+        int before = getPoints(player);
+        int after = before + delta;
+        int cap = cap();
+        if (delta > 0 && after > cap) {
+            // Нить полна: избыток не копится, а переливается в зверей и звёзды
+            int keep = Math.max(cap, before);
+            int over = after - keep;
+            after = keep;
+            if (over > 0) {
+                overflow(player, over);
+            }
+        }
+        setPoints(player, after);
+    }
+
+    /** Последний порог: выше Нить не поднимается. */
+    public static int cap() {
+        int[] t = ChaosConfig.thread.pointsPerLevel;
+        return t.length == 0 ? Integer.MAX_VALUE : t[t.length - 1];
+    }
+
+    /** Перелив избытка Нити в прокачку. Возвращает {опыт каждому зверю, число зверей, опыт перков}. */
+    public static int[] overflow(EntityPlayerMP player, int over) {
+        int beastXp = over * Math.max(0, ChaosConfig.thread.overflowBeastXp);
+        int beasts = beastXp > 0 ? ru.death.chaosshard.servant.Beasts.overflowXp(player, beastXp) : 0;
+        int astral = 0;
+        if (ChaosShard.astralLoaded && ChaosConfig.thread.overflowAstralExp > 0) {
+            astral = over * ChaosConfig.thread.overflowAstralExp;
+            ru.death.chaosshard.compat.astral.AstralOverflow.give(player, astral);
+        }
+        if (beasts > 0 || astral > 0) {
+            player.sendStatusMessage(ru.death.chaosshard.breach.Breach.grimoire("chaosshard.thread.overflow",
+                    over, beasts > 0 ? beastXp : 0, astral), true);
+        }
+        return new int[]{beasts > 0 ? beastXp : 0, beasts, astral};
     }
 
     public static void setPoints(EntityPlayerMP player, int points) {

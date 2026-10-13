@@ -10,7 +10,8 @@ chaosshard.thread.levelup.1=The Thread is taut (level %s). The stars answered �
 chaosshard.thread.levelup.2=The Thread grows stronger (level %s). Noted.
 chaosshard.thread.levelup.3=The Thread holds steady (level %s). Per the network records, most get here slower.
 chaosshard.thread.levelup.4=The Thread sings (level %s). Star perks burn brighter.
-chaosshard.thread.levelup.5=The Thread is at full strength (level %s). The whole star tree is open.
+chaosshard.thread.levelup.5=The Thread is at full strength (level %s). The whole star tree is open. It grows no further — the excess flows into my beasts and the stars.
+chaosshard.thread.overflow=The Thread is full: +%s overflowed. Beasts +%s XP, stars +%s.
 chaosshard.hud.thread=Thread %s · %s/%s
 chaosshard.hud.thread.max=Thread %s · max
 

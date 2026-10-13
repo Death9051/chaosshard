@@ -13,7 +13,8 @@ chaosshard.thread.levelup.1=Нить натянулась (уровень %s). �
 chaosshard.thread.levelup.2=Нить крепнет (уровень %s). Записано.
 chaosshard.thread.levelup.3=Нить держит ровно (уровень %s). По записям из сети, обычно сюда доходят медленнее.
 chaosshard.thread.levelup.4=Нить поёт (уровень %s). Звёздные перки горят ярче.
-chaosshard.thread.levelup.5=Нить в полную силу (уровень %s). Всё звёздное древо открыто.
+chaosshard.thread.levelup.5=Нить в полную силу (уровень %s). Всё звёздное древо открыто. Дальше Нить не растёт — избыток переливается в моих зверей и в звёзды.
+chaosshard.thread.overflow=Нить полна: +%s перелились. Зверям +%s опыта, звёздам +%s.
 chaosshard.hud.thread=Нить %s · %s/%s
 chaosshard.hud.thread.max=Нить %s · предел
 

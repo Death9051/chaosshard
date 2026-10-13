@@ -132,6 +132,29 @@ public class Beasts {
 
     // ------------------------------------------------------------------ опыт
 
+    /** Перелив Нити: опыт всем знакомым зверям хозяина, даже тем, что сейчас не рядом. Возвращает, скольким досталось. */
+    public static int overflowXp(EntityPlayerMP p, int amount) {
+        int n = 0;
+        for (Beast b : Beast.values()) {
+            Entry e = entry(p.world, p.getUniqueID(), b);
+            if (!e.known || e.ascended || e.xp >= BeastData.XP[4]) {
+                continue;
+            }
+            EntityChaosBeast live = find(p, b, 256);
+            if (live != null) {
+                addXp(live, amount);
+            } else {
+                e.xp = Math.min(BeastData.XP[4], e.xp + amount);
+                changed(p.world, p.getUniqueID());
+            }
+            n++;
+        }
+        if (n > 0) {
+            sync(p);
+        }
+        return n;
+    }
+
     public static void addXp(EntityChaosBeast beast, int amount) {
         UUID o = ownerId(beast);
         if (o == null || amount <= 0) {
