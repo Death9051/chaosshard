@@ -8,6 +8,9 @@ public final class Structures {
     public static final String[] ALL = {"crystal_spires", "greenhouse", "pavilion", "sanctum", "dome_tower"};
 
     public static Blueprint build(String name, Random r) {
+        if (name.startsWith("pillar_")) {
+            return VeilPillar.build(Integer.parseInt(name.substring(7)), r);
+        }
         switch (name) {
             case "crystal_spires": return CrystalSpires.build(r);
             case "greenhouse": return Greenhouse.build(r);

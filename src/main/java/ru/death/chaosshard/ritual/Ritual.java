@@ -63,11 +63,22 @@ public enum Ritual {
     /** Великий порыв: каждый твой Якорь в 256 блоках разом оскверняет округу. */
     GREAT_SURGE(4, 0, offer("chaosshard:chaos_essence", 0, 8), offer("chaosshard:world_shard", 0, 2), offer("chaosshard:veil_shard", 0, 4)),
     /** Вызов: состав собирается из частей (см. ChallengeSpec); в списке Гримуара — основа подношений. */
-    CHALLENGE(3, 0, offer("chaosshard:chaos_essence", 0, 4), offer("chaosshard:veil_shard", 0, 2));
+    CHALLENGE(3, 0, offer("chaosshard:chaos_essence", 0, 4), offer("chaosshard:veil_shard", 0, 2)),
+
+    // ---------------------------------------------------------------- Знамения Опор (Акт 4, старшие)
+    /** Знамение Каэля: Опора первого Светоча встаёт в ещё не созданных землях, Гримуар называет координаты. */
+    OMEN_KAEL(3, 0, offer("chaosshard:chaos_essence", 0, 6), offer("chaosshard:veil_shard", 0, 3),
+            offer("chaosshard:world_shard", 0, 2), offer("minecraft:golden_sword", 0, 1));
 
     /** Старшие ритуалы — на Алтаре Прорыва, а не в Чаше. */
     public boolean isAltar() {
-        return this == SIGHT || this == RECALL || this == BLOOD_MOON || this == GREAT_SURGE || this == CHALLENGE;
+        return this == SIGHT || this == RECALL || this == BLOOD_MOON || this == GREAT_SURGE || this == CHALLENGE
+                || isOmen();
+    }
+
+    /** Знамение Опоры (Акт 4). */
+    public boolean isOmen() {
+        return this == OMEN_KAEL;
     }
 
     /** Старший ритуал по подношениям, брошенным на Алтарь. */
@@ -99,7 +110,7 @@ public enum Ritual {
 
     /** Ритуалы с эффектом на месте: запечатываются в сферу, которую ставят, где нужно. */
     public static final Ritual[] SPHERES = {GROWTH, WARD, STORM, CORRUPTION, PULL,
-            DUSK, BREED, SIGHT, RECALL, BLOOD_MOON, GREAT_SURGE};
+            DUSK, BREED, SIGHT, RECALL, BLOOD_MOON, GREAT_SURGE, OMEN_KAEL};
 
     /** Номер сферы (метаданные предмета) или -1. */
     public int sphereIndex() {
