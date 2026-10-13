@@ -49,6 +49,10 @@ public final class ChaosConfig {
     @Config.LangKey("chaosshard.config.anchor")
     public static final AnchorCfg anchor = new AnchorCfg();
 
+    @Config.Comment("Техника: Скверный генератор, Индукция Сердца, гул машин у Якоря")
+    @Config.LangKey("chaosshard.config.tech")
+    public static final TechCfg tech = new TechCfg();
+
     @Config.Comment("Связки с другими модами")
     @Config.LangKey("chaosshard.config.compat")
     public static final CompatCfg compat = new CompatCfg();
@@ -248,6 +252,19 @@ public final class ChaosConfig {
         public boolean extraSkyPositions = true;
     }
 
+    public static final class TechCfg {
+        @Config.Comment("Скверный генератор: RF/FE за тик на каждый уровень Якоря, запас и отдача за тик")
+        public int generatorPerLevel = 30;
+        public int generatorBuffer = 100000;
+        public int generatorOutput = 2000;
+
+        @Config.Comment("Гул машин: радиус вокруг Якоря, как часто замерять (тики), сколько машин в зачёт и попыток Скверны за каждую")
+        public int humRadius = 16;
+        public int humInterval = 100;
+        public int humMax = 8;
+        public int humAttempts = 1;
+    }
+
     public static final class HeartCfg {
         @Config.Comment("Ставить Сердце Острова в Преддверии")
         public boolean enabled = true;
@@ -292,6 +309,11 @@ public final class ChaosConfig {
 
         @Config.Comment("Сколько наростов может быть на Сердце одновременно, ступени 1..4")
         public int[] maxGrowths = {8, 12, 18, 24};
+
+        @Config.Comment("Модуль «Индукция»: RF/FE за тик на каждый модуль, запас и приём за тик")
+        public int engineCost = 40;
+        public int engineBuffer = 100000;
+        public int engineInput = 4000;
     }
 
     public static final class AnchorCfg {

@@ -193,6 +193,9 @@ public class BlockAnchor extends Block {
                 player.sendMessage(Breach.grimoire("chaosshard.anchor.info_seals", a.getSeals().size(), a.level(),
                         sb.length() == 0 ? "—" : sb.toString()));
                 player.sendMessage(Breach.grimoire(a.isCaptured() ? "chaosshard.anchor.info_captured" : "chaosshard.anchor.info_open"));
+                if (a.hum.working() > 0) {
+                    player.sendMessage(Breach.grimoire("chaosshard.anchor.info_hum", a.hum.working(), ChaosConfig.tech.humMax));
+                }
                 java.util.List<TileAnchor> c = AnchorClusters.cluster(world, a);
                 int garrison = AnchorClusters.garrison((net.minecraft.world.WorldServer) world, c).size();
                 player.sendMessage(Breach.grimoire("chaosshard.anchor.info_cluster", c.size(), garrison,

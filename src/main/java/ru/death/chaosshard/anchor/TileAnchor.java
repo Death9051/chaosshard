@@ -475,16 +475,28 @@ public class TileAnchor extends TileEntity implements ITickable {
         changed();
     }
 
+    /** Гул чужих машин рядом: каждая работающая — лишние попытки Скверны. Не сохраняется. */
+    public final ru.death.chaosshard.tech.MachineHum hum = new ru.death.chaosshard.tech.MachineHum();
+
     @Override
     public void update() {
         if (world.isRemote) {
             return;
         }
+        if (world.getTotalWorldTime() % ChaosConfig.tech.humInterval == (pos.toLong() & 31)) {
+            int was = hum.working();
+            if (hum.sample(world, pos) > 0 && was == 0) {
+                EntityPlayerMP o = ownerOnline();
+                if (o != null) {
+                    ru.death.chaosshard.quest.Milestones.grant(o, ru.death.chaosshard.quest.Milestones.ANCHOR_HUM);
+                }
+            }
+        }
         if (++timer >= ChaosConfig.anchor.spreadInterval) {
             timer = 0;
             int done = 0;
             int attempts = (int) Math.round((ChaosConfig.anchor.attemptsPerSpread + (level() - 1) * ChaosConfig.anchor.attemptsPerLevel)
-                    * (1 + 0.5 * seals(ItemAnchorSeal.Type.FURY)));
+                    * (1 + 0.5 * seals(ItemAnchorSeal.Type.FURY))) + hum.working() * ChaosConfig.tech.humAttempts;
             for (int i = 0; i < attempts; i++) {
                 if (spreadOnce(world.rand)) {
                     done++;

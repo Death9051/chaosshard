@@ -38,6 +38,10 @@ public class TileHeart extends TileEntity implements ITickable {
 
     private int tier = 1;
     private int timer;
+    /** Ток для модуля «Двигатель». */
+    public final ru.death.chaosshard.tech.Battery battery = new ru.death.chaosshard.tech.Battery(
+            ChaosConfig.heart.engineBuffer, ChaosConfig.heart.engineInput, this::markDirty);
+    private boolean powered;
     private final Set<String> disabled = new HashSet<>();
 
     public final ItemStackHandler modules = new ItemStackHandler(MODULE_SLOTS) {
@@ -62,6 +66,22 @@ public class TileHeart extends TileEntity implements ITickable {
 
     public int getTier() {
         return tier;
+    }
+
+    /** Двигатель сейчас получает ток (на клиенте — по последней синхронизации). */
+    public boolean isPowered() {
+        return powered;
+    }
+
+    @Override
+    public boolean hasCapability(net.minecraftforge.common.capabilities.Capability<?> cap, @javax.annotation.Nullable net.minecraft.util.EnumFacing side) {
+        return cap == net.minecraftforge.energy.CapabilityEnergy.ENERGY || super.hasCapability(cap, side);
+    }
+
+    @Override
+    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> cap, @javax.annotation.Nullable net.minecraft.util.EnumFacing side) {
+        return cap == net.minecraftforge.energy.CapabilityEnergy.ENERGY
+                ? net.minecraftforge.energy.CapabilityEnergy.ENERGY.cast(battery) : super.getCapability(cap, side);
     }
 
     public int getTimer() {
@@ -239,7 +259,22 @@ public class TileHeart extends TileEntity implements ITickable {
             return;
         }
         tickPending();
-        if (++timer < interval()) {
+        int engines = countServer(ItemHeartModule.Type.ENGINE);
+        boolean now = engines > 0 && battery.draw(ChaosConfig.heart.engineCost * engines);
+        if (now != powered) {
+            powered = now;
+            sync();
+            if (now) {
+                for (net.minecraft.entity.player.EntityPlayer pl : world.getEntitiesWithinAABB(net.minecraft.entity.player.EntityPlayer.class,
+                        new net.minecraft.util.math.AxisAlignedBB(pos).grow(24))) {
+                    if (pl instanceof net.minecraft.entity.player.EntityPlayerMP) {
+                        ru.death.chaosshard.quest.Milestones.grant((net.minecraft.entity.player.EntityPlayerMP) pl, ru.death.chaosshard.quest.Milestones.HEART_POWERED);
+                    }
+                }
+            }
+        }
+        timer += now ? 1 + engines : 1;
+        if (timer < interval()) {
             return;
         }
         timer = 0;
@@ -378,6 +413,7 @@ public class TileHeart extends TileEntity implements ITickable {
         super.writeToNBT(tag);
         writeShared(tag);
         tag.setInteger("timer", timer);
+        battery.write(tag, "rf");
         tag.setTag("modules", modules.serializeNBT());
         NBTTagList pend = new NBTTagList();
         for (Pending p : pending) {
@@ -393,6 +429,7 @@ public class TileHeart extends TileEntity implements ITickable {
 
     private void writeShared(NBTTagCompound tag) {
         tag.setInteger("tier", tier);
+        tag.setBoolean("powered", powered);
         int[] counts = new int[ItemHeartModule.Type.values().length];
         if (world == null || !world.isRemote) {
             for (ItemHeartModule.Type t : ItemHeartModule.Type.values()) {
@@ -412,6 +449,7 @@ public class TileHeart extends TileEntity implements ITickable {
         super.readFromNBT(tag);
         readShared(tag);
         timer = tag.getInteger("timer");
+        battery.read(tag, "rf");
         if (tag.hasKey("modules")) {
             modules.deserializeNBT(tag.getCompoundTag("modules"));
         }
@@ -425,6 +463,7 @@ public class TileHeart extends TileEntity implements ITickable {
 
     private void readShared(NBTTagCompound tag) {
         tier = Math.max(1, tag.getInteger("tier"));
+        powered = tag.getBoolean("powered");
         int[] counts = tag.getIntArray("mods");
         for (int i = 0; i < clientModules.length && i < counts.length; i++) {
             clientModules[i] = counts[i];

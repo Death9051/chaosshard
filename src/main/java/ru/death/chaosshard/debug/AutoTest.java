@@ -81,7 +81,7 @@ public final class AutoTest {
     // общее состояние сценариев
     private WorldServer ow, archive;
     private FakePlayer me, meA;
-    private BlockPos base, anchorPos, chest;
+    private BlockPos base, anchorPos, chest, genPos;
     private final Map<Servants.Kind, EntityLiving> servants = new EnumMap<>(Servants.Kind.class);
     private EntityLiving miner;
     private TrialData.Trial trial, trial2;
@@ -1687,6 +1687,65 @@ public final class AutoTest {
                 hero.setDead();
             });
         }
+
+        section("Техника: Скверный генератор, Индукция, гул машин");
+        step("Сердце с «Индукцией» растёт быстрее, пока есть ток", () -> {
+            BlockPos hp = base.add(-26, 1, -26);
+            ow.setBlockState(hp, ModBlocks.ISLAND_HEART.getDefaultState(), 3);
+            ru.death.chaosshard.heart.TileHeart h = (ru.death.chaosshard.heart.TileHeart) ow.getTileEntity(hp);
+            if (h == null) { check(false, "Сердца нет"); return; }
+            check(h.hasCapability(net.minecraftforge.energy.CapabilityEnergy.ENERGY, EnumFacing.NORTH), "Сердце принимает RF/FE");
+            h.modules.setStackInSlot(0, new net.minecraft.item.ItemStack(
+                    net.minecraft.item.Item.getByNameOrId("chaosshard:heart_module_engine"), 1));
+            int t0 = h.getTimer();
+            h.update();
+            int idle = h.getTimer() - t0;
+            int got = h.getCapability(net.minecraftforge.energy.CapabilityEnergy.ENERGY, EnumFacing.NORTH).receiveEnergy(4000, false);
+            check(got == 4000, "принято " + got + " RF");
+            t0 = h.getTimer();
+            h.update();
+            int fast = h.getTimer() - t0;
+            check(idle == 1 && fast == 2, "шаг роста без тока " + idle + ", с током " + fast);
+            check(h.isPowered() && h.battery.getEnergyStored() == 4000 - ChaosConfig.heart.engineCost,
+                    "списано " + (4000 - h.battery.getEnergyStored()) + " RF");
+            ow.setBlockToAir(hp);
+        });
+        step("Скверный генератор: стоит без Скверны, на Скверне у Якоря — работает", () -> {
+            genPos = anchorPos.add(3, 0, 0);
+            ow.setBlockState(genPos.down(), Blocks.STONE.getDefaultState(), 3);
+            ow.setBlockState(genPos, ModBlocks.DEFILED_GENERATOR.getDefaultState(), 3);
+            ow.setBlockState(genPos.east(), ModBlocks.ISLAND_HEART.getDefaultState(), 3);
+            ru.death.chaosshard.tech.TileDefiledGenerator g = (ru.death.chaosshard.tech.TileDefiledGenerator) ow.getTileEntity(genPos);
+            if (g == null) { check(false, "генератора нет"); return; }
+            check(g.reason() == 1, "на чистом камне стоит");
+            check(g.hasCapability(net.minecraftforge.energy.CapabilityEnergy.ENERGY, EnumFacing.UP)
+                    && !g.getCapability(net.minecraftforge.energy.CapabilityEnergy.ENERGY, EnumFacing.UP).canReceive(), "только отдаёт ток");
+            ow.setBlockState(genPos.down(), ModBlocks.CHAOS_STONE.getDefaultState(), 3);
+            check(g.reason() == 0, "на Скверне в краю Якоря — работает");
+        });
+        until("генератор кормит соседа", () -> {
+            net.minecraft.tileentity.TileEntity te = ow.getTileEntity(genPos.east());
+            return te instanceof ru.death.chaosshard.heart.TileHeart && ((ru.death.chaosshard.heart.TileHeart) te).battery.getEnergyStored() > 0;
+        }, 80);
+        step("выработка по уровню Якоря", () -> {
+            ru.death.chaosshard.tech.TileDefiledGenerator g = (ru.death.chaosshard.tech.TileDefiledGenerator) ow.getTileEntity(genPos);
+            TileAnchor a = (TileAnchor) ow.getTileEntity(anchorPos);
+            check(g != null && a != null && g.rate() == a.level() * ChaosConfig.tech.generatorPerLevel,
+                    "выработка " + (g == null ? -1 : g.rate()) + " RF/т при уровне " + (a == null ? -1 : a.level()));
+            ru.death.chaosshard.heart.TileHeart h = (ru.death.chaosshard.heart.TileHeart) ow.getTileEntity(genPos.east());
+            check(h != null && h.battery.getEnergyStored() > 0, "Сердце рядом получило " + (h == null ? 0 : h.battery.getEnergyStored()) + " RF");
+            ow.setBlockToAir(genPos.east());
+            ow.setBlockToAir(genPos);
+        });
+        step("гул машин: провода не машины, замер не падает", () -> {
+            check(ru.death.chaosshard.tech.MachineHum.carrier("universal_cable") && ru.death.chaosshard.tech.MachineHum.carrier("energycube")
+                    && !ru.death.chaosshard.tech.MachineHum.carrier("machine_pulverizer"), "провода и хранилища отсеяны");
+            TileAnchor a = (TileAnchor) ow.getTileEntity(anchorPos);
+            if (a == null) { check(false, "Якоря нет"); return; }
+            int n = a.hum.sample(ow, anchorPos);
+            n = a.hum.sample(ow, anchorPos);
+            check(n == 0, "без чужих машин гула нет: " + n);
+        });
 
         section("Самотест");
         step("самотест", () -> {

@@ -32,6 +32,7 @@ public final class ModBlocks {
     public static Block ANCHOR_PART;
     public static Block RITUAL_BOWL;
     public static Block STAR_PUMP;
+    public static Block DEFILED_GENERATOR;
     public static Block TRIAL_SEAL, TRIAL_RUNE, TRIAL_EXIT;
     public static Block LAIR;
     public static Block ISLAND_HEART;
@@ -81,6 +82,9 @@ public final class ModBlocks {
         }
         RITUAL_BOWL = add(new ru.death.chaosshard.ritual.BlockRitualBowl(), "ritual_bowl");
         STAR_PUMP = add(new ru.death.chaosshard.pump.BlockStarPump(), "star_pump");
+        DEFILED_GENERATOR = add(new ru.death.chaosshard.tech.BlockDefiledGenerator(), "defiled_generator");
+        net.minecraftforge.fml.common.registry.GameRegistry.registerTileEntity(ru.death.chaosshard.tech.TileDefiledGenerator.class,
+                new net.minecraft.util.ResourceLocation(Tags.MOD_ID, "defiled_generator"));
         TRIAL_SEAL = add(new ru.death.chaosshard.trial.TrialBlocks.Seal(), "trial_seal");
         TRIAL_RUNE = add(new ru.death.chaosshard.trial.TrialBlocks.Rune(), "trial_rune");
         TRIAL_EXIT = add(new ru.death.chaosshard.trial.TrialBlocks.Exit(), "trial_exit");

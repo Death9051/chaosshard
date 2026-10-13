@@ -1,0 +1,29 @@
+{
+ "type": "minecraft:crafting_shaped",
+ "pattern": [
+  "SES",
+  "RFR",
+  "SIS"
+ ],
+ "key": {
+  "S": {
+   "item": "chaosshard:chaos_stone"
+  },
+  "E": {
+   "item": "chaosshard:chaos_essence"
+  },
+  "R": {
+   "item": "minecraft:redstone"
+  },
+  "F": {
+   "item": "minecraft:furnace"
+  },
+  "I": {
+   "item": "minecraft:iron_ingot"
+  }
+ },
+ "result": {
+  "item": "chaosshard:defiled_generator",
+  "count": 1
+ }
+}

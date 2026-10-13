@@ -119,8 +119,15 @@ public class GuiHeart extends GuiContainer {
         RenderHelper.disableStandardItemLighting();
         GlStateManager.popMatrix();
 
-        int secs = Math.max(0, (container.interval - container.timer) / 20);
-        fontRenderer.drawString(I18n.format("chaosshard.heart.gui.next", secs), 46, 31, DIM);
+        int engines = heart.count(ru.death.chaosshard.heart.ItemHeartModule.Type.ENGINE);
+        int speed = heart.isPowered() ? 1 + engines : 1;
+        int secs = Math.max(0, (container.interval - container.timer) / (20 * speed));
+        String next = I18n.format("chaosshard.heart.gui.next", secs);
+        fontRenderer.drawString(next, 46, 31, DIM);
+        if (engines > 0) {
+            fontRenderer.drawString(I18n.format(heart.isPowered() ? "chaosshard.heart.gui.engine_on" : "chaosshard.heart.gui.engine_off", speed),
+                    46 + fontRenderer.getStringWidth(next) + 4, 31, heart.isPowered() ? 0x80FF80 : 0xFF6060);
+        }
         boolean harvester = heart.getWorld().getTileEntity(heart.getPos().up()) instanceof ru.death.chaosshard.heart.TileHarvester;
         fontRenderer.drawString(harvester ? I18n.format("chaosshard.heart.gui.harvester")
                 : I18n.format("chaosshard.heart.gui.growths", container.growths, container.maxGrowths), 46, 42, harvester ? 0x80FFB0 : TEXT);

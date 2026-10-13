@@ -24,7 +24,9 @@ public class ItemHeartModule extends Item {
         /** Богатство: редкие руды чаще. */
         RICH,
         /** Плодовитость: шанс вырастить два нароста сразу. */
-        FERTILE
+        FERTILE,
+        /** Двигатель: Сердце питается RF/FE от машин; с током каждый двигатель добавляет ещё один шаг роста за тик. */
+        ENGINE
     }
 
     public final Type type;

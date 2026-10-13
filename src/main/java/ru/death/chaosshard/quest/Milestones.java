@@ -34,6 +34,13 @@ import ru.death.chaosshard.heart.TileHeart;
 public class Milestones {
 
     public static final String SPELL = "spell_cast";
+    public static final String HEART_POWERED = "heart_powered";
+    public static final String DEFILED_POWER = "defiled_power";
+    public static final String ANCHOR_HUM = "anchor_hum";
+    public static final String POWER_MEKANISM = "power_mekanism";
+    public static final String POWER_THERMAL = "power_thermal";
+    public static final String POWER_EXU2 = "power_exu2";
+    public static final String POWER_CYCLIC = "power_cyclic";
     public static final String SKY = "chaos_sky";
     public static final String AGE = "enter_age";
     public static final String TWO_AGES = "two_ages";

@@ -1,0 +1,23 @@
+{
+ "type": "minecraft:crafting_shaped",
+ "pattern": [
+  "SVS",
+  "VRV",
+  "SVS"
+ ],
+ "key": {
+  "S": {
+   "item": "chaosshard:chaos_stone"
+  },
+  "V": {
+   "item": "chaosshard:veil_shard"
+  },
+  "R": {
+   "item": "minecraft:redstone_block"
+  }
+ },
+ "result": {
+  "item": "chaosshard:heart_module_engine",
+  "count": 1
+ }
+}
