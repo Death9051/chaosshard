@@ -3,163 +3,178 @@ package ru.death.chaosshard.structure.bp;
 import java.util.Random;
 
 /**
- * Березовый павильон Ордена: каменное кольцо-основание, восемь светлых колонн
- * с каменными поясами, решётчатая многоярусная кровля и шпиль. В центре — помост с подношением.
+ * Бледный павильон Ордена: квадратное кольцо из крупного камня, моховой пол с крестом дорожек,
+ * восемь тонких бледных колонн с каменными вставками, решётка балок «в клетку» в два яруса
+ * и тонкий шпиль. В центре — ступенчатый помост с подношением.
  */
 public final class Pavilion {
 
-    static final String LOG = "minecraft:log[variant=birch,axis=y]";
-    static final String LOG_X = "minecraft:log[variant=birch,axis=x]";
-    static final String LOG_Z = "minecraft:log[variant=birch,axis=z]";
-    static final String PLANK = "minecraft:planks[variant=birch]";
-    static final String FENCE = "minecraft:birch_fence";
-    static final String SLAB = "minecraft:wooden_slab[variant=birch,half=bottom]";
-    static final String SLAB_TOP = "minecraft:wooden_slab[variant=birch,half=top]";
+    static final String BONE = "minecraft:bone_block[axis=y]";
+    static final String BONE_X = "minecraft:bone_block[axis=x]";
+    static final String BONE_Z = "minecraft:bone_block[axis=z]";
     static final String COBBLE = "minecraft:cobblestone";
     static final String MOSSY = "minecraft:mossy_cobblestone";
-    static final String ANDESITE = "minecraft:stone[variant=andesite]";
     static final String BRICK = "minecraft:stonebrick";
     static final String BRICK_M = "minecraft:stonebrick[variant=mossy_stonebrick]";
     static final String BRICK_C = "minecraft:stonebrick[variant=cracked_stonebrick]";
+    static final String ANDESITE = "minecraft:stone[variant=smooth_andesite]";
+    static final String GRASS = "minecraft:grass";
+    static final String SLAB = "minecraft:stone_slab[variant=smooth_brick,half=bottom]";
+    static final String Q_SLAB = "minecraft:stone_slab[variant=quartz,half=bottom]";
     static final String DIORITE = "minecraft:stone[variant=smooth_diorite]";
-    static final String QUARTZ = "minecraft:quartz_block";
+    static final String FENCE = "minecraft:birch_fence";
+
+    /** Полуразмер основания; колонны стоят на кольце P. */
+    static final int B = 7, P = 4;
+    /** Высота колонн (верх — уровень нижней рамы). */
+    static final int H = 8;
 
     public static Blueprint build(Random r) {
         Blueprint b = new Blueprint("pavilion");
-        // --- основание: кольцо крупного камня, внутри мох и плитка
-        for (int x = -7; x <= 7; x++) {
-            for (int z = -7; z <= 7; z++) {
-                double d = oct(x, z);
-                if (d > 7.2) {
-                    continue;
-                }
-                if (d > 6.2) {
-                    b.set(x, -1, z, pick(r, BRICK, BRICK_M, BRICK_C));
-                    if (r.nextInt(5) < 2 && (x + z) % 2 == 0) {
-                        b.set(x, 0, z, pick(r, BRICK, BRICK, BRICK_M, ANDESITE));
-                    }
-                } else if (d > 5.2) {
-                    b.set(x, -1, z, BRICK);
-                    b.set(x, 0, z, "minecraft:stone_slab[variant=smooth_brick,half=bottom]");
-                } else {
-                    b.set(x, -1, z, r.nextInt(3) == 0 ? MOSSY : (r.nextInt(2) == 0 ? "minecraft:grass" : DIORITE));
-                }
-            }
-        }
-        // ступени на юг
-        for (int x = -1; x <= 1; x++) {
-            b.set(x, 0, 7, "minecraft:stone_brick_stairs[facing=north]");
-            b.set(x, 0, 6, "minecraft:stone_slab[variant=smooth_brick,half=bottom]");
-        }
-        // --- помост в центре
-        b.fill(-2, 0, -2, 2, 0, 2, DIORITE);
-        b.fill(-1, 1, -1, 1, 1, 1, QUARTZ);
-        for (int[] c : new int[][]{{-2, -2}, {2, -2}, {-2, 2}, {2, 2}}) {
-            b.set(c[0], 1, c[1], SLAB);
-        }
-        b.chest(0, 2, 0, 0, "pavilion");
-        b.set(-1, 2, 0, "minecraft:flower_pot");
-        b.set(1, 2, 0, "minecraft:flower_pot");
-
-        // --- колонны
-        int top = 9;
-        int[][] posts = {{4, 2}, {4, -2}, {-4, 2}, {-4, -2}, {2, 4}, {-2, 4}, {2, -4}, {-2, -4}};
+        base(b, r);
+        dais(b);
+        int[][] posts = {{P, 2}, {P, -2}, {-P, 2}, {-P, -2}, {2, P}, {-2, P}, {2, -P}, {-2, -P}};
         for (int[] p : posts) {
-            for (int y = 0; y < top; y++) {
-                String s = LOG;
-                if (y == 0 || y == 1 || y == 4 || y == 5) {
-                    s = y == 0 ? ANDESITE : (r.nextInt(3) == 0 ? MOSSY : COBBLE);
-                }
-                b.set(p[0], y, p[1], s);
-            }
-            // каменная «манжета» на нижнем поясе
-            String f = Blueprint.outward(p[0], p[1]);
-            int ox = f.equals("east") ? 1 : f.equals("west") ? -1 : 0;
-            int oz = f.equals("south") ? 1 : f.equals("north") ? -1 : 0;
-            b.set(p[0] + ox, 0, p[1] + oz, "minecraft:stone_brick_stairs[facing=" + Blueprint.opposite(f) + "]");
-            b.set(p[0] + ox, 1, p[1] + oz, COBBLE);
-            b.set(p[0] + ox, 4, p[1] + oz, ANDESITE);
-            b.set(p[0], top, p[1], PLANK);
+            pillar(b, p[0], p[1], r);
         }
-        // --- кровля: решётка «#» из перекрещённых балок, три яруса
-        hash(b, top, 2, 5);
-        // обвязка по колоннам
-        for (int i = -2; i <= 2; i++) {
-            b.set(i, top, 4, LOG_X);
-            b.set(i, top, -4, LOG_X);
-            b.set(4, top, i, LOG_Z);
-            b.set(-4, top, i, LOG_Z);
-        }
-        for (int[] c : new int[][]{{3, 3}, {-3, 3}, {3, -3}, {-3, -3}}) {
-            b.set(c[0], top, c[1], SLAB_TOP);
-        }
-        for (int[] c : new int[][]{{2, 2}, {-2, 2}, {2, -2}, {-2, -2}}) {
-            b.set(c[0], top + 1, c[1], FENCE);
-        }
-        hash(b, top + 2, 1, 3);
-        for (int[] c : new int[][]{{1, 1}, {-1, 1}, {1, -1}, {-1, -1}}) {
-            b.set(c[0], top + 3, c[1], FENCE);
-        }
-        b.fill(-1, top + 4, -1, 1, top + 4, 1, SLAB);
-        for (int[] c : new int[][]{{2, 0}, {-2, 0}, {0, 2}, {0, -2}}) {
-            b.set(c[0], top + 4, c[1], SLAB);
-        }
-        // шпиль
-        for (int y = top + 4; y <= top + 9; y++) {
-            b.set(0, y, 0, y == top + 6 || y == top + 7 ? COBBLE : LOG);
-        }
-        b.set(0, top + 10, 0, FENCE);
-        b.set(0, top + 11, 0, FENCE);
-        // свисающий фонарь над помостом
-        for (int y = top; y <= top + 3; y++) {
-            b.setIfEmpty(0, y, 0, FENCE);
-        }
-        b.set(0, top - 1, 0, "minecraft:glowstone");
+        roof(b);
         b.footingsUnder(-1, BRICK);
         return b;
     }
 
-    /** Решётка «#»: балки вдоль x на z=±o и вдоль z на x=±o, длиной ±len. */
-    static void hash(Blueprint b, int y, int o, int len) {
-        for (int i = -len; i <= len; i++) {
-            b.set(i, y, o, LOG_X);
-            b.set(i, y, -o, LOG_X);
-            b.set(o, y, i, LOG_Z);
-            b.set(-o, y, i, LOG_Z);
+    /** Основание: кольцо из крупных блоков с зазорами, внутри мох и крест дорожек. */
+    static void base(Blueprint b, Random r) {
+        for (int x = -B; x <= B; x++) {
+            for (int z = -B; z <= B; z++) {
+                int ax = Math.abs(x), az = Math.abs(z);
+                if (ax == B && az == B) {
+                    continue; // срезанные углы
+                }
+                boolean rim = ax == B || az == B || (ax == B - 1 && az == B - 1);
+                if (rim) {
+                    b.set(x, -1, z, BRICK);
+                    // крупные камни кольца — тройками, между ними полуплита
+                    int along = ax == B ? z : x;
+                    int seg = Math.floorMod(along + B, 4);
+                    b.set(x, 0, z, seg != 3 ? pick(r, BRICK, BRICK, BRICK_M, BRICK_C) : SLAB);
+                    continue;
+                }
+                boolean path = ax <= 1 || az <= 1;
+                if (path) {
+                    b.set(x, -1, z, (x + z) % 2 == 0 ? BRICK : ANDESITE);
+                } else {
+                    int k = r.nextInt(10);
+                    b.set(x, -1, z, k < 4 ? GRASS : k < 7 ? MOSSY : k < 9 ? BRICK_M : COBBLE);
+                    if (k < 4 && r.nextInt(3) == 0) {
+                        b.set(x, 0, z, "minecraft:tallgrass[type=tall_grass]");
+                    }
+                }
+            }
         }
-        for (int[] c : new int[][]{{o, o}, {-o, o}, {o, -o}, {-o, -o}}) {
-            b.set(c[0], y, c[1], PLANK);
-        }
-        for (int[] c : new int[][]{{len, o}, {len, -o}, {-len, o}, {-len, -o}, {o, len}, {-o, len}, {o, -len}, {-o, -len}}) {
-            b.set(c[0], y, c[1], PLANK);
-            b.set(c[0], y - 1, c[1], FENCE);
+        // вход с юга: проём в кольце
+        for (int x = -1; x <= 1; x++) {
+            b.set(x, -1, B, ANDESITE);
+            b.clear(x, 0, B);
         }
     }
 
-    /** Квадратная рама полуразмера h на высоте y (брёвна вдоль сторон, углы — доски). */
-    static void frame(Blueprint b, int y, int h, int unused) {
-        for (int i = -h; i <= h; i++) {
-            b.set(i, y, -h, LOG_X);
-            b.set(i, y, h, LOG_X);
-            b.set(-h, y, i, LOG_Z);
-            b.set(h, y, i, LOG_Z);
-        }
-        for (int[] c : new int[][]{{-h, -h}, {h, -h}, {-h, h}, {h, h}}) {
-            b.set(c[0], y, c[1], PLANK);
-        }
+    /** Ступенчатый помост с сундуком-подношением. */
+    static void dais(Blueprint b) {
+        b.fill(-2, 0, -2, 2, 0, 2, SLAB);
+        b.fill(-1, 0, -1, 1, 0, 1, DIORITE);
+        b.fill(-1, 1, -1, 1, 1, 1, Q_SLAB);
+        b.set(0, 1, 0, DIORITE);
+        b.chest(0, 2, 0, 0, "pavilion");
     }
 
-    /** Перила-стойки по углам и серединам между ярусами. */
-    static void rails(Blueprint b, int y, int h) {
-        for (int[] c : new int[][]{{-h, -h}, {h, -h}, {-h, h}, {h, h}, {0, -h}, {0, h}, {-h, 0}, {h, 0}}) {
+    /** Тонкая колонна: каменный низ, бледный ствол, каменная вставка посередине. */
+    static void pillar(Blueprint b, int x, int z, Random r) {
+        for (int y = 0; y < H; y++) {
+            String s;
+            if (y <= 1) {
+                s = y == 0 ? BRICK : pick(r, COBBLE, COBBLE, MOSSY);
+            } else if (y == 4 || y == 5) {
+                s = pick(r, COBBLE, COBBLE, MOSSY);
+            } else {
+                s = BONE;
+            }
+            b.set(x, y, z, s);
+        }
+        // каменная «манжета» снаружи у основания
+        String f = Blueprint.outward(x, z);
+        int ox = f.equals("east") ? 1 : f.equals("west") ? -1 : 0;
+        int oz = f.equals("south") ? 1 : f.equals("north") ? -1 : 0;
+        b.set(x + ox, 0, z + oz, "minecraft:stone_brick_stairs[facing=" + Blueprint.opposite(f) + "]");
+        b.set(x + ox, 1, z + oz, pick(r, COBBLE, MOSSY));
+        // наросты посередине: снаружи и сбоку, вразнобой
+        b.set(x + ox, 4, z + oz, pick(r, COBBLE, COBBLE, MOSSY));
+        int sx = oz != 0 ? Integer.signum(x) : 0, sz = ox != 0 ? Integer.signum(z) : 0;
+        b.set(x + sx, 5, z + sz, COBBLE);
+        b.set(x + ox, 5, z + oz, "minecraft:stone_stairs[facing=" + Blueprint.opposite(f) + ",half=top]");
+    }
+
+    /** Кровля: нижняя рама по колоннам, «клетка» балок, верхняя рама, шпиль. */
+    static void roof(Blueprint b) {
+        int y = H;
+        // нижняя рама по колоннам, концы балок выступают
+        for (int i = -P - 1; i <= P + 1; i++) {
+            if (Math.abs(i) <= 2 || Math.abs(i) == P + 1) {
+                b.set(i, y, P, BONE_X);
+                b.set(i, y, -P, BONE_X);
+                b.set(P, y, i, BONE_Z);
+                b.set(-P, y, i, BONE_Z);
+            }
+        }
+        // косые связи на углах рамы
+        for (int[] c : new int[][]{{3, 3}, {-3, 3}, {3, -3}, {-3, -3}}) {
+            b.set(c[0], y, c[1], BONE);
+        }
+        // «клетка»: балки вдоль x на z=±2 и вдоль z на x=±2, ярусом выше и длиннее рамы
+        y = H + 1;
+        for (int i = -P - 2; i <= P + 2; i++) {
+            b.set(i, y, 2, BONE_X);
+            b.set(i, y, -2, BONE_X);
+            b.set(2, y, i, BONE_Z);
+            b.set(-2, y, i, BONE_Z);
+        }
+        for (int[] c : new int[][]{{2, 2}, {-2, 2}, {2, -2}, {-2, -2}}) {
+            b.set(c[0], y, c[1], BONE);
+        }
+        // столбики на концах балок «клетки»
+        for (int s = -1; s <= 1; s += 2) {
+            for (int o = -2; o <= 2; o += 4) {
+                b.set(s * (P + 2), y + 1, o, FENCE);
+                b.set(o, y + 1, s * (P + 2), FENCE);
+            }
+        }
+        // стойки и верхняя рама вокруг шпиля
+        y = H + 2;
+        for (int[] c : new int[][]{{2, 2}, {-2, 2}, {2, -2}, {-2, -2}}) {
             b.set(c[0], y, c[1], FENCE);
         }
-    }
-
-    /** «Восьмиугольное» расстояние. */
-    static double oct(int x, int z) {
-        int ax = Math.abs(x), az = Math.abs(z);
-        return Math.max(Math.max(ax, az), (ax + az) * 0.75);
+        y = H + 3;
+        for (int i = -2; i <= 2; i++) {
+            b.set(i, y, 2, BONE_X);
+            b.set(i, y, -2, BONE_X);
+            b.set(2, y, i, BONE_Z);
+            b.set(-2, y, i, BONE_Z);
+        }
+        for (int i = -1; i <= 1; i++) {
+            b.set(i, y + 1, 1, Q_SLAB);
+            b.set(i, y + 1, -1, Q_SLAB);
+            b.set(1, y + 1, i, Q_SLAB);
+            b.set(-1, y + 1, i, Q_SLAB);
+        }
+        // шпиль: бледный ствол с каменной вставкой
+        for (int yy = H + 1; yy <= H + 9; yy++) {
+            b.set(0, yy, 0, yy == H + 5 || yy == H + 6 ? COBBLE : BONE);
+        }
+        b.set(0, H + 10, 0, FENCE);
+        b.set(0, H + 11, 0, FENCE);
+        // свисающий светильник над помостом
+        b.set(0, H, 0, FENCE);
+        b.set(0, H - 1, 0, FENCE);
+        b.set(0, H - 2, 0, "minecraft:glowstone");
     }
 
     static String pick(Random r, String... s) {
