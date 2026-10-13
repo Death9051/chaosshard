@@ -35,11 +35,11 @@ Using cached decompiled jar from /home/runner/.gradle/caches/retro_futura_gradle
 
 > Task :cleanupDecompSrgJar
 Fixup stage 1 - applying FF patches
-  Stage 1 took 463 ms
+  Stage 1 took 448 ms
 Fixup stage 2 - applying MCP patches
-  Stage 2 took 190 ms
+  Stage 2 took 174 ms
 Fixup stage 3 - applying MCP cleanup
-  Stage 3 took 7315 ms
+  Stage 3 took 6746 ms
 Fixup stage 4 - injecting package-info
   Injected 119 package-infos
   Stage 4 took 5 ms
@@ -115,6 +115,6 @@ You can use '--warning-mode all' to show the individual deprecation warnings and
 
 For more on this, please refer to https://docs.gradle.org/9.7.0/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
 
-BUILD SUCCESSFUL in 1m 54s
+BUILD SUCCESSFUL in 1m 50s
 22 actionable tasks: 22 executed
 Consider enabling configuration cache to speed up this build: https://docs.gradle.org/9.7.0/userguide/configuration_cache_enabling.html
