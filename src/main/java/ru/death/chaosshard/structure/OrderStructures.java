@@ -172,7 +172,8 @@ public class OrderStructures implements IWorldGenerator {
         int median = a[a.length / 2];
         int lo = a[a.length / 6], hi = a[a.length - 1 - a.length / 6];
         boolean spires = e.name.equals("crystal_spires");
-        boolean pillar = e.name.startsWith("pillar_");   // Опора Завесы встаёт всегда: место выбрало Знамение
+        // Опора Завесы и монастыри Ирены встают всегда: место выбрало Знамение
+        boolean pillar = e.name.startsWith("pillar_") || e.name.equals("monastery");
         if (!pillar && (wet || hi - lo > tolerance(e.name) || water * 100 / Math.max(1, samples) > (spires ? 70 : 15))) {
             e.state = OrderStructureData.FAILED;
             data.markDirty();
@@ -220,6 +221,8 @@ public class OrderStructures implements IWorldGenerator {
         for (Blueprint.Mark m : b.marks) {
             if ("hero".equals(m.kind)) {
                 ru.death.chaosshard.hero.Pillars.placed(world, e, BlueprintPlacer.at(o, m.x, m.y, m.z, e.rot));
+            } else if ("shrine".equals(m.kind)) {
+                ru.death.chaosshard.hero.Pillars.shrinePlaced(world, e, BlueprintPlacer.at(o, m.x, m.y, m.z, e.rot));
             }
         }
         for (Blueprint.Mark m : b.guards) {
@@ -296,7 +299,8 @@ public class OrderStructures implements IWorldGenerator {
 
     /** Поставить постройку прямо сейчас у точки (для /oh structure и автотеста). */
     public static OrderStructureData.Entry placeNow(WorldServer world, String name, BlockPos at, int rot, long seed) {
-        if (!Arrays.asList(Structures.ALL).contains(name) && ru.death.chaosshard.hero.Lightbearer.byStructure(name) == null) {
+        if (!Arrays.asList(Structures.ALL).contains(name) && ru.death.chaosshard.hero.Lightbearer.byStructure(name) == null
+                && !"monastery".equals(name)) {
             return null;
         }
         OrderStructureData data = OrderStructureData.get(world);

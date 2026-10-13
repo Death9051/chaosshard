@@ -12,6 +12,7 @@ public final class Structures {
             return VeilPillar.build(Integer.parseInt(name.substring(7)), r);
         }
         switch (name) {
+            case "monastery": return Monastery.build(r);
             case "crystal_spires": return CrystalSpires.build(r);
             case "greenhouse": return Greenhouse.build(r);
             case "pavilion": return Pavilion.build(r);

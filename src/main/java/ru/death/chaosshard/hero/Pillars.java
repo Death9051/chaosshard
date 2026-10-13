@@ -78,7 +78,9 @@ public class Pillars {
             return false;
         }
         WorldServer ws = (WorldServer) world;
-        int[] spot = findSpot(ws, at, p.rotationYaw, h);
+        int[] range = ChaosConfig.order.omenDistance;
+        int near = range.length > 0 ? range[0] : 400, far = range.length > 1 ? Math.max(near, range[1]) : near * 6;
+        int[] spot = findSpot(ws, at, p.rotationYaw, h.structure(), near, far, 96);
         if (spot == null) {
             p.sendMessage(Breach.grimoire("chaosshard.omen.nowhere"));
             return false;
@@ -93,39 +95,97 @@ public class Pillars {
         data.markDirty();
         ws.addWeatherEffect(new net.minecraft.entity.effect.EntityLightningBolt(world, at.getX() + 0.5, at.getY() + 1, at.getZ() + 0.5, true));
         p.sendMessage(Breach.grimoire("chaosshard.omen.found", name(h), pl.x, pl.z, dist(at, pl.x, pl.z), side(at, pl.x, pl.z)));
+        if (h == Lightbearer.IRENA) {
+            planMonasteries(ws, pl, p, at);
+        }
         Milestones.grant(p, h.omenMilestone());
         ChaosShard.LOG.info("Знамение: Опора {} будет у {} {}", h.id(), pl.x, pl.z);
         return true;
     }
 
     /**
-     * Место для Опоры: суша, все чанки площади ещё не созданы, вдали от других построек.
+     * Место для постройки: суша, все чанки площади ещё не созданы, вдали от других построек (spacing).
      * Ищем кольцами от ближнего к дальнему, начиная с направления взгляда.
      */
-    public static int[] findSpot(WorldServer ws, BlockPos at, float yaw, Lightbearer h) {
-        int[] range = ChaosConfig.order.omenDistance;
-        int near = range.length > 0 ? range[0] : 400, far = range.length > 1 ? Math.max(near, range[1]) : near * 6;
-        Blueprint b = Structures.build(h.structure(), new Random(0));
+    public static int[] findSpot(WorldServer ws, BlockPos at, float yaw, String structure, int near, int far, int spacing) {
+        Blueprint b = Structures.build(structure, new Random(0));
         int reach = OrderStructures.reach(b) + 18;   // запас: площадь + соседние чанки, которые заселяются вместе с ней
         ChunkProviderServer cp = ws.getChunkProvider();
         // направление взгляда: в Minecraft yaw 0 — на юг (+z)
         double look = Math.toRadians(yaw);
         double lx = -Math.sin(look), lz = Math.cos(look);
         double base = Math.atan2(lz, lx);
-        for (int r = near; r <= far; r += 48) {
-            int steps = Math.max(12, (int) (2 * Math.PI * r / 96));
+        for (int r = near; r <= far; r += 24) {
+            int steps = Math.max(12, (int) (2 * Math.PI * r / 64));
             for (int i = 0; i < steps; i++) {
                 // 0, +1, -1, +2, -2 … — сначала прямо по взгляду
                 int k = (i + 1) / 2 * (i % 2 == 0 ? -1 : 1);
                 double a = base + k * 2 * Math.PI / steps;
                 int x = at.getX() + (int) Math.round(Math.cos(a) * r);
                 int z = at.getZ() + (int) Math.round(Math.sin(a) * r);
-                if (fresh(cp, x, z, reach) && land(ws, x, z) && clearOfOthers(ws, x, z)) {
+                if (fresh(cp, x, z, reach) && land(ws, x, z) && clearOfOthers(ws, x, z, spacing)) {
                     return new int[]{x, z};
                 }
             }
         }
         return null;
+    }
+
+    /** Ирена: три монастыря вокруг её Опоры, тоже в нетронутых землях. */
+    static void planMonasteries(WorldServer ws, HeroData.Pillar pl, EntityPlayerMP p, BlockPos at) {
+        OrderStructureData sd = OrderStructureData.get(ws);
+        BlockPos c = new BlockPos(pl.x, 64, pl.z);
+        pl.linked.clear();
+        pl.shrines.clear();
+        float yaw = ws.rand.nextFloat() * 360;
+        for (int i = 0; i < MONASTERIES; i++) {
+            int[] m = findSpot(ws, c, yaw + i * 120, "monastery", 110, 260, 90);
+            if (m == null) {
+                continue;
+            }
+            OrderStructureData.Entry e = OrderStructures.plan(sd, "monastery", m[0], m[1], ws.rand.nextInt(4), ws.rand.nextLong());
+            pl.linked.add(e.id);
+            p.sendMessage(Breach.grimoire("chaosshard.omen.monastery", m[0], m[1], dist(at, m[0], m[1]), side(at, m[0], m[1])));
+        }
+        HeroData.get(ws).markDirty();
+        ChaosShard.LOG.info("Знамение Ирены: монастырей {}", pl.linked.size());
+    }
+
+    public static final int MONASTERIES = 3;
+
+    /** Святыня встала в постройке (вызывает OrderStructures.place). */
+    public static void shrinePlaced(WorldServer ws, OrderStructureData.Entry e, BlockPos pos) {
+        Shrines.register(ws, pos);
+        HeroData data = HeroData.get(ws);
+        for (HeroData.Pillar pl : data.pillars) {
+            if (pl.linked.contains(e.id) && !pl.shrines.contains(pos)) {
+                pl.shrines.add(pos.toImmutable());
+                data.markDirty();
+            }
+        }
+    }
+
+    /** Святой камень монастыря какого-нибудь Светоча. */
+    public static boolean isMonasteryShrine(World w, BlockPos pos) {
+        for (HeroData.Pillar pl : HeroData.get(w).pillars) {
+            if (pl.shrines.contains(pos)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /** Сколько монастырей героя ещё горит (не вставшие считаются горящими). */
+    public static int lit(World w, Lightbearer h) {
+        HeroData.Pillar pl = HeroData.get(w).of(h);
+        int out = 0;
+        java.util.Set<BlockPos> live = ShrineData.get(w).shrines;
+        for (BlockPos s : pl.shrines) {
+            if (!live.contains(s)) {
+                out++;
+            }
+        }
+        return Math.max(0, pl.linked.size() - out);
     }
 
     /** Ни один чанк площади ещё не создан. */
@@ -154,8 +214,8 @@ public class Pillars {
         return true;
     }
 
-    static boolean clearOfOthers(WorldServer ws, int x, int z) {
-        return OrderStructureData.get(ws).near(new BlockPos(x, 0, z), 96) == null;
+    static boolean clearOfOthers(WorldServer ws, int x, int z, int spacing) {
+        return OrderStructureData.get(ws).near(new BlockPos(x, 0, z), spacing) == null;
     }
 
     // ------------------------------------------------------------------ установка
@@ -201,27 +261,11 @@ public class Pillars {
         pl.x = o.getX();
         pl.y = o.getY();
         pl.z = o.getZ();
-        pl.fallRing = 0;
+        pl.collapseAt = ws.getTotalWorldTime() + COLLAPSE_DELAY;
         data.markDirty();
         if (e != null) {
             e.keeperDead = true;
             sd.markDirty();
-            for (BlockPos b : e.beams) {
-                TileEntity te = ws.getTileEntity(b);
-                if (te instanceof TileOrderBeacon) {
-                    ((TileOrderBeacon) te).setLit(false);
-                }
-            }
-        }
-        collapse(ws, o);
-        // святыни окрест гаснут
-        int sr = ChaosConfig.order.pillarShrineRadius;
-        int out = 0;
-        for (BlockPos s : new ArrayList<>(ShrineData.get(ws).shrines)) {
-            if (s.distanceSq(o.getX(), s.getY(), o.getZ()) <= (double) sr * sr) {
-                Shrines.extinguish(ws, s);
-                out++;
-            }
         }
         // трофей — к ногам павшего
         ItemStack trophy = Trophies.of(h);
@@ -232,25 +276,62 @@ public class Pillars {
             ws.spawnEntity(ei);
         }
         int reward = ChaosConfig.order.pillarReward * (2 + h.ordinal()) / 2;
-        List<EntityPlayerMP> witnesses = new ArrayList<>();
-        for (EntityPlayer pl2 : ws.getEntitiesWithinAABB(EntityPlayer.class, new AxisAlignedBB(o).grow(96))) {
-            if (pl2 instanceof EntityPlayerMP) {
-                witnesses.add((EntityPlayerMP) pl2);
-            }
-        }
-        if (killer != null && !witnesses.contains(killer)) {
-            witnesses.add(killer);
-        }
-        for (EntityPlayerMP p : witnesses) {
+        for (EntityPlayerMP p : witnesses(ws, o, killer)) {
             ThreadManager.addPoints(p, reward);
             p.sendMessage(Breach.grimoire("chaosshard.pillar.fallen", name(h), reward));
+            Milestones.grant(p, h.fallenMilestone());
+            if (!(p instanceof net.minecraftforge.common.util.FakePlayer)) {
+                ru.death.chaosshard.cutscene.CutsceneManager.play(p, HeroScenes.fall(ws, o, p, h), HeroScenes.NONE);
+            }
+        }
+        ChaosShard.LOG.info("Опора {} пала у {}", h.id(), o);
+    }
+
+    public static final int COLLAPSE_DELAY = 25;
+
+    static List<EntityPlayerMP> witnesses(WorldServer ws, BlockPos o, EntityPlayerMP killer) {
+        List<EntityPlayerMP> out = new ArrayList<>();
+        for (EntityPlayer pl2 : ws.getEntitiesWithinAABB(EntityPlayer.class, new AxisAlignedBB(o).grow(96))) {
+            if (pl2 instanceof EntityPlayerMP) {
+                out.add((EntityPlayerMP) pl2);
+            }
+        }
+        if (killer != null && !out.contains(killer)) {
+            out.add(killer);
+        }
+        return out;
+    }
+
+    /** Колонна рушится по-настоящему: луч гаснет, святыни окрест гаснут, пошла волна Скверны. */
+    static void collapseNow(WorldServer ws, Lightbearer h, HeroData.Pillar pl) {
+        pl.collapseAt = 0;
+        pl.fallRing = 0;
+        BlockPos o = pl.pos();
+        OrderStructureData.Entry e = pl.entry >= 0 ? OrderStructureData.get(ws).byId(pl.entry) : null;
+        if (e != null) {
+            for (BlockPos b : e.beams) {
+                TileEntity te = ws.getTileEntity(b);
+                if (te instanceof TileOrderBeacon) {
+                    ((TileOrderBeacon) te).setLit(false);
+                }
+            }
+        }
+        collapse(ws, o);
+        int sr = ChaosConfig.order.pillarShrineRadius;
+        int out = 0;
+        for (BlockPos s : new ArrayList<>(ShrineData.get(ws).shrines)) {
+            if (s.distanceSq(o.getX(), s.getY(), o.getZ()) <= (double) sr * sr) {
+                Shrines.extinguish(ws, s);
+                out++;
+            }
+        }
+        for (EntityPlayerMP p : witnesses(ws, o, null)) {
             if (out > 0) {
                 p.sendMessage(Breach.grimoire("chaosshard.pillar.shrines", out));
             }
             p.sendMessage(Breach.grimoire("chaosshard.hero." + h.id() + ".memory"));
-            Milestones.grant(p, h.fallenMilestone());
         }
-        ChaosShard.LOG.info("Опора {} пала у {}; погасло святынь: {}", h.id(), o, out);
+        HeroData.get(ws).markDirty();
     }
 
     /** Колонна рушится: верх исчезает, обломки сыплются на площадь, остаётся пень. */
@@ -299,22 +380,69 @@ public class Pillars {
 
     @SubscribeEvent
     public void onWorldTick(TickEvent.WorldTickEvent event) {
-        if (event.phase != TickEvent.Phase.END || event.world.isRemote || event.world.getTotalWorldTime() % 4 != 0
+        if (event.phase != TickEvent.Phase.END || event.world.isRemote
                 || event.world.provider.getDimension() != Breach.luchezariyaDim()) {
             return;
         }
-        HeroData data = HeroData.get(event.world);
-        for (HeroData.Pillar pl : data.pillars) {
-            if (pl.fallRing < 0) {
-                continue;
+        WorldServer ws = (WorldServer) event.world;
+        long now = ws.getTotalWorldTime();
+        HeroData data = HeroData.get(ws);
+        for (Lightbearer h : Lightbearer.values()) {
+            HeroData.Pillar pl = data.of(h);
+            if (pl.collapseAt > 0 && now >= pl.collapseAt) {
+                collapseNow(ws, h, pl);
             }
-            defileRing((WorldServer) event.world, pl.pos(), pl.fallRing);
-            pl.fallRing++;
-            if (pl.fallRing > ChaosConfig.order.pillarDefileRadius) {
-                pl.fallRing = -1;
+            if (pl.state == HeroData.STANDING && !pl.introShown && now % 10 == 3) {
+                tryIntro(ws, h, pl);
             }
-            data.markDirty();
+            if (pl.fallRing >= 0 && now % 4 == 0) {
+                defileRing(ws, pl.pos(), pl.fallRing);
+                pl.fallRing++;
+                if (pl.fallRing > ChaosConfig.order.pillarDefileRadius) {
+                    pl.fallRing = -1;
+                }
+                data.markDirty();
+            }
         }
+    }
+
+    /** Первый, кто подошёл к Светочу, видит его появление. */
+    static void tryIntro(WorldServer ws, Lightbearer h, HeroData.Pillar pl) {
+        EntityHero hero = heroOf(ws, h, pl);
+        if (hero == null) {
+            return;
+        }
+        for (EntityPlayer p : ws.playerEntities) {
+            if (p instanceof EntityPlayerMP && !(p instanceof net.minecraftforge.common.util.FakePlayer) && !p.isSpectator()
+                    && p.getDistanceSq(hero) < INTRO_RANGE * INTRO_RANGE && !ru.death.chaosshard.cutscene.CutsceneManager.playing(p)) {
+                pl.introShown = true;
+                HeroData.get(ws).markDirty();
+                intro((EntityPlayerMP) p, hero);
+                return;
+            }
+        }
+    }
+
+    public static final int INTRO_RANGE = 30;
+
+    /** Показать появление героя игроку (и для команды отладки). */
+    public static void intro(EntityPlayerMP p, EntityHero hero) {
+        // повернуть игрока к герою — в конце сцены камера вернётся в его глаза без рывка
+        double dx = hero.posX - p.posX, dz = hero.posZ - p.posZ, dy = hero.posY + 1.6 - (p.posY + p.getEyeHeight());
+        float yaw = (float) Math.toDegrees(Math.atan2(dz, dx)) - 90F;
+        float pitch = (float) -Math.toDegrees(Math.atan2(dy, Math.sqrt(dx * dx + dz * dz)));
+        p.connection.setPlayerLocation(p.posX, p.posY, p.posZ, yaw, pitch);
+        p.rotationYaw = p.rotationYawHead = yaw;
+        p.rotationPitch = pitch;
+        hero.scripted = true;
+        ru.death.chaosshard.cutscene.CutsceneManager.play(p, HeroScenes.intro((WorldServer) p.world, hero, p), new HeroScenes.Intro(hero));
+    }
+
+    /** Светоч этой Опоры (загруженный) или null. */
+    public static EntityHero heroOf(WorldServer ws, Lightbearer h, HeroData.Pillar pl) {
+        List<EntityHero> l = ws.getEntitiesWithinAABB(EntityHero.class, new AxisAlignedBB(pl.pos()).grow(40, 48, 40),
+                x -> x.isEntityAlive() && x.hero() == h);
+        return l.isEmpty() ? null : l.get(0);
     }
 
     /** Осквернить кольцо радиуса r вокруг Опоры: верхние слои земли и биом. */

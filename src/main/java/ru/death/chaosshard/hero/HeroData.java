@@ -19,6 +19,14 @@ public class HeroData extends WorldSavedData {
         public int x, y, z;
         /** Волна Скверны после падения: текущий радиус, -1 — не идёт. */
         public int fallRing = -1;
+        /** Когда рухнет колонна (время мира), 0 — не ждёт. */
+        public long collapseAt;
+        /** Катсцена появления героя уже показана. */
+        public boolean introShown;
+        /** Связанные постройки (монастыри Ирены и т.п.) — записи OrderStructureData. */
+        public final java.util.List<Long> linked = new java.util.ArrayList<>();
+        /** Святыни этих построек, когда они встали. */
+        public final java.util.List<BlockPos> shrines = new java.util.ArrayList<>();
 
         public BlockPos pos() {
             return new BlockPos(x, y, z);
@@ -77,6 +85,16 @@ public class HeroData extends WorldSavedData {
             p.y = t.getInteger("Y");
             p.z = t.getInteger("Z");
             p.fallRing = t.hasKey("Ring") ? t.getInteger("Ring") : -1;
+            p.collapseAt = t.getLong("CollapseAt");
+            p.introShown = t.getBoolean("Intro");
+            p.linked.clear();
+            for (long l : readLongs(t, "Linked")) {
+                p.linked.add(l);
+            }
+            p.shrines.clear();
+            for (long l : readLongs(t, "Shrines")) {
+                p.shrines.add(BlockPos.fromLong(l));
+            }
         }
     }
 
@@ -91,8 +109,33 @@ public class HeroData extends WorldSavedData {
             t.setInteger("Y", p.y);
             t.setInteger("Z", p.z);
             t.setInteger("Ring", p.fallRing);
+            t.setLong("CollapseAt", p.collapseAt);
+            t.setBoolean("Intro", p.introShown);
+            writeLongs(t, "Linked", p.linked);
+            java.util.List<Long> sh = new java.util.ArrayList<>();
+            for (BlockPos b : p.shrines) {
+                sh.add(b.toLong());
+            }
+            writeLongs(t, "Shrines", sh);
             tag.setTag(h.id(), t);
         }
         return tag;
+    }
+
+    static long[] readLongs(NBTTagCompound t, String key) {
+        net.minecraft.nbt.NBTTagList l = t.getTagList(key, net.minecraftforge.common.util.Constants.NBT.TAG_LONG);
+        long[] out = new long[l.tagCount()];
+        for (int i = 0; i < out.length; i++) {
+            out[i] = ((net.minecraft.nbt.NBTTagLong) l.get(i)).getLong();
+        }
+        return out;
+    }
+
+    static void writeLongs(NBTTagCompound t, String key, java.util.List<Long> vals) {
+        net.minecraft.nbt.NBTTagList l = new net.minecraft.nbt.NBTTagList();
+        for (long v : vals) {
+            l.appendTag(new net.minecraft.nbt.NBTTagLong(v));
+        }
+        t.setTag(key, l);
     }
 }

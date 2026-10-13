@@ -51,6 +51,8 @@ public final class ModItems {
 
     /** Клинок Каэля — трофей первой Опоры. */
     public static Item KAEL_BLADE;
+    /** Чётки Ирены — трофей второй Опоры. */
+    public static Item IRENA_ROSARY;
 
     public static final List<Item> ALL = new ArrayList<>();
 
@@ -77,6 +79,8 @@ public final class ModItems {
         CHALLENGE_SPHERE.setCreativeTab(ru.death.chaosshard.ChaosTab.TAB);
         KAEL_BLADE = add(new ru.death.chaosshard.hero.ItemKaelBlade(), "kael_blade");
         KAEL_BLADE.setCreativeTab(ru.death.chaosshard.ChaosTab.TAB);
+        IRENA_ROSARY = add(new ru.death.chaosshard.hero.ItemIrenaRosary(), "irena_rosary");
+        IRENA_ROSARY.setCreativeTab(ru.death.chaosshard.ChaosTab.TAB);
         for (ru.death.chaosshard.anchor.ItemAnchorSeal.Type t : ru.death.chaosshard.anchor.ItemAnchorSeal.Type.values()) {
             SEALS.put(t, add(new ru.death.chaosshard.anchor.ItemAnchorSeal(t), "anchor_seal_" + t.name().toLowerCase()));
         }

@@ -283,6 +283,9 @@ public final class AutoTest {
     private ru.death.chaosshard.structure.OrderStructureData.Entry planned;
     private BlockPos bowlPos, spherePos, pullChest, altarPos, moonPos, shrinePos;
     private UUID lordId;
+    private ru.death.chaosshard.structure.OrderStructureData.Entry monastery;
+    private ru.death.chaosshard.hero.EntityHero irena;
+    private float irenaHp;
     private int challengeNit, challengeCorrupt;
 
     /** Подобрать с земли рядом сферу нужного ритуала (true — была). */
@@ -1134,6 +1137,23 @@ public final class AutoTest {
             shrinePos = sg.up();
             ru.death.chaosshard.order.Shrines.register(ow, shrinePos);
         });
+        step("сцена появления: Каэль замирает, камера кончает в глазах", () -> {
+            List<ru.death.chaosshard.hero.EntityHero> hs = ow.getEntitiesWithinAABB(ru.death.chaosshard.hero.EntityHero.class, new AxisAlignedBB(planned.origin()).grow(24, 40, 24));
+            if (hs.isEmpty()) { check(false, "Каэля нет"); return; }
+            ru.death.chaosshard.hero.EntityHero k = hs.get(0);
+            me.setPosition(k.posX, k.posY, k.posZ + 10);
+            ru.death.chaosshard.hero.Pillars.intro(me, k);
+            check(ru.death.chaosshard.cutscene.CutsceneManager.playing(me) && k.scripted, "сцена идёт, Каэль по сценарию");
+            float h0 = k.getHealth();
+            k.hurtResistantTime = 0;
+            k.attackEntityFrom(DamageSource.causePlayerDamage(me), 40F);
+            check(k.getHealth() == h0, "в сцене Каэль неуязвим");
+            ru.death.chaosshard.cutscene.Cutscene sc = ru.death.chaosshard.hero.HeroScenes.intro(ow, k, me);
+            check(sc.at(sc.length)[0].distanceTo(new Vec3d(me.posX, me.posY + me.getEyeHeight(), me.posZ)) < 0.2, "камера кончает в глазах");
+            check(sc.lines.size() == 2, "реплик: " + sc.lines.size());
+            ru.death.chaosshard.cutscene.CutsceneManager.skip(me);
+            check(!k.scripted, "после сцены Каэль снова в бою");
+        });
         step("щит спереди, спина открыта", () -> {
             List<ru.death.chaosshard.hero.EntityHero> hs = ow.getEntitiesWithinAABB(ru.death.chaosshard.hero.EntityHero.class, new AxisAlignedBB(planned.origin()).grow(24, 40, 24));
             if (hs.isEmpty()) { check(false, "Каэля нет"); return; }
@@ -1185,11 +1205,8 @@ public final class AutoTest {
             ru.death.chaosshard.hero.HeroData.Pillar p = ru.death.chaosshard.hero.HeroData.get(ow).of(ru.death.chaosshard.hero.Lightbearer.KAEL);
             check(p.state == ru.death.chaosshard.hero.HeroData.FALLEN, "Опора пала");
             BlockPos o = planned.origin();
-            check(ow.isAirBlock(o.up(ru.death.chaosshard.structure.bp.VeilPillar.FLOOR + ru.death.chaosshard.structure.bp.VeilPillar.COLUMN_H)), "верх колонны обрушен");
-            boolean off = planned.beams.stream().allMatch(b -> !(ow.getTileEntity(b) instanceof ru.death.chaosshard.structure.TileOrderBeacon)
-                    || !((ru.death.chaosshard.structure.TileOrderBeacon) ow.getTileEntity(b)).lit);
-            check(off, "луч погас (светоч обрушен вместе с колонной)");
-            check(ow.getBlockState(shrinePos).getBlock() == ModBlocks.DESECRATED_STONE, "святыня рядом погасла");
+            check(!ow.isAirBlock(o.up(ru.death.chaosshard.structure.bp.VeilPillar.FLOOR + ru.death.chaosshard.structure.bp.VeilPillar.COLUMN_H)),
+                    "колонна ещё стоит — рухнет под камерой");
             boolean blade = !ow.getEntitiesWithinAABB(net.minecraft.entity.item.EntityItem.class, new AxisAlignedBB(o).grow(24, 40, 24),
                     x -> x.getItem().getItem() == ru.death.chaosshard.init.ModItems.KAEL_BLADE).isEmpty();
             check(blade, "Клинок Каэля лежит у Опоры");
@@ -1198,6 +1215,16 @@ public final class AutoTest {
             check(a != null, "веха «Опора Каэля пала» загружена");
             // подставному игроку Forge вехи не засчитывает — только для сведения
             line("    веха у подставного игрока: " + (a != null && me.getAdvancements().getProgress(a).isDone() ? "засчитана" : "не засчитана (FakePlayer)"));
+        });
+        until("колонна рухнула", () -> ow.isAirBlock(planned.origin().up(ru.death.chaosshard.structure.bp.VeilPillar.FLOOR
+                + ru.death.chaosshard.structure.bp.VeilPillar.COLUMN_H)), ru.death.chaosshard.hero.Pillars.COLLAPSE_DELAY + 40);
+        step("после обрушения: луч погас, святыня погасла", () -> {
+            boolean off = planned.beams.stream().allMatch(b -> !(ow.getTileEntity(b) instanceof ru.death.chaosshard.structure.TileOrderBeacon)
+                    || !((ru.death.chaosshard.structure.TileOrderBeacon) ow.getTileEntity(b)).lit);
+            check(off, "луч погас (светоч обрушен вместе с колонной)");
+            check(ow.getBlockState(shrinePos).getBlock() == ModBlocks.DESECRATED_STONE, "святыня рядом погасла");
+            ru.death.chaosshard.cutscene.Cutscene fs = ru.death.chaosshard.hero.HeroScenes.fall(ow, planned.origin(), me, ru.death.chaosshard.hero.Lightbearer.KAEL);
+            check(fs.at(fs.length)[0].distanceTo(new Vec3d(me.posX, me.posY + me.getEyeHeight(), me.posZ)) < 0.2, "сцена падения кончается в глазах игрока");
         });
         until("волна Скверны прошла", () -> ru.death.chaosshard.hero.HeroData.get(ow).of(ru.death.chaosshard.hero.Lightbearer.KAEL).fallRing < 0,
                 ChaosConfig.order.pillarDefileRadius * 4 + 100);
@@ -1216,6 +1243,85 @@ public final class AutoTest {
             }
             check(bad * 2 >= all, "осквернённых столбцов на радиусе " + r + ": " + bad + " из " + all);
             check(!useSphere(ru.death.chaosshard.ritual.Ritual.OMEN_KAEL, base), "Знамение павшей Опоры не срабатывает");
+            me.setPosition(base.getX() + 0.5, base.getY() + 1, base.getZ() + 0.5);
+            me.managedPosX = me.posX;
+            me.managedPosZ = me.posZ;
+        });
+
+        section("Акт 4: Ирена и монастыри");
+        step("Знамение Ирены: Опора и три монастыря", () -> {
+            me.setPosition(base.getX() + 0.5, base.getY() + 1, base.getZ() + 0.5);
+            me.rotationYaw = 90;   // на запад — в нетронутые земли
+            check(useSphere(ru.death.chaosshard.ritual.Ritual.OMEN_IRENA, base), "Знамение Ирены сработало после падения Каэля");
+            ru.death.chaosshard.hero.HeroData.Pillar p = ru.death.chaosshard.hero.HeroData.get(ow).of(ru.death.chaosshard.hero.Lightbearer.IRENA);
+            check(p.state == ru.death.chaosshard.hero.HeroData.PLANNED, "Опора Ирены указана: " + p.x + " " + p.z);
+            check(p.linked.size() == ru.death.chaosshard.hero.Pillars.MONASTERIES, "монастырей указано: " + p.linked.size());
+            check(ru.death.chaosshard.hero.Pillars.lit(ow, ru.death.chaosshard.hero.Lightbearer.IRENA) == p.linked.size(), "все монастыри горят");
+            monastery = p.linked.isEmpty() ? null : ru.death.chaosshard.structure.OrderStructureData.get(ow).byId(p.linked.get(0));
+            if (monastery != null) {
+                me.setPosition(monastery.x + 0.5, 200, monastery.z + 0.5);
+                me.managedPosX = me.posX;
+                me.managedPosZ = me.posZ;
+            }
+        });
+        until("монастырь встал", () -> monastery != null && monastery.state == ru.death.chaosshard.structure.OrderStructureData.PLACED, 1200);
+        step("Святой камень монастыря: горит, гаснет от Эссенции", () -> {
+            ru.death.chaosshard.hero.HeroData.Pillar p = ru.death.chaosshard.hero.HeroData.get(ow).of(ru.death.chaosshard.hero.Lightbearer.IRENA);
+            check(p.shrines.size() == 1, "святыня монастыря записана: " + p.shrines.size());
+            check(ru.death.chaosshard.structure.BlueprintPlacer.FAILED.isEmpty(), "все блоки монастыря разобраны " + ru.death.chaosshard.structure.BlueprintPlacer.FAILED);
+            if (p.shrines.isEmpty()) return;
+            BlockPos st = p.shrines.get(0);
+            check(ow.getBlockState(st).getBlock() == ModBlocks.SHRINE_STONE, "на алтаре Святой камень");
+            int before = ru.death.chaosshard.hero.Pillars.lit(ow, ru.death.chaosshard.hero.Lightbearer.IRENA);
+            boolean ok = ru.death.chaosshard.order.Shrines.desecrate(ow, st, me, new net.minecraft.item.ItemStack(ru.death.chaosshard.init.ModItems.CHAOS_ESSENCE));
+            int after = ru.death.chaosshard.hero.Pillars.lit(ow, ru.death.chaosshard.hero.Lightbearer.IRENA);
+            check(ok && after == before - 1, "монастырь погас: горит " + before + " → " + after);
+            me.setPosition(p.x + 0.5, 200, p.z + 0.5);
+            me.managedPosX = me.posX;
+            me.managedPosZ = me.posZ;
+        });
+        until("Опора Ирены встала", () -> ru.death.chaosshard.hero.HeroData.get(ow).of(ru.death.chaosshard.hero.Lightbearer.IRENA).state
+                == ru.death.chaosshard.hero.HeroData.STANDING, 1200);
+        step("Ирена на Опоре, вокруг святая земля", () -> {
+            ru.death.chaosshard.hero.HeroData.Pillar p = ru.death.chaosshard.hero.HeroData.get(ow).of(ru.death.chaosshard.hero.Lightbearer.IRENA);
+            irena = ru.death.chaosshard.hero.Pillars.heroOf(ow, ru.death.chaosshard.hero.Lightbearer.IRENA, p);
+            check(irena != null, "Ирена на Опоре");
+            check(ru.death.chaosshard.order.Shrines.nearest(ow, p.pos(), 32) != null, "у Опоры Святой камень");
+            for (ru.death.chaosshard.structure.EntityOrderKnight k : ow.getEntitiesWithinAABB(ru.death.chaosshard.structure.EntityOrderKnight.class,
+                    new AxisAlignedBB(p.pos()).grow(24, 40, 24))) {
+                k.setDead();
+            }
+            if (irena != null) {
+                irena.setHealth(200);
+                irenaHp = irena.getHealth();
+            }
+        });
+        sleep(40);
+        step("монастыри лечат Ирену", () -> {
+            if (irena == null) return;
+            float d = irena.getHealth() - irenaHp;
+            check(d >= 20, "за 2 секунды при двух горящих монастырях: +" + d);
+            ru.death.chaosshard.hero.HeroData.get(ow).of(ru.death.chaosshard.hero.Lightbearer.IRENA).linked.clear();
+            irena.setHealth(200);
+            irenaHp = irena.getHealth();
+        });
+        sleep(40);
+        step("без монастырей лечения почти нет; Ирена пала — чётки у ног", () -> {
+            if (irena == null) return;
+            float d = irena.getHealth() - irenaHp;
+            check(d < 15, "без монастырей за 2 секунды: +" + d);
+            kill(irena);
+            ru.death.chaosshard.hero.HeroData.Pillar p = ru.death.chaosshard.hero.HeroData.get(ow).of(ru.death.chaosshard.hero.Lightbearer.IRENA);
+            check(p.state == ru.death.chaosshard.hero.HeroData.FALLEN, "Опора Ирены пала");
+            boolean rosary = !ow.getEntitiesWithinAABB(net.minecraft.entity.item.EntityItem.class, new AxisAlignedBB(p.pos()).grow(24, 40, 24),
+                    x -> x.getItem().getItem() == ru.death.chaosshard.init.ModItems.IRENA_ROSARY).isEmpty();
+            check(rosary, "Чётки Ирены лежат у Опоры");
+        });
+        until("Опора Ирены рухнула, святая земля погасла", () -> {
+            ru.death.chaosshard.hero.HeroData.Pillar p = ru.death.chaosshard.hero.HeroData.get(ow).of(ru.death.chaosshard.hero.Lightbearer.IRENA);
+            return p.collapseAt == 0 && ru.death.chaosshard.order.Shrines.nearest(ow, p.pos(), 32) == null;
+        }, ru.death.chaosshard.hero.Pillars.COLLAPSE_DELAY + 40);
+        step("назад на площадку", () -> {
             me.setPosition(base.getX() + 0.5, base.getY() + 1, base.getZ() + 0.5);
             me.managedPosX = me.posX;
             me.managedPosZ = me.posZ;

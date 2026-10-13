@@ -278,6 +278,17 @@ public class CommandChaosShard extends CommandBase {
                     sender.sendMessage(new net.minecraft.util.text.TextComponentString("Опоры забыты"));
                     break;
                 }
+                if (args.length >= 3 && "intro".equals(args[1])) {
+                    // /oh pillar intro <герой> — показать сцену появления ещё раз (стоять у Опоры)
+                    EntityPlayerMP pl = getCommandSenderAsPlayer(sender);
+                    ru.death.chaosshard.hero.Lightbearer h = ru.death.chaosshard.hero.Lightbearer.valueOf(args[2].toUpperCase());
+                    ru.death.chaosshard.hero.EntityHero hero = ru.death.chaosshard.hero.Pillars.heroOf(ws, h, hd.of(h));
+                    if (hero == null || pl.world != ws) {
+                        throw new CommandException("Светоч не найден рядом с его Опорой");
+                    }
+                    ru.death.chaosshard.hero.Pillars.intro(pl, hero);
+                    break;
+                }
                 if (args.length >= 3 && "fall".equals(args[1])) {
                     ru.death.chaosshard.hero.Lightbearer h = ru.death.chaosshard.hero.Lightbearer.valueOf(args[2].toUpperCase());
                     hd.of(h).state = ru.death.chaosshard.hero.HeroData.FALLEN;
@@ -609,7 +620,7 @@ public class CommandChaosShard extends CommandBase {
             return getListOfStringsMatchingLastWord(args, "duel", "reset");
         }
         if (args.length == 2 && "pillar".equals(args[0])) {
-            return getListOfStringsMatchingLastWord(args, "fall", "reset");
+            return getListOfStringsMatchingLastWord(args, "fall", "intro", "reset");
         }
         if (args.length == 3 && "pillar".equals(args[0])) {
             return getListOfStringsMatchingLastWord(args, "kael", "irena", "velmor", "lian", "elis");

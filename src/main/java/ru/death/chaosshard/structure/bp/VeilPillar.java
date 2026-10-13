@@ -43,6 +43,9 @@ public final class VeilPillar {
     /** Облик по герою: 0 Каэль, 1 Ирена, 2 Вельмор, 3 Лиан, 4 Элис. */
     static Palette palette(int hero) {
         switch (hero) {
+            case 1: // Ирена: белый мрамор, голубая вода, лазурь
+                return new Palette(Q, "minecraft:concrete[color=white]", "minecraft:concrete[color=light_blue]", BRICK, Q_CH, Q_LN, Q,
+                        "minecraft:lapis_block", LANTERN, LANTERN);
             default:
                 return new Palette(Q, "minecraft:stone[variant=smooth_diorite]", GOLD, BRICK, Q_CH, Q_LN, Q, GOLD, LANTERN, "minecraft:glowstone");
         }
@@ -138,6 +141,12 @@ public final class VeilPillar {
             b.set((int) Math.round(Math.cos(a) * (R - 2)), floor, (int) Math.round(Math.sin(a) * (R - 2)), p.light);
         }
 
+        // Ирена: Святой камень за колонной — вокруг Опоры святая земля
+        if (hero == 1) {
+            b.set(0, floor, -6, GOLD);
+            b.set(0, floor + 1, -6, "chaosshard:shrine_stone");
+            b.mark(0, floor + 1, -6, "shrine");
+        }
         // --- герой перед колонной, стража по кругу
         b.mark(0, floor + 1, 6, "hero");
         for (int i = 0; i < 4; i++) {

@@ -68,6 +68,11 @@ public class EntityHero extends EntityMob {
     private final BossInfoServer bossInfo = new BossInfoServer(new TextComponentString(""), BossInfo.Color.YELLOW, BossInfo.Overlay.NOTCHED_10);
     public long structureId = -1;
     private boolean greeted, phase2;
+    /** Сцена появления: не дерётся, неуязвим. */
+    public boolean scripted;
+    /** Ирена: таймеры святой земли, лечения стражи, щита; щит держится shield тиков. */
+    private int holyTimer, holyCharge = -1, shieldTimer, shield;
+    private long lastLitHint;
     private int flashTimer, dashTimer, dashing, stagger;
     private long lastFrontHint;
 
@@ -95,6 +100,10 @@ public class EntityHero extends EntityMob {
         dataManager.set(HERO, h.ordinal());
         double hp, dmg, armor;
         switch (h) {
+            case IRENA:
+                hp = 700; dmg = 9; armor = 12;
+                setItemStackToSlot(EntityEquipmentSlot.MAINHAND, Trophies.of(Lightbearer.IRENA));
+                break;
             default: // KAEL
                 hp = 600; dmg = 12; armor = 16;
                 setItemStackToSlot(EntityEquipmentSlot.MAINHAND, Trophies.of(Lightbearer.KAEL));
@@ -159,6 +168,23 @@ public class EntityHero extends EntityMob {
 
     @Override
     public boolean attackEntityFrom(DamageSource src, float amount) {
+        if (scripted && !src.canHarmInCreative()) {
+            return false;
+        }
+        if (!world.isRemote && hero() == Lightbearer.IRENA) {
+            if (shield > 0 && !src.canHarmInCreative()) {
+                world.playSound(null, getPosition(), SoundEvents.BLOCK_ANVIL_LAND, SoundCategory.HOSTILE, 0.6F, 1.8F);
+                return false;
+            }
+            Entity who = src.getTrueSource();
+            if (who instanceof EntityPlayerMP && world.getTotalWorldTime() - lastLitHint > 300) {
+                int lit = Pillars.lit(world, Lightbearer.IRENA);
+                if (lit > 0) {
+                    lastLitHint = world.getTotalWorldTime();
+                    ((EntityPlayerMP) who).sendStatusMessage(Breach.grimoire("chaosshard.hero.irena.lit", lit, HeroData.get(world).of(Lightbearer.IRENA).linked.size()), true);
+                }
+            }
+        }
         if (!world.isRemote && hero() == Lightbearer.KAEL && !src.isUnblockable() && stagger <= 0 && fromFront(src)) {
             amount *= FRONT_PASS;
             world.playSound(null, getPosition(), SoundEvents.ITEM_SHIELD_BLOCK, SoundCategory.HOSTILE, 1.0F, 0.8F + rand.nextFloat() * 0.3F);
@@ -196,6 +222,10 @@ public class EntityHero extends EntityMob {
             return;
         }
         bossInfo.setPercent(getHealth() / getMaxHealth());
+        if (scripted) {
+            setAttackTarget(null);
+            return;
+        }
         EntityLivingBase target = getAttackTarget();
         if (!greeted && target instanceof EntityPlayer && getDistanceSq(target) < 24 * 24) {
             greeted = true;
@@ -203,11 +233,90 @@ public class EntityHero extends EntityMob {
         }
         if (hero() == Lightbearer.KAEL) {
             kael(target);
+        } else if (hero() == Lightbearer.IRENA) {
+            irena(target);
         }
         // вне боя понемногу залечивается
         if (target == null && ticksExisted % 40 == 0 && getHealth() < getMaxHealth()) {
             heal(6.0F);
         }
+    }
+
+    /**
+     * Ирена: пока горят монастыри, молитва лечит её (6 здоровья в секунду за каждый); раз в 5 секунд
+     * освящает землю под собой — кто рядом, обжигается светом; лечит стражу. С половины здоровья —
+     * святой щит на 3 секунды раз в 15 и двое стражей на помощь.
+     */
+    private void irena(EntityLivingBase target) {
+        WorldServer ws = (WorldServer) world;
+        if (shield > 0) {
+            shield--;
+            if (shield % 3 == 0) {
+                ws.spawnParticle(EnumParticleTypes.END_ROD, posX, posY + 1.2, posZ, 6, 0.6, 0.9, 0.6, 0.01);
+            }
+        }
+        if (ticksExisted % 20 == 0) {
+            int lit = Pillars.lit(world, Lightbearer.IRENA);
+            if (lit > 0 && getHealth() < getMaxHealth()) {
+                heal(6.0F * lit);
+                ws.spawnParticle(EnumParticleTypes.HEART, posX, posY + 2.4, posZ, lit, 0.4, 0.2, 0.4, 0.0);
+            }
+        }
+        if (target == null || !target.isEntityAlive()) {
+            holyCharge = -1;
+            return;
+        }
+        // освящение: заряд секунду, потом свет бьёт всех не своих в 5 блоках
+        if (holyCharge >= 0) {
+            holyCharge++;
+            for (int i = 0; i < 6; i++) {
+                double a = rand.nextDouble() * Math.PI * 2;
+                ws.spawnParticle(EnumParticleTypes.END_ROD, posX + Math.cos(a) * 5, posY + 0.1, posZ + Math.sin(a) * 5, 1, 0, 0.05, 0, 0.0);
+            }
+            if (holyCharge >= 20) {
+                holyCharge = -1;
+                ws.spawnParticle(EnumParticleTypes.FIREWORKS_SPARK, posX, posY + 0.3, posZ, 80, 2.5, 0.2, 2.5, 0.05);
+                world.playSound(null, getPosition(), SoundEvents.ENTITY_ILLAGER_CAST_SPELL, SoundCategory.HOSTILE, 1.5F, 1.4F);
+                for (EntityLivingBase e : world.getEntitiesWithinAABB(EntityLivingBase.class, getEntityBoundingBox().grow(5),
+                        x -> x != this && !isOnSameTeam(x) && x.isEntityAlive())) {
+                    e.attackEntityFrom(DamageSource.causeMobDamage(this).setMagicDamage(), 6.0F);
+                    e.addPotionEffect(new PotionEffect(MobEffects.WEAKNESS, 60, 0));
+                }
+                for (EntityOrderKnight k : world.getEntitiesWithinAABB(EntityOrderKnight.class, getEntityBoundingBox().grow(16))) {
+                    k.heal(10.0F);
+                    ws.spawnParticle(EnumParticleTypes.HEART, k.posX, k.posY + 2, k.posZ, 2, 0.3, 0.2, 0.3, 0.0);
+                }
+            }
+            return;
+        }
+        if (++holyTimer >= 100) {
+            holyTimer = 0;
+            holyCharge = 0;
+            world.playSound(null, getPosition(), SoundEvents.BLOCK_NOTE_BELL, SoundCategory.HOSTILE, 2.0F, 1.2F);
+        }
+        if (!phase2 && getHealth() < getMaxHealth() / 2) {
+            phase2 = true;
+            say("phase2");
+            for (int i = 0; i < 2; i++) {
+                EntityOrderKnight k = new EntityOrderKnight(world);
+                k.setup(EntityOrderKnight.GUARD);
+                k.setLocationAndAngles(posX + rand.nextInt(7) - 3, posY, posZ + rand.nextInt(7) - 3, rand.nextFloat() * 360, 0);
+                if (hasHome()) {
+                    k.setHomePosAndDistance(getHomePosition(), 16);
+                }
+                world.spawnEntity(k);
+                ws.spawnParticle(EnumParticleTypes.FIREWORKS_SPARK, k.posX, k.posY + 1, k.posZ, 30, 0.3, 0.8, 0.3, 0.05);
+            }
+        }
+        if (phase2 && ++shieldTimer >= 300) {
+            shieldTimer = 0;
+            shield = 60;
+            world.playSound(null, getPosition(), SoundEvents.BLOCK_NOTE_CHIME, SoundCategory.HOSTILE, 2.0F, 1.0F);
+        }
+    }
+
+    public boolean shielded() {
+        return shield > 0;
     }
 
     private void kael(EntityLivingBase target) {

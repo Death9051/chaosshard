@@ -125,7 +125,13 @@ public class Shrines {
         if (!player.isCreative()) {
             essence.shrink(1);
         }
+        boolean monastery = ru.death.chaosshard.hero.Pillars.isMonasteryShrine(world, stone);
         extinguish(world, stone);
+        if (monastery) {
+            Milestones.grant(player, "monastery_out");
+            player.sendMessage(Breach.grimoire("chaosshard.hero.irena.monastery_out",
+                    ru.death.chaosshard.hero.Pillars.lit(world, ru.death.chaosshard.hero.Lightbearer.IRENA)));
+        }
         world.playSound(null, stone, net.minecraft.init.SoundEvents.ENTITY_WITHER_DEATH, SoundCategory.BLOCKS, 0.5F, 1.4F);
         net.minecraft.entity.item.EntityItem drop = new net.minecraft.entity.item.EntityItem(world,
                 stone.getX() + 0.5, stone.getY() + 1.2, stone.getZ() + 0.5, new ItemStack(ModItems.WORLD_SHARD));
