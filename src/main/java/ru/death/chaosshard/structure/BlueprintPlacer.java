@@ -101,11 +101,12 @@ public final class BlueprintPlacer {
         Rotation rotation = rotation(rot);
         int[] bb = b.bounds();
         // расчистка: всё, что выше земли в пятне постройки, — долой (листва, брёвна, трава)
+        java.util.Set<Long> columns = new java.util.HashSet<>();
         for (long k : b.blocks.keySet()) {
+            columns.add(Blueprint.key(Blueprint.kx(k), 0, Blueprint.kz(k)));
+        }
+        for (long k : columns) {
             int x = Blueprint.kx(k), z = Blueprint.kz(k);
-            if (Blueprint.ky(k) < 0) {
-                continue;
-            }
             for (int y = 0; y <= bb[4] + 2; y++) {
                 BlockPos p = at(origin, x, y, z, rot);
                 IBlockState s = world.getBlockState(p);

@@ -186,7 +186,7 @@ public final class Greenhouse {
         for (int x = -R + 1; x <= R - 1; x++) {
             for (int z = -R + 1; z <= R - 1; z++) {
                 double d = Math.sqrt(x * x + z * z);
-                if (d > R - 0.5 || Math.abs(x) <= 1 && z > 0) {
+                if (d > R - 0.5 || Math.abs(x) <= 1 && z > 0 || PATH.equals(b.get(x, -1, z)) || Blueprint.AIR.equals(b.get(x, 0, z))) {
                     continue;
                 }
                 if (d > R - 2.5 && r.nextInt(3) == 0) {
