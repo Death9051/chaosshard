@@ -193,6 +193,6 @@ public class TileDefiledGenerator extends TileEntity implements ITickable {
 
     @Override
     public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
-        readFromNBT(pkt.getNbtTagCompound());
+        readFromNBT(pkt.getNbtCompound());
     }
 }

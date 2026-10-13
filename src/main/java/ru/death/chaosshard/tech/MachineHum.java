@@ -27,7 +27,7 @@ public final class MachineHum {
             "capacitor", "bank"};
 
     /** Провода и хранилища — не машины: они гудят от любого тока. */
-    static boolean carrier(String path) {
+    public static boolean carrier(String path) {
         String s = path.toLowerCase();
         for (String c : CARRIERS) {
             if (s.contains(c)) {
