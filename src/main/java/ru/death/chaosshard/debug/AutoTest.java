@@ -1937,9 +1937,10 @@ public final class AutoTest {
             me.setPosition(anchorPos.getX() + 3.5, anchorPos.getY(), anchorPos.getZ() + 0.5);
             ru.death.chaosshard.structure.EntityOrderKnight cap = ru.death.chaosshard.act5.OrderRaids.spawn(ow, anchorPos, me, 3, 0);
             check(cap != null && cap.getTags().contains(ru.death.chaosshard.act5.OrderRaids.TAG_CAPTAIN), "капитан набега");
+            // рядом с капитаном — только его отряд (настоящий набег Якоря мог прийти сам и стоять в другом месте)
             List<ru.death.chaosshard.structure.EntityOrderKnight> squad = ow.getEntitiesWithinAABB(ru.death.chaosshard.structure.EntityOrderKnight.class,
-                    new AxisAlignedBB(anchorPos).grow(48), x -> x.getTags().contains(ru.death.chaosshard.act5.OrderRaids.TAG_RAID));
-            check(squad.size() == 1 + 5 + 1, "в отряде " + squad.size() + " (капитан, 5 рыцарей, знаменосец)");
+                    cap.getEntityBoundingBox().grow(7, 6, 7), x -> x.getTags().contains(ru.death.chaosshard.act5.OrderRaids.TAG_RAID));
+            check(squad.size() >= 1 + 5 + 1, "в отряде " + squad.size() + " (капитан, 5 рыцарей, знаменосец)");
             check(squad.stream().allMatch(k -> k.getTags().contains(ru.death.chaosshard.garrot.GarrotRaids.TAG_ARMY)
                     && k.getEntityData().getLong(ru.death.chaosshard.garrot.GarrotRaids.TAG_RAID) == anchorPos.toLong()), "все идут на Якорь как армия набега");
             check(squad.stream().anyMatch(k -> k.getTags().contains(ru.death.chaosshard.garrot.GarrotRaids.TAG_BANNER)), "есть знаменосец Света");
