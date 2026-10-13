@@ -1597,10 +1597,11 @@ public final class AutoTest {
             int banners = 0;
             for (net.minecraft.entity.item.EntityItem ei : ow.getEntitiesWithinAABB(net.minecraft.entity.item.EntityItem.class, me.getEntityBoundingBox().grow(32),
                     x -> x.getItem().getItem() == ru.death.chaosshard.init.ModItems.GARROT_BANNER)) {
-                banners += ei.getItem().getCount();
+                // капитаны набегов роняют по одному Знамени — считаем только связку от Гаррота
+                banners = Math.max(banners, ei.getItem().getCount());
                 ei.setDead();
             }
-            check(banners == 6, "Знамён Мрачной армии: " + banners);
+            check(banners == 6, "Знамён Мрачной армии от Гаррота: " + banners);
             Advancement a = server.getAdvancementManager().getAdvancement(new ResourceLocation("chaosshard", "m/garrot_duel"));
             check(a != null, "веха «Гаррот склонился» загружена");
         });

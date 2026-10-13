@@ -44,14 +44,16 @@ public final class ChampionsCompat {
             return;
         }
         EntityLiving e = (EntityLiving) event.getEntity();
-        if (!(e instanceof EntityHero) && !(e instanceof EntityOrderKnight)) {
+        boolean boss = e instanceof EntityHero || e instanceof ru.death.chaosshard.garrot.EntityGarrot;
+        if (!boss && !(e instanceof EntityOrderKnight)) {
             return;
         }
         IChampionship chp = CapabilityChampionship.getChampionship(e);
         if (chp == null || chp.getRank() != null) {
             return;
         }
-        if (e instanceof EntityHero) {
+        if (boss) {
+            // у Светочей и Гаррота своя механика боя — чемпионами не бывают
             chp.setRank(RankManager.getEmptyRank());
             return;
         }
