@@ -1105,8 +1105,6 @@ public final class AutoTest {
             check(!useSphere(ru.death.chaosshard.ritual.Ritual.OMEN_KAEL, base), "второе Знамение Каэля не тратится");
             planned = e;
             me.setPosition(p.x + 0.5, 200, p.z + 0.5);
-            me.managedPosX = me.posX;
-            me.managedPosZ = me.posZ;
         });
         until("Опора встаёт, когда я подхожу", () -> planned != null && planned.state == ru.death.chaosshard.structure.OrderStructureData.PLACED, 1200);
         sleep(10);
@@ -1244,8 +1242,6 @@ public final class AutoTest {
             check(bad * 2 >= all, "осквернённых столбцов на радиусе " + r + ": " + bad + " из " + all);
             check(!useSphere(ru.death.chaosshard.ritual.Ritual.OMEN_KAEL, base), "Знамение павшей Опоры не срабатывает");
             me.setPosition(base.getX() + 0.5, base.getY() + 1, base.getZ() + 0.5);
-            me.managedPosX = me.posX;
-            me.managedPosZ = me.posZ;
         });
 
         section("Акт 4: Ирена и монастыри");
@@ -1260,8 +1256,6 @@ public final class AutoTest {
             monastery = p.linked.isEmpty() ? null : ru.death.chaosshard.structure.OrderStructureData.get(ow).byId(p.linked.get(0));
             if (monastery != null) {
                 me.setPosition(monastery.x + 0.5, 200, monastery.z + 0.5);
-                me.managedPosX = me.posX;
-                me.managedPosZ = me.posZ;
             }
         });
         until("монастырь встал", () -> monastery != null && monastery.state == ru.death.chaosshard.structure.OrderStructureData.PLACED, 1200);
@@ -1277,8 +1271,6 @@ public final class AutoTest {
             int after = ru.death.chaosshard.hero.Pillars.lit(ow, ru.death.chaosshard.hero.Lightbearer.IRENA);
             check(ok && after == before - 1, "монастырь погас: горит " + before + " → " + after);
             me.setPosition(p.x + 0.5, 200, p.z + 0.5);
-            me.managedPosX = me.posX;
-            me.managedPosZ = me.posZ;
         });
         until("Опора Ирены встала", () -> ru.death.chaosshard.hero.HeroData.get(ow).of(ru.death.chaosshard.hero.Lightbearer.IRENA).state
                 == ru.death.chaosshard.hero.HeroData.STANDING, 1200);
@@ -1323,8 +1315,6 @@ public final class AutoTest {
         }, ru.death.chaosshard.hero.Pillars.COLLAPSE_DELAY + 40);
         step("назад на площадку", () -> {
             me.setPosition(base.getX() + 0.5, base.getY() + 1, base.getZ() + 0.5);
-            me.managedPosX = me.posX;
-            me.managedPosZ = me.posZ;
         });
 
         section("Акт 4: дуэль с Гарротом и катсцена");
