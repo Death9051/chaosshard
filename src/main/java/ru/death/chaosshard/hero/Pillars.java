@@ -310,7 +310,10 @@ public class Pillars {
         hero.structureId = e.id;
         hero.setLocationAndAngles(heroAt.getX() + 0.5, heroAt.getY(), heroAt.getZ() + 0.5, ws.rand.nextFloat() * 360, 0);
         hero.setHomePosAndDistance(e.origin().up(VeilPillar.FLOOR + 1), VeilPillar.R + 4);
-        ws.spawnEntity(hero);
+        ws.getChunk(heroAt);
+        if (!ws.spawnEntity(hero)) {
+            ru.death.chaosshard.ChaosShard.LOG.warn("Светоч {} не появился на Опоре у {} — повтор при следующей проверке", h, heroAt);
+        }
         if (ChaosConfig.compat.pillarWaystones) {
             ru.death.chaosshard.compat.life.ChaosWaystones.place(ws, e.origin(), WAYSTONE[h.ordinal()], VeilPillar.R + 4, VeilPillar.R + 10);
         }
