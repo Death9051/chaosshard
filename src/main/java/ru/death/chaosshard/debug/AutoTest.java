@@ -1775,7 +1775,9 @@ public final class AutoTest {
                         sb.append("entity ").append(en.getRegistryName()).append('\n');
                     }
                 }
-                for (ResourceLocation id : net.minecraft.tileentity.TileEntity.REGISTRY.getKeys()) {
+                net.minecraft.util.registry.RegistryNamespaced<ResourceLocation, Class<? extends net.minecraft.tileentity.TileEntity>> reg =
+                        net.minecraftforge.fml.common.ObfuscationReflectionHelper.getPrivateValue(net.minecraft.tileentity.TileEntity.class, null, "field_190562_f");
+                for (ResourceLocation id : reg.getKeys()) {
                     if (m.equals(id.getNamespace())) {
                         sb.append("tile ").append(id).append('\n');
                     }
