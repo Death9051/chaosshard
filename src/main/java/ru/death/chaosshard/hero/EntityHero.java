@@ -668,7 +668,19 @@ public class EntityHero extends EntityMob implements ru.death.chaosshard.hero.Po
                 for (int i = 0; i < 2; i++) {
                     EntityOrderKnight k = new EntityOrderKnight(world);
                     k.setup(EntityOrderKnight.GUARD);
-                    k.setLocationAndAngles(posX + rand.nextInt(7) - 3, posY, posZ + rand.nextInt(7) - 3, rand.nextFloat() * 360, 0);
+                    // рядом с Лианом, но только на твёрдую опору — с площадки Опоры стражи не должны падать вниз
+                    double sx = posX, sz = posZ;
+                    for (int t = 0; t < 8; t++) {
+                        double tx = posX + rand.nextInt(7) - 3, tz = posZ + rand.nextInt(7) - 3;
+                        net.minecraft.util.math.BlockPos f = new net.minecraft.util.math.BlockPos(tx, posY, tz);
+                        if (world.getBlockState(f.down()).isSideSolid(world, f.down(), net.minecraft.util.EnumFacing.UP)
+                                && world.isAirBlock(f) && world.isAirBlock(f.up())) {
+                            sx = Math.floor(tx) + 0.5;
+                            sz = Math.floor(tz) + 0.5;
+                            break;
+                        }
+                    }
+                    k.setLocationAndAngles(sx, posY, sz, rand.nextFloat() * 360, 0);
                     if (hasHome()) {
                         k.setHomePosAndDistance(getHomePosition(), 16);
                     }
