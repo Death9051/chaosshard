@@ -898,3 +898,16 @@ entity.chaosshard.order_keeper.name=Sanctum Keeper
 tile.chaosshard.order_beacon.name=Order Beacon
 chaosshard.order.keeper_alive=The Sanctum Keeper guards the cache while it lives
 chaosshard.order.keeper_dead=The Keeper has fallen. The beacons go dark - the sanctum cache is open.
+
+# Ritual spheres
+item.chaosshard.ritual_sphere.growth.name=Sphere of Growth
+item.chaosshard.ritual_sphere.ward.name=Sphere of Warding
+item.chaosshard.ritual_sphere.storm.name=Sphere of Storm
+item.chaosshard.ritual_sphere.corruption.name=Sphere of Corruption Surge
+tile.chaosshard.ritual_sphere.name=Ritual Sphere
+chaosshard.ritual.sphere.made=The ritual "%s" is sealed into a sphere. Place it where the effect is needed.
+chaosshard.ritual.sphere.placed=Sphere "%s" placed and working
+chaosshard.ritual.sphere.left=Left: %s min %s s
+chaosshard.ritual.sphere.hint=Right-click a block to place. Shift+right-click the sphere with an empty hand to take it back.
+chaosshard.ritual.sphere.hint_anchor=Right-click a block near an Anchor (up to 48 blocks) - the Corruption surges at once.
+chaosshard.magic.sphere=Sealed into a sphere - place it anywhere

@@ -45,6 +45,7 @@ public final class ModBlocks {
     /** Жила Завесы — нарост Сердца с модулем «Богатство». */
     public static Block VEIL_VEIN;
     public static Block ORDER_BEACON;
+    public static Block RITUAL_SPHERE;
 
     /** Тестовые блоки-структуры (только творческий режим). */
     public static final List<Block> SEEDS = new ArrayList<>();
@@ -97,6 +98,12 @@ public final class ModBlocks {
         CHALK.setRegistryName(Tags.MOD_ID, "chalk_rune");
         CHALK.setTranslationKey(Tags.MOD_ID + ".chalk_rune");
         event.getRegistry().register(CHALK);
+        RITUAL_SPHERE = new ru.death.chaosshard.ritual.BlockRitualSphere();
+        RITUAL_SPHERE.setRegistryName(Tags.MOD_ID, "ritual_sphere");
+        RITUAL_SPHERE.setTranslationKey(Tags.MOD_ID + ".ritual_sphere");
+        event.getRegistry().register(RITUAL_SPHERE);
+        net.minecraftforge.fml.common.registry.GameRegistry.registerTileEntity(ru.death.chaosshard.ritual.TileRitualSphere.class,
+                new net.minecraft.util.ResourceLocation(Tags.MOD_ID, "ritual_sphere"));
         ANCHOR_PART = new ru.death.chaosshard.anchor.BlockAnchorPart();
         ANCHOR_PART.setRegistryName(Tags.MOD_ID, "anchor_part");
         ANCHOR_PART.setTranslationKey(Tags.MOD_ID + ".chaos_anchor");

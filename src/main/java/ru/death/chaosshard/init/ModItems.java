@@ -44,6 +44,9 @@ public final class ModItems {
     /** Печати Якоря по типам. */
     public static final java.util.Map<ru.death.chaosshard.anchor.ItemAnchorSeal.Type, Item> SEALS = new java.util.EnumMap<>(ru.death.chaosshard.anchor.ItemAnchorSeal.Type.class);
 
+    /** Сфера ритуала (метаданные — номер ритуала в Ritual.SPHERES). */
+    public static Item RITUAL_SPHERE;
+
     public static final List<Item> ALL = new ArrayList<>();
 
     @SubscribeEvent
@@ -63,6 +66,8 @@ public final class ModItems {
         TRIAL_KEY = add(new ru.death.chaosshard.trial.ItemTrialKey(), "trial_key");
         DRAGON_SCALE = add(new ru.death.chaosshard.item.ItemLore("chaosshard.dragon_scale.lore", true), "dragon_scale");
         CHAOS_CATCH = add(new ru.death.chaosshard.servant.ItemChaosCatch(), "chaos_catch");
+        RITUAL_SPHERE = add(new ru.death.chaosshard.ritual.ItemRitualSphere(), "ritual_sphere");
+        RITUAL_SPHERE.setCreativeTab(ru.death.chaosshard.ChaosTab.TAB);
         for (ru.death.chaosshard.anchor.ItemAnchorSeal.Type t : ru.death.chaosshard.anchor.ItemAnchorSeal.Type.values()) {
             SEALS.put(t, add(new ru.death.chaosshard.anchor.ItemAnchorSeal(t), "anchor_seal_" + t.name().toLowerCase()));
         }

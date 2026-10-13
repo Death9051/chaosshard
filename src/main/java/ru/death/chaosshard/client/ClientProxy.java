@@ -47,6 +47,8 @@ public class ClientProxy extends CommonProxy {
                 ru.death.chaosshard.structure.TileOrderBeacon.class, new ru.death.chaosshard.structure.client.OrderBeaconRenderer());
         net.minecraftforge.fml.client.registry.RenderingRegistry.registerEntityRenderingHandler(ru.death.chaosshard.structure.EntityOrderKnight.class,
                 ru.death.chaosshard.structure.client.RenderOrderKnight::new);
+        net.minecraftforge.fml.client.registry.ClientRegistry.bindTileEntitySpecialRenderer(
+                ru.death.chaosshard.ritual.TileRitualSphere.class, new ru.death.chaosshard.ritual.client.SphereRenderer());
         MagicKeys.register();
         MinecraftForge.EVENT_BUS.register(new MagicKeys());
         if (ChaosShard.astralLoaded && ChaosConfig.stars.enabled) {

@@ -180,8 +180,20 @@ public class TileRitualBowl extends TileEntity implements ITickable {
         ws.spawnParticle(EnumParticleTypes.DRAGON_BREATH, pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5, 60, 1.5, 0.5, 1.5, 0.03);
         world.playSound(null, pos, SoundEvents.EVOCATION_ILLAGER_PREPARE_SUMMON, SoundCategory.BLOCKS, 1.0F, 0.7F);
         Milestones.grant(player, Milestones.RITUAL);
-        say(player, Breach.grimoire("chaosshard.ritual.started", new net.minecraft.util.text.TextComponentTranslation(r.key())));
-        if (r.duration <= 0) {
+        if (!r.isSphere()) {
+            say(player, Breach.grimoire("chaosshard.ritual.started", new net.minecraft.util.text.TextComponentTranslation(r.key())));
+        }
+        if (r.isSphere()) {
+            // длительные ритуалы и Порыв запечатываются в сферу — её ставят там, где нужно
+            net.minecraft.entity.item.EntityItem ei = new net.minecraft.entity.item.EntityItem(world, pos.getX() + 0.5, pos.getY() + 1.1,
+                    pos.getZ() + 0.5, ItemRitualSphere.of(r, r.duration));
+            ei.motionX = ei.motionY = ei.motionZ = 0;
+            ei.setNoPickupDelay();
+            world.spawnEntity(ei);
+            ws.spawnParticle(EnumParticleTypes.END_ROD, pos.getX() + 0.5, pos.getY() + 1.2, pos.getZ() + 0.5, 30, 0.2, 0.2, 0.2, 0.08);
+            world.playSound(null, pos, SoundEvents.BLOCK_END_PORTAL_FRAME_FILL, SoundCategory.BLOCKS, 1.0F, 0.8F);
+            say(player, Breach.grimoire("chaosshard.ritual.sphere.made", new net.minecraft.util.text.TextComponentTranslation(r.key())));
+        } else if (r.duration <= 0) {
             instant(r, player);
         } else {
             active = r.ordinal();
@@ -200,8 +212,6 @@ public class TileRitualBowl extends TileEntity implements ITickable {
             case SKY:
                 return world.provider.hasSkyLight() && !world.provider.doesWaterVaporize()
                         && !ru.death.chaosshard.antechamber.AntechamberDimension.is(world) ? null : "chaosshard.ritual.no_sky";
-            case CORRUPTION:
-                return nearestAnchor() != null ? null : "chaosshard.ritual.no_anchor";
             default:
                 return null;
         }
@@ -309,54 +319,7 @@ public class TileRitualBowl extends TileEntity implements ITickable {
             ws.spawnParticle(EnumParticleTypes.SPELL_WITCH, pos.getX() + at[0] + 0.5, pos.getY() + 0.3, pos.getZ() + at[1] + 0.5,
                     4, 0.1, 0.2, 0.1, 0.0);
         }
-        switch (r) {
-            case GROWTH:
-                if (age % 10 == 0) {
-                    growSome(4);
-                }
-                break;
-            case WARD:
-                if (age % 20 == 0) {
-                    RitualEvents.ward(world, pos, world.getTotalWorldTime() + 40);
-                }
-                break;
-            case STORM:
-                if (age % 40 == 0) {
-                    strike();
-                }
-                break;
-            default:
-                break;
-        }
-    }
-
-    private void growSome(int tries) {
-        Random rand = world.rand;
-        for (int i = 0; i < tries; i++) {
-            BlockPos p = pos.add(rand.nextInt(17) - 8, rand.nextInt(5) - 2, rand.nextInt(17) - 8);
-            IBlockState s = world.getBlockState(p);
-            Block b = s.getBlock();
-            if (b instanceof IGrowable && b != Blocks.GRASS && b != Blocks.TALLGRASS && b != Blocks.DOUBLE_PLANT) {
-                IGrowable g = (IGrowable) b;
-                if (g.canGrow(world, p, s, false) && g.canUseBonemeal(world, rand, p, s)) {
-                    g.grow(world, rand, p, s);
-                    ((WorldServer) world).spawnParticle(EnumParticleTypes.VILLAGER_HAPPY, p.getX() + 0.5, p.getY() + 0.5,
-                            p.getZ() + 0.5, 6, 0.3, 0.3, 0.3, 0.0);
-                }
-            }
-        }
-    }
-
-    private void strike() {
-        List<EntityLivingBase> mobs = world.getEntitiesWithinAABB(EntityLivingBase.class, new AxisAlignedBB(pos).grow(24),
-                e -> e instanceof IMob && e.isEntityAlive());
-        if (mobs.isEmpty()) {
-            return;
-        }
-        EntityLivingBase t = mobs.get(world.rand.nextInt(mobs.size()));
-        world.addWeatherEffect(new EntityLightningBolt(world, t.posX, t.posY, t.posZ, true));
-        t.attackEntityFrom(DamageSource.LIGHTNING_BOLT, 10.0F);
-        t.setFire(4);
+        RitualEffects.tick(world, pos, r, age);
     }
 
     // ------------------------------------------------------------------ сохранение и синхронизация

@@ -62,6 +62,27 @@ public enum Ritual {
 
 
 
+    /** Ритуалы с эффектом на месте: запечатываются в сферу, которую ставят, где нужно. */
+    public static final Ritual[] SPHERES = {GROWTH, WARD, STORM, CORRUPTION};
+
+    /** Номер сферы (метаданные предмета) или -1. */
+    public int sphereIndex() {
+        for (int i = 0; i < SPHERES.length; i++) {
+            if (SPHERES[i] == this) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public boolean isSphere() {
+        return sphereIndex() >= 0;
+    }
+
+    public static Ritual sphere(int meta) {
+        return meta >= 0 && meta < SPHERES.length ? SPHERES[meta] : GROWTH;
+    }
+
     public boolean isSummon() {
         return this == SERVANT_HUSK || this == SERVANT_BONE || this == SERVANT_EXECUTIONER
                 || this == SERVANT_HARE || this == SERVANT_CAT || this == SERVANT_TIGER

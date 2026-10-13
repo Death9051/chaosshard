@@ -343,6 +343,10 @@ public class GuiGrimoireMagic extends GuiScreen {
         y += 11;
         String dur = r.duration <= 0 ? I18n.format("chaosshard.magic.instant") : cooldown(r.duration);
         drawString(fontRenderer, I18n.format("chaosshard.magic.duration", dur), x, y, 0xB0A8C0);
+        if (r.isSphere()) {
+            y += 11;
+            drawString(fontRenderer, I18n.format("chaosshard.magic.sphere"), x, y, 0xC890FF);
+        }
         if (!hover.isEmpty()) {
             renderToolTip(hover, mx, my);
         }

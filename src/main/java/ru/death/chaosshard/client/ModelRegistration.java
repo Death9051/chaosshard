@@ -23,6 +23,10 @@ public final class ModelRegistration {
         for (Item item : ru.death.chaosshard.init.ModItems.ALL) {
             ModelLoader.setCustomModelResourceLocation(item, 0, new ModelResourceLocation(item.getRegistryName(), "inventory"));
         }
+        for (ru.death.chaosshard.ritual.Ritual r : ru.death.chaosshard.ritual.Ritual.SPHERES) {
+            ModelLoader.setCustomModelResourceLocation(ru.death.chaosshard.init.ModItems.RITUAL_SPHERE, r.sphereIndex(),
+                    new ModelResourceLocation(Tags.MOD_ID + ":ritual_sphere_" + r.name().toLowerCase(), "inventory"));
+        }
         ru.death.chaosshard.compat.body.BodyModels.register();
     }
 

@@ -281,6 +281,7 @@ public final class AutoTest {
 
     private final java.util.Map<String, ru.death.chaosshard.structure.OrderStructureData.Entry> structs = new java.util.HashMap<>();
     private ru.death.chaosshard.structure.OrderStructureData.Entry planned;
+    private BlockPos bowlPos, spherePos;
 
     private void plan() {
         section("Подготовка");
@@ -573,6 +574,102 @@ public final class AutoTest {
             BlockPos at = ow.getSpawnPoint().add(400, 0, 0);
             int vill = ow.getEntitiesWithinAABB(EntityVillager.class, new AxisAlignedBB(at).grow(160, 120, 160)).size();
             check(vill > 0, "жителей рядом: " + vill);
+        });
+
+        section("Сферы ритуалов");
+        step("Рост в Чаше даёт сферу", () -> {
+            bowlPos = base.add(-14, 1, -14);
+            ow.setBlockState(bowlPos, ModBlocks.RITUAL_BOWL.getDefaultState(), 3);
+            for (int[] rr : ru.death.chaosshard.ritual.TileRitualBowl.RING) {
+                ow.setBlockState(bowlPos.add(rr[0], 0, rr[1]), ModBlocks.CHALK.getDefaultState(), 3);
+            }
+            ru.death.chaosshard.ritual.TileRitualBowl bowl = (ru.death.chaosshard.ritual.TileRitualBowl) ow.getTileEntity(bowlPos);
+            check(bowl != null && bowl.chalkCount() == 8, "Чаша и круг мела");
+            if (bowl == null) return;
+            bowl.insert(me, new net.minecraft.item.ItemStack(net.minecraft.init.Items.DYE, 8, 15), true);
+            bowl.insert(me, new net.minecraft.item.ItemStack(ru.death.chaosshard.init.ModItems.CHAOS_ESSENCE, 1), true);
+            bowl.tryStart(me);
+            List<net.minecraft.entity.item.EntityItem> items = ow.getEntitiesWithinAABB(net.minecraft.entity.item.EntityItem.class,
+                    new AxisAlignedBB(bowlPos).grow(3), ei -> ei.getItem().getItem() == ru.death.chaosshard.init.ModItems.RITUAL_SPHERE);
+            check(items.size() == 1 && items.get(0).getItem().getMetadata() == ru.death.chaosshard.ritual.Ritual.GROWTH.sphereIndex(),
+                    "над Чашей появилась Сфера роста");
+            check(bowl.getActive() == null, "Чаша не держит ритуал у себя");
+            check(bowl.getItems().stream().allMatch(net.minecraft.item.ItemStack::isEmpty), "подношения потрачены");
+            items.forEach(net.minecraft.entity.Entity::setDead);
+        });
+        step("Сфера роста ставится в поле", () -> {
+            BlockPos field = base.add(-14, 0, 2);
+            for (int dx = -3; dx <= 3; dx++) {
+                for (int dz = -3; dz <= 3; dz++) {
+                    if (dx == 0 && dz == 0) continue;
+                    ow.setBlockState(field.add(dx, 0, dz), Blocks.FARMLAND.getDefaultState().withProperty(net.minecraft.block.BlockFarmland.MOISTURE, 7), 2);
+                    ow.setBlockState(field.add(dx, 1, dz), Blocks.WHEAT.getDefaultState(), 2);
+                }
+            }
+            me.setHeldItem(EnumHand.MAIN_HAND, ru.death.chaosshard.ritual.ItemRitualSphere.of(ru.death.chaosshard.ritual.Ritual.GROWTH, 0));
+            net.minecraft.util.EnumActionResult res = me.getHeldItemMainhand().getItem().onItemUse(me, ow, field, EnumHand.MAIN_HAND, EnumFacing.UP, 0.5F, 1F, 0.5F);
+            spherePos = field.up();
+            check(res == net.minecraft.util.EnumActionResult.SUCCESS && ow.getBlockState(spherePos).getBlock() == ModBlocks.RITUAL_SPHERE, "сфера встала над полем");
+            check(me.getHeldItemMainhand().isEmpty(), "сфера ушла из рук");
+        });
+        sleep(600);
+        step("пшеница вокруг сферы подросла", () -> {
+            BlockPos field = base.add(-14, 0, 2);
+            int grown = 0;
+            for (int dx = -3; dx <= 3; dx++) {
+                for (int dz = -3; dz <= 3; dz++) {
+                    IBlockState st = ow.getBlockState(field.add(dx, 1, dz));
+                    if (st.getBlock() == Blocks.WHEAT && st.getValue(net.minecraft.block.BlockCrops.AGE) > 0) grown++;
+                }
+            }
+            check(grown > 0, "подросло ростков: " + grown + " из 48");
+        });
+        step("сферу можно забрать с остатком времени", () -> {
+            me.setSneaking(true);
+            me.setHeldItem(EnumHand.MAIN_HAND, net.minecraft.item.ItemStack.EMPTY);
+            ModBlocks.RITUAL_SPHERE.onBlockActivated(ow, spherePos, ow.getBlockState(spherePos), me, EnumHand.MAIN_HAND, EnumFacing.UP, 0.5F, 0.5F, 0.5F);
+            me.setSneaking(false);
+            check(ow.isAirBlock(spherePos), "сфера снята");
+            net.minecraft.item.ItemStack got = net.minecraft.item.ItemStack.EMPTY;
+            for (int i = 0; i < me.inventory.getSizeInventory(); i++) {
+                if (me.inventory.getStackInSlot(i).getItem() == ru.death.chaosshard.init.ModItems.RITUAL_SPHERE) got = me.inventory.getStackInSlot(i);
+            }
+            int left = got.isEmpty() ? -1 : ru.death.chaosshard.ritual.ItemRitualSphere.ticks(got);
+            check(left > 0 && left < ru.death.chaosshard.ritual.Ritual.GROWTH.duration, "в руки вернулась сфера с остатком " + left + " тиков");
+            me.inventory.clear();
+        });
+        step("Сфера оберега гонит тварей", () -> {
+            BlockPos at = base.add(14, 0, -14);
+            me.setHeldItem(EnumHand.MAIN_HAND, ru.death.chaosshard.ritual.ItemRitualSphere.of(ru.death.chaosshard.ritual.Ritual.WARD, 0));
+            me.getHeldItemMainhand().getItem().onItemUse(me, ow, at, EnumHand.MAIN_HAND, EnumFacing.UP, 0.5F, 1F, 0.5F);
+            check(ow.getBlockState(at.up()).getBlock() == ModBlocks.RITUAL_SPHERE, "сфера оберега встала");
+        });
+        sleep(30);
+        step("в 32 блоках от сферы спавн запрещён", () -> {
+            BlockPos at = base.add(14, 1, -14);
+            net.minecraft.entity.monster.EntityZombie z = new net.minecraft.entity.monster.EntityZombie(ow);
+            z.setPosition(at.getX() + 10, at.getY(), at.getZ());
+            net.minecraftforge.event.entity.living.LivingSpawnEvent.CheckSpawn ev = new net.minecraftforge.event.entity.living.LivingSpawnEvent.CheckSpawn(
+                    z, ow, (float) z.posX, (float) z.posY, (float) z.posZ, null);
+            MinecraftForge.EVENT_BUS.post(ev);
+            check(ev.getResult() == net.minecraftforge.fml.common.eventhandler.Event.Result.DENY, "зомби в 10 блоках не появится");
+            net.minecraftforge.event.entity.living.LivingSpawnEvent.CheckSpawn far = new net.minecraftforge.event.entity.living.LivingSpawnEvent.CheckSpawn(
+                    z, ow, (float) z.posX + 60, (float) z.posY, (float) z.posZ, null);
+            MinecraftForge.EVENT_BUS.post(far);
+            check(far.getResult() != net.minecraftforge.fml.common.eventhandler.Event.Result.DENY, "в 70 блоках — может");
+            ow.setBlockToAir(at.up());
+        });
+        step("Сфера порыва срабатывает только у Якоря", () -> {
+            me.setHeldItem(EnumHand.MAIN_HAND, ru.death.chaosshard.ritual.ItemRitualSphere.of(ru.death.chaosshard.ritual.Ritual.CORRUPTION, 0));
+            net.minecraft.util.EnumActionResult far = me.getHeldItemMainhand().getItem().onItemUse(me, ow, base.add(0, 0, 0).add(-30, 0, -30).add(-200, 0, 0),
+                    EnumHand.MAIN_HAND, EnumFacing.UP, 0.5F, 1F, 0.5F);
+            check(far == net.minecraft.util.EnumActionResult.FAIL && !me.getHeldItemMainhand().isEmpty(), "вдали от Якоря — не тратится");
+            if (anchorPos != null && ow.getTileEntity(anchorPos) instanceof TileAnchor) {
+                net.minecraft.util.EnumActionResult near = me.getHeldItemMainhand().getItem().onItemUse(me, ow, anchorPos.add(4, -1, 0),
+                        EnumHand.MAIN_HAND, EnumFacing.UP, 0.5F, 1F, 0.5F);
+                check(near == net.minecraft.util.EnumActionResult.SUCCESS && me.getHeldItemMainhand().isEmpty(), "у Якоря — Скверна рванулась, сфера потрачена");
+            }
+            me.setHeldItem(EnumHand.MAIN_HAND, net.minecraft.item.ItemStack.EMPTY);
         });
 
         section("Постройки Ордена в Лучезарии");
