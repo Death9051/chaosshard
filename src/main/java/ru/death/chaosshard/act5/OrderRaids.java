@@ -99,7 +99,9 @@ public final class OrderRaids {
 
     static EntityOrderKnight knight(WorldServer world, BlockPos base, BlockPos anchor, int level, EntityPlayerMP target, int variant) {
         EntityOrderKnight k = new EntityOrderKnight(world);
-        BlockPos p = world.getHeight(base.add(world.rand.nextInt(7) - 3, 0, world.rand.nextInt(7) - 3));
+        BlockPos q = base.add(world.rand.nextInt(7) - 3, 0, world.rand.nextInt(7) - 3);
+        world.getChunk(q);   // в незагруженный чанк spawnEntity молча не пускает
+        BlockPos p = world.getHeight(q);
         k.setLocationAndAngles(p.getX() + 0.5, p.getY(), p.getZ() + 0.5, world.rand.nextFloat() * 360, 0);
         k.setup(variant);
         k.addTag(GarrotRaids.TAG_ARMY);

@@ -1987,11 +1987,15 @@ public final class AutoTest {
             if (k == null) { check(false, "Короля нет"); return; }
             k.scripted = false;
             me.setPosition(k.posX + 3, k.posY, k.posZ);
-            me.removePotionEffect(net.minecraft.init.MobEffects.SLOWNESS);
+            // подставного игрока поиск по области находит ненадёжно — проверяем на зомби
+            net.minecraft.entity.monster.EntityZombie z = new net.minecraft.entity.monster.EntityZombie(ow);
+            z.setNoAI(true);
+            z.setPosition(k.posX + 2, k.posY, k.posZ);
+            ow.spawnEntity(z);
             k.decree(ow);
-            check(me.isPotionActive(net.minecraft.init.MobEffects.SLOWNESS), "Указ: на колени");
-            me.removePotionEffect(net.minecraft.init.MobEffects.SLOWNESS);
-            me.removePotionEffect(net.minecraft.init.MobEffects.WEAKNESS);
+            check(z.isPotionActive(net.minecraft.init.MobEffects.SLOWNESS) && z.isPotionActive(net.minecraft.init.MobEffects.WEAKNESS),
+                    "Указ: на колени (Медлительность и Слабость)");
+            z.setDead();
             k.startDecree();
             check(k.charging(), "Указ заряжается");
             k.hurtResistantTime = 0;
