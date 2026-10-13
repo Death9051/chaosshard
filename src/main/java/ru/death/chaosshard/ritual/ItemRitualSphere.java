@@ -79,17 +79,14 @@ public class ItemRitualSphere extends Item {
         if (world.isRemote) {
             return EnumActionResult.SUCCESS;
         }
-        if (r == Ritual.CORRUPTION) {
-            TileAnchor a = RitualEffects.nearestAnchor(world, pos);
-            if (a == null) {
-                player.sendStatusMessage(Breach.grimoire("chaosshard.ritual.no_anchor"), true);
+        if (r.duration <= 0) {
+            // мгновенная сфера: действует там, где применили; не вышло — не тратится
+            if (!(player instanceof EntityPlayerMP) || !RitualEffects.use((EntityPlayerMP) player, world, pos, r)) {
                 return EnumActionResult.FAIL;
             }
-            int done = a.forceSpread(400);
-            player.sendMessage(Breach.grimoire("chaosshard.ritual.corruption.done", done));
-            ((WorldServer) world).spawnParticle(EnumParticleTypes.DRAGON_BREATH, pos.getX() + 0.5, pos.getY() + 1.2, pos.getZ() + 0.5,
-                    60, 0.6, 0.6, 0.6, 0.05);
-            world.playSound(null, pos, SoundEvents.ENTITY_ENDERMEN_TELEPORT, SoundCategory.BLOCKS, 1.0F, 0.5F);
+            ((WorldServer) world).spawnParticle(EnumParticleTypes.END_ROD, pos.getX() + 0.5, pos.getY() + 1.2, pos.getZ() + 0.5,
+                    40, 0.5, 0.5, 0.5, 0.05);
+            world.playSound(null, pos, SoundEvents.BLOCK_GLASS_BREAK, SoundCategory.BLOCKS, 0.8F, 0.6F);
             if (!player.isCreative()) {
                 stack.shrink(1);
             }
@@ -122,8 +119,10 @@ public class ItemRitualSphere extends Item {
             int t = ticks(stack);
             tooltip.add(TextFormatting.LIGHT_PURPLE + I18n.translateToLocalFormatted("chaosshard.ritual.sphere.left", t / 1200, (t / 20) % 60));
             tooltip.add(TextFormatting.DARK_GRAY + I18n.translateToLocal("chaosshard.ritual.sphere.hint"));
-        } else {
+        } else if (r == Ritual.CORRUPTION || r == Ritual.GREAT_SURGE) {
             tooltip.add(TextFormatting.DARK_GRAY + I18n.translateToLocal("chaosshard.ritual.sphere.hint_anchor"));
+        } else {
+            tooltip.add(TextFormatting.DARK_GRAY + I18n.translateToLocal("chaosshard.ritual.sphere.hint_use"));
         }
     }
 

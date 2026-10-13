@@ -48,6 +48,11 @@ public final class RitualEffects {
                     pull(world, pos);
                 }
                 break;
+            case BLOOD_MOON:
+                if (age % 20 == 0) {
+                    AltarRituals.keepMoon(world, pos, world.getTotalWorldTime() + 60);
+                }
+                break;
             default:
                 break;
         }
@@ -113,6 +118,76 @@ public final class RitualEffects {
                 e.motionZ = dz / d * sp;
                 e.velocityChanged = true;
             }
+        }
+    }
+
+    /**
+     * Мгновенная сфера: применить в точке pos. false — применить нельзя (сообщение уже отправлено), сфера не тратится.
+     */
+    public static boolean use(net.minecraft.entity.player.EntityPlayerMP p, World world, BlockPos pos, Ritual r) {
+        switch (r) {
+            case CORRUPTION: {
+                TileAnchor a = nearestAnchor(world, pos);
+                if (a == null) {
+                    p.sendStatusMessage(ru.death.chaosshard.breach.Breach.grimoire("chaosshard.ritual.no_anchor"), true);
+                    return false;
+                }
+                p.sendMessage(ru.death.chaosshard.breach.Breach.grimoire("chaosshard.ritual.corruption.done", a.forceSpread(400)));
+                return true;
+            }
+            case DUSK: {
+                if (!world.provider.hasSkyLight() || world.provider.doesWaterVaporize()
+                        || ru.death.chaosshard.antechamber.AntechamberDimension.is(world)) {
+                    p.sendStatusMessage(ru.death.chaosshard.breach.Breach.grimoire("chaosshard.ritual.no_sky"), true);
+                    return false;
+                }
+                long t = world.getWorldTime();
+                long day = t % 24000;
+                // день → закат (13 000), ночь → рассвет (следующие 0)
+                world.setWorldTime(day < 12500 ? t - day + 13000 : t - day + 24000);
+                return true;
+            }
+            case BREED: {
+                int n = 0;
+                for (net.minecraft.entity.passive.EntityAnimal a : world.getEntitiesWithinAABB(net.minecraft.entity.passive.EntityAnimal.class,
+                        new AxisAlignedBB(pos).grow(12), x -> x.isEntityAlive() && x.getGrowingAge() == 0 && !x.isInLove())) {
+                    a.setInLove(p);
+                    n++;
+                }
+                if (n == 0) {
+                    p.sendStatusMessage(ru.death.chaosshard.breach.Breach.grimoire("chaosshard.ritual.breed.none"), true);
+                    return false;
+                }
+                p.sendMessage(ru.death.chaosshard.breach.Breach.grimoire("chaosshard.ritual.breed.done", n));
+                return true;
+            }
+            case SIGHT:
+                AltarRituals.sight(p, pos);
+                return true;
+            case RECALL: {
+                if (ru.death.chaosshard.servant.Beasts.countInThread(p) == 0) {
+                    p.sendStatusMessage(ru.death.chaosshard.breach.Breach.grimoire("chaosshard.altar.recall.none"), true);
+                    return false;
+                }
+                p.sendMessage(ru.death.chaosshard.breach.Breach.grimoire("chaosshard.altar.recall.done",
+                        ru.death.chaosshard.servant.Beasts.pullFromThread(p)));
+                return true;
+            }
+            case GREAT_SURGE: {
+                List<TileAnchor> mine = AltarRituals.myAnchors(p, pos);
+                if (mine.isEmpty()) {
+                    p.sendStatusMessage(ru.death.chaosshard.breach.Breach.grimoire("chaosshard.altar.surge.none"), true);
+                    return false;
+                }
+                int total = 0;
+                for (TileAnchor a : mine) {
+                    total += a.forceSpread(250);
+                }
+                p.sendMessage(ru.death.chaosshard.breach.Breach.grimoire("chaosshard.altar.surge.done", mine.size(), total));
+                return true;
+            }
+            default:
+                return false;
         }
     }
 

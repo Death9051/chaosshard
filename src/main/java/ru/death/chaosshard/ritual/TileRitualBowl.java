@@ -210,7 +210,6 @@ public class TileRitualBowl extends TileEntity implements ITickable {
     private String precheck(Ritual r) {
         switch (r) {
             case SKY:
-            case DUSK:
                 return world.provider.hasSkyLight() && !world.provider.doesWaterVaporize()
                         && !ru.death.chaosshard.antechamber.AntechamberDimension.is(world) ? null : "chaosshard.ritual.no_sky";
             default:
@@ -251,26 +250,6 @@ public class TileRitualBowl extends TileEntity implements ITickable {
                 if (rain) {
                     world.getWorldInfo().setThundering(false);
                 }
-                break;
-            }
-            case DUSK: {
-                long t = world.getWorldTime();
-                long day = t % 24000;
-                // день → закат (13 000), ночь → рассвет (следующие 0)
-                long to = day < 12500 ? t - day + 13000 : t - day + 24000;
-                world.setWorldTime(to);
-                ((WorldServer) world).spawnParticle(EnumParticleTypes.SPELL_MOB, pos.getX() + 0.5, pos.getY() + 1.5, pos.getZ() + 0.5,
-                        40, 1.0, 0.5, 1.0, 0.0);
-                break;
-            }
-            case BREED: {
-                int n = 0;
-                for (net.minecraft.entity.passive.EntityAnimal a : world.getEntitiesWithinAABB(net.minecraft.entity.passive.EntityAnimal.class,
-                        new AxisAlignedBB(pos).grow(12), x -> x.isEntityAlive() && x.getGrowingAge() == 0 && !x.isInLove())) {
-                    a.setInLove(player);
-                    n++;
-                }
-                say(player, Breach.grimoire("chaosshard.ritual.breed.done", n));
                 break;
             }
             case SUMMON: {

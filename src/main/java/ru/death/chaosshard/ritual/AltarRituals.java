@@ -116,11 +116,6 @@ public class AltarRituals {
             p.sendMessage(Breach.grimoire("chaosshard.ritual.thin", r.minThread));
             return;
         }
-        String fail = precheck(p, altar, r);
-        if (fail != null) {
-            p.sendMessage(Breach.grimoire(fail));
-            return;
-        }
         List<ItemStack> paid = new ArrayList<>();
         for (EntityItem ei : items) {
             paid.add(ei.getItem().copy());
@@ -134,19 +129,6 @@ public class AltarRituals {
     private static boolean hasBeastNear(EntityPlayerMP p, BlockPos altar) {
         return !p.world.getEntitiesWithinAABB(ru.death.chaosshard.servant.EntityChaosBeast.class, new AxisAlignedBB(altar).grow(8),
                 x -> x.isEntityAlive() && ru.death.chaosshard.servant.Servants.isServantOf(x, p.getUniqueID())).isEmpty();
-    }
-
-    private static String precheck(EntityPlayerMP p, BlockPos altar, Ritual r) {
-        switch (r) {
-            case RECALL:
-                return Beasts.countInThread(p) > 0 ? null : "chaosshard.altar.recall.none";
-            case GREAT_SURGE:
-                return myAnchors(p, altar).isEmpty() ? "chaosshard.altar.surge.none" : null;
-            case BLOOD_MOON:
-                return moonAt(p.world, altar) ? "chaosshard.altar.moon.already" : null;
-            default:
-                return null;
-        }
     }
 
     // ------------------------------------------------------------------ ход ритуала
@@ -194,44 +176,18 @@ public class AltarRituals {
         if (r.ticks >= DURATION) {
             RUNNING.remove(p.getUniqueID());
             ws.spawnParticle(EnumParticleTypes.END_ROD, cx, cy, cz, 60, 0.4, 0.4, 0.4, 0.15);
-            perform(p, r.altar, r.ritual);
+            // старший ритуал запечатывается в сферу — её применяют там, где нужно
+            EntityItem ei = new EntityItem(ws, cx, cy, cz, ItemRitualSphere.of(r.ritual, r.ritual.duration));
+            ei.motionX = ei.motionY = ei.motionZ = 0;
+            ei.setNoPickupDelay();
+            ws.spawnEntity(ei);
+            ws.playSound(null, r.altar, SoundEvents.BLOCK_END_PORTAL_FRAME_FILL, SoundCategory.BLOCKS, 1.0F, 0.6F);
+            p.sendMessage(Breach.grimoire("chaosshard.ritual.sphere.made", new TextComponentTranslation(r.ritual.key())));
             Milestones.grant(p, Milestones.HIGH_RITUAL);
         }
     }
 
-    /** Действие старшего ритуала (вызывается и из автотеста). */
-    public static void perform(EntityPlayerMP p, BlockPos altar, Ritual r) {
-        WorldServer ws = (WorldServer) p.world;
-        switch (r) {
-            case SIGHT:
-                sight(p, altar);
-                break;
-            case RECALL: {
-                int n = Beasts.pullFromThread(p);
-                p.sendMessage(Breach.grimoire("chaosshard.altar.recall.done", n));
-                break;
-            }
-            case BLOOD_MOON:
-                MOONS.computeIfAbsent(ws.provider.getDimension(), k -> new HashMap<>())
-                        .put(altar.toLong(), ws.getTotalWorldTime() + r.duration);
-                ws.playSound(null, altar, SoundEvents.ENTITY_WITHER_SPAWN, SoundCategory.HOSTILE, 0.8F, 0.6F);
-                p.sendMessage(Breach.grimoire("chaosshard.altar.moon.start"));
-                break;
-            case GREAT_SURGE: {
-                int total = 0, anchors = 0;
-                for (TileAnchor a : myAnchors(p, altar)) {
-                    total += a.forceSpread(250);
-                    anchors++;
-                }
-                p.sendMessage(Breach.grimoire("chaosshard.altar.surge.done", anchors, total));
-                break;
-            }
-            default:
-                break;
-        }
-    }
-
-    static List<TileAnchor> myAnchors(EntityPlayerMP p, BlockPos altar) {
+    public static List<TileAnchor> myAnchors(EntityPlayerMP p, BlockPos altar) {
         List<TileAnchor> out = new ArrayList<>();
         for (BlockPos a : AnchorData.get(p.world).anchors) {
             if (a.distanceSq(altar) > (double) SURGE_REACH * SURGE_REACH) {
@@ -247,9 +203,9 @@ public class AltarRituals {
 
     // ------------------------------------------------------------------ Взор Нити
 
-    static void sight(EntityPlayerMP p, BlockPos altar) {
+    public static void sight(EntityPlayerMP p, BlockPos at) {
         int glowing = 0;
-        for (EntityLivingBase e : p.world.getEntitiesWithinAABB(EntityLivingBase.class, new AxisAlignedBB(p.getPosition()).grow(SIGHT_RADIUS),
+        for (EntityLivingBase e : p.world.getEntitiesWithinAABB(EntityLivingBase.class, new AxisAlignedBB(at).grow(SIGHT_RADIUS),
                 x -> x instanceof IMob && x.isEntityAlive())) {
             e.addPotionEffect(new PotionEffect(MobEffects.GLOWING, 1200, 0, false, false));
             glowing++;
@@ -262,12 +218,12 @@ public class AltarRituals {
             if (e.state == OrderStructureData.FAILED) {
                 continue;
             }
-            long dx = e.x - p.getPosition().getX(), dz = e.z - p.getPosition().getZ();
+            long dx = e.x - at.getX(), dz = e.z - at.getZ();
             found.add(new long[]{dx * dx + dz * dz, e.x, e.z, 0, names.size()});
             names.add("chaosshard.structure." + e.name);
         }
         for (BlockPos s : ru.death.chaosshard.order.ShrineData.get(p.world).shrines) {
-            long dx = s.getX() - p.getPosition().getX(), dz = s.getZ() - p.getPosition().getZ();
+            long dx = s.getX() - at.getX(), dz = s.getZ() - at.getZ();
             found.add(new long[]{dx * dx + dz * dz, s.getX(), s.getZ(), 1, names.size()});
             names.add("chaosshard.structure.shrine");
         }
@@ -282,7 +238,7 @@ public class AltarRituals {
             int dist = (int) Math.sqrt(f[0]);
             p.sendMessage(new TextComponentString(" §7• ").appendSibling(new TextComponentTranslation(names.get((int) f[4])))
                     .appendSibling(new TextComponentString("§7 — " + f[1] + " " + f[2] + " (" + dist + " бл., "
-                            + side(f[1] - p.getPosition().getX(), f[2] - p.getPosition().getZ()) + ")")));
+                            + side(f[1] - at.getX(), f[2] - at.getZ()) + ")")));
         }
     }
 
@@ -294,6 +250,11 @@ public class AltarRituals {
     }
 
     // ------------------------------------------------------------------ Кровавая луна
+
+    /** Сфера Кровавой луны держит луну, пока стоит. */
+    public static void keepMoon(World world, BlockPos pos, long until) {
+        MOONS.computeIfAbsent(world.provider.getDimension(), k -> new HashMap<>()).put(pos.toLong(), until);
+    }
 
     public static boolean moonAt(World world, BlockPos pos) {
         Map<Long, Long> m = MOONS.get(world.provider.getDimension());

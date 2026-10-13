@@ -96,7 +96,8 @@ public enum Ritual {
 
 
     /** Ритуалы с эффектом на месте: запечатываются в сферу, которую ставят, где нужно. */
-    public static final Ritual[] SPHERES = {GROWTH, WARD, STORM, CORRUPTION, PULL};
+    public static final Ritual[] SPHERES = {GROWTH, WARD, STORM, CORRUPTION, PULL,
+            DUSK, BREED, SIGHT, RECALL, BLOOD_MOON, GREAT_SURGE};
 
     /** Номер сферы (метаданные предмета) или -1. */
     public int sphereIndex() {
