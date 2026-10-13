@@ -1,0 +1,23 @@
+{
+ "parent": "chaosshard:m/root",
+ "display": {
+  "icon": {
+   "item": "minecraft:quartz_block"
+  },
+  "title": {
+   "translate": "advancement.chaosshard.m.pillar_lian.title"
+  },
+  "description": {
+   "translate": "advancement.chaosshard.m.pillar_lian.desc"
+  },
+  "frame": "task",
+  "show_toast": false,
+  "announce_to_chat": false,
+  "hidden": true
+ },
+ "criteria": {
+  "done": {
+   "trigger": "minecraft:impossible"
+  }
+ }
+}

@@ -124,6 +124,20 @@ public final class ChaosConfig {
 
         @Config.Comment("Очки Нити за Хранителя святилища")
         public int keeperReward = 80;
+
+        @Config.Comment("Акт 4: очки Нити за павшую Опору (первую; каждая следующая +50%)")
+        public int pillarReward = 300;
+
+        @Config.Comment("Акт 4: радиус Скверны вокруг павшей Опоры (блоки)")
+        @Config.RangeInt(min = 8, max = 128)
+        public int pillarDefileRadius = 48;
+
+        @Config.Comment("Акт 4: в каком радиусе от павшей Опоры гаснут святыни (блоки)")
+        @Config.RangeInt(min = 0, max = 2048)
+        public int pillarShrineRadius = 384;
+
+        @Config.Comment("Акт 4: Знамение ищет место для Опоры на таком расстоянии (ближе / дальше, блоки)")
+        public int[] omenDistance = {400, 2400};
     }
 
     public static final class AntechamberCfg {

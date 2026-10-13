@@ -172,14 +172,15 @@ public class OrderStructures implements IWorldGenerator {
         int median = a[a.length / 2];
         int lo = a[a.length / 6], hi = a[a.length - 1 - a.length / 6];
         boolean spires = e.name.equals("crystal_spires");
-        if (wet || hi - lo > tolerance(e.name) || water * 100 / Math.max(1, samples) > (spires ? 70 : 15)) {
+        boolean pillar = e.name.startsWith("pillar_");   // Опора Завесы встаёт всегда: место выбрало Знамение
+        if (!pillar && (wet || hi - lo > tolerance(e.name) || water * 100 / Math.max(1, samples) > (spires ? 70 : 15))) {
             e.state = OrderStructureData.FAILED;
             data.markDirty();
             ChaosShard.LOG.info("Постройка {} у {} {} не встала: неровно {} / вода {}%", e.name, e.x, e.z, hi - lo, water * 100 / Math.max(1, samples));
             return false;
         }
         // шпили стоят в воде: основание — на поверхности воды
-        e.y = median;
+        e.y = pillar ? Math.max(median, world.getSeaLevel() + 1) : median;
         place(world, data, e, b);
         return true;
     }
@@ -214,6 +215,11 @@ public class OrderStructures implements IWorldGenerator {
                 e.beams.add(p);
             } else if ("keeper".equals(m.kind)) {
                 spawn(world, p, EntityOrderKnight.KEEPER, o, e.id);
+            }
+        }
+        for (Blueprint.Mark m : b.marks) {
+            if ("hero".equals(m.kind)) {
+                ru.death.chaosshard.hero.Pillars.placed(world, e, BlueprintPlacer.at(o, m.x, m.y, m.z, e.rot));
             }
         }
         for (Blueprint.Mark m : b.guards) {
@@ -290,7 +296,7 @@ public class OrderStructures implements IWorldGenerator {
 
     /** Поставить постройку прямо сейчас у точки (для /oh structure и автотеста). */
     public static OrderStructureData.Entry placeNow(WorldServer world, String name, BlockPos at, int rot, long seed) {
-        if (!Arrays.asList(Structures.ALL).contains(name)) {
+        if (!Arrays.asList(Structures.ALL).contains(name) && ru.death.chaosshard.hero.Lightbearer.byStructure(name) == null) {
             return null;
         }
         OrderStructureData data = OrderStructureData.get(world);

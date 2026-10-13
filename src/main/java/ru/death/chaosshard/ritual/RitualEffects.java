@@ -186,8 +186,10 @@ public final class RitualEffects {
                 p.sendMessage(ru.death.chaosshard.breach.Breach.grimoire("chaosshard.altar.surge.done", mine.size(), total));
                 return true;
             }
-            default:
-                return false;
+            default: {
+                ru.death.chaosshard.hero.Lightbearer h = ru.death.chaosshard.hero.Lightbearer.byOmen(r);
+                return h != null && ru.death.chaosshard.hero.Pillars.omen(p, world, pos, h);
+            }
         }
     }
 

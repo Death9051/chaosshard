@@ -85,6 +85,9 @@ public class ChaosShard {
                 ru.death.chaosshard.servant.entity.ServantEntities.Miner.class, "chaosshard.servant_miner", eid++, this, 64, 3, true, 0x505058, 0x6a2fb0);
         net.minecraftforge.fml.common.registry.EntityRegistry.registerModEntity(new net.minecraft.util.ResourceLocation(Tags.MOD_ID, "order_knight"),
                 ru.death.chaosshard.structure.EntityOrderKnight.class, "chaosshard.order_knight", eid++, this, 80, 3, true, 0xe8e6de, 0xd8b048);
+        net.minecraftforge.fml.common.registry.EntityRegistry.registerModEntity(new net.minecraft.util.ResourceLocation(Tags.MOD_ID, "hero"),
+                ru.death.chaosshard.hero.EntityHero.class, "chaosshard.hero", eid++, this, 96, 3, true, 0xf4f0e0, 0xe8b830);
+        MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.hero.Pillars());
         MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.servant.Resync());
         MinecraftForge.EVENT_BUS.register(STRUCTURES);
         MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.thread.ThreadEvents());

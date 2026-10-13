@@ -49,13 +49,19 @@ public enum Lightbearer {
     /** Ритуал Знамения этого героя. */
     public Ritual omen() {
         switch (this) {
+            case IRENA: return Ritual.OMEN_IRENA;
+            case VELMOR: return Ritual.OMEN_VELMOR;
+            case LIAN: return Ritual.OMEN_LIAN;
+            case ELIS: return Ritual.OMEN_ELIS;
             default: return Ritual.OMEN_KAEL;
         }
     }
 
     public static Lightbearer byOmen(Ritual r) {
-        if (r == Ritual.OMEN_KAEL) {
-            return KAEL;
+        for (Lightbearer h : values()) {
+            if (h.omen() == r) {
+                return h;
+            }
         }
         return null;
     }

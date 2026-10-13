@@ -1,0 +1,23 @@
+{
+ "parent": "chaosshard:m/root",
+ "display": {
+  "icon": {
+   "item": "chaosshard:breach_altar"
+  },
+  "title": {
+   "translate": "advancement.chaosshard.m.omen_lian.title"
+  },
+  "description": {
+   "translate": "advancement.chaosshard.m.omen_lian.desc"
+  },
+  "frame": "task",
+  "show_toast": false,
+  "announce_to_chat": false,
+  "hidden": true
+ },
+ "criteria": {
+  "done": {
+   "trigger": "minecraft:impossible"
+  }
+ }
+}

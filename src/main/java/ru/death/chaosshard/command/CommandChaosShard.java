@@ -238,6 +238,35 @@ public class CommandChaosShard extends CommandBase {
                 sender.sendMessage(new net.minecraft.util.text.TextComponentString(e == null ? "Не встала" : name + " встала: " + c.getX() + " " + c.getY() + " " + c.getZ()));
                 break;
             }
+            case "pillar": {
+                // /oh pillar — состояние Опор; /oh pillar fall <герой> — считать павшей; /oh pillar reset — забыть все
+                net.minecraft.world.WorldServer ws = server.getWorld(ru.death.chaosshard.breach.Breach.luchezariyaDim());
+                ru.death.chaosshard.hero.HeroData hd = ru.death.chaosshard.hero.HeroData.get(ws);
+                if (args.length >= 2 && "reset".equals(args[1])) {
+                    for (ru.death.chaosshard.hero.HeroData.Pillar p : hd.pillars) {
+                        p.state = ru.death.chaosshard.hero.HeroData.NONE;
+                        p.entry = -1;
+                        p.fallRing = -1;
+                    }
+                    hd.markDirty();
+                    sender.sendMessage(new net.minecraft.util.text.TextComponentString("Опоры забыты"));
+                    break;
+                }
+                if (args.length >= 3 && "fall".equals(args[1])) {
+                    ru.death.chaosshard.hero.Lightbearer h = ru.death.chaosshard.hero.Lightbearer.valueOf(args[2].toUpperCase());
+                    hd.of(h).state = ru.death.chaosshard.hero.HeroData.FALLEN;
+                    hd.markDirty();
+                    sender.sendMessage(new net.minecraft.util.text.TextComponentString("Опора " + h.id() + " считается павшей"));
+                    break;
+                }
+                String[] st = {"нет", "указана", "стоит", "пала"};
+                for (ru.death.chaosshard.hero.Lightbearer h : ru.death.chaosshard.hero.Lightbearer.values()) {
+                    ru.death.chaosshard.hero.HeroData.Pillar p = hd.of(h);
+                    sender.sendMessage(new net.minecraft.util.text.TextComponentString(h.id() + ": " + st[Math.max(0, Math.min(3, p.state))]
+                            + (p.state != 0 ? " — " + p.x + " " + p.y + " " + p.z : "") + (h.ready() ? "" : " (герой ещё не готов)")));
+                }
+                break;
+            }
             case "village": {
                 if (args.length >= 2 && "entrance".equals(args[1])) {
                     // /oh village entrance — поставить деревню рядом со мной (как у входа в Лучезарию)
@@ -548,7 +577,13 @@ public class CommandChaosShard extends CommandBase {
     @Override
     public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos targetPos) {
         if (args.length == 1) {
-            return getListOfStringsMatchingLastWord(args, "nit", "tp", "sky", "grimoire", "debug", "breach", "heart", "quests", "selftest", "anchor", "shrine", "surge", "village", "trial", "beast", "servant", "autotest", "structure");
+            return getListOfStringsMatchingLastWord(args, "nit", "tp", "sky", "grimoire", "debug", "breach", "heart", "quests", "selftest", "anchor", "shrine", "surge", "village", "trial", "beast", "servant", "autotest", "structure", "pillar");
+        }
+        if (args.length == 2 && "pillar".equals(args[0])) {
+            return getListOfStringsMatchingLastWord(args, "fall", "reset");
+        }
+        if (args.length == 3 && "pillar".equals(args[0])) {
+            return getListOfStringsMatchingLastWord(args, "kael", "irena", "velmor", "lian", "elis");
         }
         if (args.length == 2 && "nit".equals(args[0])) {
             return getListOfStringsMatchingLastWord(args, "get", "set", "add", "resync");
