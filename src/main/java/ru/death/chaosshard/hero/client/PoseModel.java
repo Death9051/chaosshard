@@ -34,15 +34,23 @@ public class PoseModel extends ModelPlayer {
         parts = new ModelRenderer[] {bipedHead, bipedBody, bipedRightArm, bipedLeftArm, bipedRightLeg, bipedLeftLeg};
     }
 
-    /** Сколько тиков длится переход from → to. Удары резкие, опускание на колени медленное. */
+    /**
+     * Сколько тиков длится переход from → to (20 тиков = 1 с).
+     * Удары резкие; телеграфы атак быстрые, чтобы не съедать окно; долгие позы и колени неспешные.
+     */
     static float duration(int from, int to) {
         switch (to) {
-            case Pose.CHOP: return 2F;
-            case Pose.DASH: return 3F;
+            case Pose.CHOP: return 3F;
+            case Pose.DASH: return 4F;
+            case Pose.WINDUP:
+            case Pose.CAST:
+            case Pose.CAST_DOWN:
+            case Pose.RAISE:
+            case Pose.STAGGER: return 6F;
             case Pose.KNEEL:
-            case Pose.KNEEL_PRAY: return 8F;
-            case Pose.NONE: return from == Pose.KNEEL || from == Pose.KNEEL_PRAY ? 8F : 6F;
-            default: return 5F;
+            case Pose.KNEEL_PRAY: return 20F;
+            case Pose.NONE: return from == Pose.KNEEL || from == Pose.KNEEL_PRAY ? 20F : 10F;
+            default: return 10F;
         }
     }
 
