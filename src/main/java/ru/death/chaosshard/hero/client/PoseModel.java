@@ -1,25 +1,131 @@
 package ru.death.chaosshard.hero.client;
 
+import java.util.Map;
+import java.util.WeakHashMap;
 import net.minecraft.client.model.ModelPlayer;
+import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.MathHelper;
 import ru.death.chaosshard.hero.Pose;
 
-/** Модель игрока, которая умеет вставать в позы боссов (руки, ноги, корпус, голова). */
+/**
+ * Модель игрока, которая умеет вставать в позы боссов (руки, ноги, корпус, голова).
+ * Позы сменяются плавно: в момент смены запоминается, насколько части тела сейчас отклонены
+ * от обычной анимации, и за несколько тиков это отклонение перетекает в отклонение новой позы.
+ */
 public class PoseModel extends ModelPlayer {
+
+    private static final int N = 18;
+    private static final Map<Entity, Blend> BLENDS = new WeakHashMap<>();
+
+    /** Состояние перехода одной сущности (только на клиенте). */
+    static final class Blend {
+        int pose;
+        float start = -1000F, dur = 1F;
+        final float[] from = new float[N], last = new float[N];
+        float dropFrom, dropLast;
+    }
+
+    private final ModelRenderer[] parts;
+    private final float[] base = new float[N], target = new float[N];
 
     public PoseModel() {
         super(0.0F, false);
+        parts = new ModelRenderer[] {bipedHead, bipedBody, bipedRightArm, bipedLeftArm, bipedRightLeg, bipedLeftLeg};
+    }
+
+    /** Сколько тиков длится переход from → to. Удары резкие, опускание на колени медленное. */
+    static float duration(int from, int to) {
+        switch (to) {
+            case Pose.CHOP: return 2F;
+            case Pose.DASH: return 3F;
+            case Pose.KNEEL:
+            case Pose.KNEEL_PRAY: return 8F;
+            case Pose.NONE: return from == Pose.KNEEL || from == Pose.KNEEL_PRAY ? 8F : 6F;
+            default: return 5F;
+        }
+    }
+
+    static float ease(float x) {
+        x = MathHelper.clamp(x, 0F, 1F);
+        return x * x * (3F - 2F * x);
+    }
+
+    /** Найти или завести переход; при смене позы стартует новый от текущего положения. */
+    static Blend blend(Entity e, int pose, float age) {
+        Blend b = BLENDS.get(e);
+        if (b == null) {
+            b = new Blend();
+            b.pose = pose;
+            BLENDS.put(e, b);
+            return b;
+        }
+        if (b.pose != pose) {
+            System.arraycopy(b.last, 0, b.from, 0, N);
+            b.dropFrom = b.dropLast;
+            b.dur = duration(b.pose, pose);
+            b.start = age;
+            b.pose = pose;
+        }
+        return b;
+    }
+
+    static int poseOf(Entity e) {
+        return e instanceof Pose.Posed ? ((Pose.Posed) e).pose() : Pose.NONE;
+    }
+
+    /** Плавное опускание модели на колени (вызывается из preRenderCallback). */
+    public static float drop(Entity e, float partialTicks) {
+        int pose = poseOf(e);
+        Blend b = blend(e, pose, e.ticksExisted + partialTicks);
+        float f = ease((e.ticksExisted + partialTicks - b.start) / b.dur);
+        b.dropLast = b.dropFrom + (kneelDrop(pose) - b.dropFrom) * f;
+        return b.dropLast;
+    }
+
+    private void read(float[] out) {
+        for (int i = 0; i < parts.length; i++) {
+            out[i * 3] = parts[i].rotateAngleX;
+            out[i * 3 + 1] = parts[i].rotateAngleY;
+            out[i * 3 + 2] = parts[i].rotateAngleZ;
+        }
+    }
+
+    private void write(float[] in) {
+        for (int i = 0; i < parts.length; i++) {
+            parts[i].rotateAngleX = in[i * 3];
+            parts[i].rotateAngleY = in[i * 3 + 1];
+            parts[i].rotateAngleZ = in[i * 3 + 2];
+        }
     }
 
     @Override
     public void setRotationAngles(float limbSwing, float limbSwingAmount, float age, float headYaw, float headPitch, float scale, Entity e) {
         super.setRotationAngles(limbSwing, limbSwingAmount, age, headYaw, headPitch, scale, e);
-        int pose = e instanceof Pose.Posed ? ((Pose.Posed) e).pose() : Pose.NONE;
-        if (pose == Pose.NONE) {
-            return;
+        int pose = poseOf(e);
+        Blend b = blend(e, pose, age);
+        read(base);
+        apply(pose, age * 0.15F);
+        read(target);
+        float f = ease((age - b.start) / b.dur);
+        for (int i = 0; i < N; i++) {
+            // отклонение от обычной анимации: из запомненного к отклонению новой позы
+            float off = b.from[i] + (target[i] - base[i] - b.from[i]) * f;
+            b.last[i] = off;
+            target[i] = base[i] + off;
         }
-        float t = age * 0.15F;
+        write(target);
+        // второй слой скина повторяет первый
+        copyModelAngles(bipedRightArm, bipedRightArmwear);
+        copyModelAngles(bipedLeftArm, bipedLeftArmwear);
+        copyModelAngles(bipedRightLeg, bipedRightLegwear);
+        copyModelAngles(bipedLeftLeg, bipedLeftLegwear);
+        copyModelAngles(bipedBody, bipedBodyWear);
+        copyModelAngles(bipedHead, bipedHeadwear);
+    }
+
+    /** Выставить углы позы поверх обычной анимации. */
+    private void apply(int pose, float t) {
         switch (pose) {
             case Pose.RAISE:
                 bipedRightArm.rotateAngleX = -2.9F;
@@ -121,13 +227,6 @@ public class PoseModel extends ModelPlayer {
             default:
                 break;
         }
-        // второй слой скина повторяет первый
-        copyModelAngles(bipedRightArm, bipedRightArmwear);
-        copyModelAngles(bipedLeftArm, bipedLeftArmwear);
-        copyModelAngles(bipedRightLeg, bipedRightLegwear);
-        copyModelAngles(bipedLeftLeg, bipedLeftLegwear);
-        copyModelAngles(bipedBody, bipedBodyWear);
-        copyModelAngles(bipedHead, bipedHeadwear);
     }
 
     /** На коленях: голени назад. Модель целиком опускается в рендере (kneelDrop). */

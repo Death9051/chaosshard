@@ -32,7 +32,7 @@ public class RenderGarrot extends RenderBiped<EntityGarrot> {
     protected void preRenderCallback(EntityGarrot e, float partialTicks) {
         float s = e.variant() == EntityGarrot.LORD ? 1.15F : 0.9375F;
         GlStateManager.scale(s, s, s);
-        GlStateManager.translate(0F, ru.death.chaosshard.hero.client.PoseModel.kneelDrop(e.pose()), 0F);
+        GlStateManager.translate(0F, ru.death.chaosshard.hero.client.PoseModel.drop(e, partialTicks), 0F);
         if (e.variant() == EntityGarrot.SHADOW) {
             GlStateManager.enableBlend();
             GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);

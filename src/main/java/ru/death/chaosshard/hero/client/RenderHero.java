@@ -33,6 +33,6 @@ public class RenderHero extends RenderBiped<EntityHero> {
     @Override
     protected void preRenderCallback(EntityHero e, float partialTicks) {
         GlStateManager.scale(1.15F, 1.15F, 1.15F);
-        GlStateManager.translate(0F, PoseModel.kneelDrop(e.pose()), 0F);
+        GlStateManager.translate(0F, PoseModel.drop(e, partialTicks), 0F);
     }
 }
