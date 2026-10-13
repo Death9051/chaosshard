@@ -283,7 +283,6 @@ public final class AutoTest {
     private ru.death.chaosshard.structure.OrderStructureData.Entry planned;
     private BlockPos bowlPos, spherePos, pullChest, altarPos, moonPos;
     private int challengeNit, challengeCorrupt;
-    private ru.death.chaosshard.challenge.ChallengeManager.Challenge withdrawn;
 
     /** Подобрать с земли рядом сферу нужного ритуала (true — была). */
     private boolean takeSphere(BlockPos at, ru.death.chaosshard.ritual.Ritual r) {
@@ -947,43 +946,26 @@ public final class AutoTest {
             c.timer = 2;
         });
         sleep(5);
-        step("бесконечный: волна пала", () -> {
+        step("бесконечный: Shift+ПКМ Гримуаром во время волны — она последняя", () -> {
             ru.death.chaosshard.challenge.ChallengeManager.Challenge c = ru.death.chaosshard.challenge.ChallengeManager.of(me);
             if (c == null) { check(false, "Вызова нет"); return; }
+            check(c.fighting, "волна идёт");
+            me.setSneaking(true);
+            me.setHeldItem(EnumHand.MAIN_HAND, new net.minecraft.item.ItemStack(ru.death.chaosshard.init.ModItems.GRIMOIRE));
+            MinecraftForge.EVENT_BUS.post(new PlayerInteractEvent.RightClickItem(me, EnumHand.MAIN_HAND));
+            me.setSneaking(false);
+            me.setHeldItem(EnumHand.MAIN_HAND, net.minecraft.item.ItemStack.EMPTY);
+            check(c.lastWave && ru.death.chaosshard.challenge.ChallengeManager.of(me) == c && c.fighting, "волна продолжается, отмечена последней");
             for (UUID id : new ArrayList<>(c.mobs)) {
                 Entity e = ow.getEntityFromUuid(id);
                 if (e instanceof EntityLivingBase) kill((EntityLivingBase) e);
             }
         });
-        until("бесконечный: волна засчитана", () -> {
-            ru.death.chaosshard.challenge.ChallengeManager.Challenge c = ru.death.chaosshard.challenge.ChallengeManager.of(me);
-            return c != null && !c.fighting && c.wave == 1;
-        }, 60);
-        step("отказ посреди волны: новых волн нет, враги остаются", () -> {
-            ru.death.chaosshard.challenge.ChallengeSpec sp = new ru.death.chaosshard.challenge.ChallengeSpec();
-            sp.faction = ru.death.chaosshard.challenge.ChallengeFaction.WILD;
-            sp.tier = 2;
-            withdrawn = ru.death.chaosshard.challenge.ChallengeManager.begin(me, sp, anchorPos, false, 0);
-            withdrawn.timer = 2;
-        });
-        sleep(5);
-        step("отказ: Shift+ПКМ Гримуаром во время волны", () -> {
-            List<UUID> left = new ArrayList<>(withdrawn.mobs);
-            check(withdrawn.fighting && !left.isEmpty(), "волна идёт: врагов " + left.size());
-            me.setSneaking(true);
-            me.setHeldItem(EnumHand.MAIN_HAND, new net.minecraft.item.ItemStack(ru.death.chaosshard.init.ModItems.GRIMOIRE));
-            PlayerInteractEvent.RightClickItem ev = new PlayerInteractEvent.RightClickItem(me, EnumHand.MAIN_HAND);
-            MinecraftForge.EVENT_BUS.post(ev);
-            me.setSneaking(false);
-            me.setHeldItem(EnumHand.MAIN_HAND, net.minecraft.item.ItemStack.EMPTY);
-            check(ru.death.chaosshard.challenge.ChallengeManager.of(me) == null, "Вызов снят");
-            long alive = left.stream().map(ow::getEntityFromUuid).filter(e -> e != null && e.isEntityAlive()).count();
-            check(alive == left.size(), "нынешняя волна осталась у Якоря: " + alive);
-            for (UUID id : left) { Entity e = ow.getEntityFromUuid(id); if (e != null) e.setDead(); }
-        });
-        step("бесконечный: уход с наградой", () -> {
-            ru.death.chaosshard.challenge.ChallengeManager.cashOut(me);
-            check(ru.death.chaosshard.challenge.ChallengeManager.of(me) == null, "Вызов закрыт с наградой");
+        until("последняя волна отбита — Вызов закрыт с наградой", () -> ru.death.chaosshard.challenge.ChallengeManager.of(me) == null, 60);
+        step("награда за бесконечный в сумке", () -> {
+            int items = 0;
+            for (int i = 0; i < me.inventory.getSizeInventory(); i++) if (!me.inventory.getStackInSlot(i).isEmpty()) items++;
+            check(items > 0, "стопок в сумке: " + items);
             me.inventory.clear();
         });
 

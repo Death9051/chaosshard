@@ -89,6 +89,8 @@ public class ChallengeManager {
         public int timer;
         public final Set<UUID> mobs = new HashSet<>();
         public UUID hunter;
+        /** Бесконечный: после этой волны — закончить с наградой. */
+        public boolean lastWave;
         int absent;
         long hunterReady;
 
@@ -484,13 +486,13 @@ public class ChallengeManager {
         p.addExperience(8 * c.wave);
         w.playSound(null, p.getPosition(), SoundEvents.ENTITY_PLAYER_LEVELUP, SoundCategory.PLAYERS, 0.8F, 1.2F);
         p.sendMessage(Breach.grimoire("chaosshard.challenge.wave.done", c.wave, nit));
-        if (c.spec.endless()) {
+        if (c.spec.endless() && !c.lastWave) {
             p.sendMessage(Breach.grimoire("chaosshard.challenge.cashout_hint"));
             if (c.wave >= 10) {
                 Milestones.grant(p, Milestones.CHALLENGE_ENDLESS);
             }
         }
-        if (!c.spec.endless() && c.wave >= c.spec.waves()) {
+        if (!c.spec.endless() && c.wave >= c.spec.waves() || c.spec.endless() && c.lastWave) {
             victory(w, c, p);
             return;
         }
@@ -541,29 +543,6 @@ public class ChallengeManager {
         } else {
             fail(c, p, "chaosshard.challenge.fail.abandon");
         }
-    }
-
-    /** Отказ посреди волны. */
-    public static void withdraw(EntityPlayerMP p) {
-        Challenge c = of(p);
-        if (c == null) {
-            return;
-        }
-        p.sendMessage(Breach.grimoire(c.arena ? "chaosshard.challenge.withdraw.arena" : "chaosshard.challenge.withdraw.anchor", c.wave));
-        if (c.arena) {
-            end(c, p);
-            return;
-        }
-        // у Якоря нынешняя волна остаётся — без Вызова это просто враги рядом
-        ACTIVE.remove(c.owner);
-        WorldServer w = DimensionManager.getWorld(c.dim);
-        if (w != null && c.hunter != null) {
-            Entity h = w.getEntityFromUuid(c.hunter);
-            if (h != null) {
-                h.setDead();
-            }
-        }
-        c.mobs.clear();
     }
 
     static void fail(Challenge c, EntityPlayerMP p, String why) {
@@ -653,9 +632,8 @@ public class ChallengeManager {
     }
 
     /**
-     * Shift+ПКМ Гримуаром: между волнами в бесконечном — уйти с наградой, на ступени — сдаться;
-     * во время волны — отказаться: новых волн не будет, дары за отбитые остаются, итоговой награды нет.
-     * У Якоря нынешняя волна остаётся добивать, с арены — домой.
+     * Shift+ПКМ Гримуаром. Между волнами: в бесконечном — уйти с наградой, на ступени — сдаться.
+     * Во время волны в бесконечном: «эта волна последняя» — она доигрывается, новых нет, итоговая награда как при уходе.
      */
     @SubscribeEvent
     public void onGrimoire(PlayerInteractEvent.RightClickItem event) {
@@ -668,7 +646,13 @@ public class ChallengeManager {
         }
         event.setCanceled(true);
         if (c.fighting) {
-            withdraw((EntityPlayerMP) event.getEntityPlayer());
+            if (!c.spec.endless()) {
+                event.getEntityPlayer().sendStatusMessage(Breach.grimoire("chaosshard.challenge.not_now"), true);
+                return;
+            }
+            // бесконечный: эта волна — последняя (повторно — передумать)
+            c.lastWave = !c.lastWave;
+            event.getEntityPlayer().sendMessage(Breach.grimoire(c.lastWave ? "chaosshard.challenge.last_wave" : "chaosshard.challenge.last_wave.off"));
             return;
         }
         cashOut((EntityPlayerMP) event.getEntityPlayer());
