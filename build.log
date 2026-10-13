@@ -35,14 +35,14 @@ Using cached decompiled jar from /home/runner/.gradle/caches/retro_futura_gradle
 
 > Task :cleanupDecompSrgJar
 Fixup stage 1 - applying FF patches
-  Stage 1 took 515 ms
+  Stage 1 took 438 ms
 Fixup stage 2 - applying MCP patches
-  Stage 2 took 184 ms
+  Stage 2 took 156 ms
 Fixup stage 3 - applying MCP cleanup
-  Stage 3 took 8555 ms
+  Stage 3 took 7634 ms
 Fixup stage 4 - injecting package-info
   Injected 119 package-infos
-  Stage 4 took 6 ms
+  Stage 4 took 4 ms
 Saving the fixed-up jar
 
 > Task :patchDecompiledJar
@@ -89,19 +89,14 @@ Note: Writing searge output SRGs to /home/runner/work/chaosshard/chaosshard/buil
 Note: Writing refmap to /home/runner/work/chaosshard/chaosshard/build/tmp/mixins/mixins.chaosshard.refmap.json
 Note: Writing refmap to /home/runner/work/chaosshard/chaosshard/build/tmp/mixins/mixins.chaosshard.refmap.json
 Note: Writing searge output SRGs to /home/runner/work/chaosshard/chaosshard/build/tmp/mixins/mixins.srg
-/home/runner/work/chaosshard/chaosshard/src/main/java/ru/death/chaosshard/structure/OrderStructures.java:261: error: cannot find symbol
-            world.playSound(null, k.getPosition(), SoundEvents.BLOCK_BEACON_DEACTIVATE, SoundCategory.HOSTILE, 3.0F, 0.7F);
-                                                              ^
-  symbol:   variable BLOCK_BEACON_DEACTIVATE
-  location: class net.minecraft.init.SoundEvents
 /home/runner/work/chaosshard/chaosshard/src/main/java/ru/death/chaosshard/structure/EntityOrderKnight.java:167: error: cannot find symbol
-            world.playSound(null, getPosition(), SoundEvents.BLOCK_BEACON_POWER_SELECT, SoundCategory.HOSTILE, 1.5F, 1.3F);
+            world.playSound(null, getPosition(), SoundEvents.ENTITY_EVOCATION_ILLAGER_CAST_SPELL, SoundCategory.HOSTILE, 1.5F, 1.3F);
                                                             ^
-  symbol:   variable BLOCK_BEACON_POWER_SELECT
+  symbol:   variable ENTITY_EVOCATION_ILLAGER_CAST_SPELL
   location: class net.minecraft.init.SoundEvents
 Note: Some input files use or override a deprecated API.
 Note: Recompile with -Xlint:deprecation for details.
-2 errors
+1 error
 
 > Task :compileJava FAILED
 
@@ -113,7 +108,7 @@ FAILURE: Build failed with an exception.
 Execution failed for task ':compileJava' (registered by plugin class 'org.gradle.api.plugins.JavaBasePlugin').
 > Compilation failed; see the compiler output below.
   Note: SpongePowered MIXIN Annotation Processor Version=0.8.7
-  2 errors
+  1 error
 
 * Try:
 > Run with --scan to get full insights from a Build Scan (powered by Develocity).
@@ -151,6 +146,37 @@ org.gradle.api.tasks.TaskExecutionException: Execution failed for task ':compile
 	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$BuildOperationAwareExecutionAction.execute(DefaultTaskExecutionGraph.java:328)
 	at org.gradle.execution.plan.DefaultPlanExecutor$ExecutorWorker.execute(DefaultPlanExecutor.java:459)
 	at org.gradle.execution.plan.DefaultPlanExecutor$ExecutorWorker.run(DefaultPlanExecutor.java:376)
+	at org.gradle.execution.plan.DefaultPlanExecutor.process(DefaultPlanExecutor.java:111)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph.executeWithServices(DefaultTaskExecutionGraph.java:146)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph.execute(DefaultTaskExecutionGraph.java:131)
+	at org.gradle.execution.SelectedTaskExecutionAction.execute(SelectedTaskExecutionAction.java:35)
+	at org.gradle.execution.BuildOperationFiringBuildWorkerExecutor$ExecuteTasks.call(BuildOperationFiringBuildWorkerExecutor.java:54)
+	at org.gradle.execution.BuildOperationFiringBuildWorkerExecutor$ExecuteTasks.call(BuildOperationFiringBuildWorkerExecutor.java:43)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:210)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:205)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:67)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:60)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:167)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:60)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.call(DefaultBuildOperationRunner.java:54)
+	at org.gradle.execution.BuildOperationFiringBuildWorkerExecutor.execute(BuildOperationFiringBuildWorkerExecutor.java:40)
+	at org.gradle.internal.build.DefaultBuildLifecycleController.lambda$executeTasks$0(DefaultBuildLifecycleController.java:323)
+	at org.gradle.internal.model.StateTransitionController.doTransition(StateTransitionController.java:324)
+	at org.gradle.internal.model.StateTransitionController.lambda$tryTransition$0(StateTransitionController.java:235)
+	at org.gradle.internal.work.DefaultSynchronizer.withLock(DefaultSynchronizer.java:45)
+	at org.gradle.internal.model.StateTransitionController.tryTransition(StateTransitionController.java:235)
+	at org.gradle.internal.build.DefaultBuildLifecycleController.executeTasks(DefaultBuildLifecycleController.java:314)
+	at org.gradle.internal.build.DefaultBuildWorkGraphController$DefaultBuildWorkGraph.runWork(DefaultBuildWorkGraphController.java:220)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.lambda$runAndReleaseLocks$0(DefaultWorkerLeaseService.java:302)
+	at org.gradle.internal.work.ResourceLockStatistics$1.measure(ResourceLockStatistics.java:43)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.runAndReleaseLocks(DefaultWorkerLeaseService.java:300)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.withLocksAcquired(DefaultWorkerLeaseService.java:296)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.withLocks(DefaultWorkerLeaseService.java:288)
+	at org.gradle.internal.work.DefaultWorkerLeaseService.runAsWorkerThread(DefaultWorkerLeaseService.java:131)
+	at org.gradle.composite.internal.DefaultBuildController.doRun(DefaultBuildController.java:182)
+	at org.gradle.composite.internal.DefaultBuildController$BuildOpRunnable.lambda$run$0(DefaultBuildController.java:199)
+	at org.gradle.internal.operations.CurrentBuildOperationRef.with(CurrentBuildOperationRef.java:84)
+	at org.gradle.composite.internal.DefaultBuildController$BuildOpRunnable.run(DefaultBuildController.java:199)
 	at org.gradle.internal.concurrent.ExecutorPolicy$CatchAndRecordFailures.onExecute(ExecutorPolicy.java:65)
 	at org.gradle.internal.concurrent.AbstractManagedExecutor$1.run(AbstractManagedExecutor.java:47)
 Caused by: org.gradle.api.internal.tasks.compile.CompilationFailedException: Compilation failed; see the compiler output below.
@@ -162,19 +188,14 @@ Note: Writing searge output SRGs to /home/runner/work/chaosshard/chaosshard/buil
 Note: Writing refmap to /home/runner/work/chaosshard/chaosshard/build/tmp/mixins/mixins.chaosshard.refmap.json
 Note: Writing refmap to /home/runner/work/chaosshard/chaosshard/build/tmp/mixins/mixins.chaosshard.refmap.json
 Note: Writing searge output SRGs to /home/runner/work/chaosshard/chaosshard/build/tmp/mixins/mixins.srg
-/home/runner/work/chaosshard/chaosshard/src/main/java/ru/death/chaosshard/structure/OrderStructures.java:261: error: cannot find symbol
-            world.playSound(null, k.getPosition(), SoundEvents.BLOCK_BEACON_DEACTIVATE, SoundCategory.HOSTILE, 3.0F, 0.7F);
-                                                              ^
-  symbol:   variable BLOCK_BEACON_DEACTIVATE
-  location: class net.minecraft.init.SoundEvents
 /home/runner/work/chaosshard/chaosshard/src/main/java/ru/death/chaosshard/structure/EntityOrderKnight.java:167: error: cannot find symbol
-            world.playSound(null, getPosition(), SoundEvents.BLOCK_BEACON_POWER_SELECT, SoundCategory.HOSTILE, 1.5F, 1.3F);
+            world.playSound(null, getPosition(), SoundEvents.ENTITY_EVOCATION_ILLAGER_CAST_SPELL, SoundCategory.HOSTILE, 1.5F, 1.3F);
                                                             ^
-  symbol:   variable BLOCK_BEACON_POWER_SELECT
+  symbol:   variable ENTITY_EVOCATION_ILLAGER_CAST_SPELL
   location: class net.minecraft.init.SoundEvents
 Note: Some input files use or override a deprecated API.
 Note: Recompile with -Xlint:deprecation for details.
-2 errors
+1 error
 	at org.gradle.api.internal.tasks.compile.JdkJavaCompiler.execute(JdkJavaCompiler.java:88)
 	at org.gradle.api.internal.tasks.compile.JdkJavaCompiler.execute(JdkJavaCompiler.java:49)
 	at org.gradle.api.internal.tasks.compile.daemon.CompilerWorkAction.execute(CompilerWorkAction.java:52)
@@ -208,5 +229,5 @@ You can use '--warning-mode all' to show the individual deprecation warnings and
 
 For more on this, please refer to https://docs.gradle.org/9.7.0/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
 
-BUILD FAILED in 2m 3s
+BUILD FAILED in 1m 38s
 17 actionable tasks: 17 executed
