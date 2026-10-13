@@ -594,7 +594,11 @@ public final class AutoTest {
                     long k = be.getKey();
                     BlockPos p = ru.death.chaosshard.structure.BlueprintPlacer.at(e.origin(), ru.death.chaosshard.structure.bp.Blueprint.kx(k),
                             ru.death.chaosshard.structure.bp.Blueprint.ky(k), ru.death.chaosshard.structure.bp.Blueprint.kz(k), e.rot);
-                    if (ow.getBlockState(p).getBlock() != ru.death.chaosshard.structure.BlueprintPlacer.parse(be.getValue()).getBlock()) bad++;
+                    if (ow.getBlockState(p).getBlock() != ru.death.chaosshard.structure.BlueprintPlacer.parse(be.getValue()).getBlock()) {
+                        if (bad < 6) line("      " + names[i] + " (" + ru.death.chaosshard.structure.bp.Blueprint.kx(k) + "," + ru.death.chaosshard.structure.bp.Blueprint.ky(k) + ","
+                                + ru.death.chaosshard.structure.bp.Blueprint.kz(k) + "): ждали " + be.getValue() + ", стоит " + ow.getBlockState(p).getBlock().getRegistryName());
+                        bad++;
+                    }
                 }
                 check(bad <= bp.blocks.size() / 100, names[i] + ": блоков не на месте " + bad + " из " + bp.blocks.size());
                 int chests = 0, loot = 0;
