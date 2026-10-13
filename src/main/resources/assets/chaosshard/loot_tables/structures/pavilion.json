@@ -19,7 +19,8 @@
         "max": 6
        }
       }
-     ]
+     ],
+     "entryName": "gold_ingot"
     },
     {
      "type": "item",
@@ -33,7 +34,8 @@
         "max": 3
        }
       }
-     ]
+     ],
+     "entryName": "emerald"
     },
     {
      "type": "item",
@@ -47,7 +49,8 @@
         "max": 5
        }
       }
-     ]
+     ],
+     "entryName": "golden_carrot"
     },
     {
      "type": "item",
@@ -59,7 +62,8 @@
        "levels": 15,
        "treasure": true
       }
-     ]
+     ],
+     "entryName": "book"
     },
     {
      "type": "item",
@@ -73,12 +77,14 @@
         "max": 8
        }
       }
-     ]
+     ],
+     "entryName": "glowstone_dust"
     },
     {
      "type": "item",
      "name": "minecraft:golden_apple",
-     "weight": 3
+     "weight": 3,
+     "entryName": "golden_apple"
     }
    ]
   },
@@ -89,7 +95,8 @@
     {
      "type": "item",
      "name": "chaosshard:veil_shard",
-     "weight": 10
+     "weight": 10,
+     "entryName": "veil_shard"
     }
    ],
    "conditions": [

@@ -19,7 +19,8 @@
         "max": 4
        }
       }
-     ]
+     ],
+     "entryName": "gold_ingot"
     },
     {
      "type": "item",
@@ -33,7 +34,8 @@
         "max": 2
        }
       }
-     ]
+     ],
+     "entryName": "emerald"
     }
    ]
   },
@@ -51,7 +53,8 @@
     {
      "type": "item",
      "name": "chaosshard:veil_shard",
-     "weight": 10
+     "weight": 10,
+     "entryName": "veil_shard"
     }
    ]
   }

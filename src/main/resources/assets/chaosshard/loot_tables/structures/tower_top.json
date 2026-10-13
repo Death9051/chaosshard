@@ -19,7 +19,8 @@
         "max": 4
        }
       }
-     ]
+     ],
+     "entryName": "diamond"
     },
     {
      "type": "item",
@@ -33,7 +34,8 @@
         "max": 10
        }
       }
-     ]
+     ],
+     "entryName": "gold_ingot"
     },
     {
      "type": "item",
@@ -47,7 +49,8 @@
         "max": 5
        }
       }
-     ]
+     ],
+     "entryName": "emerald"
     },
     {
      "type": "item",
@@ -59,7 +62,8 @@
        "levels": 25,
        "treasure": true
       }
-     ]
+     ],
+     "entryName": "diamond_sword"
     },
     {
      "type": "item",
@@ -71,7 +75,8 @@
        "levels": 25,
        "treasure": true
       }
-     ]
+     ],
+     "entryName": "diamond_helmet"
     },
     {
      "type": "item",
@@ -83,7 +88,8 @@
        "levels": 25,
        "treasure": true
       }
-     ]
+     ],
+     "entryName": "book"
     },
     {
      "type": "item",
@@ -97,7 +103,8 @@
         "max": 2
        }
       }
-     ]
+     ],
+     "entryName": "golden_apple"
     },
     {
      "type": "item",
@@ -111,7 +118,8 @@
         "max": 8
        }
       }
-     ]
+     ],
+     "entryName": "experience_bottle"
     }
    ]
   },
@@ -131,7 +139,8 @@
         "max": 3
        }
       }
-     ]
+     ],
+     "entryName": "veil_shard"
     }
    ]
   },
@@ -142,7 +151,8 @@
     {
      "type": "item",
      "name": "chaosshard:trial_key",
-     "weight": 10
+     "weight": 10,
+     "entryName": "trial_key"
     }
    ],
    "conditions": [

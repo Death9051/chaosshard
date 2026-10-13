@@ -186,6 +186,7 @@ public class OrderStructures implements IWorldGenerator {
 
     /** Первый воздушный слой над грунтом (без листвы, брёвен и травы); над водой — над водой. */
     public static BlockPos ground(World world, int x, int z) {
+        world.getChunk(x >> 4, z >> 4); // в незагруженном чанке высота читается как 0
         BlockPos p = world.getHeight(new BlockPos(x, 0, z));
         while (p.getY() > 1) {
             IBlockState s = world.getBlockState(p.down());

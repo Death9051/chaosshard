@@ -19,7 +19,8 @@
         "max": 5
        }
       }
-     ]
+     ],
+     "entryName": "diamond"
     },
     {
      "type": "item",
@@ -33,7 +34,8 @@
         "max": 7
        }
       }
-     ]
+     ],
+     "entryName": "emerald"
     },
     {
      "type": "item",
@@ -47,7 +49,8 @@
         "max": 10
        }
       }
-     ]
+     ],
+     "entryName": "gold_ingot"
     },
     {
      "type": "item",
@@ -61,7 +64,8 @@
         "max": 2
        }
       }
-     ]
+     ],
+     "entryName": "golden_apple"
     },
     {
      "type": "item",
@@ -72,7 +76,8 @@
        "function": "set_data",
        "data": 1
       }
-     ]
+     ],
+     "entryName": "golden_apple_2"
     },
     {
      "type": "item",
@@ -84,7 +89,8 @@
        "levels": 30,
        "treasure": true
       }
-     ]
+     ],
+     "entryName": "book"
     },
     {
      "type": "item",
@@ -96,7 +102,8 @@
        "levels": 30,
        "treasure": true
       }
-     ]
+     ],
+     "entryName": "diamond_sword"
     },
     {
      "type": "item",
@@ -108,12 +115,14 @@
        "levels": 30,
        "treasure": true
       }
-     ]
+     ],
+     "entryName": "diamond_chestplate"
     },
     {
      "type": "item",
      "name": "minecraft:totem_of_undying",
-     "weight": 2
+     "weight": 2,
+     "entryName": "totem_of_undying"
     },
     {
      "type": "item",
@@ -127,7 +136,8 @@
         "max": 10
        }
       }
-     ]
+     ],
+     "entryName": "experience_bottle"
     }
    ]
   },
@@ -147,7 +157,8 @@
         "max": 4
        }
       }
-     ]
+     ],
+     "entryName": "veil_shard"
     }
    ]
   },
@@ -158,7 +169,8 @@
     {
      "type": "item",
      "name": "chaosshard:trial_key",
-     "weight": 10
+     "weight": 10,
+     "entryName": "trial_key"
     }
    ],
    "conditions": [

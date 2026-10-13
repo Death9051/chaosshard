@@ -16,7 +16,8 @@
         "max": 4
        }
       }
-     ]
+     ],
+     "entryName": "diamond"
     }
    ]
   },
@@ -36,7 +37,8 @@
         "max": 5
        }
       }
-     ]
+     ],
+     "entryName": "veil_shard"
     }
    ]
   },
@@ -56,7 +58,8 @@
         "max": 2
        }
       }
-     ]
+     ],
+     "entryName": "gold_block"
     }
    ]
   }

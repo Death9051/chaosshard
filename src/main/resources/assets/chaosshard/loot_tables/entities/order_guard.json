@@ -16,7 +16,8 @@
         "max": 2
        }
       }
-     ]
+     ],
+     "entryName": "bread"
     },
     {
      "type": "item",
@@ -30,7 +31,8 @@
         "max": 4
        }
       }
-     ]
+     ],
+     "entryName": "gold_nugget"
     },
     {
      "type": "item",
@@ -44,7 +46,8 @@
         "max": 4
        }
       }
-     ]
+     ],
+     "entryName": "arrow"
     }
    ]
   },
@@ -62,7 +65,8 @@
     {
      "type": "item",
      "name": "chaosshard:veil_shard",
-     "weight": 10
+     "weight": 10,
+     "entryName": "veil_shard"
     }
    ]
   }

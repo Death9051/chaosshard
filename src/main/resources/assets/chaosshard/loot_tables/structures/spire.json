@@ -19,7 +19,8 @@
         "max": 7
        }
       }
-     ]
+     ],
+     "entryName": "prismarine_shard"
     },
     {
      "type": "item",
@@ -33,7 +34,8 @@
         "max": 6
        }
       }
-     ]
+     ],
+     "entryName": "prismarine_crystals"
     },
     {
      "type": "item",
@@ -51,7 +53,8 @@
        "function": "set_data",
        "data": 4
       }
-     ]
+     ],
+     "entryName": "dye"
     },
     {
      "type": "item",
@@ -65,7 +68,8 @@
         "max": 3
        }
       }
-     ]
+     ],
+     "entryName": "ender_pearl"
     },
     {
      "type": "item",
@@ -79,7 +83,8 @@
         "max": 2
        }
       }
-     ]
+     ],
+     "entryName": "diamond"
     },
     {
      "type": "item",
@@ -93,7 +98,8 @@
         "max": 5
        }
       }
-     ]
+     ],
+     "entryName": "experience_bottle"
     },
     {
      "type": "item",
@@ -105,7 +111,8 @@
        "levels": 20,
        "treasure": true
       }
-     ]
+     ],
+     "entryName": "book"
     }
    ]
   },
@@ -125,7 +132,8 @@
         "max": 2
        }
       }
-     ]
+     ],
+     "entryName": "veil_shard"
     }
    ],
    "conditions": [

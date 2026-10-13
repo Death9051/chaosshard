@@ -19,7 +19,8 @@
         "max": 8
        }
       }
-     ]
+     ],
+     "entryName": "iron_ingot"
     },
     {
      "type": "item",
@@ -33,7 +34,8 @@
         "max": 5
        }
       }
-     ]
+     ],
+     "entryName": "gold_ingot"
     },
     {
      "type": "item",
@@ -47,7 +49,8 @@
         "max": 16
        }
       }
-     ]
+     ],
+     "entryName": "arrow"
     },
     {
      "type": "item",
@@ -61,7 +64,8 @@
         "max": 6
        }
       }
-     ]
+     ],
+     "entryName": "bread"
     },
     {
      "type": "item",
@@ -73,7 +77,8 @@
        "levels": 15,
        "treasure": true
       }
-     ]
+     ],
+     "entryName": "iron_helmet"
     },
     {
      "type": "item",
@@ -85,7 +90,8 @@
        "levels": 15,
        "treasure": true
       }
-     ]
+     ],
+     "entryName": "iron_chestplate"
     },
     {
      "type": "item",
@@ -97,12 +103,14 @@
        "levels": 15,
        "treasure": true
       }
-     ]
+     ],
+     "entryName": "iron_sword"
     },
     {
      "type": "item",
      "name": "minecraft:shield",
-     "weight": 5
+     "weight": 5,
+     "entryName": "shield"
     },
     {
      "type": "item",
@@ -116,7 +124,8 @@
         "max": 8
        }
       }
-     ]
+     ],
+     "entryName": "paper"
     }
    ]
   },
@@ -127,7 +136,8 @@
     {
      "type": "item",
      "name": "chaosshard:veil_shard",
-     "weight": 10
+     "weight": 10,
+     "entryName": "veil_shard"
     }
    ],
    "conditions": [
