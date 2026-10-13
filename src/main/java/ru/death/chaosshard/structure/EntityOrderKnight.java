@@ -164,7 +164,7 @@ public class EntityOrderKnight extends EntityMob {
                 e.attackEntityFrom(DamageSource.causeMobDamage(this).setMagicDamage(), 4.0F);
             }
             ((WorldServer) world).spawnParticle(EnumParticleTypes.END_ROD, posX, posY + 1, posZ, 60, 2.5, 0.6, 2.5, 0.08);
-            world.playSound(null, getPosition(), SoundEvents.BLOCK_BEACON_POWER_SELECT, SoundCategory.HOSTILE, 1.5F, 1.3F);
+            world.playSound(null, getPosition(), SoundEvents.ENTITY_EVOCATION_ILLAGER_CAST_SPELL, SoundCategory.HOSTILE, 1.5F, 1.3F);
         }
         // на половине здоровья зовёт двух стражей
         if (!calledHelp && getHealth() < getMaxHealth() / 2) {

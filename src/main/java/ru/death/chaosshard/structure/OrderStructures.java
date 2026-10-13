@@ -258,7 +258,7 @@ public class OrderStructures implements IWorldGenerator {
                     ((TileOrderBeacon) te).setLit(false);
                 }
             }
-            world.playSound(null, k.getPosition(), SoundEvents.BLOCK_BEACON_DEACTIVATE, SoundCategory.HOSTILE, 3.0F, 0.7F);
+            world.playSound(null, k.getPosition(), SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.HOSTILE, 3.0F, 0.5F);
             for (EntityPlayer pl : world.getEntitiesWithinAABB(EntityPlayer.class, k.getEntityBoundingBox().grow(48))) {
                 pl.sendMessage(new TextComponentTranslation("chaosshard.order.keeper_dead").setStyle(
                         new net.minecraft.util.text.Style().setColor(TextFormatting.GOLD)));
