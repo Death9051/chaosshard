@@ -77,7 +77,11 @@ public final class ThreadManager {
     }
 
     /** Перелив избытка Нити в прокачку. Возвращает {опыт каждому зверю, число зверей, опыт перков}. */
+    /** Сколько Нити перелилось за всё время работы сервера (для автотеста). */
+    public static long overflowed;
+
     public static int[] overflow(EntityPlayerMP player, int over) {
+        overflowed += over;
         int beastXp = over * Math.max(0, ChaosConfig.thread.overflowBeastXp);
         int beasts = beastXp > 0 ? ru.death.chaosshard.servant.Beasts.overflowXp(player, beastXp) : 0;
         int astral = 0;

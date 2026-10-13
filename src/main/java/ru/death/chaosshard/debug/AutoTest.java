@@ -944,6 +944,7 @@ public final class AutoTest {
             check(me.getHeldItemMainhand().isEmpty(), "сфера разбита");
             if (c != null) c.timer = 2;
             challengeNit = ru.death.chaosshard.thread.ThreadManager.getPoints(me);
+            overSnap = ru.death.chaosshard.thread.ThreadManager.overflowed;
             challengeCorrupt = ((TileAnchor) ow.getTileEntity(anchorPos)).getCorrupted();
         });
         for (int wv = 1; wv <= 3; wv++) {
@@ -967,7 +968,7 @@ public final class AutoTest {
         }
         step("Вызов выдержан: награда, Нить, Якорь окреп", () -> {
             check(ru.death.chaosshard.challenge.ChallengeManager.of(me) == null, "Вызов завершён");
-            check(ru.death.chaosshard.thread.ThreadManager.getPoints(me) > challengeNit, "Нить выросла: " + challengeNit + " → " + ru.death.chaosshard.thread.ThreadManager.getPoints(me));
+            check(nitGrew(challengeNit), "Нить выросла (или перелилась): " + challengeNit + " → " + ru.death.chaosshard.thread.ThreadManager.getPoints(me));
             check(((TileAnchor) ow.getTileEntity(anchorPos)).getCorrupted() > challengeCorrupt, "Якорь окреп");
             int items = 0;
             for (int i = 0; i < me.inventory.getSizeInventory(); i++) if (!me.inventory.getStackInSlot(i).isEmpty()) items++;
@@ -1231,6 +1232,7 @@ public final class AutoTest {
             List<ru.death.chaosshard.hero.EntityHero> hs = ow.getEntitiesWithinAABB(ru.death.chaosshard.hero.EntityHero.class, new AxisAlignedBB(planned.origin()).grow(24, 40, 24));
             if (hs.isEmpty()) { check(false, "Каэля нет"); return; }
             int nit = ru.death.chaosshard.thread.ThreadManager.getPoints(me);
+            overSnap = ru.death.chaosshard.thread.ThreadManager.overflowed;
             kill(hs.get(0));
             ru.death.chaosshard.hero.HeroData.Pillar p = ru.death.chaosshard.hero.HeroData.get(ow).of(ru.death.chaosshard.hero.Lightbearer.KAEL);
             check(p.state == ru.death.chaosshard.hero.HeroData.FALLEN, "Опора пала");
@@ -1240,7 +1242,7 @@ public final class AutoTest {
             boolean blade = !ow.getEntitiesWithinAABB(net.minecraft.entity.item.EntityItem.class, new AxisAlignedBB(o).grow(24, 40, 24),
                     x -> x.getItem().getItem() == ru.death.chaosshard.init.ModItems.KAEL_BLADE).isEmpty();
             check(blade, "Клинок Каэля лежит у Опоры");
-            check(ru.death.chaosshard.thread.ThreadManager.getPoints(me) > nit, "Нить окрепла: " + nit + " → " + ru.death.chaosshard.thread.ThreadManager.getPoints(me));
+            check(nitGrew(nit), "Нить окрепла (или перелилась): " + nit + " → " + ru.death.chaosshard.thread.ThreadManager.getPoints(me));
             Advancement a = server.getAdvancementManager().getAdvancement(new ResourceLocation("chaosshard", "m/pillar_kael"));
             check(a != null, "веха «Опора Каэля пала» загружена");
             // подставному игроку Forge вехи не засчитывает — только для сведения
@@ -2013,9 +2015,10 @@ public final class AutoTest {
         });
         step("Иссушитель: Нить и веха", () -> {
             int before = ru.death.chaosshard.thread.ThreadManager.getPoints(me);
+            long over0 = ru.death.chaosshard.thread.ThreadManager.overflowed;
             ru.death.chaosshard.plans.MinorPlans.slain(me, false);
-            check(ru.death.chaosshard.thread.ThreadManager.getPoints(me) - before == ChaosConfig.plans.witherThread,
-                    "Нить +" + (ru.death.chaosshard.thread.ThreadManager.getPoints(me) - before));
+            long got = ru.death.chaosshard.thread.ThreadManager.getPoints(me) - before + ru.death.chaosshard.thread.ThreadManager.overflowed - over0;
+            check(got >= ChaosConfig.plans.witherThread, "Нить +" + got + " (с переливом)");
         });
         step("«Нюх Нити»", () -> {
             check(ru.death.chaosshard.ritual.Ritual.SCENT.isSphere() && ru.death.chaosshard.ritual.Ritual.SCENT.available(), "ритуал-сфера есть");
@@ -2035,6 +2038,12 @@ public final class AutoTest {
             // рядом с капитаном — только его отряд (настоящий набег Якоря мог прийти сам и стоять в другом месте)
             List<ru.death.chaosshard.structure.EntityOrderKnight> squad = ow.getEntitiesWithinAABB(ru.death.chaosshard.structure.EntityOrderKnight.class,
                     cap.getEntityBoundingBox().grow(8, 24, 8), x -> x.getTags().contains(ru.death.chaosshard.act5.OrderRaids.TAG_RAID));
+            if (squad.size() < 7) {
+                for (ru.death.chaosshard.structure.EntityOrderKnight k : ow.getEntitiesWithinAABB(ru.death.chaosshard.structure.EntityOrderKnight.class,
+                        cap.getEntityBoundingBox().grow(64, 64, 64), x -> x.getTags().contains(ru.death.chaosshard.act5.OrderRaids.TAG_RAID))) {
+                    line("  рыцарь " + k.getTags() + " в " + k.getPosition() + " (капитан " + cap.getPosition() + "), жив " + k.isEntityAlive());
+                }
+            }
             check(squad.size() >= 1 + 5 + 1, "в отряде " + squad.size() + " (капитан, 5 рыцарей, знаменосец)");
             check(squad.stream().allMatch(k -> k.getTags().contains(ru.death.chaosshard.garrot.GarrotRaids.TAG_ARMY)
                     && k.getEntityData().getLong(ru.death.chaosshard.garrot.GarrotRaids.TAG_RAID) == anchorPos.toLong()), "все идут на Якорь как армия набега");
@@ -2235,6 +2244,13 @@ public final class AutoTest {
     }
 
     /** Провести подставного игрока через комнату обломка. true — комната пройдена. */
+    private long overSnap;
+
+    /** Нить выросла — или упёрлась в потолок и перелилась. */
+    private boolean nitGrew(int before) {
+        return ru.death.chaosshard.thread.ThreadManager.getPoints(me) > before || ru.death.chaosshard.thread.ThreadManager.overflowed > overSnap;
+    }
+
     private boolean drive(int room) {
         TrialData.Trial t = trial;
         long now = archive.getTotalWorldTime();
