@@ -1,0 +1,17 @@
+name: Ванильные текстуры
+on: workflow_dispatch
+permissions:
+  contents: write
+jobs:
+  tex:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Скачать клиент 1.12.2 и вынуть текстуры блоков
+        run: |
+          curl -sSL -o client.jar https://launcher.mojang.com/v1/objects/0f275bc1547d01fa5f56ba34bdc87d981ee12daf/client.jar
+          mkdir out && cd out
+          unzip -q ../client.jar 'assets/minecraft/textures/blocks/*'
+          git init -q && git checkout -q -b vanilla-tex
+          git add -A
+          git -c user.name=ci -c user.email=ci@local commit -qm "текстуры 1.12.2"
+          git push -qf "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" vanilla-tex
