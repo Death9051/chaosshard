@@ -348,6 +348,7 @@ public class Pillars {
         echo.setEntityInvulnerable(true);
         echo.setNoDespawn();
         ws.spawnEntity(echo);
+        ru.death.chaosshard.compat.loot.OrderLoot.heroRelics(ws, h, heroAt);
         int reward = ChaosConfig.order.pillarReward * (2 + h.ordinal()) / 2;
         for (EntityPlayerMP p : witnesses(ws, o, killer)) {
             ThreadManager.addPoints(p, reward);

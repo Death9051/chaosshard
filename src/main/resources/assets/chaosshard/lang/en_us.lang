@@ -1243,3 +1243,14 @@ advancement.chaosshard.m.power_exu2.title=Defilement in Extra Utilities
 advancement.chaosshard.m.power_exu2.desc=Quest milestone
 advancement.chaosshard.m.power_cyclic.title=Defilement in Cyclic
 advancement.chaosshard.m.power_cyclic.desc=Quest milestone
+
+# ---- Magic & loot: rituals on Order loot
+chaosshard.ritual.holy_defile=Tainted Sanctity
+chaosshard.ritual.holy_defile.desc=Sphere. Order holy water poisoned by Chaos: break it and the nearest Order shrine within 64 blocks is desecrated, as with Essence. Order knights carry holy water.
+chaosshard.ritual.holy_defile.none=No Order shrine nearby — the sphere is intact.
+item.chaosshard.ritual_sphere.holy_defile.name=Sphere of Tainted Sanctity
+chaosshard.ritual.fallen_feather=Fallen Feather
+chaosshard.ritual.fallen_feather.desc=Sphere. An angelic feather turned to Chaos: your servants within 32 blocks get Speed II, Resistance and Regeneration for 5 minutes.
+chaosshard.ritual.fallen_feather.none=None of your servants nearby — the sphere is intact.
+chaosshard.ritual.fallen_feather.done=The feather crumbles: %s servants under its shadow.
+item.chaosshard.ritual_sphere.fallen_feather.name=Sphere of the Fallen Feather

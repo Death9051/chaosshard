@@ -282,7 +282,7 @@ public class GuiGrimoireMagic extends GuiScreen {
     static List<Ritual> shownRituals() {
         List<Ritual> out = new ArrayList<>();
         for (Ritual r : Ritual.values()) {
-            if (!r.isSummon()) {
+            if (!r.isSummon() && r.available()) {
                 out.add(r);
             }
         }

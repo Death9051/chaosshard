@@ -186,6 +186,32 @@ public final class RitualEffects {
                 p.sendMessage(ru.death.chaosshard.breach.Breach.grimoire("chaosshard.altar.surge.done", mine.size(), total));
                 return true;
             }
+            case HOLY_DEFILE: {
+                BlockPos stone = ru.death.chaosshard.order.Shrines.nearest(world, pos, 64);
+                if (stone == null) {
+                    p.sendStatusMessage(ru.death.chaosshard.breach.Breach.grimoire("chaosshard.ritual.holy_defile.none"), true);
+                    return false;
+                }
+                return ru.death.chaosshard.order.Shrines.desecrate(world, stone, p,
+                        new net.minecraft.item.ItemStack(ru.death.chaosshard.init.ModItems.CHAOS_ESSENCE));
+            }
+            case FALLEN_FEATHER: {
+                int n = 0;
+                for (net.minecraft.entity.EntityLiving e : world.getEntitiesWithinAABB(net.minecraft.entity.EntityLiving.class,
+                        new AxisAlignedBB(pos).grow(32), x -> ru.death.chaosshard.servant.Servants.isServantOf(x, p.getUniqueID()))) {
+                    e.addPotionEffect(new net.minecraft.potion.PotionEffect(net.minecraft.init.MobEffects.SPEED, 6000, 1));
+                    e.addPotionEffect(new net.minecraft.potion.PotionEffect(net.minecraft.init.MobEffects.RESISTANCE, 6000, 0));
+                    e.addPotionEffect(new net.minecraft.potion.PotionEffect(net.minecraft.init.MobEffects.REGENERATION, 6000, 0));
+                    ((WorldServer) world).spawnParticle(EnumParticleTypes.END_ROD, e.posX, e.posY + e.height, e.posZ, 12, 0.3, 0.3, 0.3, 0.02);
+                    n++;
+                }
+                if (n == 0) {
+                    p.sendStatusMessage(ru.death.chaosshard.breach.Breach.grimoire("chaosshard.ritual.fallen_feather.none"), true);
+                    return false;
+                }
+                p.sendMessage(ru.death.chaosshard.breach.Breach.grimoire("chaosshard.ritual.fallen_feather.done", n));
+                return true;
+            }
             default: {
                 ru.death.chaosshard.hero.Lightbearer h = ru.death.chaosshard.hero.Lightbearer.byOmen(r);
                 return h != null && ru.death.chaosshard.hero.Pillars.omen(p, world, pos, h);

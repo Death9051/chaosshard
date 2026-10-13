@@ -1266,3 +1266,14 @@ advancement.chaosshard.m.power_exu2.title=Скверна в Extra Utilities
 advancement.chaosshard.m.power_exu2.desc=Генератор питает машину Extra Utilities 2
 advancement.chaosshard.m.power_cyclic.title=Скверна в Cyclic
 advancement.chaosshard.m.power_cyclic.desc=Генератор питает машину Cyclic
+
+# ---- Магия и лут: ритуалы на добыче с Ордена
+chaosshard.ritual.holy_defile=Порченая святость
+chaosshard.ritual.holy_defile.desc=Сфера. Святая вода Ордена, отравленная Хаосом: разбей её — ближайшая святыня Ордена в 64 блоках осквернится, как от Эссенции. Святую воду носят рыцари Ордена.
+chaosshard.ritual.holy_defile.none=Святынь Ордена рядом нет — сфера цела.
+item.chaosshard.ritual_sphere.holy_defile.name=Сфера порченой святости
+chaosshard.ritual.fallen_feather=Падшее перо
+chaosshard.ritual.fallen_feather.desc=Сфера. Ангельское перо, обращённое в Хаос: твои слуги в 32 блоках получают Скорость II, Сопротивление и Регенерацию на 5 минут.
+chaosshard.ritual.fallen_feather.none=Твоих слуг рядом нет — сфера цела.
+chaosshard.ritual.fallen_feather.done=Перо рассыпалось: слуг под его тенью — %s.
+item.chaosshard.ritual_sphere.fallen_feather.name=Сфера падшего пера

@@ -24,7 +24,26 @@ public final class MachineHum {
     private int working;
 
     static final String[] CARRIERS = {"cable", "duct", "conduit", "pipe", "wire", "transmitter", "cell", "cube", "battery",
-            "capacitor", "bank"};
+            "capacitor", "bank", "transfernode", "powermanager"};
+
+    /** Чей это тайл: по пространству имён в реестре или по пакету класса (Cyclic регистрирует тайлы под minecraft:). */
+    public static String modOf(TileEntity te) {
+        String cls = te.getClass().getName();
+        if (cls.startsWith("mekanism.")) {
+            return "mekanism";
+        }
+        if (cls.startsWith("cofh.thermal")) {
+            return "thermal";
+        }
+        if (cls.startsWith("com.rwtema.extrautils2")) {
+            return "extrautils2";
+        }
+        if (cls.startsWith("com.lothrazar.cyclicmagic")) {
+            return "cyclic";
+        }
+        ResourceLocation id = TileEntity.getKey(te.getClass());
+        return id == null ? "" : id.getNamespace();
+    }
 
     /** Провода и хранилища — не машины: они гудят от любого тока. */
     public static boolean carrier(String path) {
@@ -54,8 +73,9 @@ public final class MachineHum {
                 continue;
             }
             ResourceLocation id = TileEntity.getKey(te.getClass());
-            if (id == null || Tags.MOD_ID.equals(id.getNamespace()) || "minecraft".equals(id.getNamespace())
-                    || carrier(id.getPath()) || !te.hasCapability(CapabilityEnergy.ENERGY, null)) {
+            // у ванильных тайлов RF/FE нет; Cyclic пишет свои тайлы под minecraft: — поэтому смотрим ещё и класс
+            if (id == null || Tags.MOD_ID.equals(id.getNamespace()) || carrier(id.getPath())
+                    || carrier(te.getClass().getSimpleName()) || !te.hasCapability(CapabilityEnergy.ENERGY, null)) {
                 continue;
             }
             IEnergyStorage es = te.getCapability(CapabilityEnergy.ENERGY, null);

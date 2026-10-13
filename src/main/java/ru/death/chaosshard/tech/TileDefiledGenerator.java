@@ -30,9 +30,8 @@ public class TileDefiledGenerator extends TileEntity implements ITickable {
 
     /** Моды, ради которых генератор и делался: веха за первую отданную им энергию. */
     static final String[][] MODS = {
-            {"mekanism", Milestones.POWER_MEKANISM}, {"mekanismgenerators", Milestones.POWER_MEKANISM},
-            {"thermalexpansion", Milestones.POWER_THERMAL}, {"thermaldynamics", Milestones.POWER_THERMAL},
-            {"extrautils2", Milestones.POWER_EXU2}, {"cyclicmagic", Milestones.POWER_CYCLIC}};
+            {"mekanism", Milestones.POWER_MEKANISM}, {"thermal", Milestones.POWER_THERMAL},
+            {"extrautils2", Milestones.POWER_EXU2}, {"cyclic", Milestones.POWER_CYCLIC}};
 
     /** Запас: снаружи только отдаёт. */
     static final class Store extends EnergyStorage {
@@ -123,12 +122,10 @@ public class TileDefiledGenerator extends TileEntity implements ITickable {
                 markDirty();
                 left -= sent;
                 if (world.getTotalWorldTime() % 100 == 0) {
-                    ResourceLocation id = TileEntity.getKey(te.getClass());
-                    if (id != null) {
-                        for (String[] m : MODS) {
-                            if (m[0].equals(id.getNamespace())) {
-                                grantNear(m[1]);
-                            }
+                    String mod = MachineHum.modOf(te);
+                    for (String[] m : MODS) {
+                        if (m[0].equals(mod)) {
+                            grantNear(m[1]);
                         }
                     }
                 }

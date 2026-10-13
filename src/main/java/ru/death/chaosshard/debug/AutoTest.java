@@ -1746,6 +1746,44 @@ public final class AutoTest {
             check(n == 0, "без чужих машин гула нет: " + n);
         });
 
+        section("Магия и лут: Reliquary, Bountiful Baubles");
+        if (Loader.isModLoaded("xreliquary")) {
+            step("ритуалы на добыче с Ордена", () -> {
+                check(ru.death.chaosshard.ritual.Ritual.HOLY_DEFILE.available() && ru.death.chaosshard.ritual.Ritual.FALLEN_FEATHER.available(),
+                        "ритуалы на святой воде и пере доступны");
+                check(ru.death.chaosshard.ritual.Ritual.find(ru.death.chaosshard.ritual.Ritual.HOLY_DEFILE.offeringStacks())
+                        == ru.death.chaosshard.ritual.Ritual.HOLY_DEFILE, "Чаша узнаёт «Порченую святость»");
+                EntityLiving sv = servants.get(Servants.Kind.EXECUTIONER);
+                if (sv == null || !sv.isEntityAlive()) {
+                    line("  (слуги для пера нет — пропуск)");
+                    return;
+                }
+                sv.removePotionEffect(net.minecraft.init.MobEffects.SPEED);
+                boolean ok = ru.death.chaosshard.ritual.RitualEffects.use(me, ow, sv.getPosition(), ru.death.chaosshard.ritual.Ritual.FALLEN_FEATHER);
+                net.minecraft.potion.PotionEffect sp = sv.getActivePotionEffect(net.minecraft.init.MobEffects.SPEED);
+                check(ok && sp != null && sp.getAmplifier() == 1, "«Падшее перо»: слуга получил Скорость II");
+            });
+        }
+        step("сундуки Ордена и реликвии Светочей", () -> {
+            net.minecraft.world.storage.loot.LootTable t = ow.getLootTableManager().getLootTableFromLocation(
+                    new ResourceLocation("chaosshard", "structures/spire"));
+            boolean any = Loader.isModLoaded("xreliquary") || Loader.isModLoaded("bountifulbaubles");
+            check((t.getPool("chaosshard_relics") != null) == any, "пул реликвий в сундуках Ордена: " + (t.getPool("chaosshard_relics") != null));
+            BlockPos at = base.add(-20, 1, 20);
+            ru.death.chaosshard.compat.loot.OrderLoot.heroRelics(ow, ru.death.chaosshard.hero.Lightbearer.KAEL, at);
+            int n = 0;
+            for (net.minecraft.entity.item.EntityItem ei : ow.getEntitiesWithinAABB(net.minecraft.entity.item.EntityItem.class,
+                    new AxisAlignedBB(at).grow(3))) {
+                String id = String.valueOf(ei.getItem().getItem().getRegistryName());
+                if (id.equals("xreliquary:mercy_cross") || id.equals("bountifulbaubles:shieldcobalt")) {
+                    n++;
+                }
+                ei.setDead();
+            }
+            int want = (Loader.isModLoaded("xreliquary") ? 1 : 0) + (Loader.isModLoaded("bountifulbaubles") ? 1 : 0);
+            check(n == want, "Каэль оставил реликвий: " + n + " из " + want);
+        });
+
         section("Справка: реестры модов сборки");
         step("выписать предметы, блоки, тайлы и существ", () -> {
             String[] mods = {"xreliquary", "reliquary", "bountifulbaubles", "apotheosis", "waystones", "extrautils2", "cyclicmagic",

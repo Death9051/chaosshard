@@ -81,7 +81,13 @@ public enum Ritual {
             offer("chaosshard:world_shard", 0, 4), offer("minecraft:noteblock", 0, 4)),
     /** Знамение Элис. */
     OMEN_ELIS(5, 0, offer("chaosshard:chaos_essence", 0, 16), offer("chaosshard:veil_shard", 0, 6),
-            offer("chaosshard:world_shard", 0, 5), offer("minecraft:golden_horse_armor", 0, 1));
+            offer("chaosshard:world_shard", 0, 5), offer("minecraft:golden_horse_armor", 0, 1)),
+
+    // ---------------------------------------------------------------- на добыче с Ордена (Reliquary); только в конец
+    /** Порченая святость (сфера): ближайшая святыня Ордена в 64 блоках осквернена. Святая вода — с рыцарей Ордена. */
+    HOLY_DEFILE(2, 0, offer("xreliquary:glowing_water", 0, 2), offer("chaosshard:chaos_essence", 0, 2)),
+    /** Падшее перо (сфера): мои слуги в 32 блоках — Скорость II, Сопротивление I и Регенерация I на 5 минут. */
+    FALLEN_FEATHER(3, 0, offer("xreliquary:angelic_feather", 0, 1), offer("chaosshard:chaos_essence", 0, 3));
 
     /** Старшие ритуалы — на Алтаре Прорыва, а не в Чаше. */
     public boolean isAltar() {
@@ -124,7 +130,7 @@ public enum Ritual {
     /** Ритуалы с эффектом на месте: запечатываются в сферу, которую ставят, где нужно. */
     public static final Ritual[] SPHERES = {GROWTH, WARD, STORM, CORRUPTION, PULL,
             DUSK, BREED, SIGHT, RECALL, BLOOD_MOON, GREAT_SURGE,
-            OMEN_KAEL, OMEN_IRENA, OMEN_VELMOR, OMEN_LIAN, OMEN_ELIS};
+            OMEN_KAEL, OMEN_IRENA, OMEN_VELMOR, OMEN_LIAN, OMEN_ELIS, HOLY_DEFILE, FALLEN_FEATHER};
 
     /** Номер сферы (метаданные предмета) или -1. */
     public int sphereIndex() {
@@ -142,6 +148,16 @@ public enum Ritual {
 
     public static Ritual sphere(int meta) {
         return meta >= 0 && meta < SPHERES.length ? SPHERES[meta] : GROWTH;
+    }
+
+    /** Все подношения есть в игре (ритуалы на предметах других модов без этих модов не показываются и не идут). */
+    public boolean available() {
+        for (Offering o : offerings) {
+            if (o.item.get() == Items.AIR) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public boolean isSummon() {
@@ -204,7 +220,7 @@ public enum Ritual {
 
     public static Ritual find(List<ItemStack> contents) {
         for (Ritual r : values()) {
-            if (!r.isAltar() && r.matches(contents)) {
+            if (!r.isAltar() && r.available() && r.matches(contents)) {
                 return r;
             }
         }
