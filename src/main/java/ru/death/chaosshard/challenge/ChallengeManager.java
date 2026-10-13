@@ -543,6 +543,29 @@ public class ChallengeManager {
         }
     }
 
+    /** Отказ посреди волны. */
+    public static void withdraw(EntityPlayerMP p) {
+        Challenge c = of(p);
+        if (c == null) {
+            return;
+        }
+        p.sendMessage(Breach.grimoire(c.arena ? "chaosshard.challenge.withdraw.arena" : "chaosshard.challenge.withdraw.anchor", c.wave));
+        if (c.arena) {
+            end(c, p);
+            return;
+        }
+        // у Якоря нынешняя волна остаётся — без Вызова это просто враги рядом
+        ACTIVE.remove(c.owner);
+        WorldServer w = DimensionManager.getWorld(c.dim);
+        if (w != null && c.hunter != null) {
+            Entity h = w.getEntityFromUuid(c.hunter);
+            if (h != null) {
+                h.setDead();
+            }
+        }
+        c.mobs.clear();
+    }
+
     static void fail(Challenge c, EntityPlayerMP p, String why) {
         if (p != null) {
             p.sendMessage(Breach.grimoire(why, c.wave));
@@ -629,7 +652,11 @@ public class ChallengeManager {
         }
     }
 
-    /** Shift+ПКМ Гримуаром между волнами: в бесконечном — уйти с наградой, на ступени — сдаться. */
+    /**
+     * Shift+ПКМ Гримуаром: между волнами в бесконечном — уйти с наградой, на ступени — сдаться;
+     * во время волны — отказаться: новых волн не будет, дары за отбитые остаются, итоговой награды нет.
+     * У Якоря нынешняя волна остаётся добивать, с арены — домой.
+     */
     @SubscribeEvent
     public void onGrimoire(PlayerInteractEvent.RightClickItem event) {
         if (event.getWorld().isRemote || !event.getEntityPlayer().isSneaking() || event.getItemStack().getItem() != ModItems.GRIMOIRE) {
@@ -641,7 +668,7 @@ public class ChallengeManager {
         }
         event.setCanceled(true);
         if (c.fighting) {
-            event.getEntityPlayer().sendStatusMessage(Breach.grimoire("chaosshard.challenge.not_now"), true);
+            withdraw((EntityPlayerMP) event.getEntityPlayer());
             return;
         }
         cashOut((EntityPlayerMP) event.getEntityPlayer());

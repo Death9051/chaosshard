@@ -1029,3 +1029,5 @@ advancement.chaosshard.m.challenge_top.title=Пятая ступень
 advancement.chaosshard.m.challenge_top.desc=Веха квеста «Пятая ступень»
 advancement.chaosshard.m.challenge_endless.title=Десятая волна
 advancement.chaosshard.m.challenge_endless.desc=Веха квеста «Десятая волна»
+chaosshard.challenge.withdraw.anchor=Ты отказался от Вызова. Новых волн не будет, но эту придётся добить. Отбито волн: %s — их дары твои.
+chaosshard.challenge.withdraw.arena=Ты отказался от Вызова. Нить уводит с арены. Отбито волн: %s — их дары твои.
