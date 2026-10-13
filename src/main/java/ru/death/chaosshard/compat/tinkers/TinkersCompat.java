@@ -48,7 +48,8 @@ public final class TinkersCompat {
             chaos.setRenderInfo(COLOR);
             distorted.setRenderInfo(DISTORTED_COLOR);
         }
-        ChaosShard.LOG.info("Tinkers: материал «Хаосит» зарегистрирован");
+        EchoModifiers.preInit();
+        ChaosShard.LOG.info("Tinkers: материал «Хаосит» и отголоски Светочей зарегистрированы");
     }
 
     /** После регистрации блоков: какой предмет считается материалом. */
@@ -56,6 +57,7 @@ public final class TinkersCompat {
         if (chaos == null) {
             return;
         }
+        EchoModifiers.init();
         Item stone = Item.getItemFromBlock(ModBlocks.CHAOS_STONE);
         chaos.addItem(stone, 1, Material.VALUE_Ingot);
         // Модификатор «Нить Хаоса» для любого инструмента: хаосит (1) или Эссенция Хаоса (16)
