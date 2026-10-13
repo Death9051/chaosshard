@@ -100,6 +100,7 @@ public class CutsceneManager {
         // стоять на месте
         if (p.getDistanceSq(r.hold.x, r.hold.y, r.hold.z) > 0.04) {
             p.setPositionAndUpdate(r.hold.x, r.hold.y, r.hold.z);
+            p.setPosition(r.hold.x, r.hold.y, r.hold.z);
         }
         p.motionX = p.motionZ = 0;
         p.fallDistance = 0;

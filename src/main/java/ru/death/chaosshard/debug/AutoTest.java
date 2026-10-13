@@ -1283,15 +1283,19 @@ public final class AutoTest {
             check(me.motionX < 0, "вытолкнуло к центру: " + me.motionX);
             ru.death.chaosshard.garrot.EntityGarrot g = (ru.death.chaosshard.garrot.EntityGarrot) ow.getEntityFromUuid(d.lord);
             g.rotationYaw = g.renderYawOffset = g.rotationYawHead = 0;
-            me.setPosition(g.posX, g.posY, g.posZ + 2);
-            me.clearActivePotions();
+            net.minecraft.entity.monster.EntityZombie front = new net.minecraft.entity.monster.EntityZombie(ow);
+            net.minecraft.entity.monster.EntityZombie back = new net.minecraft.entity.monster.EntityZombie(ow);
+            front.setNoAI(true);
+            back.setNoAI(true);
+            front.setPosition(g.posX, g.posY, g.posZ + 2);
+            back.setPosition(g.posX, g.posY, g.posZ - 2);
+            ow.spawnEntity(front);
+            ow.spawnEntity(back);
             g.cleave(ow);
-            check(me.isPotionActive(net.minecraft.init.MobEffects.SLOWNESS), "секира задела стоящего впереди");
-            me.clearActivePotions();
-            me.setPosition(g.posX, g.posY, g.posZ - 2);
-            g.cleave(ow);
-            check(!me.isPotionActive(net.minecraft.init.MobEffects.SLOWNESS), "за спиной — мимо");
-            me.clearActivePotions();
+            check(front.getHealth() < front.getMaxHealth(), "секира задела стоящего впереди: " + front.getHealth());
+            check(back.getHealth() == back.getMaxHealth(), "за спиной — мимо");
+            front.setDead();
+            back.setDead();
         });
         step("на 8% Гаррот склоняется, а не умирает", () -> {
             ru.death.chaosshard.garrot.GarrotDuel.Duel d = ru.death.chaosshard.garrot.GarrotDuel.of(me);
