@@ -1625,6 +1625,68 @@ public final class AutoTest {
             me.setPosition(base.getX() + 0.5, base.getY() + 1, base.getZ() + 0.5);
         });
 
+        section("Бой: зачарования, отголоски, чемпионы");
+        step("зачарования Хаоса", () -> {
+            check(ru.death.chaosshard.enchant.ChaosEnchants.BANE_OF_ORDER != null && ru.death.chaosshard.enchant.ChaosEnchants.SHARD_HARVEST != null,
+                    "зачарования зарегистрированы");
+            net.minecraft.item.ItemStack sword = new net.minecraft.item.ItemStack(net.minecraft.init.Items.WOODEN_SWORD);
+            sword.addEnchantment(ru.death.chaosshard.enchant.ChaosEnchants.BANE_OF_ORDER, 4);
+            ru.death.chaosshard.structure.EntityOrderKnight a = new ru.death.chaosshard.structure.EntityOrderKnight(ow);
+            ru.death.chaosshard.structure.EntityOrderKnight b = new ru.death.chaosshard.structure.EntityOrderKnight(ow);
+            for (ru.death.chaosshard.structure.EntityOrderKnight k : new ru.death.chaosshard.structure.EntityOrderKnight[]{a, b}) {
+                k.setNoAI(true);
+                k.setPosition(base.getX() + 6.5, base.getY() + 1, base.getZ() + 0.5);
+                for (net.minecraft.inventory.EntityEquipmentSlot sl : net.minecraft.inventory.EntityEquipmentSlot.values()) {
+                    k.setItemStackToSlot(sl, net.minecraft.item.ItemStack.EMPTY);
+                }
+                ow.spawnEntity(k);
+            }
+            me.setHeldItem(EnumHand.MAIN_HAND, net.minecraft.item.ItemStack.EMPTY);
+            a.attackEntityFrom(DamageSource.causePlayerDamage(me), 2F);
+            me.setHeldItem(EnumHand.MAIN_HAND, sword);
+            b.attackEntityFrom(DamageSource.causePlayerDamage(me), 2F);
+            float la = a.getMaxHealth() - a.getHealth(), lb = b.getMaxHealth() - b.getHealth();
+            check(lb > la + 5, "«Погибель Порядка» бьёт рыцаря сильнее: " + la + " → " + lb);
+            me.setHeldItem(EnumHand.MAIN_HAND, net.minecraft.item.ItemStack.EMPTY);
+            a.setDead();
+            b.setDead();
+        });
+        step("отголоски Светочей", () -> {
+            for (ru.death.chaosshard.hero.Lightbearer h : ru.death.chaosshard.hero.Lightbearer.values()) {
+                net.minecraft.item.ItemStack e = ru.death.chaosshard.hero.ItemHeroEcho.of(h);
+                check(!e.isEmpty() && ru.death.chaosshard.hero.ItemHeroEcho.hero(e) == h, "отголосок " + h.id());
+                if (Loader.isModLoaded("tconstruct")) {
+                    check(slimeknights.tconstruct.library.TinkerRegistry.getModifier("chaosshard_echo_" + h.id()) != null,
+                            "модификатор Tinkers «" + h.id() + "»");
+                }
+            }
+        });
+        if (Loader.isModLoaded("champions")) {
+            step("Орден выставляет чемпионов, Светочи — никогда", () -> {
+                int champs = 0;
+                float was = ChaosConfig.compat.championBase;
+                ChaosConfig.compat.championBase = 1F;
+                for (int i = 0; i < 20; i++) {
+                    ru.death.chaosshard.structure.EntityOrderKnight k = new ru.death.chaosshard.structure.EntityOrderKnight(ow);
+                    k.setNoAI(true);
+                    k.setPosition(base.getX() + 8.5, base.getY() + 1, base.getZ() + 0.5);
+                    ow.spawnEntity(k);
+                    if (ru.death.chaosshard.compat.champions.ChampionsCompat.tier(k) > 0) {
+                        champs++;
+                    }
+                    k.setDead();
+                }
+                ChaosConfig.compat.championBase = was;
+                line("  павших Опор " + ru.death.chaosshard.hero.HeroData.get(ow).fallenCount() + ", чемпионов из 20: " + champs);
+                check(champs == 20, "при шансе 100% все рыцари — чемпионы: " + champs);
+                ru.death.chaosshard.hero.EntityHero hero = new ru.death.chaosshard.hero.EntityHero(ow);
+                hero.setPosition(base.getX() + 8.5, base.getY() + 1, base.getZ() + 0.5);
+                ow.spawnEntity(hero);
+                check(ru.death.chaosshard.compat.champions.ChampionsCompat.tier(hero) == 0, "Светоч не чемпион");
+                hero.setDead();
+            });
+        }
+
         section("Самотест");
         step("самотест", () -> {
             ru.death.chaosshard.command.SelfTest st = ru.death.chaosshard.command.SelfTest.run(server, me);
