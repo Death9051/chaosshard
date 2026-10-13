@@ -913,3 +913,11 @@ advancement.chaosshard.m.village_fallen.title=Судьба деревни
 advancement.chaosshard.m.village_fallen.desc=Веха квеста «Судьба деревни»
 advancement.chaosshard.m.village_patron.title=Судьба деревни
 advancement.chaosshard.m.village_patron.desc=Веха квеста «Судьба деревни»
+
+# Постройки Ордена в Лучезарии
+entity.chaosshard.order_knight.name=Страж Ордена
+entity.chaosshard.order_captain.name=Капитан Ордена
+entity.chaosshard.order_keeper.name=Хранитель святилища
+tile.chaosshard.order_beacon.name=Светоч Ордена
+chaosshard.order.keeper_alive=Хранитель святилища не подпустит к тайнику, пока жив
+chaosshard.order.keeper_dead=Хранитель пал. Светочи гаснут — тайник святилища открыт.

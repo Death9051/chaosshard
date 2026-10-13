@@ -201,6 +201,43 @@ public class CommandChaosShard extends CommandBase {
                 }
                 break;
             }
+            case "structure": {
+                // /oh structure <имя> [поворот] — поставить постройку Ордена перед собой
+                // /oh structure list — постройки рядом (500 блоков)
+                EntityPlayerMP pl = getCommandSenderAsPlayer(sender);
+                net.minecraft.world.WorldServer ws = (net.minecraft.world.WorldServer) pl.world;
+                if (args.length < 2 || "list".equals(args[1])) {
+                    int n = 0;
+                    for (ru.death.chaosshard.structure.OrderStructureData.Entry e : ru.death.chaosshard.structure.OrderStructureData.get(ws).entries) {
+                        double d = Math.sqrt((e.x - pl.posX) * (e.x - pl.posX) + (e.z - pl.posZ) * (e.z - pl.posZ));
+                        if (d < 500) {
+                            String st = e.state == 0 ? "ждёт" : e.state == 1 ? "стоит" : "не встала";
+                            sender.sendMessage(new net.minecraft.util.text.TextComponentString(e.name + " — " + e.x + " " + (e.state == 1 ? e.y : "~") + " " + e.z
+                                    + " (" + (int) d + " бл., " + st + (e.name.equals("sanctum") ? (e.keeperDead ? ", Хранитель пал" : ", Хранитель жив") : "") + ")"));
+                            n++;
+                        }
+                    }
+                    if (n == 0) {
+                        sender.sendMessage(new net.minecraft.util.text.TextComponentString("Построек Ордена рядом нет (500 блоков)"));
+                    }
+                    break;
+                }
+                String name = args[1];
+                int rot = args.length >= 3 ? parseInt(args[2], 0, 3) : 0;
+                ru.death.chaosshard.structure.bp.Blueprint bp;
+                try {
+                    bp = ru.death.chaosshard.structure.bp.Structures.build(name, new java.util.Random(ws.rand.nextLong()));
+                } catch (IllegalArgumentException ex) {
+                    throw new CommandException("Нет такой постройки: " + name + ". Есть: " + String.join(", ", ru.death.chaosshard.structure.bp.Structures.ALL));
+                }
+                int off = ru.death.chaosshard.structure.OrderStructures.reach(bp) + 4;
+                net.minecraft.util.EnumFacing f = pl.getHorizontalFacing();
+                BlockPos c = ru.death.chaosshard.structure.OrderStructures.ground(ws, (int) Math.floor(pl.posX) + f.getXOffset() * off,
+                        (int) Math.floor(pl.posZ) + f.getZOffset() * off);
+                ru.death.chaosshard.structure.OrderStructureData.Entry e = ru.death.chaosshard.structure.OrderStructures.placeNow(ws, name, c, rot, ws.rand.nextLong());
+                sender.sendMessage(new net.minecraft.util.text.TextComponentString(e == null ? "Не встала" : name + " встала: " + c.getX() + " " + c.getY() + " " + c.getZ()));
+                break;
+            }
             case "village": {
                 if (args.length >= 2 && "entrance".equals(args[1])) {
                     // /oh village entrance — поставить деревню рядом со мной (как у входа в Лучезарию)
@@ -511,7 +548,7 @@ public class CommandChaosShard extends CommandBase {
     @Override
     public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos targetPos) {
         if (args.length == 1) {
-            return getListOfStringsMatchingLastWord(args, "nit", "tp", "sky", "grimoire", "debug", "breach", "heart", "quests", "selftest", "anchor", "shrine", "surge", "village", "trial", "beast", "servant", "autotest");
+            return getListOfStringsMatchingLastWord(args, "nit", "tp", "sky", "grimoire", "debug", "breach", "heart", "quests", "selftest", "anchor", "shrine", "surge", "village", "trial", "beast", "servant", "autotest", "structure");
         }
         if (args.length == 2 && "nit".equals(args[0])) {
             return getListOfStringsMatchingLastWord(args, "get", "set", "add", "resync");
@@ -536,6 +573,11 @@ public class CommandChaosShard extends CommandBase {
             for (ru.death.chaosshard.servant.ServantUpgrade u : ru.death.chaosshard.servant.ServantUpgrade.values()) {
                 names.add(u.name().toLowerCase(java.util.Locale.ROOT));
             }
+            return getListOfStringsMatchingLastWord(args, names);
+        }
+        if (args.length == 2 && "structure".equals(args[0])) {
+            java.util.List<String> names = new java.util.ArrayList<>(java.util.Arrays.asList(ru.death.chaosshard.structure.bp.Structures.ALL));
+            names.add("list");
             return getListOfStringsMatchingLastWord(args, names);
         }
         if (args.length == 2 && "beast".equals(args[0])) {

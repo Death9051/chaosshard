@@ -890,3 +890,11 @@ advancement.chaosshard.m.village_fallen.title=Судьба деревни
 advancement.chaosshard.m.village_fallen.desc=Quest milestone «Судьба деревни»
 advancement.chaosshard.m.village_patron.title=Судьба деревни
 advancement.chaosshard.m.village_patron.desc=Quest milestone «Судьба деревни»
+
+# Order structures in Luchezariya
+entity.chaosshard.order_knight.name=Order Guard
+entity.chaosshard.order_captain.name=Order Captain
+entity.chaosshard.order_keeper.name=Sanctum Keeper
+tile.chaosshard.order_beacon.name=Order Beacon
+chaosshard.order.keeper_alive=The Sanctum Keeper guards the cache while it lives
+chaosshard.order.keeper_dead=The Keeper has fallen. The beacons go dark - the sanctum cache is open.

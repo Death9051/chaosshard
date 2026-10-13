@@ -44,6 +44,7 @@ public final class ModBlocks {
     public static Block PATRON_SIGIL;
     /** Жила Завесы — нарост Сердца с модулем «Богатство». */
     public static Block VEIL_VEIN;
+    public static Block ORDER_BEACON;
 
     /** Тестовые блоки-структуры (только творческий режим). */
     public static final List<Block> SEEDS = new ArrayList<>();
@@ -80,6 +81,9 @@ public final class ModBlocks {
         TRIAL_RUNE = add(new ru.death.chaosshard.trial.TrialBlocks.Rune(), "trial_rune");
         TRIAL_EXIT = add(new ru.death.chaosshard.trial.TrialBlocks.Exit(), "trial_exit");
         LAIR = add(new ru.death.chaosshard.lair.BlockLair(), "lair_core");
+        ORDER_BEACON = add(new ru.death.chaosshard.structure.BlockOrderBeacon(), "order_beacon");
+        net.minecraftforge.fml.common.registry.GameRegistry.registerTileEntity(ru.death.chaosshard.structure.TileOrderBeacon.class,
+                new net.minecraft.util.ResourceLocation(Tags.MOD_ID, "order_beacon"));
         net.minecraftforge.fml.common.registry.GameRegistry.registerTileEntity(ru.death.chaosshard.lair.TileLair.class,
                 new net.minecraft.util.ResourceLocation(Tags.MOD_ID, "lair_core"));
         net.minecraftforge.fml.common.registry.GameRegistry.registerTileEntity(ru.death.chaosshard.pump.TileStarPump.class,

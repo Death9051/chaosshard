@@ -107,6 +107,23 @@ public final class ChaosConfig {
 
         @Config.Comment("Очки Нити за убитого капитана Мрачной Армии")
         public int captainReward = 40;
+
+        @Config.Comment("Постройки Ордена в Лучезарии (шпили, оранжереи, павильоны, святилища, башни)")
+        public boolean structures = true;
+
+        @Config.Comment("Шанс постройки Ордена на чанк Лучезарии (1 из N)")
+        @Config.RangeInt(min = 1, max = 100000)
+        public int structureRarity = 60;
+
+        @Config.Comment("Наименьшее расстояние между постройками Ордена (блоки)")
+        @Config.RangeInt(min = 32, max = 4096)
+        public int structureSpacing = 220;
+
+        @Config.Comment({"Веса построек: хрустальные шпили, оранжерея, павильон, святилище, купольная башня"})
+        public int[] structureWeights = {3, 3, 4, 2, 2};
+
+        @Config.Comment("Очки Нити за Хранителя святилища")
+        public int keeperReward = 80;
     }
 
     public static final class AntechamberCfg {

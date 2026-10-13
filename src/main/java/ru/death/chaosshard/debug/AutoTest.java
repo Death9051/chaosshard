@@ -279,6 +279,9 @@ public final class AutoTest {
 
     // ------------------------------------------------------------------ сценарии
 
+    private final java.util.Map<String, ru.death.chaosshard.structure.OrderStructureData.Entry> structs = new java.util.HashMap<>();
+    private ru.death.chaosshard.structure.OrderStructureData.Entry planned;
+
     private void plan() {
         section("Подготовка");
         step("площадка и подставной игрок", () -> {
@@ -571,6 +574,106 @@ public final class AutoTest {
             int vill = ow.getEntitiesWithinAABB(EntityVillager.class, new AxisAlignedBB(at).grow(160, 120, 160)).size();
             check(vill > 0, "жителей рядом: " + vill);
         });
+
+        section("Постройки Ордена в Лучезарии");
+        step("все пять встают, блоки разобраны, сундуки с добычей", () -> {
+            ru.death.chaosshard.structure.BlueprintPlacer.FAILED.clear();
+            structs.clear();
+            String[] names = ru.death.chaosshard.structure.bp.Structures.ALL;
+            for (int i = 0; i < names.length; i++) {
+                int x = ow.getSpawnPoint().getX() - 300 + i * 70, z = ow.getSpawnPoint().getZ() + 300;
+                BlockPos g = ru.death.chaosshard.structure.OrderStructures.ground(ow, x, z);
+                long seed = 1000 + i;
+                ru.death.chaosshard.structure.OrderStructureData.Entry e = ru.death.chaosshard.structure.OrderStructures.placeNow(ow, names[i], g, i % 4, seed);
+                check(e != null && e.state == ru.death.chaosshard.structure.OrderStructureData.PLACED, names[i] + " встала у " + g);
+                if (e == null) continue;
+                structs.put(names[i], e);
+                ru.death.chaosshard.structure.bp.Blueprint bp = ru.death.chaosshard.structure.bp.Structures.build(names[i], new java.util.Random(seed));
+                int bad = 0;
+                for (java.util.Map.Entry<Long, String> be : bp.blocks.entrySet()) {
+                    long k = be.getKey();
+                    BlockPos p = ru.death.chaosshard.structure.BlueprintPlacer.at(e.origin(), ru.death.chaosshard.structure.bp.Blueprint.kx(k),
+                            ru.death.chaosshard.structure.bp.Blueprint.ky(k), ru.death.chaosshard.structure.bp.Blueprint.kz(k), e.rot);
+                    if (ow.getBlockState(p).getBlock() != ru.death.chaosshard.structure.BlueprintPlacer.parse(be.getValue()).getBlock()) bad++;
+                }
+                check(bad <= bp.blocks.size() / 100, names[i] + ": блоков не на месте " + bad + " из " + bp.blocks.size());
+                int chests = 0, loot = 0;
+                for (ru.death.chaosshard.structure.bp.Blueprint.Mark c : bp.chests) {
+                    net.minecraft.tileentity.TileEntity te = ow.getTileEntity(ru.death.chaosshard.structure.BlueprintPlacer.at(e.origin(), c.x, c.y, c.z, e.rot));
+                    if (te instanceof net.minecraft.tileentity.TileEntityChest) {
+                        chests++;
+                        if (((net.minecraft.tileentity.TileEntityChest) te).getLootTable() != null) loot++;
+                    }
+                }
+                check(chests == bp.chests.size() && loot == chests, names[i] + ": сундуков " + chests + "/" + bp.chests.size() + ", с добычей " + loot);
+                if (ow.getLootTableManager() != null) {
+                    for (ru.death.chaosshard.structure.bp.Blueprint.Mark c : bp.chests) {
+                        net.minecraft.world.storage.loot.LootTable lt = ow.getLootTableManager().getLootTableFromLocation(
+                                new ResourceLocation("chaosshard", "structures/" + c.kind));
+                        check(lt != net.minecraft.world.storage.loot.LootTable.EMPTY_LOOT_TABLE, "таблица добычи structures/" + c.kind + " загружена");
+                    }
+                }
+            }
+            check(ru.death.chaosshard.structure.BlueprintPlacer.FAILED.isEmpty(), "все строки блоков разобраны " + ru.death.chaosshard.structure.BlueprintPlacer.FAILED);
+        });
+        sleep(10);
+        step("стража на местах", () -> {
+            for (String n : new String[]{"dome_tower", "sanctum"}) {
+                ru.death.chaosshard.structure.OrderStructureData.Entry e = structs.get(n);
+                if (e == null) continue;
+                List<ru.death.chaosshard.structure.EntityOrderKnight> ks = ow.getEntitiesWithinAABB(ru.death.chaosshard.structure.EntityOrderKnight.class,
+                        new AxisAlignedBB(e.origin()).grow(20, 40, 20));
+                long keepers = ks.stream().filter(k -> k.variant() == ru.death.chaosshard.structure.EntityOrderKnight.KEEPER).count();
+                long caps = ks.stream().filter(k -> k.variant() == ru.death.chaosshard.structure.EntityOrderKnight.CAPTAIN).count();
+                if (n.equals("dome_tower")) {
+                    check(ks.size() == 5 && caps == 1, "башня: стражей " + ks.size() + ", капитанов " + caps);
+                } else {
+                    check(ks.size() == 5 && keepers == 1, "святилище: стражей " + ks.size() + ", Хранителей " + keepers);
+                    check(ks.stream().allMatch(k -> k.getMaxHealth() >= 30), "у стражи настоящее здоровье");
+                }
+            }
+        });
+        step("тайник святилища заперт, светочи горят", () -> {
+            ru.death.chaosshard.structure.OrderStructureData.Entry e = structs.get("sanctum");
+            if (e == null) { check(false, "святилища нет"); return; }
+            check(e.beams.size() == 2, "светочей " + e.beams.size());
+            boolean lit = e.beams.stream().allMatch(p -> ow.getTileEntity(p) instanceof ru.death.chaosshard.structure.TileOrderBeacon
+                    && ((ru.death.chaosshard.structure.TileOrderBeacon) ow.getTileEntity(p)).lit);
+            check(lit, "светочи горят");
+            BlockPos chest = ru.death.chaosshard.structure.BlueprintPlacer.at(e.origin(), 0, 3, 0, e.rot);
+            check(ow.getBlockState(chest).getBlock() == Blocks.CHEST, "тайник на помосте");
+            PlayerInteractEvent.RightClickBlock ev = new PlayerInteractEvent.RightClickBlock(me, EnumHand.MAIN_HAND, chest, EnumFacing.UP, new Vec3d(0.5, 1, 0.5));
+            MinecraftForge.EVENT_BUS.post(ev);
+            check(ev.isCanceled(), "пока Хранитель жив — тайник не открыть");
+        });
+        step("Хранитель пал — светочи гаснут, тайник открыт", () -> {
+            ru.death.chaosshard.structure.OrderStructureData.Entry e = structs.get("sanctum");
+            if (e == null) return;
+            for (ru.death.chaosshard.structure.EntityOrderKnight k : ow.getEntitiesWithinAABB(ru.death.chaosshard.structure.EntityOrderKnight.class,
+                    new AxisAlignedBB(e.origin()).grow(20, 40, 20))) {
+                if (k.variant() == ru.death.chaosshard.structure.EntityOrderKnight.KEEPER) kill(k);
+            }
+            check(e.keeperDead, "Хранитель отмечен павшим");
+            boolean off = e.beams.stream().allMatch(p -> ow.getTileEntity(p) instanceof ru.death.chaosshard.structure.TileOrderBeacon
+                    && !((ru.death.chaosshard.structure.TileOrderBeacon) ow.getTileEntity(p)).lit);
+            check(off, "светочи погасли");
+            BlockPos chest = ru.death.chaosshard.structure.BlueprintPlacer.at(e.origin(), 0, 3, 0, e.rot);
+            PlayerInteractEvent.RightClickBlock ev = new PlayerInteractEvent.RightClickBlock(me, EnumHand.MAIN_HAND, chest, EnumFacing.UP, new Vec3d(0.5, 1, 0.5));
+            MinecraftForge.EVENT_BUS.post(ev);
+            check(!ev.isCanceled(), "после Хранителя тайник открывается");
+        });
+        step("отложенная постройка: план → встаёт, когда чанки готовы", () -> {
+            int x = ow.getSpawnPoint().getX() + 600, z = ow.getSpawnPoint().getZ() - 600;
+            for (int cx = (x >> 4) - 3; cx <= (x >> 4) + 3; cx++) {
+                for (int cz = (z >> 4) - 3; cz <= (z >> 4) + 3; cz++) {
+                    ow.getChunkProvider().provideChunk(cx, cz);
+                }
+            }
+            planned = ru.death.chaosshard.structure.OrderStructures.plan(ru.death.chaosshard.structure.OrderStructureData.get(ow), "pavilion", x, z, 1, 77L);
+        });
+        until("запланированная постройка решена (встала или отклонена по рельефу)",
+                () -> planned != null && planned.state != ru.death.chaosshard.structure.OrderStructureData.PLANNED, 200);
+        step("итог отложенной", () -> line("    отложенная pavilion: " + (planned.state == 1 ? "встала на " + planned.y : "отклонена (рельеф/вода)")));
 
         section("Самотест");
         step("самотест", () -> {

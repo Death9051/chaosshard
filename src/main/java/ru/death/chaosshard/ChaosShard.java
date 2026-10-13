@@ -34,6 +34,7 @@ public class ChaosShard {
 
     public static final String MODID = Tags.MOD_ID;
     public static final Logger LOG = LogManager.getLogger("ChaosShard");
+    public static final ru.death.chaosshard.structure.OrderStructures STRUCTURES = new ru.death.chaosshard.structure.OrderStructures();
 
     /** Станции добытчиков держат чанки. */
     public static final ru.death.chaosshard.servant.work.WorkChunks WORK_CHUNKS = new ru.death.chaosshard.servant.work.WorkChunks();
@@ -82,7 +83,10 @@ public class ChaosShard {
                 ru.death.chaosshard.servant.entity.ServantEntities.Lumberjack.class, "chaosshard.servant_lumberjack", eid++, this, 64, 3, true, 0x5a4026, 0x6a2fb0);
         net.minecraftforge.fml.common.registry.EntityRegistry.registerModEntity(new net.minecraft.util.ResourceLocation(Tags.MOD_ID, "servant_miner"),
                 ru.death.chaosshard.servant.entity.ServantEntities.Miner.class, "chaosshard.servant_miner", eid++, this, 64, 3, true, 0x505058, 0x6a2fb0);
+        net.minecraftforge.fml.common.registry.EntityRegistry.registerModEntity(new net.minecraft.util.ResourceLocation(Tags.MOD_ID, "order_knight"),
+                ru.death.chaosshard.structure.EntityOrderKnight.class, "chaosshard.order_knight", eid++, this, 80, 3, true, 0xe8e6de, 0xd8b048);
         MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.servant.Resync());
+        MinecraftForge.EVENT_BUS.register(STRUCTURES);
         MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.thread.ThreadEvents());
         MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.antechamber.AntechamberEvents());
         MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.breach.BreachRitual());
@@ -104,6 +108,7 @@ public class ChaosShard {
         MinecraftForge.EVENT_BUS.register(WORK_CHUNKS);
         ru.death.chaosshard.compat.body.Body.init();
         net.minecraftforge.fml.common.registry.GameRegistry.registerWorldGenerator(new ru.death.chaosshard.order.ShrineGen(), 20);
+        net.minecraftforge.fml.common.registry.GameRegistry.registerWorldGenerator(STRUCTURES, 30);
         if (astralLoaded) {
             MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.stars.PerkBridge());
         }
