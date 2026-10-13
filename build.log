@@ -15,10 +15,28 @@ For more details see https://docs.gradle.org/9.7.0/release-notes.html
 
 To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/9.7.0/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
 Daemon will be stopped at the end of the build 
+
+> Configure project :
+Download https://launchermeta.mojang.com/mc/game/version_manifest.json
+Downloading data into the RFG cache from [https://maven.minecraftforge.net/de/oceanlabs/mcp/mcp/1.12.2/mcp-1.12.2-srg.zip, https://maven.minecraftforge.net/de/oceanlabs/mcp/mcp_stable/39-1.12/mcp_stable-39-1.12.zip]...
+Downloading data into the RFG cache from [https://maven.minecraftforge.net/net/minecraftforge/forge/1.12.2-14.23.5.2847/forge-1.12.2-14.23.5.2847-userdev.jar]...
+
 > Task :compileInjectedInterfacesJava NO-SOURCE
 > Task :extractDependencyATs
-> Task :generateForgeSrgMappings SKIPPED
-> Task :downloadVanillaJars SKIPPED
+> Task :generateForgeSrgMappings
+Download https://piston-meta.mojang.com/v1/packages/832d95b9f40699d4961394dcf6cf549e65f15dc5/1.12.2.json
+> Task :downloadFernflower SKIPPED
+> Task :processInjectedInterfacesResources NO-SOURCE
+> Task :injectedInterfacesClasses UP-TO-DATE
+> Task :processApiResources NO-SOURCE
+> Task :injectTags
+> Task :compileInjectedTagsJava
+
+> Task :downloadVanillaJars
+Download https://piston-data.mojang.com/v1/objects/0f275bc1547d01fa5f56ba34bdc87d981ee12daf/client.jar
+Download https://piston-data.mojang.com/v1/objects/886945bfb2b978778c3a0288fd7fab09d315b25f/server.jar
+
+> Task :extractNatives2
 > Task :mergeVanillaSidedJars
 
 > Task :deobfuscateMergedJarToSrg
@@ -28,21 +46,21 @@ Renamed 0 AT entries
 Applying Exceptor
 Cleaning up generated debuginfo
 
-> Task :downloadFernflower SKIPPED
-
 > Task :decompileSrgJar
-Using cached decompiled jar from /home/runner/.gradle/caches/retro_futura_gradle/fernflower-cache/1.0.342-3bcc7ff2caa3c44ef8a4ae34bd7503f35aae66fe83874c4549de26a264180930.jar
+Didn't find cached decompiled jar, decompiling and saving to /home/runner/.gradle/caches/retro_futura_gradle/fernflower-cache/1.0.342-3bcc7ff2caa3c44ef8a4ae34bd7503f35aae66fe83874c4549de26a264180930.jar
+Decompiling the srg jar with fernflower
+  Decompiling took 103516 ms
 
 > Task :cleanupDecompSrgJar
 Fixup stage 1 - applying FF patches
-  Stage 1 took 495 ms
+  Stage 1 took 414 ms
 Fixup stage 2 - applying MCP patches
-  Stage 2 took 175 ms
+  Stage 2 took 155 ms
 Fixup stage 3 - applying MCP cleanup
-  Stage 3 took 6537 ms
+  Stage 3 took 6488 ms
 Fixup stage 4 - injecting package-info
   Injected 119 package-infos
-  Stage 4 took 7 ms
+  Stage 4 took 2 ms
 Saving the fixed-up jar
 
 > Task :patchDecompiledJar
@@ -56,8 +74,6 @@ Applying access transformers: [/home/runner/work/chaosshard/chaosshard/build/rfg
 Applied 0 missing generics
 
 > Task :decompressDecompiledSources
-> Task :processInjectedInterfacesResources NO-SOURCE
-> Task :injectedInterfacesClasses UP-TO-DATE
 
 > Task :compilePatchedMcJava
 Note: Some input files use or override a deprecated API.
@@ -68,11 +84,7 @@ Note: Recompile with -Xlint:unchecked for details.
 > Task :processPatchedMcResources
 > Task :patchedMcClasses
 > Task :compileApiJava NO-SOURCE
-> Task :processApiResources NO-SOURCE
 > Task :apiClasses UP-TO-DATE
-> Task :injectTags
-> Task :compileInjectedTagsJava
-> Task :extractNatives2
 > Task :createMcLauncherFiles
 > Task :compileMcLauncherJava
 > Task :processInjectedTagsResources NO-SOURCE
@@ -115,6 +127,6 @@ You can use '--warning-mode all' to show the individual deprecation warnings and
 
 For more on this, please refer to https://docs.gradle.org/9.7.0/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
 
-BUILD SUCCESSFUL in 1m 51s
-22 actionable tasks: 22 executed
+BUILD SUCCESSFUL in 5m 13s
+24 actionable tasks: 24 executed
 Consider enabling configuration cache to speed up this build: https://docs.gradle.org/9.7.0/userguide/configuration_cache_enabling.html
