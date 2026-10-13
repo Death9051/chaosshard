@@ -104,6 +104,11 @@ public class ChallengeManager {
             return spec.endless() ? 1 + wave / 3 : spec.tier;
         }
 
+        /** Множитель награды: модификаторы и +25% за бой у Якоря (там риск выше — смерть настоящая, Якорь может пасть). */
+        public double mul() {
+            return spec.rewardMul() + (arena ? 0 : 0.25);
+        }
+
         boolean bossWave() {
             return spec.endless() ? (wave + 1) % 5 == 0 : wave == spec.waves() - 1;
         }
@@ -471,7 +476,7 @@ public class ChallengeManager {
     static void waveCleared(WorldServer w, Challenge c, EntityPlayerMP p) {
         c.wave++;
         c.fighting = false;
-        double mul = c.spec.rewardMul();
+        double mul = c.mul();
         int nit = (int) Math.round((4 + 2 * c.wave) * c.effTier() * mul);
         ThreadManager.addPoints(p, nit);
         int rolls = 1 + (c.wave >= 3 ? 1 : 0) + (w.rand.nextDouble() < mul - 1 ? 1 : 0);
@@ -493,7 +498,7 @@ public class ChallengeManager {
     }
 
     static void victory(WorldServer w, Challenge c, EntityPlayerMP p) {
-        double mul = c.spec.rewardMul();
+        double mul = c.mul();
         int tier = c.spec.endless() ? Math.max(1, c.wave / 3) : c.spec.tier;
         int nit = (int) Math.round(40 * tier * mul);
         ThreadManager.addPoints(p, nit);
