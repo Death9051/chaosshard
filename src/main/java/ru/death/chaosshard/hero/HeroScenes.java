@@ -122,6 +122,20 @@ public final class HeroScenes {
                         w.playSound(null, hero.getPosition(), SoundEvents.BLOCK_NOTE_BELL, SoundCategory.HOSTILE, 1.5F, 0.6F + (t - 72) / 100F);
                     }
                     break;
+                case VELMOR:
+                    // открывает и закрывает свои порталы: кольца искр вокруг, вспышки у печатей
+                    if (t > 72 && t < 190) {
+                        double a = t * 0.35;
+                        w.spawnParticle(EnumParticleTypes.PORTAL, hero.posX + Math.cos(a) * 1.4, hero.posY + 1.0 + Math.sin(t * 0.1) * 0.6,
+                                hero.posZ + Math.sin(a) * 1.4, 6, 0.05, 0.05, 0.05, 0.4);
+                    }
+                    if (t == 110 || t == 150) {
+                        w.playSound(null, hero.getPosition(), SoundEvents.ENTITY_ENDERMEN_TELEPORT, SoundCategory.HOSTILE, 1.5F, 0.8F);
+                        for (BlockPos seal : Pillars.intactSeals(w, Lightbearer.VELMOR)) {
+                            w.spawnParticle(EnumParticleTypes.PORTAL, seal.getX() + 0.5, seal.getY() + 1, seal.getZ() + 0.5, 120, 0.5, 1.5, 0.5, 1.0);
+                        }
+                    }
+                    break;
                 default:
                     break;
             }

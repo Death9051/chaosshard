@@ -286,6 +286,8 @@ public final class AutoTest {
     private ru.death.chaosshard.structure.OrderStructureData.Entry monastery;
     private ru.death.chaosshard.hero.EntityHero irena;
     private float irenaHp;
+    private ru.death.chaosshard.hero.EntityHero velmor;
+    private BlockPos sealHere;
     private int challengeNit, challengeCorrupt;
 
     /** Подобрать с земли рядом сферу нужного ритуала (true — была). */
@@ -1316,6 +1318,81 @@ public final class AutoTest {
         step("назад на площадку", () -> {
             me.setPosition(base.getX() + 0.5, base.getY() + 1, base.getZ() + 0.5);
         });
+
+        section("Акт 4: Вельмор и печати отступления");
+        step("Знамение Вельмора: Опора и печати", () -> {
+            me.setPosition(base.getX() + 0.5, base.getY() + 1, base.getZ() + 0.5);
+            me.rotationYaw = 270;   // на восток
+            check(useSphere(ru.death.chaosshard.ritual.Ritual.OMEN_VELMOR, base), "Знамение Вельмора сработало после падения Ирены");
+            ru.death.chaosshard.hero.HeroData.Pillar p = ru.death.chaosshard.hero.HeroData.get(ow).of(ru.death.chaosshard.hero.Lightbearer.VELMOR);
+            check(p.state == ru.death.chaosshard.hero.HeroData.PLANNED, "Опора Вельмора указана: " + p.x + " " + p.z);
+            check(p.linked.size() == ru.death.chaosshard.hero.Pillars.WARDS, "печатей запланировано: " + p.linked.size());
+            me.setPosition(p.x + 0.5, 200, p.z + 0.5);
+        });
+        until("Опора Вельмора и печати встали", () -> {
+            ru.death.chaosshard.hero.HeroData.Pillar p = ru.death.chaosshard.hero.HeroData.get(ow).of(ru.death.chaosshard.hero.Lightbearer.VELMOR);
+            return p.state == ru.death.chaosshard.hero.HeroData.STANDING && p.shrines.size() >= 2;
+        }, 1500);
+        step("Вельмор на Опоре, печати целы", () -> {
+            ru.death.chaosshard.hero.HeroData.Pillar p = ru.death.chaosshard.hero.HeroData.get(ow).of(ru.death.chaosshard.hero.Lightbearer.VELMOR);
+            velmor = ru.death.chaosshard.hero.Pillars.heroOf(ow, ru.death.chaosshard.hero.Lightbearer.VELMOR, p);
+            check(velmor != null, "Вельмор на Опоре");
+            List<BlockPos> seals = ru.death.chaosshard.hero.Pillars.intactSeals(ow, ru.death.chaosshard.hero.Lightbearer.VELMOR);
+            check(seals.size() == p.shrines.size() && !seals.isEmpty(), "целых печатей: " + seals.size());
+            check(ru.death.chaosshard.structure.BlueprintPlacer.FAILED.isEmpty(), "все блоки разобраны " + ru.death.chaosshard.structure.BlueprintPlacer.FAILED);
+            for (ru.death.chaosshard.structure.EntityOrderKnight k : ow.getEntitiesWithinAABB(ru.death.chaosshard.structure.EntityOrderKnight.class,
+                    new AxisAlignedBB(p.pos()).grow(24, 40, 24))) {
+                k.setDead();
+            }
+        });
+        step("на 66% сбегает к печати и прячется за щитом", () -> {
+            if (velmor == null) return;
+            velmor.setHealth(velmor.getMaxHealth() * 0.68F);
+            velmor.hurtResistantTime = 0;
+            velmor.attackEntityFrom(DamageSource.causePlayerDamage(me), 40F);
+            check(velmor.warded(), "сбежал к печати");
+            BlockPos near = null;
+            for (BlockPos sp : ru.death.chaosshard.hero.Pillars.intactSeals(ow, ru.death.chaosshard.hero.Lightbearer.VELMOR)) {
+                if (velmor.getDistanceSq(sp) < 5 * 5) near = sp;
+            }
+            check(near != null, "стоит у печати");
+            float h = velmor.getHealth();
+            velmor.hurtResistantTime = 0;
+            velmor.attackEntityFrom(DamageSource.causePlayerDamage(me), 40F);
+            check(velmor.getHealth() == h, "за щитом неуязвим");
+            sealHere = near;
+        });
+        step("разбил его печать — оглушён и открыт", () -> {
+            if (velmor == null || sealHere == null) return;
+            float h = velmor.getHealth();
+            ow.destroyBlock(sealHere, false);
+            check(!velmor.warded() && velmor.stunned(), "оглушён, щита нет");
+            check(velmor.getHealth() < h, "печать ударила по нему: " + h + " → " + velmor.getHealth());
+        });
+        step("печатей не осталось — побег срывается", () -> {
+            if (velmor == null) return;
+            for (BlockPos sp : ru.death.chaosshard.hero.Pillars.intactSeals(ow, ru.death.chaosshard.hero.Lightbearer.VELMOR)) {
+                ow.destroyBlock(sp, false);
+            }
+            check(ru.death.chaosshard.hero.Pillars.intactSeals(ow, ru.death.chaosshard.hero.Lightbearer.VELMOR).isEmpty(), "все печати разбиты");
+            velmor.setHealth(velmor.getMaxHealth() * 0.35F);
+            velmor.hurtResistantTime = 0;
+            velmor.attackEntityFrom(DamageSource.causePlayerDamage(me), 40F);
+            check(!velmor.warded() && velmor.stunned(), "побег сорвался — оглушён");
+        });
+        step("Вельмор пал — посох у ног", () -> {
+            if (velmor == null) return;
+            kill(velmor);
+            ru.death.chaosshard.hero.HeroData.Pillar p = ru.death.chaosshard.hero.HeroData.get(ow).of(ru.death.chaosshard.hero.Lightbearer.VELMOR);
+            check(p.state == ru.death.chaosshard.hero.HeroData.FALLEN, "Опора Вельмора пала");
+            boolean staff = !ow.getEntitiesWithinAABB(net.minecraft.entity.item.EntityItem.class, velmor.getEntityBoundingBox().grow(8),
+                    x -> x.getItem().getItem() == ru.death.chaosshard.init.ModItems.VELMOR_STAFF).isEmpty();
+            check(staff, "Посох Вельмора лежит у тела");
+            check(ru.death.chaosshard.hero.HeroData.get(ow).fallenCount() == 3, "пало Опор: " + ru.death.chaosshard.hero.HeroData.get(ow).fallenCount());
+        });
+        until("Опора Вельмора рухнула", () -> ru.death.chaosshard.hero.HeroData.get(ow).of(ru.death.chaosshard.hero.Lightbearer.VELMOR).collapseAt == 0,
+                ru.death.chaosshard.hero.Pillars.COLLAPSE_DELAY + 40);
+        step("назад на площадку", () -> me.setPosition(base.getX() + 0.5, base.getY() + 1, base.getZ() + 0.5));
 
         section("Акт 4: дуэль с Гарротом и катсцена");
         step("Гаррот приходит: барабаны", () -> {

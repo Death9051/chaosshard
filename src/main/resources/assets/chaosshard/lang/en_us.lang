@@ -1126,3 +1126,25 @@ item.chaosshard.irena_rosary.lore=The beads are still warm. The prayer in them i
 chaosshard.hero.irena.monastery_out=A monastery has gone dark. Still healing Irena: %s.
 advancement.chaosshard.m.monastery_out.title=A Monastery Goes Dark
 advancement.chaosshard.m.monastery_out.desc=Quest milestone
+
+# ---------------------------------------------------------------- Act 4: Velmor
+tile.chaosshard.velmor_seal.name=Retreat Seal
+chaosshard.structure.velmor_ward=Velmor's Retreat Seal
+chaosshard.omen.wards=Velmor has hidden retreat seals around the Pillar: %s. The Omen won't say where. Better find them before the fight.
+chaosshard.hero.velmor.intro1=A Chaos creature... I was expecting you, naturally. I always have a backup plan. And a backup for the backup.
+chaosshard.hero.velmor.intro2=The backup plans are seals somewhere around. Better break them before he uses them.
+chaosshard.hero.velmor.greet=Protective circuits in place. Let us begin.
+chaosshard.hero.velmor.escape=Pardon me, I have an appointment elsewhere!
+chaosshard.hero.velmor.no_seals=The seals?.. Where are my seals?!
+chaosshard.hero.velmor.seal_here=Who dared touch my seals?!
+chaosshard.hero.velmor.back=I'm back. As promised.
+chaosshard.hero.velmor.death=There was... no backup plan...
+chaosshard.hero.velmor.fled=Velmor fled to a seal: §e%s %s§d. While it holds, he can't be reached.
+chaosshard.hero.velmor.warded=He's behind the seal's shield. Break the seal.
+chaosshard.hero.velmor.seal_broken=A retreat seal is broken. Intact: %s, not yet found: %s.
+chaosshard.hero.velmor.memory=The third line: "We have come here before. And lost."
+item.chaosshard.velmor_staff.name=Velmor's Staff
+item.chaosshard.velmor_staff.desc=RMB — step through space 10 blocks ahead. Every 3 seconds.
+item.chaosshard.velmor_staff.lore=A backup plan that didn't save him.
+advancement.chaosshard.m.seal_broken.title=Seal Broken
+advancement.chaosshard.m.seal_broken.desc=Quest milestone

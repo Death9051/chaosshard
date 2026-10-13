@@ -97,6 +97,9 @@ public class Pillars {
         p.sendMessage(Breach.grimoire("chaosshard.omen.found", name(h), pl.x, pl.z, dist(at, pl.x, pl.z), side(at, pl.x, pl.z)));
         if (h == Lightbearer.IRENA) {
             planMonasteries(ws, pl, p, at);
+        } else if (h == Lightbearer.VELMOR) {
+            planWards(ws, pl);
+            p.sendMessage(Breach.grimoire("chaosshard.omen.wards", WARDS));
         }
         Milestones.grant(p, h.omenMilestone());
         ChaosShard.LOG.info("Знамение: Опора {} будет у {} {}", h.id(), pl.x, pl.z);
@@ -151,7 +154,72 @@ public class Pillars {
         ChaosShard.LOG.info("Знамение Ирены: монастырей {}", pl.linked.size());
     }
 
-    public static final int MONASTERIES = 3;
+    public static final int MONASTERIES = 3, WARDS = 3;
+
+    /** Вельмор: печати отступления рядом с Опорой — координат Знамение не даёт, их надо найти. */
+    static void planWards(WorldServer ws, HeroData.Pillar pl) {
+        OrderStructureData sd = OrderStructureData.get(ws);
+        BlockPos c = new BlockPos(pl.x, 64, pl.z);
+        pl.linked.clear();
+        pl.shrines.clear();
+        float yaw = ws.rand.nextFloat() * 360;
+        for (int i = 0; i < WARDS; i++) {
+            int[] m = findSpot(ws, c, yaw + i * 120, "velmor_ward", 45, 90, 24);
+            if (m == null) {
+                continue;
+            }
+            OrderStructureData.Entry e = OrderStructures.plan(sd, "velmor_ward", m[0], m[1], 0, ws.rand.nextLong());
+            pl.linked.add(e.id);
+        }
+        HeroData.get(ws).markDirty();
+    }
+
+    /** Печать встала. */
+    public static void sealPlaced(WorldServer ws, OrderStructureData.Entry e, BlockPos pos) {
+        HeroData data = HeroData.get(ws);
+        for (HeroData.Pillar pl : data.pillars) {
+            if (pl.linked.contains(e.id) && !pl.shrines.contains(pos)) {
+                pl.shrines.add(pos.toImmutable());
+                data.markDirty();
+            }
+        }
+    }
+
+    /** Целые печати героя (из вставших). */
+    public static List<BlockPos> intactSeals(World w, Lightbearer h) {
+        List<BlockPos> out = new ArrayList<>();
+        for (BlockPos s : HeroData.get(w).of(h).shrines) {
+            if (w.isBlockLoaded(s) && w.getBlockState(s).getBlock() == ru.death.chaosshard.init.ModBlocks.VELMOR_SEAL) {
+                out.add(s);
+            }
+        }
+        return out;
+    }
+
+    /** Печать разбита (зовёт блок). */
+    public static void sealBroken(WorldServer ws, BlockPos pos) {
+        HeroData data = HeroData.get(ws);
+        HeroData.Pillar pl = data.of(Lightbearer.VELMOR);
+        if (!pl.shrines.contains(pos)) {
+            return;
+        }
+        int left = intactSeals(ws, Lightbearer.VELMOR).size();
+        int hidden = Math.max(0, pl.linked.size() - pl.shrines.size());
+        for (EntityPlayer p : ws.getEntitiesWithinAABB(EntityPlayer.class, new AxisAlignedBB(pos).grow(24))) {
+            p.sendMessage(Breach.grimoire("chaosshard.hero.velmor.seal_broken", left, hidden));
+            if (p instanceof EntityPlayerMP) {
+                Milestones.grant((EntityPlayerMP) p, "seal_broken");
+            }
+        }
+        EntityHero v = pl.state == HeroData.STANDING ? heroOf(ws, Lightbearer.VELMOR, pl) : null;
+        if (v == null) {
+            List<EntityHero> l = ws.getEntitiesWithinAABB(EntityHero.class, new AxisAlignedBB(pos).grow(12), x -> x.hero() == Lightbearer.VELMOR);
+            v = l.isEmpty() ? null : l.get(0);
+        }
+        if (v != null) {
+            v.onSealBroken(pos);
+        }
+    }
 
     /** Святыня встала в постройке (вызывает OrderStructures.place). */
     public static void shrinePlaced(WorldServer ws, OrderStructureData.Entry e, BlockPos pos) {

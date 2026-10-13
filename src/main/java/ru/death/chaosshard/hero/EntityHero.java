@@ -73,6 +73,12 @@ public class EntityHero extends EntityMob {
     /** Ирена: таймеры святой земли, лечения стражи, щита; щит держится shield тиков. */
     private int holyTimer, holyCharge = -1, shieldTimer, shield;
     private long lastLitHint;
+    /** Вельмор: снаряды, ловушки, отскок; сколько раз уже сбегал; где прячется; оглушение. */
+    private int boltTimer, trapTimer, blinkTimer, escapes, awayTicks, stun;
+    private BlockPos away, pillarHome;
+    private int pillarHomeR;
+    private boolean returnAfterStun;
+    private final java.util.List<double[]> traps = new java.util.ArrayList<>();
     private int flashTimer, dashTimer, dashing, stagger;
     private long lastFrontHint;
 
@@ -100,6 +106,10 @@ public class EntityHero extends EntityMob {
         dataManager.set(HERO, h.ordinal());
         double hp, dmg, armor;
         switch (h) {
+            case VELMOR:
+                hp = 650; dmg = 8; armor = 10;
+                setItemStackToSlot(EntityEquipmentSlot.MAINHAND, Trophies.of(Lightbearer.VELMOR));
+                break;
             case IRENA:
                 hp = 700; dmg = 9; armor = 12;
                 setItemStackToSlot(EntityEquipmentSlot.MAINHAND, Trophies.of(Lightbearer.IRENA));
@@ -171,6 +181,15 @@ public class EntityHero extends EntityMob {
         if (scripted && !src.canHarmInCreative()) {
             return false;
         }
+        if (!world.isRemote && hero() == Lightbearer.VELMOR && away != null && stun <= 0 && !src.canHarmInCreative()) {
+            world.playSound(null, getPosition(), SoundEvents.BLOCK_GLASS_HIT, SoundCategory.HOSTILE, 1.0F, 0.6F);
+            Entity who = src.getTrueSource();
+            if (who instanceof EntityPlayerMP && world.getTotalWorldTime() - lastLitHint > 200) {
+                lastLitHint = world.getTotalWorldTime();
+                ((EntityPlayerMP) who).sendStatusMessage(Breach.grimoire("chaosshard.hero.velmor.warded"), true);
+            }
+            return false;
+        }
         if (!world.isRemote && hero() == Lightbearer.IRENA) {
             if (shield > 0 && !src.canHarmInCreative()) {
                 world.playSound(null, getPosition(), SoundEvents.BLOCK_ANVIL_LAND, SoundCategory.HOSTILE, 0.6F, 1.8F);
@@ -194,8 +213,17 @@ public class EntityHero extends EntityMob {
                 ((EntityPlayerMP) who).sendStatusMessage(Breach.grimoire("chaosshard.hero.kael.front"), true);
             }
         }
-        return super.attackEntityFrom(src, amount);
+        boolean hurt = super.attackEntityFrom(src, amount);
+        if (hurt && !world.isRemote && hero() == Lightbearer.VELMOR && isEntityAlive() && escapes < ESCAPE_AT.length
+                && getHealth() < getMaxHealth() * ESCAPE_AT[escapes]) {
+            escapes++;
+            escape();
+        }
+        return hurt;
     }
+
+    /** Вельмор сбегает к печати на этих долях здоровья. */
+    public static final float[] ESCAPE_AT = {0.66F, 0.33F};
 
     /** Удар пришёл спереди (в конусе ±60° от взгляда). */
     boolean fromFront(DamageSource src) {
@@ -235,6 +263,8 @@ public class EntityHero extends EntityMob {
             kael(target);
         } else if (hero() == Lightbearer.IRENA) {
             irena(target);
+        } else if (hero() == Lightbearer.VELMOR) {
+            velmor(target);
         }
         // вне боя понемногу залечивается
         if (target == null && ticksExisted % 40 == 0 && getHealth() < getMaxHealth()) {
@@ -313,6 +343,169 @@ public class EntityHero extends EntityMob {
             shield = 60;
             world.playSound(null, getPosition(), SoundEvents.BLOCK_NOTE_CHIME, SoundCategory.HOSTILE, 2.0F, 1.0F);
         }
+    }
+
+    /**
+     * Вельмор: огненные стрелы издалека, рунные ловушки под ногами (секунда на то, чтобы сойти),
+     * отскок, если подошли вплотную. На 66% и 33% сбегает к целой печати отступления и прячется за щитом,
+     * пока печать не разобьют (тогда оглушён и открыт) или пока не отдышится (30 секунд) — потом возвращается.
+     * Если печатей не осталось — побег срывается, он оглушён.
+     */
+    private void velmor(EntityLivingBase target) {
+        WorldServer ws = (WorldServer) world;
+        tickTraps(ws);
+        if (stun > 0) {
+            stun--;
+            motionX = motionZ = 0;
+            if (stun % 4 == 0) {
+                ws.spawnParticle(EnumParticleTypes.CRIT_MAGIC, posX, posY + 2.3, posZ, 6, 0.3, 0.2, 0.3, 0.05);
+            }
+            if (stun == 0 && returnAfterStun) {
+                returnAfterStun = false;
+                goHome();
+            }
+            return;
+        }
+        if (away != null) {
+            awayTicks++;
+            setAttackTarget(null);
+            if (awayTicks % 20 == 0 && getHealth() < getMaxHealth()) {
+                heal(getMaxHealth() * 0.005F);
+            }
+            if (awayTicks % 3 == 0) {
+                double a = awayTicks * 0.3;
+                ws.spawnParticle(EnumParticleTypes.PORTAL, posX + Math.cos(a) * 1.2, posY + 1.2, posZ + Math.sin(a) * 1.2, 3, 0, 0.4, 0, 0.3);
+            }
+            if (awayTicks >= 600) {
+                goHome();
+            }
+            return;
+        }
+        if (target == null || !target.isEntityAlive()) {
+            return;
+        }
+        double d = getDistance(target);
+        // отскок от того, кто подошёл вплотную
+        if (++blinkTimer >= 100 && d < 3.5) {
+            blinkTimer = 0;
+            for (int i = 0; i < 8; i++) {
+                double a = rand.nextDouble() * Math.PI * 2, r = 7 + rand.nextInt(4);
+                BlockPos at = world.getHeight(new BlockPos(posX + Math.cos(a) * r, 0, posZ + Math.sin(a) * r));
+                if (Math.abs(at.getY() - posY) < 4 && (!hasHome() || at.distanceSq(getHomePosition()) < getMaximumHomeDistance() * getMaximumHomeDistance())) {
+                    blink(at.getX() + 0.5, at.getY(), at.getZ() + 0.5);
+                    break;
+                }
+            }
+        }
+        // огненные стрелы
+        if (++boltTimer >= 40 && canEntityBeSeen(target)) {
+            boltTimer = 0;
+            for (int i = 0; i < 2; i++) {
+                double dx = target.posX - posX, dy = target.posY + target.height / 2 - (posY + 1.8), dz = target.posZ - posZ;
+                net.minecraft.entity.projectile.EntitySmallFireball f = new net.minecraft.entity.projectile.EntitySmallFireball(world, this,
+                        dx + rand.nextGaussian() * 0.6, dy, dz + rand.nextGaussian() * 0.6);
+                f.posY = posY + 1.8;
+                world.spawnEntity(f);
+            }
+            world.playSound(null, getPosition(), SoundEvents.ENTITY_BLAZE_SHOOT, SoundCategory.HOSTILE, 1.0F, 1.2F);
+        }
+        // рунные ловушки под целью
+        if (++trapTimer >= 160) {
+            trapTimer = 0;
+            for (int i = 0; i < 3; i++) {
+                double tx = target.posX + (i == 0 ? 0 : rand.nextInt(7) - 3), tz = target.posZ + (i == 0 ? 0 : rand.nextInt(7) - 3);
+                traps.add(new double[]{tx, target.posY, tz, 0});
+            }
+            world.playSound(null, target.getPosition(), SoundEvents.ENTITY_ILLAGER_PREPARE_MIRROR, SoundCategory.HOSTILE, 1.5F, 1.0F);
+        }
+    }
+
+    private void tickTraps(WorldServer ws) {
+        java.util.Iterator<double[]> it = traps.iterator();
+        while (it.hasNext()) {
+            double[] t = it.next();
+            t[3]++;
+            if (t[3] % 2 == 0) {
+                for (int k = 0; k < 8; k++) {
+                    double a = k * Math.PI / 4 + t[3] * 0.1;
+                    ws.spawnParticle(EnumParticleTypes.SPELL_WITCH, t[0] + Math.cos(a) * 2, t[1] + 0.1, t[2] + Math.sin(a) * 2, 1, 0, 0, 0, 0.0);
+                }
+            }
+            if (t[3] >= TRAP_DELAY) {
+                it.remove();
+                ws.spawnParticle(EnumParticleTypes.EXPLOSION_LARGE, t[0], t[1] + 0.5, t[2], 1, 0, 0, 0, 0.0);
+                world.playSound(null, new BlockPos(t[0], t[1], t[2]), SoundEvents.ENTITY_EVOCATION_FANGS_ATTACK, SoundCategory.HOSTILE, 1.2F, 1.0F);
+                for (EntityLivingBase e : world.getEntitiesWithinAABB(EntityLivingBase.class,
+                        new net.minecraft.util.math.AxisAlignedBB(t[0] - 2, t[1] - 1, t[2] - 2, t[0] + 2, t[1] + 2, t[2] + 2),
+                        x -> x != this && !isOnSameTeam(x) && x.isEntityAlive())) {
+                    e.attackEntityFrom(DamageSource.causeMobDamage(this).setMagicDamage(), 6.0F);
+                    e.addPotionEffect(new PotionEffect(MobEffects.SLOWNESS, 60, 1));
+                }
+            }
+        }
+    }
+
+    public static final int TRAP_DELAY = 30;
+
+    private void blink(double x, double y, double z) {
+        ((WorldServer) world).spawnParticle(EnumParticleTypes.PORTAL, posX, posY + 1, posZ, 40, 0.3, 0.8, 0.3, 0.6);
+        setPositionAndUpdate(x, y, z);
+        ((WorldServer) world).spawnParticle(EnumParticleTypes.PORTAL, posX, posY + 1, posZ, 40, 0.3, 0.8, 0.3, 0.6);
+        world.playSound(null, getPosition(), SoundEvents.ENTITY_ENDERMEN_TELEPORT, SoundCategory.HOSTILE, 1.0F, 1.2F);
+    }
+
+    /** Сбежать к ближайшей целой печати. */
+    void escape() {
+        java.util.List<BlockPos> seals = Pillars.intactSeals(world, Lightbearer.VELMOR);
+        if (seals.isEmpty()) {
+            say("no_seals");
+            stun = 60;
+            return;
+        }
+        BlockPos seal = seals.get(rand.nextInt(seals.size()));
+        if (pillarHome == null && hasHome()) {
+            pillarHome = getHomePosition();
+            pillarHomeR = (int) getMaximumHomeDistance();
+        }
+        say("escape");
+        BlockPos at = world.getHeight(seal.add(2, 0, 0));
+        blink(seal.getX() + 2.5, Math.max(at.getY(), seal.getY() - 1), seal.getZ() + 0.5);
+        away = seal;
+        awayTicks = 0;
+        setHomePosAndDistance(seal, 4);
+        setAttackTarget(null);
+        for (EntityPlayer pl : world.getEntitiesWithinAABB(EntityPlayer.class, getEntityBoundingBox().grow(160))) {
+            pl.sendMessage(Breach.grimoire("chaosshard.hero.velmor.fled", seal.getX(), seal.getZ()));
+        }
+    }
+
+    /** Печать разбита: если он прятался за ней — оглушён и открыт, потом вернётся на Опору. */
+    public void onSealBroken(BlockPos pos) {
+        if (away != null && away.equals(pos)) {
+            away = null;
+            stun = 60;
+            returnAfterStun = true;
+            setHealth(Math.max(1, getHealth() - getMaxHealth() * 0.1F));
+            say("seal_here");
+        }
+    }
+
+    void goHome() {
+        away = null;
+        awayTicks = 0;
+        if (pillarHome != null) {
+            setHomePosAndDistance(pillarHome, pillarHomeR);
+            blink(pillarHome.getX() + 0.5, pillarHome.getY(), pillarHome.getZ() + 0.5);
+        }
+        say("back");
+    }
+
+    public boolean warded() {
+        return away != null;
+    }
+
+    public boolean stunned() {
+        return stun > 0;
     }
 
     public boolean shielded() {
@@ -487,6 +680,14 @@ public class EntityHero extends EntityMob {
         tag.setLong("Structure", structureId);
         tag.setBoolean("Greeted", greeted);
         tag.setBoolean("Phase2", phase2);
+        tag.setInteger("Escapes", escapes);
+        if (away != null) {
+            tag.setLong("Away", away.toLong());
+        }
+        if (pillarHome != null) {
+            tag.setLong("PillarHome", pillarHome.toLong());
+            tag.setInteger("PillarHomeR", pillarHomeR);
+        }
         if (hasHome()) {
             tag.setLong("Home", getHomePosition().toLong());
             tag.setInteger("HomeR", (int) getMaximumHomeDistance());
@@ -500,6 +701,12 @@ public class EntityHero extends EntityMob {
         structureId = tag.hasKey("Structure") ? tag.getLong("Structure") : -1;
         greeted = tag.getBoolean("Greeted");
         phase2 = tag.getBoolean("Phase2");
+        escapes = tag.getInteger("Escapes");
+        away = tag.hasKey("Away") ? BlockPos.fromLong(tag.getLong("Away")) : null;
+        if (tag.hasKey("PillarHome")) {
+            pillarHome = BlockPos.fromLong(tag.getLong("PillarHome"));
+            pillarHomeR = tag.getInteger("PillarHomeR");
+        }
         if (tag.hasKey("Home")) {
             setHomePosAndDistance(BlockPos.fromLong(tag.getLong("Home")), tag.getInteger("HomeR"));
         }

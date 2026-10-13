@@ -40,6 +40,8 @@ public final class ModBlocks {
     /** Святой камень Ордена и он же после осквернения. */
     public static Block SHRINE_STONE;
     public static Block DESECRATED_STONE;
+    /** Печать отступления Вельмора. */
+    public static Block VELMOR_SEAL;
     /** Знак покровителя деревни. */
     public static Block PATRON_SIGIL;
     /** Жила Завесы — нарост Сердца с модулем «Богатство». */
@@ -65,6 +67,7 @@ public final class ModBlocks {
         VEIL_VEIN = add(new ru.death.chaosshard.heart.BlockVeilVein(), "veil_vein");
         SHRINE_STONE = add(new ru.death.chaosshard.order.BlockShrineStone(), "shrine_stone");
         DESECRATED_STONE = add(new SimpleBlock(Material.ROCK, SoundType.STONE, 3.0F, 30.0F, 0.3F), "desecrated_stone");
+        VELMOR_SEAL = add(new ru.death.chaosshard.hero.BlockVelmorSeal(), "velmor_seal");
         PATRON_SIGIL = add(new ru.death.chaosshard.village.BlockPatronSigil(), "patron_sigil");
         net.minecraftforge.fml.common.registry.GameRegistry.registerTileEntity(ru.death.chaosshard.village.TilePatronSigil.class,
                 new net.minecraft.util.ResourceLocation(Tags.MOD_ID, "patron_sigil"));

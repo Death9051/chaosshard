@@ -1149,3 +1149,25 @@ item.chaosshard.irena_rosary.lore=Бусины ещё тёплые. Молитв
 chaosshard.hero.irena.monastery_out=Монастырь погас. Ирену лечат ещё: %s.
 advancement.chaosshard.m.monastery_out.title=Монастырь погас
 advancement.chaosshard.m.monastery_out.desc=Веха квеста «Монастыри»
+
+# ---------------------------------------------------------------- Акт 4: Вельмор
+tile.chaosshard.velmor_seal.name=Печать отступления
+chaosshard.structure.velmor_ward=Печать отступления Вельмора
+chaosshard.omen.wards=Вокруг Опоры Вельмор спрятал печати отступления: %s. Где — Знамение не говорит. Лучше найти их до боя.
+chaosshard.hero.velmor.intro1=Тварь Хаоса… Я, разумеется, ждал. У меня всегда есть запасной план. И запасной к запасному.
+chaosshard.hero.velmor.intro2=Запасные планы — это печати где-то вокруг. Разбить бы их до того, как он ими воспользуется.
+chaosshard.hero.velmor.greet=Защитные контуры на месте. Начнём.
+chaosshard.hero.velmor.escape=Прошу прощения, у меня назначено в другом месте!
+chaosshard.hero.velmor.no_seals=Печати?.. Где мои печати?!
+chaosshard.hero.velmor.seal_here=Кто посмел тронуть мои печати?!
+chaosshard.hero.velmor.back=Я вернулся. Как и обещал.
+chaosshard.hero.velmor.death=Запасного плана… не было…
+chaosshard.hero.velmor.fled=Вельмор ушёл к печати: §e%s %s§d. Пока она цела, его не достать.
+chaosshard.hero.velmor.warded=Он за щитом печати. Разбей печать.
+chaosshard.hero.velmor.seal_broken=Печать отступления разбита. Целых осталось: %s, ещё не найдено: %s.
+chaosshard.hero.velmor.memory=Третья строка: «Мы уже приходили сюда. И проиграли».
+item.chaosshard.velmor_staff.name=Посох Вельмора
+item.chaosshard.velmor_staff.desc=ПКМ — шаг сквозь пространство на 10 блоков вперёд. Раз в 3 секунды.
+item.chaosshard.velmor_staff.lore=Запасной план, который ему не помог.
+advancement.chaosshard.m.seal_broken.title=Печать разбита
+advancement.chaosshard.m.seal_broken.desc=Веха квеста «Печати отступления»

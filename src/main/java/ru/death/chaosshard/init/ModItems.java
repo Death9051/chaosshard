@@ -53,6 +53,8 @@ public final class ModItems {
     public static Item KAEL_BLADE;
     /** Чётки Ирены — трофей второй Опоры. */
     public static Item IRENA_ROSARY;
+    /** Посох Вельмора — трофей третьей Опоры. */
+    public static Item VELMOR_STAFF;
 
     public static final List<Item> ALL = new ArrayList<>();
 
@@ -81,6 +83,8 @@ public final class ModItems {
         KAEL_BLADE.setCreativeTab(ru.death.chaosshard.ChaosTab.TAB);
         IRENA_ROSARY = add(new ru.death.chaosshard.hero.ItemIrenaRosary(), "irena_rosary");
         IRENA_ROSARY.setCreativeTab(ru.death.chaosshard.ChaosTab.TAB);
+        VELMOR_STAFF = add(new ru.death.chaosshard.hero.ItemVelmorStaff(), "velmor_staff");
+        VELMOR_STAFF.setCreativeTab(ru.death.chaosshard.ChaosTab.TAB);
         for (ru.death.chaosshard.anchor.ItemAnchorSeal.Type t : ru.death.chaosshard.anchor.ItemAnchorSeal.Type.values()) {
             SEALS.put(t, add(new ru.death.chaosshard.anchor.ItemAnchorSeal(t), "anchor_seal_" + t.name().toLowerCase()));
         }
