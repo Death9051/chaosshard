@@ -1632,25 +1632,24 @@ public final class AutoTest {
                     "зачарования зарегистрированы");
             net.minecraft.item.ItemStack sword = new net.minecraft.item.ItemStack(net.minecraft.init.Items.WOODEN_SWORD);
             sword.addEnchantment(ru.death.chaosshard.enchant.ChaosEnchants.BANE_OF_ORDER, 4);
-            ru.death.chaosshard.structure.EntityOrderKnight a = new ru.death.chaosshard.structure.EntityOrderKnight(ow);
-            ru.death.chaosshard.structure.EntityOrderKnight b = new ru.death.chaosshard.structure.EntityOrderKnight(ow);
-            for (ru.death.chaosshard.structure.EntityOrderKnight k : new ru.death.chaosshard.structure.EntityOrderKnight[]{a, b}) {
-                k.setNoAI(true);
-                k.setPosition(base.getX() + 6.5, base.getY() + 1, base.getZ() + 0.5);
-                for (net.minecraft.inventory.EntityEquipmentSlot sl : net.minecraft.inventory.EntityEquipmentSlot.values()) {
-                    k.setItemStackToSlot(sl, net.minecraft.item.ItemStack.EMPTY);
-                }
-                ow.spawnEntity(k);
-            }
+            // сам расчёт урона — без брони и аффиксов Champions, которые меняют итог
+            ru.death.chaosshard.structure.EntityOrderKnight k = new ru.death.chaosshard.structure.EntityOrderKnight(ow);
+            k.setPosition(base.getX() + 6.5, base.getY() + 1, base.getZ() + 0.5);
             me.setHeldItem(EnumHand.MAIN_HAND, net.minecraft.item.ItemStack.EMPTY);
-            a.attackEntityFrom(DamageSource.causePlayerDamage(me), 2F);
+            net.minecraftforge.event.entity.living.LivingHurtEvent plain =
+                    new net.minecraftforge.event.entity.living.LivingHurtEvent(k, DamageSource.causePlayerDamage(me), 2F);
+            ru.death.chaosshard.enchant.ChaosEnchants.onHurt(plain);
             me.setHeldItem(EnumHand.MAIN_HAND, sword);
-            b.attackEntityFrom(DamageSource.causePlayerDamage(me), 2F);
-            float la = a.getMaxHealth() - a.getHealth(), lb = b.getMaxHealth() - b.getHealth();
-            check(lb > la + 5, "«Погибель Порядка» бьёт рыцаря сильнее: " + la + " → " + lb);
+            net.minecraftforge.event.entity.living.LivingHurtEvent bane =
+                    new net.minecraftforge.event.entity.living.LivingHurtEvent(k, DamageSource.causePlayerDamage(me), 2F);
+            ru.death.chaosshard.enchant.ChaosEnchants.onHurt(bane);
+            check(plain.getAmount() == 2F && bane.getAmount() == 12F,
+                    "«Погибель Порядка» IV по рыцарю: " + plain.getAmount() + " → " + bane.getAmount());
+            net.minecraftforge.event.entity.living.LivingHurtEvent zombie = new net.minecraftforge.event.entity.living.LivingHurtEvent(
+                    new net.minecraft.entity.monster.EntityZombie(ow), DamageSource.causePlayerDamage(me), 2F);
+            ru.death.chaosshard.enchant.ChaosEnchants.onHurt(zombie);
+            check(zombie.getAmount() == 2F, "по зомби без прибавки: " + zombie.getAmount());
             me.setHeldItem(EnumHand.MAIN_HAND, net.minecraft.item.ItemStack.EMPTY);
-            a.setDead();
-            b.setDead();
         });
         step("отголоски Светочей", () -> {
             for (ru.death.chaosshard.hero.Lightbearer h : ru.death.chaosshard.hero.Lightbearer.values()) {
