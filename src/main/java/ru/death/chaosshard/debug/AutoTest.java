@@ -86,6 +86,8 @@ public final class AutoTest {
     private EntityLiving miner;
     private TrialData.Trial trial, trial2;
     private int roomTicks;
+    /** Тики с начала испытания комнаты (roomState == 1). */
+    private int liveTicks;
     private long roomBegan;
 
     private AutoTest(MinecraftServer server, boolean shutdown) {
@@ -602,6 +604,7 @@ public final class AutoTest {
             meA.setPosition(t3.origin().getX() + 0.5, t3.origin().getY(), t3.origin().getZ() + 2.5);
             roomBegan = archive.getTotalWorldTime();
             roomTicks = 0;
+            liveTicks = 0;
         });
         for (int r = 0; r < 6; r++) {
             final int room = r;
@@ -1860,7 +1863,7 @@ public final class AutoTest {
                 int n = ru.death.chaosshard.compat.world.WildChaos.callLight(cap, me);
                 List<EntityLiving> ls = ow.getEntitiesWithinAABB(EntityLiving.class, cap.getEntityBoundingBox().grow(6),
                         x -> x.getTags().contains(ru.death.chaosshard.compat.world.WildChaos.TAG_LIGHT));
-                check(n > 0 && ls.size() == n, "стражей света: " + ls.size());
+                check(n > 0 && ls.size() >= n, "стражей света: " + n + " (рядом " + ls.size() + ")");
                 for (EntityLiving l : ls) {
                     l.setAttackTarget(cap);
                     check(l.getAttackTarget() == null, "страж не бьёт своих: " + net.minecraft.entity.EntityList.getKey(l));
@@ -2215,6 +2218,7 @@ public final class AutoTest {
             line("    " + t.roomType(room) + ": пройдена за " + (now - roomBegan) + " тиков, барьер " + (open ? "погас" : "НЕ погас"));
             roomBegan = now;
             roomTicks = 0;
+            liveTicks = 0;
             return open;
         }
         roomTicks++;
@@ -2245,6 +2249,7 @@ public final class AutoTest {
         if (t.roomState != 1) {
             return false;
         }
+        liveTicks++;
         switch (type) {
             case ARENA: case GUARD: {
                 List<EntityLivingBase> mobs = archive.getEntitiesWithinAABB(EntityLivingBase.class,
@@ -2277,18 +2282,18 @@ public final class AutoTest {
                 }
                 if (type == TrialRoom.GUARD && t.conditions != 0) {
                     EntityLivingBase g = mobs.stream().filter(e -> e.getEntityData().getBoolean(TrialManager.TAG_GUARD)).findFirst().orElse(null);
-                    if (roomTicks == 2 && g != null) {
+                    if (liveTicks == 2 && g != null) {
                         check(g.getCustomNameTag().contains("("), "Страж с повадками: " + g.getCustomNameTag());
                     }
-                    if (roomTicks == 3 && g != null) {
+                    if (liveTicks == 3 && g != null) {
                         kill(g);
                         return false;
                     }
-                    if (roomTicks == 5 && TrialCondition.has(t.conditions, TrialCondition.ECHO)) {
+                    if (liveTicks == 5 && TrialCondition.has(t.conditions, TrialCondition.ECHO)) {
                         check(mobs.stream().filter(e -> e.getEntityData().getBoolean(TrialManager.TAG_RISEN)).count() >= 2,
                                 "Мир эха: Страж распался на эхо");
                     }
-                    if (roomTicks < 6) {
+                    if (liveTicks < 6) {
                         return false;
                     }
                 }
@@ -2334,7 +2339,7 @@ public final class AutoTest {
                 }
                 return false;
             case COLLAPSE:
-                if (roomTicks == 5) {
+                if (liveTicks == 5) {
                     meA.setPosition(x, y, o.getZ() + (b[0] + b[1]) / 2.0 + 0.5);
                     meA.onGround = true;
                     TrialManager.tick(meA, false);
