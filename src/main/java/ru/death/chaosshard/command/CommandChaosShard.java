@@ -264,6 +264,34 @@ public class CommandChaosShard extends CommandBase {
                         + (left > 0 && !gd.submitted ? ", вернётся через " + left / 20 + " с" : "")));
                 break;
             }
+            case "act5": {
+                // /oh act5 start — все Опоры пали и Гаррот склонился (сразу к Акту 5); /oh act5 raid — набег Ордена на ближний Якорь
+                net.minecraft.world.WorldServer ws = server.getWorld(ru.death.chaosshard.breach.Breach.luchezariyaDim());
+                if (args.length >= 2 && "start".equals(args[1])) {
+                    ru.death.chaosshard.hero.HeroData hd = ru.death.chaosshard.hero.HeroData.get(ws);
+                    for (ru.death.chaosshard.hero.HeroData.Pillar p : hd.pillars) {
+                        p.state = ru.death.chaosshard.hero.HeroData.FALLEN;
+                    }
+                    hd.markDirty();
+                    ru.death.chaosshard.garrot.GarrotData gd = ru.death.chaosshard.garrot.GarrotData.get(ws);
+                    gd.submitted = true;
+                    gd.markDirty();
+                    sender.sendMessage(new net.minecraft.util.text.TextComponentString("Акт 5: все Опоры пали, Гаррот склонился — Орден наступает"));
+                    break;
+                }
+                if (args.length >= 2 && "raid".equals(args[1])) {
+                    EntityPlayerMP pl = getCommandSenderAsPlayer(sender);
+                    BlockPos near = ru.death.chaosshard.anchor.AnchorData.get(pl.world).nearest(pl.getPosition(), null);
+                    if (near == null || !(pl.world.getTileEntity(near) instanceof ru.death.chaosshard.anchor.TileAnchor)) {
+                        throw new CommandException("Якоря рядом нет");
+                    }
+                    int lvl = ((ru.death.chaosshard.anchor.TileAnchor) pl.world.getTileEntity(near)).level();
+                    ru.death.chaosshard.act5.OrderRaids.spawn((net.minecraft.world.WorldServer) pl.world, near, pl, Math.max(1, lvl), pl.world.rand.nextDouble() * Math.PI * 2);
+                    break;
+                }
+                sender.sendMessage(new net.minecraft.util.text.TextComponentString("Наступление Ордена: " + (ru.death.chaosshard.act5.OrderRaids.active(ws) ? "идёт" : "ещё нет")));
+                break;
+            }
             case "pillar": {
                 // /oh pillar — состояние Опор; /oh pillar fall <герой> — считать павшей; /oh pillar reset — забыть все
                 net.minecraft.world.WorldServer ws = server.getWorld(ru.death.chaosshard.breach.Breach.luchezariyaDim());
@@ -614,7 +642,10 @@ public class CommandChaosShard extends CommandBase {
     @Override
     public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos targetPos) {
         if (args.length == 1) {
-            return getListOfStringsMatchingLastWord(args, "nit", "tp", "sky", "grimoire", "debug", "breach", "heart", "quests", "selftest", "anchor", "shrine", "surge", "village", "trial", "beast", "servant", "autotest", "structure", "pillar", "garrot");
+            return getListOfStringsMatchingLastWord(args, "nit", "tp", "sky", "grimoire", "debug", "breach", "heart", "quests", "selftest", "anchor", "shrine", "surge", "village", "trial", "beast", "servant", "autotest", "structure", "pillar", "garrot", "act5");
+        }
+        if (args.length == 2 && "act5".equals(args[0])) {
+            return getListOfStringsMatchingLastWord(args, "start", "raid");
         }
         if (args.length == 2 && "garrot".equals(args[0])) {
             return getListOfStringsMatchingLastWord(args, "duel", "reset");

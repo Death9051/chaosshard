@@ -1300,3 +1300,21 @@ advancement.chaosshard.m.wither_slain.title=Иссушитель поверже�
 advancement.chaosshard.m.wither_slain.desc=Убит Иссушитель
 advancement.chaosshard.m.dragon_slain.title=Дракон повержен
 advancement.chaosshard.m.dragon_slain.desc=Убит Дракон Края
+
+# ---- Акт 5: наступление Ордена
+item.chaosshard.order_seal.name=Печать Ордена
+chaosshard.order_seal.lore=Сургуч и золото: печать капитана Ордена. Три печати укажут, где сидит тот, кто их раздаёт.
+chaosshard.order.herald=Глашатай Ордена:
+chaosshard.order.bannerman=Знаменосец Света
+chaosshard.order.rise=Светочи пали, и тьма стоит у ворот. Отныне Орден идёт сам. Каждый край, отданный Хаосу, мы выжжем светом.
+chaosshard.order.raid.warn=Колокола столицы звонят по тебе, тварь. Мы идём.
+chaosshard.order.raid.start.0=Во имя Короля и Света — вперёд!
+chaosshard.order.raid.start.1=Знамя вперёд! Пусть Скверна горит под нашими ногами!
+chaosshard.order.raid.start.2=Ни шагу назад. Светочи смотрят на нас.
+chaosshard.order.raid.fall.0=Капитан пал… Отходим — к столице!
+chaosshard.order.raid.fall.1=Печать… возьми её, если сможешь унести. Король всё равно сильнее.
+chaosshard.order.raid.fall.2=Отступаем! Свет вернётся — с рассветом.
+chaosshard.order.raid.coming=Набег Ордена %s ур. — от X %s, Z %s на Якорь у X %s, Z %s. Капитан несёт Печать.
+chaosshard.order.raid.repelled=Капитан Ордена пал, отряд бежит. Якорь окреп (+%s к Скверне). Печать — моя.
+advancement.chaosshard.m.order_raid.title=Набег Ордена отбит
+advancement.chaosshard.m.order_raid.desc=Пал капитан набега Ордена

@@ -1929,6 +1929,29 @@ public final class AutoTest {
             check(true, "поиск не падает");
         });
 
+        section("Акт 5: наступление Ордена");
+        step("Орден идёт сам: отряд, знаменосец, капитан с печатью", () -> {
+            check(ru.death.chaosshard.act5.OrderRaids.active(ow), "наступление идёт (Опоры пали, Гаррот склонился)");
+            TileAnchor a = (TileAnchor) ow.getTileEntity(anchorPos);
+            if (a == null) { check(false, "Якоря нет"); return; }
+            me.setPosition(anchorPos.getX() + 3.5, anchorPos.getY(), anchorPos.getZ() + 0.5);
+            ru.death.chaosshard.structure.EntityOrderKnight cap = ru.death.chaosshard.act5.OrderRaids.spawn(ow, anchorPos, me, 3, 0);
+            check(cap != null && cap.getTags().contains(ru.death.chaosshard.act5.OrderRaids.TAG_CAPTAIN), "капитан набега");
+            List<ru.death.chaosshard.structure.EntityOrderKnight> squad = ow.getEntitiesWithinAABB(ru.death.chaosshard.structure.EntityOrderKnight.class,
+                    new AxisAlignedBB(anchorPos).grow(48), x -> x.getTags().contains(ru.death.chaosshard.act5.OrderRaids.TAG_RAID));
+            check(squad.size() == 1 + 5 + 1, "в отряде " + squad.size() + " (капитан, 5 рыцарей, знаменосец)");
+            check(squad.stream().allMatch(k -> k.getTags().contains(ru.death.chaosshard.garrot.GarrotRaids.TAG_ARMY)
+                    && k.getEntityData().getLong(ru.death.chaosshard.garrot.GarrotRaids.TAG_RAID) == anchorPos.toLong()), "все идут на Якорь как армия набега");
+            check(squad.stream().anyMatch(k -> k.getTags().contains(ru.death.chaosshard.garrot.GarrotRaids.TAG_BANNER)), "есть знаменосец Света");
+            cap.attackEntityFrom(DamageSource.causePlayerDamage(me), 100000F);
+            check(!cap.isEntityAlive(), "капитан пал");
+            boolean seal = !ow.getEntitiesWithinAABB(net.minecraft.entity.item.EntityItem.class, cap.getEntityBoundingBox().grow(3),
+                    x -> x.getItem().getItem() == ru.death.chaosshard.init.ModItems.ORDER_SEAL).isEmpty();
+            check(seal, "с капитана упала Печать Ордена");
+        });
+        until("отряд Ордена ушёл", () -> ow.getEntitiesWithinAABB(ru.death.chaosshard.structure.EntityOrderKnight.class,
+                new AxisAlignedBB(anchorPos).grow(48), x -> x.isEntityAlive() && x.getTags().contains(ru.death.chaosshard.act5.OrderRaids.TAG_RAID)).isEmpty(), 40);
+
         section("Справка: реестры модов сборки");
         step("выписать предметы, блоки, тайлы и существ", () -> {
             String[] mods = {"xreliquary", "reliquary", "bountifulbaubles", "apotheosis", "waystones", "extrautils2", "cyclicmagic",

@@ -107,6 +107,9 @@ public final class ChaosConfig {
         @Config.Comment("Набеги Мрачной Армии на захваченные края")
         public boolean raids = true;
 
+        @Config.Comment("Акт 5: когда все Опоры пали и Гаррот склонился — набеги идёт делать сам Орден")
+        public boolean orderRaids = true;
+
         @Config.Comment("Через сколько тиков после захвата края приходит первый набег")
         public int firstRaidDelay = 2400;
 

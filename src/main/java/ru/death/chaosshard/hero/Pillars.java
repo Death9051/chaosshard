@@ -363,6 +363,7 @@ public class Pillars {
             if (data.fallenCount() == Lightbearer.values().length) {
                 Milestones.grant(p, "act4_done");
                 p.sendMessage(Breach.grimoire("chaosshard.act4.done"));
+                ru.death.chaosshard.act5.OrderRaids.herald(p, "chaosshard.order.rise");
             }
             if (!(p instanceof net.minecraftforge.common.util.FakePlayer)) {
                 ru.death.chaosshard.cutscene.CutsceneManager.play(p, HeroScenes.fall(ws, o, p, h), HeroScenes.NONE);

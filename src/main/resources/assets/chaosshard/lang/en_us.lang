@@ -1277,3 +1277,21 @@ advancement.chaosshard.m.wither_slain.title=Wither slain
 advancement.chaosshard.m.wither_slain.desc=Quest milestone
 advancement.chaosshard.m.dragon_slain.title=Dragon slain
 advancement.chaosshard.m.dragon_slain.desc=Quest milestone
+
+# ---- Act 5: the Order's offensive
+item.chaosshard.order_seal.name=Order Seal
+chaosshard.order_seal.lore=Wax and gold: an Order captain's seal. Three seals point to the one who hands them out.
+chaosshard.order.herald=Order Herald:
+chaosshard.order.bannerman=Bearer of Light
+chaosshard.order.rise=The Lightbearers have fallen and darkness stands at the gates. From now on the Order marches itself. Every land given to Chaos we shall burn with light.
+chaosshard.order.raid.warn=The bells of the capital toll for you, creature. We are coming.
+chaosshard.order.raid.start.0=For the King and the Light — forward!
+chaosshard.order.raid.start.1=Banner forward! Let the Defilement burn beneath our feet!
+chaosshard.order.raid.start.2=Not one step back. The Lightbearers are watching.
+chaosshard.order.raid.fall.0=The captain has fallen… Fall back — to the capital!
+chaosshard.order.raid.fall.1=The seal… take it, if you can carry it. The King is stronger still.
+chaosshard.order.raid.fall.2=Retreat! The Light will return — with the dawn.
+chaosshard.order.raid.coming=Order raid, level %s — from X %s, Z %s toward the Anchor at X %s, Z %s. The captain carries a Seal.
+chaosshard.order.raid.repelled=The Order captain has fallen, the squad flees. The Anchor grew stronger (+%s Defilement). The Seal is mine.
+advancement.chaosshard.m.order_raid.title=Order raid repelled
+advancement.chaosshard.m.order_raid.desc=Quest milestone

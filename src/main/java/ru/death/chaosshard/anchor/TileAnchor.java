@@ -73,7 +73,12 @@ public class TileAnchor extends TileEntity implements ITickable {
         if (siege > 0 && world.getTotalWorldTime() - lastSiege > 200) {
             siege = Math.max(0, siege - 20);
         }
-        if (!ru.death.chaosshard.ChaosConfig.order.raids || ru.death.chaosshard.garrot.GarrotData.get(world).submitted) {
+        if (!ru.death.chaosshard.ChaosConfig.order.raids) {
+            return;
+        }
+        // Гаррот склонился — набегов нет, пока в бой не пойдёт сам Орден (Акт 5)
+        boolean order = ru.death.chaosshard.garrot.GarrotData.get(world).submitted;
+        if (order && !ru.death.chaosshard.act5.OrderRaids.active(world)) {
             return;
         }
         java.util.List<TileAnchor> c = AnchorClusters.cluster(world, this);
@@ -103,7 +108,11 @@ public class TileAnchor extends TileEntity implements ITickable {
             TileAnchor target = c.get(world.rand.nextInt(c.size()));
             raidTarget = target.pos.toLong();
             raidAngle = world.rand.nextDouble() * Math.PI * 2;
-            ru.death.chaosshard.garrot.GarrotRaids.say(o, "chaosshard.garrot.warn");
+            if (order) {
+                ru.death.chaosshard.act5.OrderRaids.herald(o, "chaosshard.order.raid.warn");
+            } else {
+                ru.death.chaosshard.garrot.GarrotRaids.say(o, "chaosshard.garrot.warn");
+            }
             o.sendMessage(Breach.grimoire("chaosshard.raid.warn", target.pos.getX(), target.pos.getZ(),
                     new net.minecraft.util.text.TextComponentTranslation("chaosshard.dir." + compass(raidAngle))));
             markDirty();
@@ -112,8 +121,10 @@ public class TileAnchor extends TileEntity implements ITickable {
             if (near && (raidTimer / 20) % 3 == 0) {
                 BlockPos t = BlockPos.fromLong(raidTarget);
                 BlockPos drum = new BlockPos(t.getX() + Math.cos(raidAngle) * 24, o.posY, t.getZ() + Math.sin(raidAngle) * 24);
-                world.playSound(null, drum, SoundEvents.BLOCK_NOTE_BASEDRUM, SoundCategory.HOSTILE, 3.0F, 0.5F);
-                world.playSound(null, drum, SoundEvents.BLOCK_NOTE_BASEDRUM, SoundCategory.HOSTILE, 3.0F, 0.6F);
+                // Гаррот бьёт в барабаны, Орден звонит в колокола
+                net.minecraft.util.SoundEvent beat = order ? SoundEvents.BLOCK_NOTE_BELL : SoundEvents.BLOCK_NOTE_BASEDRUM;
+                world.playSound(null, drum, beat, SoundCategory.HOSTILE, 3.0F, 0.5F);
+                world.playSound(null, drum, beat, SoundCategory.HOSTILE, 3.0F, 0.6F);
             }
             return;
         }
@@ -129,7 +140,11 @@ public class TileAnchor extends TileEntity implements ITickable {
             target = this;
         }
         int lvl = AnchorClusters.maxLevel(c);
-        ru.death.chaosshard.garrot.GarrotRaids.spawn((WorldServer) world, target.pos, o, lvl, raidAngle);
+        if (order) {
+            ru.death.chaosshard.act5.OrderRaids.spawn((WorldServer) world, target.pos, o, lvl, raidAngle);
+        } else {
+            ru.death.chaosshard.garrot.GarrotRaids.spawn((WorldServer) world, target.pos, o, lvl, raidAngle);
+        }
         target.siege = 0;
         // гарнизон всей сети — на помощь
         for (net.minecraft.entity.EntityLiving g : AnchorClusters.garrison((WorldServer) world, c)) {
