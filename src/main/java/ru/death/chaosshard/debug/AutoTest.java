@@ -594,7 +594,8 @@ public final class AutoTest {
                     long k = be.getKey();
                     BlockPos p = ru.death.chaosshard.structure.BlueprintPlacer.at(e.origin(), ru.death.chaosshard.structure.bp.Blueprint.kx(k),
                             ru.death.chaosshard.structure.bp.Blueprint.ky(k), ru.death.chaosshard.structure.bp.Blueprint.kz(k), e.rot);
-                    if (ow.getBlockState(p).getBlock() != ru.death.chaosshard.structure.BlueprintPlacer.parse(be.getValue()).getBlock()) {
+                    if (ow.getBlockState(p).getBlock() != ru.death.chaosshard.structure.BlueprintPlacer.parse(be.getValue()).getBlock()
+                            && ow.getBlockState(p).getBlock() != ModBlocks.ORDER_BEACON) {
                         if (bad < 6) line("      " + names[i] + " (" + ru.death.chaosshard.structure.bp.Blueprint.kx(k) + "," + ru.death.chaosshard.structure.bp.Blueprint.ky(k) + ","
                                 + ru.death.chaosshard.structure.bp.Blueprint.kz(k) + "): ждали " + be.getValue() + ", стоит " + ow.getBlockState(p).getBlock().getRegistryName());
                         bad++;

@@ -118,7 +118,19 @@ public final class BlueprintPlacer {
                 }
             }
         }
+        // два прохода: сначала воздух (чтобы тропа не легла под грунт и не стала землёй),
+        // потом блоки снизу вверх (цветы и факелы — уже на готовую опору)
+        java.util.List<Map.Entry<Long, String>> solid = new java.util.ArrayList<>();
         for (Map.Entry<Long, String> e : b.blocks.entrySet()) {
+            if (Blueprint.AIR.equals(e.getValue())) {
+                long k = e.getKey();
+                world.setBlockState(at(origin, Blueprint.kx(k), Blueprint.ky(k), Blueprint.kz(k), rot), Blocks.AIR.getDefaultState(), 2);
+            } else {
+                solid.add(e);
+            }
+        }
+        solid.sort(java.util.Comparator.comparingInt(e -> Blueprint.ky(e.getKey())));
+        for (Map.Entry<Long, String> e : solid) {
             long k = e.getKey();
             BlockPos p = at(origin, Blueprint.kx(k), Blueprint.ky(k), Blueprint.kz(k), rot);
             IBlockState st = parse(e.getValue()).withRotation(rotation);
