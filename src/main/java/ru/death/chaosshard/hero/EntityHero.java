@@ -434,7 +434,7 @@ public class EntityHero extends EntityMob {
             if (t[3] >= TRAP_DELAY) {
                 it.remove();
                 ws.spawnParticle(EnumParticleTypes.EXPLOSION_LARGE, t[0], t[1] + 0.5, t[2], 1, 0, 0, 0, 0.0);
-                world.playSound(null, new BlockPos(t[0], t[1], t[2]), SoundEvents.ENTITY_EVOCATION_FANGS_ATTACK, SoundCategory.HOSTILE, 1.2F, 1.0F);
+                world.playSound(null, new BlockPos(t[0], t[1], t[2]), SoundEvents.EVOCATION_FANGS_ATTACK, SoundCategory.HOSTILE, 1.2F, 1.0F);
                 for (EntityLivingBase e : world.getEntitiesWithinAABB(EntityLivingBase.class,
                         new net.minecraft.util.math.AxisAlignedBB(t[0] - 2, t[1] - 1, t[2] - 2, t[0] + 2, t[1] + 2, t[2] + 2),
                         x -> x != this && !isOnSameTeam(x) && x.isEntityAlive())) {
