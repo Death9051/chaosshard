@@ -1159,13 +1159,17 @@ public final class AutoTest {
             List<ru.death.chaosshard.hero.EntityHero> hs = ow.getEntitiesWithinAABB(ru.death.chaosshard.hero.EntityHero.class, new AxisAlignedBB(planned.origin()).grow(24, 40, 24));
             if (hs.isEmpty()) { check(false, "Каэля нет"); return; }
             ru.death.chaosshard.hero.EntityHero k = hs.get(0);
+            BlockPos stand = planned.origin().up(ru.death.chaosshard.structure.bp.VeilPillar.FLOOR + 1);
+            k.setPositionAndUpdate(stand.getX() + 0.5, stand.getY(), stand.getZ() + 6.5);
             net.minecraft.entity.monster.EntityZombie z = new net.minecraft.entity.monster.EntityZombie(ow);
             z.setNoAI(true);
+            z.setChild(false);
             z.setLocationAndAngles(k.posX, k.posY, k.posZ + 4, 180, 0);
             z.rotationYawHead = 180;   // лицом на север, к Каэлю
             ow.spawnEntity(z);
             k.flash(ow);
-            check(z.isPotionActive(net.minecraft.init.MobEffects.BLINDNESS), "смотрел — ослеп");
+            check(z.isPotionActive(net.minecraft.init.MobEffects.BLINDNESS), "смотрел — ослеп (виден: " + k.canEntityBeSeen(z)
+                    + ", взгляд " + z.getLook(1F) + ")");
             z.clearActivePotions();
             z.rotationYaw = z.rotationYawHead = 0;     // отвернулся
             k.flash(ow);
