@@ -124,6 +124,9 @@ public class ChaosShard {
         if (Loader.isModLoaded("tconstruct") && ChaosConfig.compat.tinkers) {
             ru.death.chaosshard.compat.tinkers.TinkersCompat.preInit();
         }
+        if (Loader.isModLoaded("champions")) {
+            ru.death.chaosshard.compat.champions.ChampionsCompat.init();
+        }
         proxy.preInit(event);
         if (astralLoaded && !Loader.isModLoaded("mixinbooter")) {
             LOG.error("Astral Sorcery есть, а MixinBooter нет: правила неба Преддверия и Кладовок работать не будут.");

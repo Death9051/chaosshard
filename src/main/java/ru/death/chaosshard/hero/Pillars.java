@@ -343,6 +343,11 @@ public class Pillars {
             ei.setNoDespawn();
             ws.spawnEntity(ei);
         }
+        // отголосок приёма — модификатор Tinkers
+        EntityItem echo = new EntityItem(ws, heroAt.getX() + 0.5, heroAt.getY() + 1, heroAt.getZ() + 0.5, ItemHeroEcho.of(h));
+        echo.setEntityInvulnerable(true);
+        echo.setNoDespawn();
+        ws.spawnEntity(echo);
         int reward = ChaosConfig.order.pillarReward * (2 + h.ordinal()) / 2;
         for (EntityPlayerMP p : witnesses(ws, o, killer)) {
             ThreadManager.addPoints(p, reward);

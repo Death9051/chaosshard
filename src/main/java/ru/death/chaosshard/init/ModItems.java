@@ -57,6 +57,8 @@ public final class ModItems {
     public static Item VELMOR_STAFF;
     /** Лютня Лиана и Перстень Элис — трофеи четвёртой и пятой Опор. */
     public static Item LIAN_LUTE, ELIS_SIGNET;
+    /** Отголоски Светочей (метаданные — герой): модификаторы Tinkers. */
+    public static Item HERO_ECHO;
 
     public static final List<Item> ALL = new ArrayList<>();
 
@@ -91,6 +93,8 @@ public final class ModItems {
         LIAN_LUTE.setCreativeTab(ru.death.chaosshard.ChaosTab.TAB);
         ELIS_SIGNET = add(new ru.death.chaosshard.hero.ItemElisSignet(), "elis_signet");
         ELIS_SIGNET.setCreativeTab(ru.death.chaosshard.ChaosTab.TAB);
+        HERO_ECHO = add(new ru.death.chaosshard.hero.ItemHeroEcho(), "hero_echo");
+        HERO_ECHO.setCreativeTab(ru.death.chaosshard.ChaosTab.TAB);
         for (ru.death.chaosshard.anchor.ItemAnchorSeal.Type t : ru.death.chaosshard.anchor.ItemAnchorSeal.Type.values()) {
             SEALS.put(t, add(new ru.death.chaosshard.anchor.ItemAnchorSeal(t), "anchor_seal_" + t.name().toLowerCase()));
         }

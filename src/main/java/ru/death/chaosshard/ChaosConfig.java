@@ -356,6 +356,13 @@ public final class ChaosConfig {
         @Config.Comment("Tinkers' Construct: материал «Хаосит» со свойством «Нить Хаоса»")
         @Config.RequiresMcRestart
         public boolean tinkers = true;
+
+        @Config.Comment("Champions: шанс, что рыцарь Ордена станет чемпионом — база и прибавка за каждую павшую Опору")
+        public float championBase = 0.10F;
+        public float championPerPillar = 0.12F;
+
+        @Config.Comment("Champions: очков Нити за убитого чемпиона на каждый ранг")
+        public int championThread = 8;
     }
 
     public static final class BreachCfg {

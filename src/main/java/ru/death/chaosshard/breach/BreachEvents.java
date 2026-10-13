@@ -51,11 +51,13 @@ public class BreachEvents {
             return;
         }
         int n;
+        int harvest = ru.death.chaosshard.enchant.ChaosEnchants.level(ru.death.chaosshard.enchant.ChaosEnchants.SHARD_HARVEST,
+                (EntityPlayer) event.getSource().getTrueSource());
         if (!mob.isNonBoss()) {
-            n = 3 + world.rand.nextInt(3);
+            n = 3 + world.rand.nextInt(3) + harvest;
         } else {
             double strength = Math.max(0.5, Math.min(5.0, mob.getMaxHealth() / 20.0));
-            double chance = ChaosConfig.breach.worldShardChance * strength * (1 + event.getLootingLevel() * 0.5);
+            double chance = ChaosConfig.breach.worldShardChance * strength * (1 + event.getLootingLevel() * 0.5) * (1 + harvest * 0.5);
             if (mob instanceof net.minecraft.entity.passive.EntityAnimal) {
                 chance *= 0.5;   // мирные звери — скупее, иначе фермы
             }
