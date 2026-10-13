@@ -311,7 +311,13 @@ public class Pillars {
         hero.setLocationAndAngles(heroAt.getX() + 0.5, heroAt.getY(), heroAt.getZ() + 0.5, ws.rand.nextFloat() * 360, 0);
         hero.setHomePosAndDistance(e.origin().up(VeilPillar.FLOOR + 1), VeilPillar.R + 4);
         ws.spawnEntity(hero);
+        if (ChaosConfig.compat.pillarWaystones) {
+            ru.death.chaosshard.compat.life.ChaosWaystones.place(ws, e.origin(), WAYSTONE[h.ordinal()], VeilPillar.R + 4, VeilPillar.R + 10);
+        }
     }
+
+    /** Имена путевых камней у Опор. */
+    static final String[] WAYSTONE = {"Опора Каэля", "Опора Ирены", "Опора Вельмора", "Опора Лиана", "Опора Элис"};
 
     // ------------------------------------------------------------------ падение
 

@@ -1833,6 +1833,64 @@ public final class AutoTest {
             });
         }
 
+        section("Быт: еда слуг, путевые камни");
+        step("слуга ест самое сытное из сундука и крепнет", () -> {
+            BlockPos cp = base.add(-14, 1, 14);
+            ow.setBlockState(cp, Blocks.CHEST.getDefaultState(), 3);
+            net.minecraft.tileentity.TileEntityChest ch = (net.minecraft.tileentity.TileEntityChest) ow.getTileEntity(cp);
+            net.minecraft.item.ItemStack best = new net.minecraft.item.ItemStack(net.minecraft.init.Items.COOKED_BEEF);
+            int bestHeal = 8;
+            for (net.minecraft.item.Item it : net.minecraftforge.fml.common.registry.ForgeRegistries.ITEMS) {
+                if (it instanceof net.minecraft.item.ItemFood && it.getRegistryName() != null && "harvestcraft".equals(it.getRegistryName().getNamespace())) {
+                    int h = ((net.minecraft.item.ItemFood) it).getHealAmount(new net.minecraft.item.ItemStack(it));
+                    if (h > bestHeal) {
+                        bestHeal = h;
+                        best = new net.minecraft.item.ItemStack(it);
+                    }
+                }
+            }
+            ch.setInventorySlotContents(0, new net.minecraft.item.ItemStack(net.minecraft.init.Items.BREAD, 4));
+            ch.setInventorySlotContents(1, best.copy());
+            EntityLiving sv = Servants.spawn(me, Servants.Kind.HUSK, cp.add(2, 0, 0));
+            if (sv == null) { check(false, "слуга не появился"); return; }
+            int ate = ru.death.chaosshard.compat.life.ServantMeals.tryEat(sv);
+            line("  лучшая еда: " + best.getItem().getRegistryName() + " (" + bestHeal + ")");
+            check(ate == bestHeal && ch.getStackInSlot(1).isEmpty() && ch.getStackInSlot(0).getCount() == 4, "съел самое сытное: " + ate);
+            check(sv.isPotionActive(net.minecraft.init.MobEffects.REGENERATION) && sv.isPotionActive(net.minecraft.init.MobEffects.STRENGTH),
+                    "сытый: Регенерация и Сила");
+            check(bestHeal < 10 || sv.isPotionActive(net.minecraft.init.MobEffects.RESISTANCE), "сытное блюдо — ещё и Сопротивление");
+            check(ru.death.chaosshard.compat.life.ServantMeals.tryEat(sv) == 0, "сытый второй раз не ест");
+            sv.setDead();
+            ch.clear();
+            ow.setBlockToAir(cp);
+        });
+        if (Loader.isModLoaded("waystones")) {
+            step("путевые камни: у Якоря и по имени", () -> {
+                BlockPos at = base.add(-30, 1, -30);
+                boolean ok = ru.death.chaosshard.compat.life.ChaosWaystones.place(ow, at, "Проверка");
+                check(ok && ru.death.chaosshard.compat.life.ChaosWaystones.nearby(ow, at, 6), "камень поставлен");
+                String name = "?";
+                for (BlockPos p : BlockPos.getAllInBox(at.add(-6, -4, -6), at.add(6, 6, 6))) {
+                    net.minecraft.tileentity.TileEntity te = ow.getTileEntity(p);
+                    if (te != null && te.getClass().getName().contains("Waystone")) {
+                        try {
+                            name = String.valueOf(te.getClass().getMethod("getWaystoneName").invoke(te));
+                        } catch (Exception ex) {
+                            name = ex.toString();
+                        }
+                        break;
+                    }
+                }
+                check("Проверка".equals(name), "имя камня: " + name);
+                TileAnchor a = (TileAnchor) ow.getTileEntity(anchorPos);
+                if (a != null) {
+                    a.growWaystone();
+                    check(a.level() < ChaosConfig.compat.anchorWaystoneLevel || ru.death.chaosshard.compat.life.ChaosWaystones.nearby(ow, anchorPos, 8),
+                            "Якорь " + a.level() + " ур. вырастил камень");
+                }
+            });
+        }
+
         section("Справка: реестры модов сборки");
         step("выписать предметы, блоки, тайлы и существ", () -> {
             String[] mods = {"xreliquary", "reliquary", "bountifulbaubles", "apotheosis", "waystones", "extrautils2", "cyclicmagic",

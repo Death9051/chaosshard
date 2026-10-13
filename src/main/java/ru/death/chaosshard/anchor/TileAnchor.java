@@ -475,6 +475,28 @@ public class TileAnchor extends TileEntity implements ITickable {
         changed();
     }
 
+    /** Путевой камень уже вырос (Waystones). */
+    private boolean waystone;
+
+    /** На нужном уровне Якорь выращивает рядом путевой камень Waystones. */
+    public boolean growWaystone() {
+        if (waystone || ChaosConfig.compat.anchorWaystoneLevel <= 0 || level() < ChaosConfig.compat.anchorWaystoneLevel || !ru.death.chaosshard.compat.life.ChaosWaystones.available()) {
+            return false;
+        }
+        waystone = true;
+        markDirty();
+        if (ru.death.chaosshard.compat.life.ChaosWaystones.nearby(world, pos, 8)) {
+            return false;
+        }
+        boolean ok = ru.death.chaosshard.compat.life.ChaosWaystones.place(world, pos, "Якорь " + pos.getX() + " " + pos.getZ(), 3, 7);
+        EntityPlayerMP o = ownerOnline();
+        if (ok && o != null) {
+            o.sendMessage(ru.death.chaosshard.breach.Breach.grimoire("chaosshard.anchor.waystone"));
+            ru.death.chaosshard.quest.Milestones.grant(o, ru.death.chaosshard.quest.Milestones.ANCHOR_WAYSTONE);
+        }
+        return ok;
+    }
+
     /** Гул чужих машин рядом: каждая работающая — лишние попытки Скверны. Не сохраняется. */
     public final ru.death.chaosshard.tech.MachineHum hum = new ru.death.chaosshard.tech.MachineHum();
 
@@ -509,6 +531,7 @@ public class TileAnchor extends TileEntity implements ITickable {
         long wt = world.getTotalWorldTime();
         if (wt % 200 == 100) {
             growColumn();
+            growWaystone();
         }
         if (wt % 200 == 150 && captured) {
             clusterArcs();
@@ -664,6 +687,7 @@ public class TileAnchor extends TileEntity implements ITickable {
         tag.setString("ownerName", ownerName);
         tag.setInteger("corrupted", corrupted);
         tag.setBoolean("captured", captured);
+        tag.setBoolean("waystone", waystone);
         tag.setInteger("passive", passiveTimer);
         tag.setBoolean("counted", counted);
         tag.setInteger("raidTimer", raidTimer);
@@ -682,6 +706,7 @@ public class TileAnchor extends TileEntity implements ITickable {
         ownerName = tag.getString("ownerName");
         corrupted = tag.getInteger("corrupted");
         captured = tag.getBoolean("captured");
+        waystone = tag.getBoolean("waystone");
         passiveTimer = tag.getInteger("passive");
         counted = tag.getBoolean("counted");
         raidTimer = tag.hasKey("raidTimer") ? tag.getInteger("raidTimer") : -1;

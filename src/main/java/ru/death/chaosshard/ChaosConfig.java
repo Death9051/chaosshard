@@ -394,6 +394,14 @@ public final class ChaosConfig {
 
         @Config.Comment("Lycanite's Mobs: капитан Ордена в бою зовёт стражей света")
         public boolean orderLight = true;
+
+        @Config.Comment("Еда слуг: голодный слуга раз в минуту ест из сундука и крепнет; потолок длительности в минутах")
+        public boolean servantMeals = true;
+        public int mealMaxMinutes = 20;
+
+        @Config.Comment("Waystones: на каком уровне Якорь выращивает путевой камень (0 — никогда), и камни у Опор Светочей")
+        public int anchorWaystoneLevel = 3;
+        public boolean pillarWaystones = true;
     }
 
     public static final class BreachCfg {

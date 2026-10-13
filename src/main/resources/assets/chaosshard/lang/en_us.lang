@@ -1254,3 +1254,10 @@ chaosshard.ritual.fallen_feather.desc=Sphere. An angelic feather turned to Chaos
 chaosshard.ritual.fallen_feather.none=None of your servants nearby — the sphere is intact.
 chaosshard.ritual.fallen_feather.done=The feather crumbles: %s servants under its shadow.
 item.chaosshard.ritual_sphere.fallen_feather.name=Sphere of the Fallen Feather
+
+# ---- Life: servant meals, waystones
+chaosshard.anchor.waystone=The Defilement around the Anchor grew strong enough to raise a waystone. The lands of Chaos are linked.
+advancement.chaosshard.m.anchor_waystone.title=Anchor waystone
+advancement.chaosshard.m.anchor_waystone.desc=Quest milestone
+advancement.chaosshard.m.servant_fed.title=Well-fed servants
+advancement.chaosshard.m.servant_fed.desc=Quest milestone

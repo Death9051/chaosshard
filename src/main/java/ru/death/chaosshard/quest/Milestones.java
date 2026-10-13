@@ -37,6 +37,8 @@ public class Milestones {
     public static final String HEART_POWERED = "heart_powered";
     public static final String DEFILED_POWER = "defiled_power";
     public static final String ANCHOR_HUM = "anchor_hum";
+    public static final String ANCHOR_WAYSTONE = "anchor_waystone";
+    public static final String SERVANT_FED = "servant_fed";
     public static final String POWER_MEKANISM = "power_mekanism";
     public static final String POWER_THERMAL = "power_thermal";
     public static final String POWER_EXU2 = "power_exu2";

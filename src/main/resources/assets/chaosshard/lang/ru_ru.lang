@@ -1277,3 +1277,10 @@ chaosshard.ritual.fallen_feather.desc=Сфера. Ангельское перо,
 chaosshard.ritual.fallen_feather.none=Твоих слуг рядом нет — сфера цела.
 chaosshard.ritual.fallen_feather.done=Перо рассыпалось: слуг под его тенью — %s.
 item.chaosshard.ritual_sphere.fallen_feather.name=Сфера падшего пера
+
+# ---- Быт: еда слуг, путевые камни
+chaosshard.anchor.waystone=Скверна вокруг Якоря окрепла настолько, что из неё вырос путевой камень. Края Хаоса связаны.
+advancement.chaosshard.m.anchor_waystone.title=Камень у Якоря
+advancement.chaosshard.m.anchor_waystone.desc=Якорь вырастил путевой камень
+advancement.chaosshard.m.servant_fed.title=Сытые слуги
+advancement.chaosshard.m.servant_fed.desc=Слуга поел из сундука
