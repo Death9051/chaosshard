@@ -1,0 +1,470 @@
+[
+ {
+  "name": "MixinBooter",
+  "projectID": 419286,
+  "fileID": 7049694,
+  "file": "!mixinbooter-10.7.jar"
+ },
+ {
+  "name": "Universal Tweaks",
+  "projectID": 705000,
+  "fileID": 8941250,
+  "file": "UniversalTweaks-1.12.2-1.21.0.jar"
+ },
+ {
+  "name": "VintageFix",
+  "projectID": 871198,
+  "fileID": 8895999,
+  "file": "vintagefix-0.7.1.jar"
+ },
+ {
+  "name": "ConfigAnytime",
+  "projectID": 870276,
+  "fileID": 5212709,
+  "file": "!configanytime-3.0.jar"
+ },
+ {
+  "name": "Had Enough Items",
+  "projectID": 557549,
+  "fileID": 8934963,
+  "file": "HadEnoughItems_1.12.2-4.35.0.jar"
+ },
+ {
+  "name": "spark",
+  "projectID": 361579,
+  "fileID": 3245793,
+  "file": "spark-forge1122.jar"
+ },
+ {
+  "name": "Advanced Backups",
+  "projectID": 876284,
+  "fileID": 6148212,
+  "file": "AdvancedBackups-forge-1.12-3.7.1.jar"
+ },
+ {
+  "name": "Baubles",
+  "projectID": 227083,
+  "fileID": 2518667,
+  "file": "Baubles-1.12-1.5.2.jar"
+ },
+ {
+  "name": "Bookshelf",
+  "projectID": 228525,
+  "fileID": 2836960,
+  "file": "Bookshelf-1.12.2-2.3.590.jar"
+ },
+ {
+  "name": "Game Stages",
+  "projectID": 268655,
+  "fileID": 2951840,
+  "file": "GameStages-1.12.2-2.0.123.jar"
+ },
+ {
+  "name": "Item Stages",
+  "projectID": 280316,
+  "fileID": 2696766,
+  "file": "ItemStages-1.12.2-2.0.49.jar"
+ },
+ {
+  "name": "Recipe Stages",
+  "projectID": 280554,
+  "fileID": 3405071,
+  "file": "RecipeStages-1.1.3.8.jar"
+ },
+ {
+  "name": "CraftTweaker",
+  "projectID": 239197,
+  "fileID": 4534504,
+  "file": "CraftTweaker2-1.12-4.1.20.688.jar"
+ },
+ {
+  "name": "ModTweaker",
+  "projectID": 220954,
+  "fileID": 3840577,
+  "file": "modtweaker-4.0.20.11.jar"
+ },
+ {
+  "name": "MTLib",
+  "projectID": 253211,
+  "fileID": 3308160,
+  "file": "MTLib-3.0.7.jar"
+ },
+ {
+  "name": "ContentTweaker",
+  "projectID": 237065,
+  "fileID": 3331364,
+  "file": "ContentTweaker-1.12.2-4.10.0.jar"
+ },
+ {
+  "name": "B.A.S.E",
+  "projectID": 246996,
+  "fileID": 3440963,
+  "file": "base-1.12.2-3.14.0.jar"
+ },
+ {
+  "name": "Better Questing",
+  "projectID": 238856,
+  "fileID": 2950248,
+  "file": "BetterQuesting-3.5.329.jar"
+ },
+ {
+  "name": "BQ Standard Expansion",
+  "projectID": 238857,
+  "fileID": 2863771,
+  "file": "StandardExpansion-3.4.173.jar"
+ },
+ {
+  "name": "BQ Quest Book",
+  "projectID": 242106,
+  "fileID": 2539562,
+  "file": "questbook-3.1.1-1.12.jar"
+ },
+ {
+  "name": "Mystcraft",
+  "projectID": 224599,
+  "fileID": 2958490,
+  "file": "mystcraft-1.12.2-0.13.7.06.jar"
+ },
+ {
+  "name": "Astral Sorcery",
+  "projectID": 241721,
+  "fileID": 3044416,
+  "file": "astralsorcery-1.12.2-1.10.27.jar"
+ },
+ {
+  "name": "Robotic Parts",
+  "projectID": 283377,
+  "fileID": 3366534,
+  "file": "cyberware-1.12.2-0.2.11.29.jar"
+ },
+ {
+  "name": "ReWIRED",
+  "projectID": 285550,
+  "fileID": 2962840,
+  "file": "ReWIRED-1.0.9b.jar"
+ },
+ {
+  "name": "McLib",
+  "projectID": 304750,
+  "fileID": 5440933,
+  "file": "mclib-2.4.3-1.12.2.jar"
+ },
+ {
+  "name": "Metamorph",
+  "projectID": 256932,
+  "fileID": 5440927,
+  "file": "metamorph-1.4-1.12.2.jar"
+ },
+ {
+  "name": "Chameleon (Metamorph)",
+  "projectID": 427823,
+  "fileID": 4743912,
+  "file": "chameleon-1.2.2.jar"
+ },
+ {
+  "name": "Mekanism",
+  "projectID": 268560,
+  "fileID": 2835175,
+  "file": "Mekanism-1.12.2-9.8.3.390.jar"
+ },
+ {
+  "name": "Mekanism Generators",
+  "projectID": 268566,
+  "fileID": 2835177,
+  "file": "MekanismGenerators-1.12.2-9.8.3.390.jar"
+ },
+ {
+  "name": "CodeChicken Lib",
+  "projectID": 242818,
+  "fileID": 2779848,
+  "file": "CodeChickenLib-1.12.2-3.2.3.358-universal.jar"
+ },
+ {
+  "name": "Redstone Flux",
+  "projectID": 270789,
+  "fileID": 2920436,
+  "file": "RedstoneFlux-1.12-2.1.1.1-universal.jar"
+ },
+ {
+  "name": "CoFH Core",
+  "projectID": 69162,
+  "fileID": 2920433,
+  "file": "CoFHCore-1.12.2-4.6.6.1-universal.jar"
+ },
+ {
+  "name": "CoFH World",
+  "projectID": 271384,
+  "fileID": 2920434,
+  "file": "CoFHWorld-1.12.2-1.4.0.1-universal.jar"
+ },
+ {
+  "name": "Thermal Foundation",
+  "projectID": 222880,
+  "fileID": 2926428,
+  "file": "ThermalFoundation-1.12.2-2.6.7.1-universal.jar"
+ },
+ {
+  "name": "Thermal Expansion",
+  "projectID": 69163,
+  "fileID": 2926431,
+  "file": "ThermalExpansion-1.12.2-5.5.7.1-universal.jar"
+ },
+ {
+  "name": "Thermal Dynamics",
+  "projectID": 227443,
+  "fileID": 2920505,
+  "file": "ThermalDynamics-1.12.2-2.5.6.1-universal.jar"
+ },
+ {
+  "name": "UniDict",
+  "projectID": 244258,
+  "fileID": 3553627,
+  "file": "UniDict-1.12.2-3.0.10.jar"
+ },
+ {
+  "name": "Defiled Lands",
+  "projectID": 273502,
+  "fileID": 2835318,
+  "file": "defiledlands-1.12.2-1.4.3.jar"
+ },
+ {
+  "name": "EvilCraft",
+  "projectID": 74610,
+  "fileID": 2811267,
+  "file": "EvilCraft-1.12.2-0.10.78.jar"
+ },
+ {
+  "name": "Cyclops Core",
+  "projectID": 232758,
+  "fileID": 3159497,
+  "file": "CyclopsCore-1.12.2-1.6.7.jar"
+ },
+ {
+  "name": "Ancient Warfare 2",
+  "projectID": 224602,
+  "fileID": 3293318,
+  "file": "ancientwarfare-1.12.2-2.7.0.1038.jar"
+ },
+ {
+  "name": "Recurrent Complex",
+  "projectID": 223150,
+  "fileID": 8562927,
+  "file": "RecurrentComplex-1.4.8.7.jar"
+ },
+ {
+  "name": "IvToolkit",
+  "projectID": 224535,
+  "fileID": 2443253,
+  "file": "IvToolkit-1.3.3-1.12.jar"
+ },
+ {
+  "name": "Roguelike Dungeons",
+  "projectID": 221585,
+  "fileID": 2492586,
+  "file": "RoguelikeDungeons-1.12.2-1.8.0.jar"
+ },
+ {
+  "name": "Dimensional Doors",
+  "projectID": 284876,
+  "fileID": 6386037,
+  "file": "Dimensional Doors-3.2.3.jar"
+ },
+ {
+  "name": "Lycanite's Mobs",
+  "projectID": 224770,
+  "fileID": 5750564,
+  "file": "lycanitesmobs-1.12.2-2.0.8.10.jar"
+ },
+ {
+  "name": "Champions",
+  "projectID": 307152,
+  "fileID": 3177947,
+  "file": "champions-1.12.2-1.0.11.10.jar"
+ },
+ {
+  "name": "AE2 Unofficial Extended Life",
+  "projectID": 570458,
+  "fileID": 5411078,
+  "file": "ae2-uel-v0.56.6.jar"
+ },
+ {
+  "name": "PackagedAuto",
+  "projectID": 308380,
+  "fileID": 7329681,
+  "file": "PackagedAuto-1.12.2-1.0.24.73.jar"
+ },
+ {
+  "name": "PackagedAstral",
+  "projectID": 811828,
+  "fileID": 7762599,
+  "file": "PackagedAstral-1.12.2-1.0.5.24.jar"
+ },
+ {
+  "name": "Refined Storage",
+  "projectID": 243076,
+  "fileID": 2940914,
+  "file": "refinedstorage-1.6.16.jar"
+ },
+ {
+  "name": "Storage Drawers",
+  "projectID": 223852,
+  "fileID": 5981297,
+  "file": "StorageDrawers-1.12.2-5.5.3.jar"
+ },
+ {
+  "name": "Chameleon (lib)",
+  "projectID": 230497,
+  "fileID": 2450900,
+  "file": "Chameleon-1.12-4.1.3.jar"
+ },
+ {
+  "name": "Iron Chests",
+  "projectID": 228756,
+  "fileID": 2747935,
+  "file": "ironchest-1.12.2-7.0.72.847.jar"
+ },
+ {
+  "name": "Tinkers Construct",
+  "projectID": 74072,
+  "fileID": 2902483,
+  "file": "TConstruct-1.12.2-2.13.0.183.jar"
+ },
+ {
+  "name": "Mantle",
+  "projectID": 74924,
+  "fileID": 2713386,
+  "file": "Mantle-1.12-1.3.3.55.jar"
+ },
+ {
+  "name": "MoreToolMats",
+  "projectID": 376903,
+  "fileID": 3648592,
+  "file": "plustic-8.0.5.jar"
+ },
+ {
+  "name": "Tinkers' Tool Leveling",
+  "projectID": 250957,
+  "fileID": 2630860,
+  "file": "TinkerToolLeveling-1.12.2-1.1.0.jar"
+ },
+ {
+  "name": "Tinkers' Evolution",
+  "projectID": 384589,
+  "fileID": 9030702,
+  "file": "tconevo-1.12.2-1.1.8.jar"
+ },
+ {
+  "name": "LibNine",
+  "projectID": 322344,
+  "fileID": 6790812,
+  "file": "libnine-1.12.2-1.2.2.jar"
+ },
+ {
+  "name": "Pam's HarvestCraft",
+  "projectID": 221857,
+  "fileID": 2904825,
+  "file": "Pam's HarvestCraft 1.12.2zg.jar"
+ },
+ {
+  "name": "Better Builder's Wands",
+  "projectID": 238403,
+  "fileID": 2691084,
+  "file": "BetterBuildersWands-1.12.2-0.13.2.271+5997513.jar"
+ },
+ {
+  "name": "Extra Utilities 2",
+  "projectID": 225561,
+  "fileID": 2678374,
+  "file": "extrautils2-1.12-1.9.9.jar"
+ },
+ {
+  "name": "Cyclic",
+  "projectID": 239286,
+  "fileID": 4075832,
+  "file": "Cyclic-1.12.2-1.20.14.jar"
+ },
+ {
+  "name": "Quark",
+  "projectID": 243121,
+  "fileID": 2924091,
+  "file": "Quark-r1.6-179.jar"
+ },
+ {
+  "name": "AutoRegLib",
+  "projectID": 250363,
+  "fileID": 2746011,
+  "file": "AutoRegLib-1.3-32.jar"
+ },
+ {
+  "name": "Reliquary",
+  "projectID": 241319,
+  "fileID": 2761319,
+  "file": "Reliquary-1.12.2-1.3.4.796.jar"
+ },
+ {
+  "name": "Apotheosis",
+  "projectID": 313970,
+  "fileID": 2906487,
+  "file": "Apotheosis-1.12.2-1.12.5.jar"
+ },
+ {
+  "name": "Placebo",
+  "projectID": 283644,
+  "fileID": 4629597,
+  "file": "Placebo-1.12.2-1.6.1.jar"
+ },
+ {
+  "name": "Bountiful Baubles",
+  "projectID": 313536,
+  "fileID": 3568240,
+  "file": "Bountiful Baubles-1.12.2-0.1.8.jar"
+ },
+ {
+  "name": "JourneyMap",
+  "projectID": 32274,
+  "fileID": 5172461,
+  "file": "journeymap-1.12.2-5.7.1p3.jar"
+ },
+ {
+  "name": "Waystones",
+  "projectID": 245755,
+  "fileID": 2859589,
+  "file": "Waystones_1.12.2-4.1.0.jar"
+ },
+ {
+  "name": "The One Probe",
+  "projectID": 245211,
+  "fileID": 2667280,
+  "file": "theoneprobe-1.12-1.4.28.jar"
+ },
+ {
+  "name": "Inventory Tweaks",
+  "projectID": 223094,
+  "fileID": 2923460,
+  "file": "InventoryTweaks-1.64+dev.151.jar"
+ },
+ {
+  "name": "Mouse Tweaks Unofficial",
+  "projectID": 461660,
+  "fileID": 5876158,
+  "file": "mousetweaks-1.12.2-3.1.5.jar"
+ },
+ {
+  "name": "AppleSkin",
+  "projectID": 248787,
+  "fileID": 2987247,
+  "file": "AppleSkin-mc1.12-1.0.14.jar"
+ },
+ {
+  "name": "Controlling",
+  "projectID": 250398,
+  "fileID": 5408385,
+  "file": "Controlling-3.0.12.4.jar"
+ },
+ {
+  "name": "Corpse Complex",
+  "projectID": 271605,
+  "fileID": 3176964,
+  "file": "corpsecomplex-1.12.2-1.0.12.0.jar"
+ }
+]
