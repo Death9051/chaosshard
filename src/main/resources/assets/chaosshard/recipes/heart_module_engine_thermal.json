@@ -1,0 +1,30 @@
+{
+ "conditions": [
+  {
+   "type": "forge:mod_loaded",
+   "modid": "thermalfoundation"
+  }
+ ],
+ "type": "forge:ore_shaped",
+ "pattern": [
+  "SVS",
+  "VXV",
+  "SVS"
+ ],
+ "key": {
+  "S": {
+   "item": "chaosshard:chaos_stone"
+  },
+  "V": {
+   "item": "chaosshard:veil_shard"
+  },
+  "X": {
+   "item": "thermalfoundation:material",
+   "data": 513
+  }
+ },
+ "result": {
+  "item": "chaosshard:heart_module_engine",
+  "count": 1
+ }
+}

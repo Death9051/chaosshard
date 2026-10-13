@@ -1,0 +1,29 @@
+{
+ "conditions": [
+  {
+   "type": "forge:mod_loaded",
+   "modid": "mekanism"
+  }
+ ],
+ "type": "forge:ore_shaped",
+ "pattern": [
+  "VEV",
+  "ECE",
+  "VEV"
+ ],
+ "key": {
+  "V": {
+   "item": "chaosshard:veil_shard"
+  },
+  "E": {
+   "item": "chaosshard:chaos_essence"
+  },
+  "C": {
+   "item": "mekanism:controlcircuit",
+   "data": 0
+  }
+ },
+ "result": {
+  "item": "chaosshard:anchor_seal_engine"
+ }
+}

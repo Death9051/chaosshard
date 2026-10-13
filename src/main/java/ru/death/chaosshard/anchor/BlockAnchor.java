@@ -192,6 +192,10 @@ public class BlockAnchor extends Block {
                 }
                 player.sendMessage(Breach.grimoire("chaosshard.anchor.info_seals", a.getSeals().size(), a.level(),
                         sb.length() == 0 ? "—" : sb.toString()));
+                if (a.seals(ItemAnchorSeal.Type.ENGINE) > 0) {
+                    player.sendMessage(Breach.grimoire("chaosshard.anchor.info_engine", a.battery.getEnergyStored(), a.battery.getMaxEnergyStored(),
+                            a.seals(ItemAnchorSeal.Type.ENGINE) * ChaosConfig.anchor.engineCostPerStep / Math.max(1, ChaosConfig.anchor.spreadInterval)));
+                }
                 player.sendMessage(Breach.grimoire(a.isCaptured() ? "chaosshard.anchor.info_captured" : "chaosshard.anchor.info_open"));
                 java.util.List<TileAnchor> c = AnchorClusters.cluster(world, a);
                 int garrison = AnchorClusters.garrison((net.minecraft.world.WorldServer) world, c).size();

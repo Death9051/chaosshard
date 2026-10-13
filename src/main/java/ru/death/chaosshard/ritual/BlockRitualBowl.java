@@ -73,6 +73,16 @@ public class BlockRitualBowl extends Block {
     }
 
     @Override
+    public void neighborChanged(IBlockState state, World world, BlockPos pos, net.minecraft.block.Block block, BlockPos from) {
+        if (!world.isRemote) {
+            TileEntity te = world.getTileEntity(pos);
+            if (te instanceof TileRitualBowl) {
+                ((TileRitualBowl) te).redstone(world.isBlockPowered(pos));
+            }
+        }
+    }
+
+    @Override
     public void breakBlock(World world, BlockPos pos, IBlockState state) {
         TileEntity te = world.getTileEntity(pos);
         if (te instanceof TileRitualBowl) {

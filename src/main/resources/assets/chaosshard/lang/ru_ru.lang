@@ -1207,3 +1207,18 @@ advancement.chaosshard.m.lian_silenced.desc=Веха квеста «Заглуш
 advancement.chaosshard.m.act4_done.title=Светочи пали
 advancement.chaosshard.m.act4_done.desc=Веха квеста «Завеса держится на одном»
 chaosshard.act4.done=Все пять Опор пали. Завеса держится на одном — и он ждёт меня в Разломе. Путь к столице открыт.
+
+# ---- Техника: ток RF/FE
+item.chaosshard.heart_module_engine.name=Модуль «Двигатель»
+chaosshard.heart_module.engine.desc=Сердце берёт RF/FE от машин и кабелей. Пока идёт ток, каждый двигатель добавляет ещё один шаг роста (40 RF/т за модуль)
+chaosshard.heart.gui.engine_on=ток ×%s
+chaosshard.heart.gui.engine_off=нет тока
+item.chaosshard.anchor_seal_engine.name=Печать-двигатель
+chaosshard.anchor_seal.engine.desc=Двигатель: Якорь берёт RF/FE по кабелю к основанию. Пока идёт ток, каждая печать добавляет Скверне ещё столько же попыток (50 RF/т за печать)
+chaosshard.anchor.info_engine=Ток: %s из %s RF, расход %s RF/т.
+advancement.chaosshard.m.ritual_auto.title=Чаша работает сама
+advancement.chaosshard.m.ritual_auto.desc=Чаша сама провела ритуал по сигналу
+advancement.chaosshard.m.heart_powered.title=Сердце под током
+advancement.chaosshard.m.heart_powered.desc=Сердце с Двигателем получило ток
+advancement.chaosshard.m.anchor_engine.title=Скверна под током
+advancement.chaosshard.m.anchor_engine.desc=Печать-двигатель потратила ток на Скверну

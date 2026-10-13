@@ -53,6 +53,114 @@ public class TileRitualBowl extends TileEntity implements ITickable {
     private int active = -1;
     private int ticksLeft;
     private int age;
+    /** Кто последним начал здесь ритуал: от его имени их повторяет сигнал редстоуна. */
+    private java.util.UUID owner;
+    private boolean lastPowered, quiet, auto;
+
+    /** Подношения снаружи: воронки, трубы, AE2/RS. Забирать нельзя — только класть. */
+    private final net.minecraftforge.items.IItemHandler input = new net.minecraftforge.items.IItemHandler() {
+        @Override
+        public int getSlots() {
+            return SLOTS;
+        }
+
+        @Override
+        public ItemStack getStackInSlot(int slot) {
+            return items.get(slot);
+        }
+
+        @Override
+        public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
+            if (stack.isEmpty() || active >= 0) {
+                return stack;
+            }
+            ItemStack cur = items.get(slot);
+            int room;
+            if (cur.isEmpty()) {
+                room = stack.getMaxStackSize();
+            } else if (ItemHandlerHelper.canItemStacksStack(cur, stack)) {
+                room = cur.getMaxStackSize() - cur.getCount();
+            } else {
+                return stack;
+            }
+            int put = Math.min(room, stack.getCount());
+            if (put <= 0) {
+                return stack;
+            }
+            if (!simulate) {
+                if (cur.isEmpty()) {
+                    items.set(slot, ItemHandlerHelper.copyStackWithSize(stack, put));
+                } else {
+                    cur.grow(put);
+                }
+                changed();
+            }
+            return put == stack.getCount() ? ItemStack.EMPTY : ItemHandlerHelper.copyStackWithSize(stack, stack.getCount() - put);
+        }
+
+        @Override
+        public ItemStack extractItem(int slot, int amount, boolean simulate) {
+            return ItemStack.EMPTY;
+        }
+
+        @Override
+        public int getSlotLimit(int slot) {
+            return 64;
+        }
+    };
+
+    @Override
+    public boolean hasCapability(net.minecraftforge.common.capabilities.Capability<?> cap, @javax.annotation.Nullable net.minecraft.util.EnumFacing side) {
+        return cap == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY || super.hasCapability(cap, side);
+    }
+
+    @Override
+    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> cap, @javax.annotation.Nullable net.minecraft.util.EnumFacing side) {
+        return cap == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY
+                ? net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(input) : super.getCapability(cap, side);
+    }
+
+    /** Сигнал редстоуна: по переднему фронту — повторить ритуал от имени того, кто начинал здесь последним. */
+    public void redstone(boolean powered) {
+        boolean rising = powered && !lastPowered;
+        lastPowered = powered;
+        if (rising) {
+            autoStart();
+        }
+    }
+
+    /** Запуск по сигналу: от имени последнего, кто начинал здесь ритуал (он должен быть в игре). */
+    public boolean autoStart() {
+        if (owner == null || world.getMinecraftServer() == null) {
+            return false;
+        }
+        EntityPlayerMP p = world.getMinecraftServer().getPlayerList().getPlayerByUUID(owner);
+        return p != null && autoStartAs(p);
+    }
+
+    /** Запуск без игрока у чаши. Призывы (слуги, твари) и усиления слуг так не запускаются. */
+    public boolean autoStartAs(EntityPlayerMP p) {
+        Ritual r = Ritual.find(items);
+        if (active >= 0 || r == null || r.isSummon() || r == Ritual.SUMMON) {
+            return false;
+        }
+        quiet = true;
+        auto = true;
+        try {
+            boolean ok = tryStart(p);
+            if (ok) {
+                Milestones.grant(p, Milestones.RITUAL_AUTO);
+            }
+            return ok;
+        } finally {
+            quiet = false;
+            auto = false;
+        }
+    }
+
+    public java.util.UUID getOwner() {
+        return owner;
+    }
 
     public NonNullList<ItemStack> getItems() {
         return items;
@@ -128,54 +236,59 @@ public class TileRitualBowl extends TileEntity implements ITickable {
         return n;
     }
 
-    public void tryStart(EntityPlayerMP player) {
+    public boolean tryStart(EntityPlayerMP player) {
         if (active >= 0) {
             say(player, Breach.grimoire("chaosshard.ritual.busy"));
-            return;
+            return false;
         }
         int chalk = chalkCount();
         if (chalk < RING.length) {
             say(player, Breach.grimoire("chaosshard.ritual.no_circle", chalk, RING.length));
-            return;
+            return false;
         }
         Ritual r = Ritual.find(items);
         if (r == null) {
             ru.death.chaosshard.servant.ServantUpgrade up = ru.death.chaosshard.servant.ServantUpgrade.find(items);
             if (up != null) {
+                if (auto) {
+                    return false;
+                }
                 if (ru.death.chaosshard.servant.ServantUpgrade.perform(player, up, pos)) {
                     items.clear();
                     changed();
+                    return true;
                 }
-                return;
+                return false;
             }
             say(player, Breach.grimoire("chaosshard.ritual.unknown"));
-            return;
+            return false;
         }
         if (ThreadBonus.level(player) < r.minThread && !player.isCreative()) {
             say(player, Breach.grimoire("chaosshard.ritual.thin", r.minThread));
-            return;
+            return false;
         }
         if (r.isSummon() && servantKind(r).unique()) {
             long left = ru.death.chaosshard.servant.Beasts.inThread(player, ru.death.chaosshard.servant.BeastData.Beast.of(servantKind(r)));
             if (left > 0) {
                 say(player, Breach.grimoire("chaosshard.beast.in_thread", (left / 20 + 59) / 60));
-                return;
+                return false;
             }
         }
         if (r.isSummon() && servantKind(r).unique() && ru.death.chaosshard.servant.Servants.hasUnique(player, servantKind(r))) {
             say(player, Breach.grimoire("chaosshard.servant.unique"));
-            return;
+            return false;
         }
         if (r.isSummon() && !servantKind(r).unique() && ru.death.chaosshard.servant.Servants.count(player) >= ru.death.chaosshard.servant.Servants.limit(player)) {
             say(player, Breach.grimoire("chaosshard.servant.limit", ru.death.chaosshard.servant.Servants.limit(player)));
-            return;
+            return false;
         }
         String fail = precheck(r);
         if (fail != null) {
             say(player, Breach.grimoire(fail));
-            return;
+            return false;
         }
         items.clear();
+        owner = player.getUniqueID();
         WorldServer ws = (WorldServer) world;
         ws.spawnParticle(EnumParticleTypes.DRAGON_BREATH, pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5, 60, 1.5, 0.5, 1.5, 0.03);
         world.playSound(null, pos, SoundEvents.EVOCATION_ILLAGER_PREPARE_SUMMON, SoundCategory.BLOCKS, 1.0F, 0.7F);
@@ -185,11 +298,22 @@ public class TileRitualBowl extends TileEntity implements ITickable {
         }
         if (r.isSphere()) {
             // длительные ритуалы и Порыв запечатываются в сферу — её ставят там, где нужно
-            net.minecraft.entity.item.EntityItem ei = new net.minecraft.entity.item.EntityItem(world, pos.getX() + 0.5, pos.getY() + 1.1,
-                    pos.getZ() + 0.5, ItemRitualSphere.of(r, r.duration));
-            ei.motionX = ei.motionY = ei.motionZ = 0;
-            ei.setNoPickupDelay();
-            world.spawnEntity(ei);
+            ItemStack sphere = ItemRitualSphere.of(r, r.duration);
+            if (auto) {
+                // по сигналу — сразу в хранилище под чашей, если оно есть
+                TileEntity below = world.getTileEntity(pos.down());
+                if (below != null && below.hasCapability(net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, net.minecraft.util.EnumFacing.UP)) {
+                    sphere = ItemHandlerHelper.insertItem(below.getCapability(net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY,
+                            net.minecraft.util.EnumFacing.UP), sphere, false);
+                }
+            }
+            if (!sphere.isEmpty()) {
+                net.minecraft.entity.item.EntityItem ei = new net.minecraft.entity.item.EntityItem(world, pos.getX() + 0.5, pos.getY() + 1.1,
+                        pos.getZ() + 0.5, sphere);
+                ei.motionX = ei.motionY = ei.motionZ = 0;
+                ei.setNoPickupDelay();
+                world.spawnEntity(ei);
+            }
             ws.spawnParticle(EnumParticleTypes.END_ROD, pos.getX() + 0.5, pos.getY() + 1.2, pos.getZ() + 0.5, 30, 0.2, 0.2, 0.2, 0.08);
             world.playSound(null, pos, SoundEvents.BLOCK_END_PORTAL_FRAME_FILL, SoundCategory.BLOCKS, 1.0F, 0.8F);
             say(player, Breach.grimoire("chaosshard.ritual.sphere.made", new net.minecraft.util.text.TextComponentTranslation(r.key())));
@@ -200,9 +324,13 @@ public class TileRitualBowl extends TileEntity implements ITickable {
             ticksLeft = r.duration;
         }
         changed();
+        return true;
     }
 
-    private static void say(EntityPlayer player, ITextComponent msg) {
+    private void say(EntityPlayer player, ITextComponent msg) {
+        if (quiet) {
+            return;
+        }
         player.sendMessage(msg);
     }
 
@@ -334,6 +462,7 @@ public class TileRitualBowl extends TileEntity implements ITickable {
     public NBTTagCompound writeToNBT(NBTTagCompound tag) {
         super.writeToNBT(tag);
         writeShared(tag);
+        writeOwner(tag);
         return tag;
     }
 
@@ -347,10 +476,19 @@ public class TileRitualBowl extends TileEntity implements ITickable {
         tag.setInteger("ticks", ticksLeft);
     }
 
+    private void writeOwner(NBTTagCompound tag) {
+        if (owner != null) {
+            tag.setUniqueId("owner", owner);
+        }
+        tag.setBoolean("powered", lastPowered);
+    }
+
     @Override
     public void readFromNBT(NBTTagCompound tag) {
         super.readFromNBT(tag);
         readShared(tag);
+        owner = tag.hasUniqueId("owner") ? tag.getUniqueId("owner") : null;
+        lastPowered = tag.getBoolean("powered");
     }
 
     private void readShared(NBTTagCompound tag) {

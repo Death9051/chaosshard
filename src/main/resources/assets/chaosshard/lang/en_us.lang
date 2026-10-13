@@ -1184,3 +1184,18 @@ advancement.chaosshard.m.lian_silenced.desc=Quest milestone
 advancement.chaosshard.m.act4_done.title=The Lightbearers Have Fallen
 advancement.chaosshard.m.act4_done.desc=Quest milestone
 chaosshard.act4.done=All five Pillars have fallen. The Veil is held by one — and he waits for me in the Rift. The road to the capital is open.
+
+# ---- Tech: RF/FE power
+item.chaosshard.heart_module_engine.name=Engine Module
+chaosshard.heart_module.engine.desc=The Heart accepts RF/FE from machines and cables. While powered, each engine adds one more growth step (40 RF/t per module)
+chaosshard.heart.gui.engine_on=power ×%s
+chaosshard.heart.gui.engine_off=no power
+item.chaosshard.anchor_seal_engine.name=Engine Seal
+chaosshard.anchor_seal.engine.desc=Engine: the Anchor accepts RF/FE via a cable to its base. While powered, each seal adds as many Corruption attempts again (50 RF/t per seal)
+chaosshard.anchor.info_engine=Power: %s of %s RF, drain %s RF/t.
+advancement.chaosshard.m.ritual_auto.title=Ritual on a signal
+advancement.chaosshard.m.ritual_auto.desc=Quest milestone
+advancement.chaosshard.m.heart_powered.title=Powered Heart
+advancement.chaosshard.m.heart_powered.desc=Quest milestone
+advancement.chaosshard.m.anchor_engine.title=Powered Corruption
+advancement.chaosshard.m.anchor_engine.desc=Quest milestone

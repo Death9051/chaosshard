@@ -769,6 +769,70 @@ public final class AutoTest {
             ow.setBlockToAir(pullChest.up());
         });
 
+        section("Техника: ток и автоматизация");
+        step("Сердце с Двигателем растёт быстрее, пока есть ток", () -> {
+            BlockPos hp = base.add(-26, 1, -26);
+            ow.setBlockState(hp, ModBlocks.ISLAND_HEART.getDefaultState(), 3);
+            ru.death.chaosshard.heart.TileHeart h = (ru.death.chaosshard.heart.TileHeart) ow.getTileEntity(hp);
+            if (h == null) { check(false, "Сердца нет"); return; }
+            check(h.hasCapability(net.minecraftforge.energy.CapabilityEnergy.ENERGY, EnumFacing.NORTH), "Сердце принимает RF/FE");
+            h.modules.setStackInSlot(0, new net.minecraft.item.ItemStack(
+                    net.minecraft.item.Item.getByNameOrId("chaosshard:heart_module_engine"), 1));
+            int t0 = h.getTimer();
+            h.update();
+            int idle = h.getTimer() - t0;
+            int got = h.getCapability(net.minecraftforge.energy.CapabilityEnergy.ENERGY, EnumFacing.NORTH).receiveEnergy(4000, false);
+            check(got == 4000, "принято " + got + " RF");
+            t0 = h.getTimer();
+            h.update();
+            int fast = h.getTimer() - t0;
+            check(idle == 1 && fast == 2, "шаг роста без тока " + idle + ", с током " + fast);
+            check(h.isPowered() && h.battery.getEnergyStored() == 4000 - ChaosConfig.heart.engineCost,
+                    "списано " + (4000 - h.battery.getEnergyStored()) + " RF");
+            ow.setBlockToAir(hp);
+        });
+        step("Печать-двигатель: Якорь берёт ток и тратит его на шаг Скверны", () -> {
+            TileAnchor a = (TileAnchor) ow.getTileEntity(anchorPos);
+            if (a == null) { check(false, "Якоря нет"); return; }
+            List<ru.death.chaosshard.anchor.ItemAnchorSeal.Type> saved = new ArrayList<>(a.getSeals());
+            while (a.removeSeal() != null) { }
+            check(a.addSeal(ru.death.chaosshard.anchor.ItemAnchorSeal.Type.ENGINE), "печать навешена");
+            a.getCapability(net.minecraftforge.energy.CapabilityEnergy.ENERGY, null).receiveEnergy(4000, false);
+            int before = a.battery.getEnergyStored();
+            for (int i = 0; i < ChaosConfig.anchor.spreadInterval; i++) a.update();
+            check(before - a.battery.getEnergyStored() == ChaosConfig.anchor.engineCostPerStep,
+                    "за шаг списано " + (before - a.battery.getEnergyStored()) + " RF");
+            while (a.removeSeal() != null) { }
+            for (ru.death.chaosshard.anchor.ItemAnchorSeal.Type t : saved) a.addSeal(t);
+        });
+        step("Чаша: подношения из воронки, запуск по сигналу от имени хозяина", () -> {
+            ru.death.chaosshard.ritual.TileRitualBowl bowl = (ru.death.chaosshard.ritual.TileRitualBowl) ow.getTileEntity(bowlPos);
+            if (bowl == null) { check(false, "Чаши нет"); return; }
+            net.minecraftforge.items.IItemHandler in = bowl.getCapability(net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.UP);
+            net.minecraft.item.ItemStack rest = net.minecraftforge.items.ItemHandlerHelper.insertItem(in,
+                    new net.minecraft.item.ItemStack(ru.death.chaosshard.init.ModItems.CHAOS_ESSENCE, 1), false);
+            rest = rest.isEmpty() ? net.minecraftforge.items.ItemHandlerHelper.insertItem(in, new net.minecraft.item.ItemStack(net.minecraft.init.Items.COAL, 4), false) : rest;
+            check(rest.isEmpty(), "подношения легли в Чашу");
+            check(in.extractItem(0, 1, true).isEmpty(), "забрать из Чаши снаружи нельзя");
+            check(me.getUniqueID().equals(bowl.getOwner()), "хозяин Чаши — тот, кто начинал ритуал");
+            ow.setBlockState(bowlPos.down(), Blocks.CHEST.getDefaultState(), 3);
+            check(bowl.autoStartAs(me), "ритуал запущен без Гримуара");
+            net.minecraft.tileentity.TileEntity te = ow.getTileEntity(bowlPos.down());
+            boolean inChest = false;
+            if (te instanceof net.minecraft.tileentity.TileEntityChest) {
+                for (int i = 0; i < ((net.minecraft.tileentity.TileEntityChest) te).getSizeInventory(); i++) {
+                    if (((net.minecraft.tileentity.TileEntityChest) te).getStackInSlot(i).getItem() instanceof ru.death.chaosshard.ritual.ItemRitualSphere) inChest = true;
+                }
+            }
+            check(inChest, "Сфера сумерек легла в сундук под Чашей");
+            ow.setBlockToAir(bowlPos.down());
+            ow.setBlockState(bowlPos.down(), Blocks.STONE.getDefaultState(), 3);
+            bowl.insert(me, new net.minecraft.item.ItemStack(ru.death.chaosshard.init.ModItems.CHAOS_ESSENCE, 2), true);
+            bowl.insert(me, new net.minecraft.item.ItemStack(net.minecraft.init.Items.ROTTEN_FLESH, 8), true);
+            check(!bowl.autoStartAs(me), "призыв слуги по сигналу не запускается");
+            bowl.takeLast(me); bowl.takeLast(me);
+        });
+
         section("Старшие ритуалы: Алтарь Прорыва");
         step("Алтарь и четыре шпиля: Взор Нити складывается в сферу", () -> {
             altarPos = base.add(-24, 1, -24);

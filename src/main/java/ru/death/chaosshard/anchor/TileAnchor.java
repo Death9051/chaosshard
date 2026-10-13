@@ -32,6 +32,37 @@ public class TileAnchor extends TileEntity implements ITickable {
     private int corrupted;
     private boolean captured;
     private int timer;
+    /** Ток для Печати-двигателя. */
+    public final ru.death.chaosshard.tech.Battery battery = new ru.death.chaosshard.tech.Battery(
+            ChaosConfig.anchor.engineBuffer, ChaosConfig.anchor.engineInput, this::markDirty);
+
+    @Override
+    public boolean hasCapability(net.minecraftforge.common.capabilities.Capability<?> cap, @javax.annotation.Nullable net.minecraft.util.EnumFacing side) {
+        return cap == net.minecraftforge.energy.CapabilityEnergy.ENERGY || super.hasCapability(cap, side);
+    }
+
+    @Override
+    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> cap, @javax.annotation.Nullable net.minecraft.util.EnumFacing side) {
+        return cap == net.minecraftforge.energy.CapabilityEnergy.ENERGY
+                ? net.minecraftforge.energy.CapabilityEnergy.ENERGY.cast(battery) : super.getCapability(cap, side);
+    }
+
+    /** Сколько печатей-двигателей сейчас под током (списывает ток за шаг Скверны). */
+    private int poweredEngines() {
+        int n = seals(ItemAnchorSeal.Type.ENGINE);
+        int cost = ChaosConfig.anchor.engineCostPerStep;
+        int paid = 0;
+        while (paid < n && battery.draw(cost)) {
+            paid++;
+        }
+        if (paid > 0) {
+            EntityPlayerMP o = ownerOnline();
+            if (o != null) {
+                ru.death.chaosshard.quest.Milestones.grant(o, ru.death.chaosshard.quest.Milestones.ANCHOR_ENGINE);
+            }
+        }
+        return paid;
+    }
     private int passiveTimer;
     /** Захват уже засчитан владельцу (для квестов). */
     private boolean counted;
@@ -484,7 +515,7 @@ public class TileAnchor extends TileEntity implements ITickable {
             timer = 0;
             int done = 0;
             int attempts = (int) Math.round((ChaosConfig.anchor.attemptsPerSpread + (level() - 1) * ChaosConfig.anchor.attemptsPerLevel)
-                    * (1 + 0.5 * seals(ItemAnchorSeal.Type.FURY)));
+                    * (1 + 0.5 * seals(ItemAnchorSeal.Type.FURY)) * (1 + poweredEngines()));
             for (int i = 0; i < attempts; i++) {
                 if (spreadOnce(world.rand)) {
                     done++;
@@ -659,6 +690,7 @@ public class TileAnchor extends TileEntity implements ITickable {
         tag.setDouble("raidAngle", raidAngle);
         tag.setLong("raidTarget", raidTarget);
         tag.setInteger("siege", siege);
+        battery.write(tag, "rf");
         writeSeals(tag);
         return tag;
     }
@@ -677,6 +709,7 @@ public class TileAnchor extends TileEntity implements ITickable {
         raidAngle = tag.getDouble("raidAngle");
         raidTarget = tag.getLong("raidTarget");
         siege = tag.getInteger("siege");
+        battery.read(tag, "rf");
         readSeals(tag);
     }
 

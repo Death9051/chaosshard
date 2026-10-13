@@ -252,6 +252,11 @@ public final class ChaosConfig {
         @Config.Comment("Ставить Сердце Острова в Преддверии")
         public boolean enabled = true;
 
+        @Config.Comment("Модуль «Двигатель»: RF/FE за тик на каждый модуль, запас и приём за тик")
+        public int engineCost = 40;
+        public int engineBuffer = 100000;
+        public int engineInput = 4000;
+
         @Config.Comment("Наросты при добыче выпадают блоком руды (как с «Шёлковым касанием»), а не осколками")
         public boolean dropOreBlocks = true;
 
@@ -297,6 +302,11 @@ public final class ChaosConfig {
     public static final class AnchorCfg {
         @Config.Comment("Уровень Нити, нужный, чтобы вбить Якорь")
         public int threadLevel = 2;
+
+        @Config.Comment("Печать-двигатель: RF/FE за шаг Скверны на печать (шаг — раз в spreadInterval тиков), запас и приём за тик")
+        public int engineCostPerStep = 2000;
+        public int engineBuffer = 200000;
+        public int engineInput = 4000;
 
         @Config.Comment("Минимальное расстояние между Якорями (блоков)")
         public int minDistance = 96;
