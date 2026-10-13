@@ -65,7 +65,7 @@ public class CutsceneManager {
             old.script.end(p, false, true);
         }
         p.motionX = p.motionY = p.motionZ = 0;
-        RUNS.put(p.getUniqueID(), new Run(scene, script, p.getPositionVector(), p.dimension));
+        RUNS.put(p.getUniqueID(), new Run(scene, script, new Vec3d(p.posX, p.posY, p.posZ), p.dimension));
         ChaosNetwork.CHANNEL.sendTo(PacketCutscene.start(scene), p);
     }
 

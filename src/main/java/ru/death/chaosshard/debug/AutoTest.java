@@ -1159,17 +1159,18 @@ public final class AutoTest {
             List<ru.death.chaosshard.hero.EntityHero> hs = ow.getEntitiesWithinAABB(ru.death.chaosshard.hero.EntityHero.class, new AxisAlignedBB(planned.origin()).grow(24, 40, 24));
             if (hs.isEmpty()) { check(false, "Каэля нет"); return; }
             ru.death.chaosshard.hero.EntityHero k = hs.get(0);
-            me.setPosition(k.posX, k.posY, k.posZ + 4);
-            me.rotationYaw = me.rotationYawHead = 180;   // лицом на север, к Каэлю
-            me.rotationPitch = 0;
-            me.clearActivePotions();
+            net.minecraft.entity.monster.EntityZombie z = new net.minecraft.entity.monster.EntityZombie(ow);
+            z.setNoAI(true);
+            z.setLocationAndAngles(k.posX, k.posY, k.posZ + 4, 180, 0);
+            z.rotationYawHead = 180;   // лицом на север, к Каэлю
+            ow.spawnEntity(z);
             k.flash(ow);
-            check(me.isPotionActive(net.minecraft.init.MobEffects.BLINDNESS), "смотрел — ослеп");
-            me.clearActivePotions();
-            me.rotationYaw = me.rotationYawHead = 0;     // отвернулся
+            check(z.isPotionActive(net.minecraft.init.MobEffects.BLINDNESS), "смотрел — ослеп");
+            z.clearActivePotions();
+            z.rotationYaw = z.rotationYawHead = 0;     // отвернулся
             k.flash(ow);
-            check(!me.isPotionActive(net.minecraft.init.MobEffects.BLINDNESS), "отвернулся — не ослеп");
-            me.clearActivePotions();
+            check(!z.isPotionActive(net.minecraft.init.MobEffects.BLINDNESS), "отвернулся — не ослеп");
+            z.setDead();
             me.setHealth(me.getMaxHealth());
         });
         step("Каэль пал — Опора рушится, святыня гаснет, трофей у ног", () -> {

@@ -136,7 +136,7 @@ public class GarrotDuel {
         Vec3d look = p.getLookVec();
         Vec3d dir = new Vec3d(look.x, 0, look.z);
         dir = dir.lengthSquared() < 1.0E-4 ? new Vec3d(0, 0, 1) : dir.normalize();
-        Duel d = new Duel(p.getUniqueID(), p.dimension, p.getPositionVector(), dir);
+        Duel d = new Duel(p.getUniqueID(), p.dimension, new Vec3d(p.posX, p.posY, p.posZ), dir);
         DUELS.put(p.getUniqueID(), d);
         GarrotData gd = GarrotData.get(p.world);
         gd.lastDuel = p.world.getTotalWorldTime();
