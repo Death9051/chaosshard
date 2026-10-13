@@ -1627,6 +1627,17 @@ public final class AutoTest {
         });
 
         section("Бой: зачарования, отголоски, чемпионы");
+        step("дальше набеги только вручную: свои набеги Якоря мешают проверкам", () -> {
+            ChaosConfig.order.raids = false;
+            int n = 0;
+            for (Entity x : new ArrayList<>(ow.loadedEntityList)) {
+                if (x.getTags().contains(ru.death.chaosshard.garrot.GarrotRaids.TAG_ARMY)) {
+                    ow.removeEntity(x);
+                    n++;
+                }
+            }
+            line("  убрано бойцов набегов: " + n);
+        });
         step("зачарования Хаоса", () -> {
             check(ru.death.chaosshard.enchant.ChaosEnchants.BANE_OF_ORDER != null && ru.death.chaosshard.enchant.ChaosEnchants.SHARD_HARVEST != null,
                     "зачарования зарегистрированы");
@@ -2079,6 +2090,7 @@ public final class AutoTest {
         });
 
         section("Справка: реестры модов сборки");
+        step("набеги снова включены", () -> ChaosConfig.order.raids = true);
         step("выписать предметы, блоки, тайлы и существ", () -> {
             String[] mods = {"xreliquary", "reliquary", "bountifulbaubles", "apotheosis", "waystones", "extrautils2", "cyclicmagic",
                     "lycanitesmobs", "harvestcraft"};
