@@ -1746,6 +1746,52 @@ public final class AutoTest {
             check(n == 0, "без чужих машин гула нет: " + n);
         });
 
+        section("Справка: реестры модов сборки");
+        step("выписать предметы, блоки, тайлы и существ", () -> {
+            String[] mods = {"xreliquary", "reliquary", "bountifulbaubles", "apotheosis", "waystones", "extrautils2", "cyclicmagic",
+                    "lycanitesmobs", "harvestcraft"};
+            StringBuilder sb = new StringBuilder();
+            for (String m : mods) {
+                sb.append("=== ").append(m).append('\n');
+                for (net.minecraft.item.Item it : net.minecraftforge.fml.common.registry.ForgeRegistries.ITEMS) {
+                    if (it.getRegistryName() != null && m.equals(it.getRegistryName().getNamespace())) {
+                        sb.append("item ").append(it.getRegistryName());
+                        if (it.getHasSubtypes()) {
+                            net.minecraft.util.NonNullList<net.minecraft.item.ItemStack> subs = net.minecraft.util.NonNullList.create();
+                            try {
+                                it.getSubItems(net.minecraft.creativetab.CreativeTabs.SEARCH, subs);
+                            } catch (Throwable ignored) {
+                                // на сервере может не выйти
+                            }
+                            for (net.minecraft.item.ItemStack st : subs) {
+                                sb.append(" | ").append(st.getMetadata()).append('=').append(st.getTranslationKey());
+                            }
+                        }
+                        sb.append('\n');
+                    }
+                }
+                for (net.minecraftforge.fml.common.registry.EntityEntry en : net.minecraftforge.fml.common.registry.ForgeRegistries.ENTITIES) {
+                    if (en.getRegistryName() != null && m.equals(en.getRegistryName().getNamespace())) {
+                        sb.append("entity ").append(en.getRegistryName()).append('\n');
+                    }
+                }
+                for (ResourceLocation id : net.minecraft.tileentity.TileEntity.REGISTRY.getKeys()) {
+                    if (m.equals(id.getNamespace())) {
+                        sb.append("tile ").append(id).append('\n');
+                    }
+                }
+            }
+            for (ResourceLocation id : net.minecraft.world.storage.loot.LootTableList.getAll()) {
+                sb.append("loot ").append(id).append('\n');
+            }
+            try {
+                java.nio.file.Files.write(new java.io.File("chaosshard-registry.txt").toPath(), sb.toString().getBytes(java.nio.charset.StandardCharsets.UTF_8));
+                check(true, "реестры выписаны");
+            } catch (Exception ex) {
+                check(false, "реестры: " + ex);
+            }
+        });
+
         section("Самотест");
         step("самотест", () -> {
             ru.death.chaosshard.command.SelfTest st = ru.death.chaosshard.command.SelfTest.run(server, me);

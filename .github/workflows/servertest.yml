@@ -90,6 +90,7 @@ jobs:
           mkdir -p /tmp/t
           cp server/chaosshard-autotest.txt /tmp/t/ 2>/dev/null || echo "отчёта нет — см. console.log" > /tmp/t/chaosshard-autotest.txt
           cp server/chaosshard-selftest.txt /tmp/t/ 2>/dev/null || true
+          cp server/chaosshard-registry.txt /tmp/t/ 2>/dev/null || true
           cp server/console.log /tmp/t/ 2>/dev/null || true
           cp server/logs/latest.log /tmp/t/latest.log 2>/dev/null || true
           cp server/crash-reports/*.txt /tmp/t/ 2>/dev/null || true
