@@ -23,7 +23,7 @@ import ru.death.chaosshard.servant.Servants;
 /**
  * Еда слуг: раз в минуту голодный слуга берёт самую сытную еду из своего сундука (или из любого в 6 блоках)
  * и, пока сыт, крепче. Сытость и сила зависят от еды — блюда Pam's HarvestCraft кормят лучше простой.
- *   сытость 1–5  — Регенерация I;
+ *   сытость 1–5  — Регенерация I (нежити — Поглощение I);
  *   6–9          — + Сила I;
  *   10 и больше  — + Сопротивление I.
  * Длительность — минута за каждую единицу сытости, но не больше потолка.
@@ -78,7 +78,8 @@ public final class ServantMeals {
     public static void feed(EntityLiving e, int food) {
         int ticks = Math.min(ChaosConfig.compat.mealMaxMinutes, food) * 1200;
         e.getEntityData().setLong(TAG_FED, e.world.getTotalWorldTime() + ticks);
-        e.addPotionEffect(new PotionEffect(MobEffects.REGENERATION, ticks, 0, true, true));
+        // нежить не лечится Регенерацией — ей Поглощение
+        e.addPotionEffect(new PotionEffect(e.isEntityUndead() ? MobEffects.ABSORPTION : MobEffects.REGENERATION, ticks, 0, true, true));
         if (food >= 6) {
             e.addPotionEffect(new PotionEffect(MobEffects.STRENGTH, ticks, 0, true, true));
         }

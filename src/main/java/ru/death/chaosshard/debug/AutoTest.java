@@ -1856,8 +1856,8 @@ public final class AutoTest {
             int ate = ru.death.chaosshard.compat.life.ServantMeals.tryEat(sv);
             line("  лучшая еда: " + best.getItem().getRegistryName() + " (" + bestHeal + ")");
             check(ate == bestHeal && ch.getStackInSlot(1).isEmpty() && ch.getStackInSlot(0).getCount() == 4, "съел самое сытное: " + ate);
-            check(sv.isPotionActive(net.minecraft.init.MobEffects.REGENERATION) && sv.isPotionActive(net.minecraft.init.MobEffects.STRENGTH),
-                    "сытый: Регенерация и Сила");
+            check((sv.isPotionActive(net.minecraft.init.MobEffects.REGENERATION) || sv.isPotionActive(net.minecraft.init.MobEffects.ABSORPTION))
+                    && sv.isPotionActive(net.minecraft.init.MobEffects.STRENGTH), "сытый: Регенерация (у нежити Поглощение) и Сила");
             check(bestHeal < 10 || sv.isPotionActive(net.minecraft.init.MobEffects.RESISTANCE), "сытное блюдо — ещё и Сопротивление");
             check(ru.death.chaosshard.compat.life.ServantMeals.tryEat(sv) == 0, "сытый второй раз не ест");
             sv.setDead();
