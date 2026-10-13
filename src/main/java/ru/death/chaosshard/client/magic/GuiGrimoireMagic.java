@@ -347,6 +347,10 @@ public class GuiGrimoireMagic extends GuiScreen {
             y += 11;
             drawString(fontRenderer, I18n.format("chaosshard.magic.sphere"), x, y, 0xC890FF);
         }
+        if (r.isAltar()) {
+            y += 11;
+            drawString(fontRenderer, I18n.format("chaosshard.magic.altar"), x, y, 0xFFD27A);
+        }
         if (!hover.isEmpty()) {
             renderToolTip(hover, mx, my);
         }
@@ -360,6 +364,13 @@ public class GuiGrimoireMagic extends GuiScreen {
             case STORM: return new ItemStack(net.minecraft.init.Items.BLAZE_ROD);
             case SUMMON: return new ItemStack(net.minecraft.init.Items.ROTTEN_FLESH);
             case CORRUPTION: return new ItemStack(ModBlocks.CHAOS_ANCHOR);
+            case DUSK: return new ItemStack(net.minecraft.init.Items.CLOCK);
+            case BREED: return new ItemStack(net.minecraft.init.Items.WHEAT);
+            case PULL: return new ItemStack(net.minecraft.init.Items.ENDER_PEARL);
+            case SIGHT: return new ItemStack(net.minecraft.init.Items.ENDER_EYE);
+            case RECALL: return new ItemStack(net.minecraft.init.Items.GOLDEN_APPLE);
+            case BLOOD_MOON: return new ItemStack(net.minecraft.init.Items.REDSTONE);
+            case GREAT_SURGE: return new ItemStack(ModItems.WORLD_SHARD);
             case SERVANT_HUSK: return new ItemStack(net.minecraft.init.Items.ROTTEN_FLESH);
             case SERVANT_BONE: return new ItemStack(net.minecraft.init.Items.SKULL, 1, 1);
             case SERVANT_EXECUTIONER: return new ItemStack(net.minecraft.init.Items.IRON_AXE);

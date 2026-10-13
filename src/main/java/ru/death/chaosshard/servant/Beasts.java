@@ -211,6 +211,34 @@ public class Beasts {
         e.returnAt = 0;
     }
 
+    /** Сколько зверей игрока сейчас в Нити. */
+    public static int countInThread(EntityPlayerMP p) {
+        int n = 0;
+        for (Beast b : Beast.values()) {
+            if (inThread(p, b) > 0) {
+                n++;
+            }
+        }
+        return n;
+    }
+
+    /** Зов из Нити (старший ритуал): все звери, ушедшие в Нить, могут вернуться прямо сейчас. */
+    public static int pullFromThread(EntityPlayerMP p) {
+        int n = 0;
+        long now = p.world.getTotalWorldTime();
+        for (Beast b : Beast.values()) {
+            Entry e = entry(p.world, p.getUniqueID(), b);
+            if (e.returnAt > now) {
+                e.returnAt = now;
+                n++;
+            }
+        }
+        if (n > 0) {
+            changed(p.world, p.getUniqueID());
+        }
+        return n;
+    }
+
     /** Ещё в Нити? Тогда ритуалом не позвать. Возвращает оставшиеся тики или 0. */
     public static long inThread(EntityPlayerMP p, Beast b) {
         Entry e = entry(p.world, p.getUniqueID(), b);

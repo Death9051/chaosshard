@@ -53,6 +53,7 @@ public class Milestones {
     public static final String GARROT_1 = "garrot_1";
     public static final String GARROT_3 = "garrot_3";
     public static final String RITUAL = "ritual_done";
+    public static final String HIGH_RITUAL = "high_ritual";
     public static final String ANCHOR_MAX = "anchor_max";
     public static final String IMPLANT = "implant_installed";
     public static final String CHAOS_CORE = "chaos_core";

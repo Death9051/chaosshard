@@ -281,7 +281,18 @@ public final class AutoTest {
 
     private final java.util.Map<String, ru.death.chaosshard.structure.OrderStructureData.Entry> structs = new java.util.HashMap<>();
     private ru.death.chaosshard.structure.OrderStructureData.Entry planned;
-    private BlockPos bowlPos, spherePos;
+    private BlockPos bowlPos, spherePos, pullChest, altarPos;
+    private net.minecraft.entity.monster.EntityZombie sightZombie;
+
+    /** Бросить предметы на Алтарь (как игрок, клавишей Q). */
+    private void drop(BlockPos altar, net.minecraft.item.ItemStack... stacks) {
+        for (net.minecraft.item.ItemStack st : stacks) {
+            net.minecraft.entity.item.EntityItem ei = new net.minecraft.entity.item.EntityItem(ow, altar.getX() + 0.5, altar.getY() + 1.1, altar.getZ() + 0.5, st);
+            ei.motionX = ei.motionY = ei.motionZ = 0;
+            ei.setPickupDelay(1000);
+            ow.spawnEntity(ei);
+        }
+    }
 
     private void plan() {
         section("Подготовка");
@@ -674,6 +685,127 @@ public final class AutoTest {
                 check(near == net.minecraft.util.EnumActionResult.SUCCESS && me.getHeldItemMainhand().isEmpty(), "у Якоря — Скверна рванулась, сфера потрачена");
             }
             me.setHeldItem(EnumHand.MAIN_HAND, net.minecraft.item.ItemStack.EMPTY);
+        });
+
+        section("Новые ритуалы: Чаша");
+        step("Сумерки: день → закат → рассвет", () -> {
+            ru.death.chaosshard.ritual.TileRitualBowl bowl = (ru.death.chaosshard.ritual.TileRitualBowl) ow.getTileEntity(bowlPos);
+            if (bowl == null) { check(false, "Чаши нет"); return; }
+            long day0 = ow.getWorldTime() - ow.getWorldTime() % 24000;
+            ow.setWorldTime(day0 + 1000);
+            bowl.insert(me, new net.minecraft.item.ItemStack(ru.death.chaosshard.init.ModItems.CHAOS_ESSENCE, 1), true);
+            bowl.insert(me, new net.minecraft.item.ItemStack(net.minecraft.init.Items.COAL, 4), true);
+            bowl.tryStart(me);
+            check(ow.getWorldTime() % 24000 == 13000, "день стал закатом (" + ow.getWorldTime() % 24000 + ")");
+            bowl.insert(me, new net.minecraft.item.ItemStack(ru.death.chaosshard.init.ModItems.CHAOS_ESSENCE, 1), true);
+            bowl.insert(me, new net.minecraft.item.ItemStack(net.minecraft.init.Items.COAL, 4, 1), true);
+            bowl.tryStart(me);
+            check(ow.getWorldTime() % 24000 == 0, "ночь стала рассветом, древесный уголь тоже годится (" + ow.getWorldTime() % 24000 + ")");
+        });
+        step("Приплод: звери у Чаши готовы", () -> {
+            ru.death.chaosshard.ritual.TileRitualBowl bowl = (ru.death.chaosshard.ritual.TileRitualBowl) ow.getTileEntity(bowlPos);
+            if (bowl == null) return;
+            List<net.minecraft.entity.passive.EntityCow> cows = new ArrayList<>();
+            for (int i = 0; i < 3; i++) {
+                net.minecraft.entity.passive.EntityCow c = new net.minecraft.entity.passive.EntityCow(ow);
+                c.setPosition(bowlPos.getX() + 4 + i, bowlPos.getY(), bowlPos.getZ() + 4);
+                ow.spawnEntity(c);
+                cows.add(c);
+            }
+            bowl.insert(me, new net.minecraft.item.ItemStack(ru.death.chaosshard.init.ModItems.CHAOS_ESSENCE, 1), true);
+            bowl.insert(me, new net.minecraft.item.ItemStack(net.minecraft.init.Items.WHEAT, 8), true);
+            bowl.insert(me, new net.minecraft.item.ItemStack(net.minecraft.init.Items.CARROT, 8), true);
+            bowl.tryStart(me);
+            check(cows.stream().allMatch(net.minecraft.entity.passive.EntityAnimal::isInLove), "все три коровы готовы к приплоду");
+        });
+        step("Сфера тяги: вещи плывут в сундук под ней", () -> {
+            pullChest = base.add(-20, 1, 14);
+            ow.setBlockState(pullChest, Blocks.CHEST.getDefaultState(), 3);
+            me.setHeldItem(EnumHand.MAIN_HAND, ru.death.chaosshard.ritual.ItemRitualSphere.of(ru.death.chaosshard.ritual.Ritual.PULL, 0));
+            me.getHeldItemMainhand().getItem().onItemUse(me, ow, pullChest, EnumHand.MAIN_HAND, EnumFacing.UP, 0.5F, 1F, 0.5F);
+            check(ow.getBlockState(pullChest.up()).getBlock() == ModBlocks.RITUAL_SPHERE, "сфера тяги встала на сундук");
+            net.minecraft.entity.item.EntityItem ei = new net.minecraft.entity.item.EntityItem(ow, pullChest.getX() + 7.5, pullChest.getY() + 0.5,
+                    pullChest.getZ() + 0.5, new net.minecraft.item.ItemStack(Blocks.DIRT, 5));
+            ei.setPickupDelay(1000);
+            ow.spawnEntity(ei);
+        });
+        sleep(200);
+        step("вещь доехала до сундука", () -> {
+            net.minecraft.tileentity.TileEntity te = ow.getTileEntity(pullChest);
+            int dirt = 0;
+            if (te instanceof net.minecraft.tileentity.TileEntityChest) {
+                for (int i = 0; i < ((net.minecraft.tileentity.TileEntityChest) te).getSizeInventory(); i++) {
+                    net.minecraft.item.ItemStack st = ((net.minecraft.tileentity.TileEntityChest) te).getStackInSlot(i);
+                    if (st.getItem() == net.minecraft.item.Item.getItemFromBlock(Blocks.DIRT)) dirt += st.getCount();
+                }
+            }
+            check(dirt == 5, "в сундуке земли: " + dirt + " из 5");
+            ow.setBlockToAir(pullChest.up());
+        });
+
+        section("Старшие ритуалы: Алтарь Прорыва");
+        step("Алтарь и четыре шпиля, Взор Нити по брошенным подношениям", () -> {
+            altarPos = base.add(-24, 1, -24);
+            ow.setBlockState(altarPos, ModBlocks.BREACH_ALTAR.getDefaultState(), 3);
+            for (BlockPos sp : ru.death.chaosshard.breach.BreachRitual.pillars(altarPos)) {
+                ow.setBlockState(sp, ModBlocks.RITUAL_SPIRE.getDefaultState().withProperty(ru.death.chaosshard.breach.BlockRitualSpire.HALF,
+                        ru.death.chaosshard.breach.BlockRitualSpire.Half.LOWER), 3);
+                ow.setBlockState(sp.up(), ModBlocks.RITUAL_SPIRE.getDefaultState().withProperty(ru.death.chaosshard.breach.BlockRitualSpire.HALF,
+                        ru.death.chaosshard.breach.BlockRitualSpire.Half.UPPER), 3);
+            }
+            me.setPosition(altarPos.getX() + 3.5, altarPos.getY(), altarPos.getZ() + 0.5);
+            net.minecraft.entity.monster.EntityZombie z = new net.minecraft.entity.monster.EntityZombie(ow);
+            z.setPosition(altarPos.getX() + 10, altarPos.getY(), altarPos.getZ());
+            z.enablePersistence();
+            ow.spawnEntity(z);
+            sightZombie = z;
+            drop(altarPos, new net.minecraft.item.ItemStack(ru.death.chaosshard.init.ModItems.CHAOS_ESSENCE, 4),
+                    new net.minecraft.item.ItemStack(net.minecraft.init.Items.ENDER_EYE, 2), new net.minecraft.item.ItemStack(ru.death.chaosshard.init.ModItems.VEIL_SHARD, 2));
+            ru.death.chaosshard.ritual.AltarRituals.tryStart(me, altarPos);
+            check(ru.death.chaosshard.ritual.AltarRituals.isRunning(me), "старший ритуал пошёл");
+            check(ow.getEntitiesWithinAABB(net.minecraft.entity.item.EntityItem.class, new AxisAlignedBB(altarPos).grow(2), net.minecraft.entity.Entity::isEntityAlive).isEmpty(),
+                    "подношения забраны с Алтаря");
+            for (int i = 0; i < ru.death.chaosshard.ritual.AltarRituals.DURATION + 2; i++) ru.death.chaosshard.ritual.AltarRituals.tick(me);
+            check(!ru.death.chaosshard.ritual.AltarRituals.isRunning(me), "ритуал завершился");
+            check(z.isPotionActive(net.minecraft.init.MobEffects.GLOWING), "зомби в 10 блоках светится");
+        });
+        step("чужие подношения — не ритуал, ничего не тратится", () -> {
+            drop(altarPos, new net.minecraft.item.ItemStack(Blocks.DIRT, 3));
+            ru.death.chaosshard.ritual.AltarRituals.tryStart(me, altarPos);
+            check(!ru.death.chaosshard.ritual.AltarRituals.isRunning(me), "по земле ритуал не начался");
+            check(!ow.getEntitiesWithinAABB(net.minecraft.entity.item.EntityItem.class, new AxisAlignedBB(altarPos).grow(2), net.minecraft.entity.Entity::isEntityAlive).isEmpty(),
+                    "земля осталась лежать");
+            ow.getEntitiesWithinAABB(net.minecraft.entity.item.EntityItem.class, new AxisAlignedBB(altarPos).grow(2)).forEach(net.minecraft.entity.Entity::setDead);
+        });
+        step("Зов из Нити: без зверей в Нити не тратится; со зверем — возвращает", () -> {
+            drop(altarPos, new net.minecraft.item.ItemStack(ru.death.chaosshard.init.ModItems.CHAOS_ESSENCE, 4),
+                    new net.minecraft.item.ItemStack(net.minecraft.init.Items.GOLDEN_APPLE, 1), new net.minecraft.item.ItemStack(ru.death.chaosshard.init.ModItems.VEIL_SHARD, 2));
+            ru.death.chaosshard.ritual.AltarRituals.tryStart(me, altarPos);
+            check(!ru.death.chaosshard.ritual.AltarRituals.isRunning(me), "в Нити никого — ритуал не начат");
+            BeastData.Entry e = Beasts.entry(ow, me.getUniqueID(), BeastData.Beast.HARE);
+            e.returnAt = ow.getTotalWorldTime() + 20000;
+            ru.death.chaosshard.ritual.AltarRituals.tryStart(me, altarPos);
+            check(ru.death.chaosshard.ritual.AltarRituals.isRunning(me), "заяц в Нити — ритуал пошёл");
+            for (int i = 0; i < ru.death.chaosshard.ritual.AltarRituals.DURATION + 2; i++) ru.death.chaosshard.ritual.AltarRituals.tick(me);
+            check(e.returnAt > 0 && e.returnAt <= ow.getTotalWorldTime(), "заяц отпущен из Нити сейчас");
+        });
+        step("Кровавая луна: твари идут, вокруг Алтаря луна", () -> {
+            ru.death.chaosshard.ritual.AltarRituals.perform(me, altarPos, ru.death.chaosshard.ritual.Ritual.BLOOD_MOON);
+            check(ru.death.chaosshard.ritual.AltarRituals.moonAt(ow, altarPos.add(30, 0, 0)), "в 30 блоках — луна");
+            check(!ru.death.chaosshard.ritual.AltarRituals.moonAt(ow, altarPos.add(100, 0, 0)), "в 100 блоках — нет");
+            for (int i = 0; i < 4; i++) ru.death.chaosshard.ritual.AltarRituals.spawnMoonMob(ow, me);
+            check(!tagged(ow, new AxisAlignedBB(me.getPosition()).grow(20), "chaosshard_moon").isEmpty(), "твари луны появились рядом");
+            net.minecraftforge.event.entity.living.LivingExperienceDropEvent xe = new net.minecraftforge.event.entity.living.LivingExperienceDropEvent(
+                    sightZombie, me, 5);
+            MinecraftForge.EVENT_BUS.post(xe);
+            check(xe.getDroppedExperience() == 10, "опыт за тварь удвоен: " + xe.getDroppedExperience());
+        });
+        step("Великий порыв: Якорь рядом оскверняет разом", () -> {
+            if (anchorPos == null || !(ow.getTileEntity(anchorPos) instanceof TileAnchor)) { check(false, "Якоря нет"); return; }
+            int before = ((TileAnchor) ow.getTileEntity(anchorPos)).getCorrupted();
+            ru.death.chaosshard.ritual.AltarRituals.perform(me, altarPos, ru.death.chaosshard.ritual.Ritual.GREAT_SURGE);
+            int after = ((TileAnchor) ow.getTileEntity(anchorPos)).getCorrupted();
+            check(after > before, "Скверна выросла: " + before + " → " + after);
         });
 
         section("Постройки Ордена в Лучезарии");

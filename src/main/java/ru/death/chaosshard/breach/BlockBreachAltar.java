@@ -24,9 +24,9 @@ public class BlockBreachAltar extends ModBlocks.SimpleBlock {
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand,
                                     EnumFacing facing, float hitX, float hitY, float hitZ) {
         if (player.getHeldItem(hand).getItem() == ModItems.GRIMOIRE) {
-            // Высокий ритуал: Вознесение зверя
+            // Старшие ритуалы (подношения брошены на Алтарь) или Вознесение зверя
             if (!world.isRemote && hand == EnumHand.MAIN_HAND) {
-                ru.death.chaosshard.servant.AltarAscension.tryStart((EntityPlayerMP) player, pos);
+                ru.death.chaosshard.ritual.AltarRituals.tryStart((EntityPlayerMP) player, pos);
             }
             return true;
         }

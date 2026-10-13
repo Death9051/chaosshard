@@ -43,7 +43,40 @@ public enum Ritual {
     /** Добытчик: Лесоруб. */
     SERVANT_LUMBERJACK(1, 0, offer("chaosshard:chaos_essence", 0, 2), offer("minecraft:sapling", -1, 8), offer("minecraft:stone_axe", 0, 1)),
     /** Добытчик: Рудокоп. */
-    SERVANT_MINER(2, 0, offer("chaosshard:chaos_essence", 0, 3), offer("minecraft:stone_pickaxe", 0, 1), offer("minecraft:torch", 0, 16));
+    SERVANT_MINER(2, 0, offer("chaosshard:chaos_essence", 0, 3), offer("minecraft:stone_pickaxe", 0, 1), offer("minecraft:torch", 0, 16)),
+
+    // ---------------------------------------------------------------- младшие (Чаша); только в конец — номера записаны в мирах
+    /** Сумерки: день сменяется ночью, ночь — рассветом. */
+    DUSK(0, 0, offer("chaosshard:chaos_essence", 0, 1), offer("minecraft:coal", -1, 4)),
+    /** Приплод: звери в 12 блоках от Чаши готовы к приплоду. */
+    BREED(1, 0, offer("chaosshard:chaos_essence", 0, 1), offer("minecraft:wheat", 0, 8), offer("minecraft:carrot", 0, 8)),
+    /** Тяга (сфера): 5 минут вещи и опыт в 12 блоках стягиваются к сфере, а под ней — в сундук. */
+    PULL(1, 20 * 60 * 5, offer("chaosshard:chaos_essence", 0, 2), offer("minecraft:ender_pearl", 0, 1), offer("minecraft:iron_ingot", 0, 2)),
+
+    // ---------------------------------------------------------------- старшие (Алтарь Прорыва и 4 шпиля)
+    /** Взор Нити: твари в 96 блоках светятся минуту; Гримуар называет ближайшие постройки и святыни Ордена. */
+    SIGHT(2, 0, offer("chaosshard:chaos_essence", 0, 4), offer("minecraft:ender_eye", 0, 2), offer("chaosshard:veil_shard", 0, 2)),
+    /** Зов из Нити: все звери, ушедшие в Нить, возвращаются сразу. */
+    RECALL(2, 0, offer("chaosshard:chaos_essence", 0, 4), offer("minecraft:golden_apple", 0, 1), offer("chaosshard:veil_shard", 0, 2)),
+    /** Кровавая луна: 5 минут вокруг Алтаря лезут твари, а убитые роняют Эссенцию Хаоса и вдвое больше опыта. */
+    BLOOD_MOON(3, 20 * 60 * 5, offer("chaosshard:chaos_essence", 0, 6), offer("minecraft:redstone", 0, 16), offer("minecraft:bone", 0, 16)),
+    /** Великий порыв: каждый твой Якорь в 256 блоках разом оскверняет округу. */
+    GREAT_SURGE(4, 0, offer("chaosshard:chaos_essence", 0, 8), offer("chaosshard:world_shard", 0, 2), offer("chaosshard:veil_shard", 0, 4));
+
+    /** Старшие ритуалы — на Алтаре Прорыва, а не в Чаше. */
+    public boolean isAltar() {
+        return this == SIGHT || this == RECALL || this == BLOOD_MOON || this == GREAT_SURGE;
+    }
+
+    /** Старший ритуал по подношениям, брошенным на Алтарь. */
+    public static Ritual findAltar(List<ItemStack> contents) {
+        for (Ritual r : values()) {
+            if (r.isAltar() && r.matches(contents)) {
+                return r;
+            }
+        }
+        return null;
+    }
 
     /** Ритуал призыва слуги этого типа. */
     public static Ritual summonFor(ru.death.chaosshard.servant.Servants.Kind k) {
@@ -63,7 +96,7 @@ public enum Ritual {
 
 
     /** Ритуалы с эффектом на месте: запечатываются в сферу, которую ставят, где нужно. */
-    public static final Ritual[] SPHERES = {GROWTH, WARD, STORM, CORRUPTION};
+    public static final Ritual[] SPHERES = {GROWTH, WARD, STORM, CORRUPTION, PULL};
 
     /** Номер сферы (метаданные предмета) или -1. */
     public int sphereIndex() {
@@ -143,7 +176,7 @@ public enum Ritual {
 
     public static Ritual find(List<ItemStack> contents) {
         for (Ritual r : values()) {
-            if (r.matches(contents)) {
+            if (!r.isAltar() && r.matches(contents)) {
                 return r;
             }
         }

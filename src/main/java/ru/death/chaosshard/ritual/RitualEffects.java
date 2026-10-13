@@ -43,6 +43,11 @@ public final class RitualEffects {
                     strike(world, pos);
                 }
                 break;
+            case PULL:
+                if (age % 4 == 0) {
+                    pull(world, pos);
+                }
+                break;
             default:
                 break;
         }
@@ -76,6 +81,39 @@ public final class RitualEffects {
         world.addWeatherEffect(new EntityLightningBolt(world, t.posX, t.posY, t.posZ, true));
         t.attackEntityFrom(DamageSource.LIGHTNING_BOLT, 10.0F);
         t.setFire(4);
+    }
+
+    public static final int PULL_RADIUS = 12;
+
+    /** Тяга: вещи и сферы опыта плывут к сфере; дошедшие вещи падают в сундук под ней, если он есть. */
+    static void pull(World world, BlockPos pos) {
+        double cx = pos.getX() + 0.5, cy = pos.getY() + 0.5, cz = pos.getZ() + 0.5;
+        AxisAlignedBB box = new AxisAlignedBB(pos).grow(PULL_RADIUS);
+        TileEntity below = world.getTileEntity(pos.down());
+        net.minecraftforge.items.IItemHandler inv = below == null ? null
+                : below.getCapability(net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, net.minecraft.util.EnumFacing.UP);
+        for (net.minecraft.entity.Entity e : world.getEntitiesWithinAABB(net.minecraft.entity.Entity.class, box,
+                x -> x instanceof net.minecraft.entity.item.EntityItem || x instanceof net.minecraft.entity.item.EntityXPOrb)) {
+            double dx = cx - e.posX, dy = cy - e.posY, dz = cz - e.posZ;
+            double d = Math.sqrt(dx * dx + dy * dy + dz * dz);
+            if (d < 1.2 && e instanceof net.minecraft.entity.item.EntityItem && inv != null) {
+                net.minecraft.entity.item.EntityItem ei = (net.minecraft.entity.item.EntityItem) e;
+                net.minecraft.item.ItemStack rest = net.minecraftforge.items.ItemHandlerHelper.insertItemStacked(inv, ei.getItem().copy(), false);
+                if (rest.isEmpty()) {
+                    ei.setDead();
+                } else {
+                    ei.setItem(rest);
+                }
+                continue;
+            }
+            if (d > 0.6) {
+                double sp = 0.12;
+                e.motionX = dx / d * sp;
+                e.motionY = dy / d * sp + 0.03;
+                e.motionZ = dz / d * sp;
+                e.velocityChanged = true;
+            }
+        }
     }
 
     /** Ближайший Якорь в пределах ANCHOR_REACH от точки. */
