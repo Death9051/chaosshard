@@ -607,7 +607,7 @@ public final class SpellCaster {
             t.attackEntityFrom(DamageSource.causePlayerDamage(p), (float) (dmg * SpellMods.power(p, Spell.DASH)));
             t.knockBack(p, 1.2F, -dir.x, -dir.z);
         }
-        ws.spawnParticle(EnumParticleTypes.SWEEP_ATTACK, t.posX, t.posY + t.height / 2, t.posZ, 1, 0, 0, 0, 0);
+        ws.spawnParticle(EnumParticleTypes.SWEEP_ATTACK, t.posX, t.posY + t.height / 2, t.posZ, 1, 0.0, 0.0, 0.0, 0.0);
         p.world.playSound(null, p.getPosition(), SoundEvents.ENTITY_PLAYER_ATTACK_STRONG, SoundCategory.PLAYERS, 1.0F, 0.9F);
         return true;
     }
@@ -686,7 +686,7 @@ public final class SpellCaster {
     /** Взрыв Хаоса: магический урон всем врагам в радиусе 3, блоки целы. */
     static int blast(EntityPlayerMP p, Vec3d at, float dmg) {
         WorldServer ws = (WorldServer) p.world;
-        ws.spawnParticle(EnumParticleTypes.EXPLOSION_LARGE, at.x, at.y, at.z, 1, 0, 0, 0, 0);
+        ws.spawnParticle(EnumParticleTypes.EXPLOSION_LARGE, at.x, at.y, at.z, 1, 0.0, 0.0, 0.0, 0.0);
         ws.spawnParticle(EnumParticleTypes.DRAGON_BREATH, at.x, at.y, at.z, 60, 1.2, 0.8, 1.2, 0.03);
         p.world.playSound(null, new BlockPos(at), SoundEvents.ENTITY_GENERIC_EXPLODE, SoundCategory.PLAYERS, 0.8F, 1.3F);
         int n = 0;
