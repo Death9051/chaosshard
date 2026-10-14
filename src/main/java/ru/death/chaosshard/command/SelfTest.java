@@ -138,6 +138,7 @@ public final class SelfTest {
         // каждый файл рецепта, чьи условия выполнены, должен загрузиться (иначе — ошибка разбора в журнале)
         final int[] files = {0};
         final List<String> lost = new ArrayList<>();
+        final List<String> moved = new ArrayList<>();
         net.minecraftforge.fml.common.ModContainer mod = Loader.instance().getIndexedModList().get(Tags.MOD_ID);
         net.minecraftforge.common.crafting.JsonContext ctx = new net.minecraftforge.common.crafting.JsonContext(Tags.MOD_ID);
         net.minecraftforge.common.crafting.CraftingHelper.findFiles(mod, "assets/" + Tags.MOD_ID + "/recipes", null, (root, file) -> {
@@ -157,17 +158,57 @@ public final class SelfTest {
             files[0]++;
             String name = rel.substring(0, rel.length() - 5);
             if (!names.contains(name)) {
-                lost.add(name);
+                String other = replacement(file);
+                if (other != null) {
+                    moved.add(name + " -> " + other);
+                } else {
+                    lost.add(name);
+                }
             }
             return true;
         }, true, true);
         check(lost.isEmpty(), "все файлы рецептов загружены (" + files[0] + ")" + (lost.isEmpty() ? "" : ", не загрузились: " + lost));
+        if (!moved.isEmpty()) {
+            warn("рецепты перерегистрировал другой мод (работают под другим именем): " + moved);
+        }
         for (IRecipe r : ForgeRegistries.RECIPES) {
             if (r.getRegistryName() != null && Tags.MOD_ID.equals(r.getRegistryName().getNamespace())
                     && r.getRecipeOutput().isEmpty()) {
                 check(false, "рецепт " + r.getRegistryName() + " с пустым результатом");
             }
         }
+    }
+
+    /** Рецепт мода, которого нет под своим именем: другой мод (UniDict) мог переписать его под своим. Имя замены или null. */
+    private static String replacement(java.nio.file.Path file) {
+        try (Reader rd = Files.newBufferedReader(file)) {
+            JsonObject json = new JsonParser().parse(rd).getAsJsonObject();
+            JsonObject res = json.getAsJsonObject("result");
+            Item out = Item.getByNameOrId(res.get("item").getAsString());
+            int meta = res.has("data") ? res.get("data").getAsInt() : 0;
+            int count = res.has("count") ? res.get("count").getAsInt() : 1;
+            int n = json.has("ingredients") ? json.getAsJsonArray("ingredients").size() : -1;
+            for (IRecipe r : ForgeRegistries.RECIPES) {
+                ItemStack o = r.getRecipeOutput();
+                if (o.getItem() != out || o.getMetadata() != meta || o.getCount() != count || r.getRegistryName() == null) {
+                    continue;
+                }
+                int k = 0;
+                boolean grimoire = false;
+                for (net.minecraft.item.crafting.Ingredient in : r.getIngredients()) {
+                    if (in != net.minecraft.item.crafting.Ingredient.EMPTY && in.getMatchingStacks().length > 0) {
+                        k++;
+                        grimoire |= in.apply(new ItemStack(ModItems.GRIMOIRE));
+                    }
+                }
+                if ((n < 0 || k == n) && (grimoire || !json.toString().contains("chaosshard:grimoire"))) {
+                    return r.getRegistryName().toString();
+                }
+            }
+        } catch (Exception e) {
+            return null;
+        }
+        return null;
     }
 
     private void antechamber(MinecraftServer server) {
@@ -204,7 +245,7 @@ public final class SelfTest {
             for (int l = 0; l <= level; l++) {
                 all &= stages.contains(ChaosConfig.thread.stagePrefix + l);
             }
-            if (all || player.connection != null) {
+            if (all || player.getServer() == null || player.getServer().getPlayerList().getPlayerByUUID(player.getUniqueID()) != null) {
                 check(all, "этапы Game Stages выданы до уровня " + level);
             } else {
                 warn("этапы Game Stages: подставной игрок не в списке игроков, команда gamestage его не видит");

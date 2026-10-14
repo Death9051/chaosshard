@@ -1325,6 +1325,17 @@ public final class AutoTest {
             ow.getEntitiesWithinAABB(net.minecraft.entity.item.EntityItem.class, new AxisAlignedBB(altarPos).grow(2)).forEach(net.minecraft.entity.Entity::setDead);
         });
         step("Зов из Нити: без зверей в Нити сфера цела; со зверем — возвращает", () -> {
+            // звери, павшие в прошлых шагах, ещё могут быть в Нити (зависит от скорости прогона) — отпускаем их
+            StringBuilder was = new StringBuilder();
+            for (BeastData.Beast b : BeastData.Beast.values()) {
+                if (Beasts.inThread(me, b) > 0) {
+                    was.append(' ').append(b);
+                    Beasts.entry(ow, me.getUniqueID(), b).returnAt = 0;
+                }
+            }
+            if (was.length() > 0) {
+                line("  (были в Нити:" + was + ")");
+            }
             check(!useSphere(ru.death.chaosshard.ritual.Ritual.RECALL, base) && !me.getHeldItemMainhand().isEmpty(), "в Нити никого — сфера цела");
             BeastData.Entry e = Beasts.entry(ow, me.getUniqueID(), BeastData.Beast.HARE);
             e.returnAt = ow.getTotalWorldTime() + 20000;
