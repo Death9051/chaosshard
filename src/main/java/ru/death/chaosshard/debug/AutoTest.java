@@ -2894,6 +2894,29 @@ public final class AutoTest {
 
         section("Справка: реестры модов сборки");
         step("набеги снова включены", () -> ChaosConfig.order.raids = true);
+        step("рецепты с зельями", () -> {
+            int n = 0;
+            for (net.minecraft.item.crafting.IRecipe r : net.minecraft.item.crafting.CraftingManager.REGISTRY) {
+                StringBuilder ing = new StringBuilder();
+                boolean potion = false;
+                int idx = 0;
+                for (net.minecraft.item.crafting.Ingredient in : r.getIngredients()) {
+                    net.minecraft.item.ItemStack[] ms = in.getMatchingStacks();
+                    String d = ms.length == 0 ? "-" : ms[0].getItem().getRegistryName() + "@" + ms[0].getMetadata()
+                            + (ms[0].hasTagCompound() ? ms[0].getTagCompound().toString() : "") + (ms.length > 1 ? "(+" + (ms.length - 1) + ")" : "");
+                    for (net.minecraft.item.ItemStack m : ms) {
+                        if (m.getItem() instanceof net.minecraft.item.ItemPotion || String.valueOf(m.getItem().getRegistryName()).contains("potion")) potion = true;
+                    }
+                    ing.append(" [").append(idx++).append("]").append(d);
+                }
+                if (potion) {
+                    line("  [ЗЕЛЬЕ] " + r.getRegistryName() + " (" + r.getClass().getSimpleName() + ") -> " + r.getRecipeOutput().getItem().getRegistryName()
+                            + "@" + r.getRecipeOutput().getMetadata() + " x" + r.getRecipeOutput().getCount() + " w=" + (r instanceof net.minecraftforge.common.crafting.IShapedRecipe ? ((net.minecraftforge.common.crafting.IShapedRecipe) r).getRecipeWidth() : 0) + " :" + ing);
+                    n++;
+                }
+            }
+            line("  рецептов с зельями: " + n);
+        });
         step("выписать предметы, блоки, тайлы и существ", () -> {
             String[] mods = {"xreliquary", "reliquary", "bountifulbaubles", "apotheosis", "waystones", "extrautils2", "cyclicmagic",
                     "lycanitesmobs", "harvestcraft"};
