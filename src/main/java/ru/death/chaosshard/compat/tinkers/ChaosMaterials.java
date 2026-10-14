@@ -10,7 +10,6 @@ import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
-import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import ru.death.chaosshard.breach.Breach;
@@ -289,23 +288,4 @@ public final class ChaosMaterials implements SpellMods.Hook {
         return true;
     }
 
-    @SubscribeEvent
-    public void onTooltip(ItemTooltipEvent event) {
-        ItemStack s = event.getItemStack();
-        Set<String> mats = materials(s);
-        if (mats.isEmpty()) {
-            return;
-        }
-        for (String m : mats) {
-            int xp = xp(s, m);
-            int l = levelOf(xp);
-            String next = l >= 5 ? "max" : xp + "/" + XP[l];
-            event.getToolTip().add(TextFormatting.LIGHT_PURPLE + net.minecraft.util.text.translation.I18n.translateToLocalFormatted(
-                    "chaosshard.material.level", net.minecraft.util.text.translation.I18n.translateToLocal("material." + m + ".name"), l, next));
-        }
-        if (level(s, CRYSTAL) > 0) {
-            event.getToolTip().add(TextFormatting.AQUA + net.minecraft.util.text.translation.I18n.translateToLocalFormatted(
-                    "chaosshard.material.store", store(s), storeCap(s)));
-        }
-    }
 }

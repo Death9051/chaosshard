@@ -59,6 +59,7 @@ public final class TinkersCompat {
             crystal.setRenderInfo(CRYSTAL_COLOR);
             blood.setRenderInfo(BLOOD_COLOR);
             star.setRenderInfo(STAR_COLOR);
+            net.minecraftforge.common.MinecraftForge.EVENT_BUS.register(new MaterialTooltips());
         }
         ChaosMaterials hook = new ChaosMaterials();
         ru.death.chaosshard.spell.SpellMods.register(hook);
