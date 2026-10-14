@@ -16,7 +16,8 @@
    "item": "chaosshard:distorted_starmetal"
   },
   "C": {
-   "item": "astralsorcery:itemrockcrystalsimple"
+   "item": "astralsorcery:itemrockcrystalsimple",
+   "data": 0
   },
   "E": {
    "item": "chaosshard:chaos_essence"

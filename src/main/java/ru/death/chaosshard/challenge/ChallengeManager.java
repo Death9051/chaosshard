@@ -658,6 +658,16 @@ public class ChallengeManager {
         cashOut((EntityPlayerMP) event.getEntityPlayer());
     }
 
+    /** Бойцы оборванного Вызова (выход из мира посреди волны) не остаются навсегда светиться у Якоря. */
+    @SubscribeEvent
+    public void onJoin(net.minecraftforge.event.entity.EntityJoinWorldEvent event) {
+        Entity e = event.getEntity();
+        if (!e.world.isRemote && e.getEntityData().hasUniqueId(TAG) && !ACTIVE.containsKey(e.getEntityData().getUniqueId(TAG))) {
+            event.setCanceled(true);
+            e.setDead();
+        }
+    }
+
     /** Вошёл, а Вызова уже нет (перезапуск) — с арены домой. */
     @SubscribeEvent
     public void onLogin(PlayerEvent.PlayerLoggedInEvent event) {

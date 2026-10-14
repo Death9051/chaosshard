@@ -135,6 +135,33 @@ public final class SelfTest {
             }
             check(pages >= 20, "рецепты страниц ресурсов Mystcraft: " + pages);
         }
+        // каждый файл рецепта, чьи условия выполнены, должен загрузиться (иначе — ошибка разбора в журнале)
+        final int[] files = {0};
+        final List<String> lost = new ArrayList<>();
+        net.minecraftforge.fml.common.ModContainer mod = Loader.instance().getIndexedModList().get(Tags.MOD_ID);
+        net.minecraftforge.common.crafting.JsonContext ctx = new net.minecraftforge.common.crafting.JsonContext(Tags.MOD_ID);
+        net.minecraftforge.common.crafting.CraftingHelper.findFiles(mod, "assets/" + Tags.MOD_ID + "/recipes", null, (root, file) -> {
+            String rel = root.relativize(file).toString().replace('\\', '/');
+            if (!rel.endsWith(".json") || rel.startsWith("_")) {
+                return true;
+            }
+            try (java.io.Reader rd = java.nio.file.Files.newBufferedReader(file)) {
+                com.google.gson.JsonObject json = net.minecraft.util.JsonUtils.fromJson(new com.google.gson.Gson(), rd, com.google.gson.JsonObject.class);
+                if (json != null && json.has("conditions")
+                        && !net.minecraftforge.common.crafting.CraftingHelper.processConditions(json.getAsJsonArray("conditions"), ctx)) {
+                    return true;
+                }
+            } catch (Exception e) {
+                // битый файл — его и так не будет в реестре
+            }
+            files[0]++;
+            String name = rel.substring(0, rel.length() - 5);
+            if (!names.contains(name)) {
+                lost.add(name);
+            }
+            return true;
+        }, true, true);
+        check(lost.isEmpty(), "все файлы рецептов загружены (" + files[0] + ")" + (lost.isEmpty() ? "" : ", не загрузились: " + lost));
         for (IRecipe r : ForgeRegistries.RECIPES) {
             if (r.getRegistryName() != null && Tags.MOD_ID.equals(r.getRegistryName().getNamespace())
                     && r.getRecipeOutput().isEmpty()) {
@@ -177,7 +204,11 @@ public final class SelfTest {
             for (int l = 0; l <= level; l++) {
                 all &= stages.contains(ChaosConfig.thread.stagePrefix + l);
             }
-            check(all, "этапы Game Stages выданы до уровня " + level);
+            if (all || player.connection != null) {
+                check(all, "этапы Game Stages выданы до уровня " + level);
+            } else {
+                warn("этапы Game Stages: подставной игрок не в списке игроков, команда gamestage его не видит");
+            }
         }
     }
 
@@ -188,7 +219,11 @@ public final class SelfTest {
         }
         World w = server.getWorld(AntechamberDimension.id());
         TileEntity te = w.getTileEntity(HeartPlacer.heartPos());
-        check(te instanceof TileHeart, "Сердце стоит на месте " + HeartPlacer.heartPos());
+        if (te instanceof TileHeart || HeartPlacer.Data.get(w).placed) {
+            check(te instanceof TileHeart, "Сердце стоит на месте " + HeartPlacer.heartPos());
+        } else {
+            warn("Сердце ещё не поставлено: в Преддверие никто не входил");
+        }
         for (int tier = 1; tier <= HeartTiers.maxTier(); tier++) {
             String[] entries = ChaosConfig.heart.tierOres[tier - 1].split(",");
             int resolved = HeartTiers.pool(tier).size() - (tier > 1 ? HeartTiers.pool(tier - 1).size() : 0);

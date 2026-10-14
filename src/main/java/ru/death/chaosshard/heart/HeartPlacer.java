@@ -40,13 +40,13 @@ public final class HeartPlacer {
 
     public static class Data extends WorldSavedData {
         static final String NAME = "chaosshard_heart";
-        boolean placed;
+        public boolean placed;
 
         public Data(String name) {
             super(name);
         }
 
-        static Data get(World world) {
+        public static Data get(World world) {
             Data d = (Data) world.getPerWorldStorage().getOrLoadData(Data.class, NAME);
             if (d == null) {
                 d = new Data(NAME);

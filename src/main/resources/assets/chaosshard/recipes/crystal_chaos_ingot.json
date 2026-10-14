@@ -3,7 +3,7 @@
  "type": "minecraft:crafting_shapeless",
  "ingredients": [
   {"item": "chaosshard:chaos_stone"}, {"item": "chaosshard:chaos_stone"},
-  {"item": "astralsorcery:itemrockcrystalsimple"},
+  {"item": "astralsorcery:itemrockcrystalsimple", "data": 0},
   {"item": "minecraft:quartz"}, {"item": "minecraft:quartz"},
   {"item": "chaosshard:chaos_essence"}
  ],
