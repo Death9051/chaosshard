@@ -175,7 +175,7 @@ public class ChaosShard {
         try {
             ru.death.chaosshard.act5.Rift.restoreOnStop();
             ru.death.chaosshard.trial.TrialManager.restoreCollapse();
-        } catch (RuntimeException e) {
+        } catch (Throwable e) {
             LOG.warn("Не удалось вернуть блоки перед остановкой", e);
         }
     }
@@ -183,27 +183,38 @@ public class ChaosShard {
     /** Мир закрыт: сбросить всё, что живёт в памяти между тиками, — иначе оно перетекает в следующий мир одиночной игры. */
     @Mod.EventHandler
     public void serverStopped(net.minecraftforge.fml.common.event.FMLServerStoppedEvent event) {
-        ru.death.chaosshard.servant.Beasts.clearState();
-        ru.death.chaosshard.servant.Servants.clearState();
-        ru.death.chaosshard.servant.AltarAscension.clearState();
-        ru.death.chaosshard.servant.work.WorkChunks.clearState();
-        ru.death.chaosshard.servant.work.Work.clearState();
-        ru.death.chaosshard.servant.Resync.clearState();
-        ru.death.chaosshard.challenge.ChallengeManager.clearState();
-        ru.death.chaosshard.anchor.AnchorSigns.clearState();
-        ru.death.chaosshard.garrot.GarrotDuel.clearState();
-        ru.death.chaosshard.garrot.GarrotRaids.clearState();
-        ru.death.chaosshard.breach.BreachHints.clearState();
-        ru.death.chaosshard.breach.BreachRitual.clearState();
-        ru.death.chaosshard.hero.TrophyPassives.clearState();
-        ru.death.chaosshard.spell.SpellAccel.clearState();
-        ru.death.chaosshard.order.Shrines.clearState();
-        ru.death.chaosshard.cutscene.CutsceneManager.clearState();
-        ru.death.chaosshard.ritual.RitualEvents.clearState();
-        ru.death.chaosshard.ritual.AltarRituals.clearState();
-        ru.death.chaosshard.trial.TrialManager.clearState();
-        ru.death.chaosshard.stars.ChaosLink.clearState();
-        ru.death.chaosshard.anchor.AnchorView.clear();
+        reset(ru.death.chaosshard.servant.Beasts::clearState);
+        reset(ru.death.chaosshard.servant.Servants::clearState);
+        reset(ru.death.chaosshard.servant.AltarAscension::clearState);
+        reset(ru.death.chaosshard.servant.work.WorkChunks::clearState);
+        reset(ru.death.chaosshard.servant.work.Work::clearState);
+        reset(ru.death.chaosshard.servant.Resync::clearState);
+        reset(ru.death.chaosshard.challenge.ChallengeManager::clearState);
+        reset(ru.death.chaosshard.anchor.AnchorSigns::clearState);
+        reset(ru.death.chaosshard.garrot.GarrotDuel::clearState);
+        reset(ru.death.chaosshard.garrot.GarrotRaids::clearState);
+        reset(ru.death.chaosshard.breach.BreachHints::clearState);
+        reset(ru.death.chaosshard.breach.BreachRitual::clearState);
+        reset(ru.death.chaosshard.hero.TrophyPassives::clearState);
+        reset(ru.death.chaosshard.spell.SpellAccel::clearState);
+        reset(ru.death.chaosshard.order.Shrines::clearState);
+        reset(ru.death.chaosshard.cutscene.CutsceneManager::clearState);
+        reset(ru.death.chaosshard.ritual.RitualEvents::clearState);
+        reset(ru.death.chaosshard.ritual.AltarRituals::clearState);
+        reset(ru.death.chaosshard.trial.TrialManager::clearState);
+        if (astralLoaded) {
+            reset(ru.death.chaosshard.stars.ChaosLink::clearState);
+        }
+        reset(ru.death.chaosshard.anchor.AnchorView::clear);
+    }
+
+    /** Сброс не должен ронять остановку сервера: ошибка — в журнал, дальше. */
+    private static void reset(Runnable r) {
+        try {
+            r.run();
+        } catch (Throwable t) {
+            LOG.warn("Сброс состояния при остановке не удался", t);
+        }
     }
 
     @Mod.EventHandler
