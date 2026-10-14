@@ -36,6 +36,8 @@ jobs:
         run: |
           chmod +x gradlew
           export LIBGL_ALWAYS_SOFTWARE=1
+          # русский интерфейс, как у игрока
+          mkdir -p run && printf 'lang:ru_ru\n' > run/options.txt
           set +e
           timeout 2400 xvfb-run -a -s "-screen 0 1920x1080x24" ./gradlew --no-daemon runClient \
             "-Pextra_jvm_args=-Dchaosshard.clienttest=true" > client.log 2>&1

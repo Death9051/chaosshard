@@ -108,7 +108,8 @@ public class GuiHeart extends GuiContainer {
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
         int tier = tier();
         fontRenderer.drawString(I18n.format("chaosshard.heart.gui.title", tier, HeartTiers.maxTier()), 6, 5, TEXT);
-        fontRenderer.drawString(I18n.format("chaosshard.heart.gui.modules"), 146, 5, DIM);
+        String mods = I18n.format("chaosshard.heart.gui.modules");
+        fontRenderer.drawString(mods, Math.min(146, xSize - 4 - fontRenderer.getStringWidth(mods)), 5, DIM);
 
         // Сердце крупно
         GlStateManager.pushMatrix();
@@ -196,7 +197,10 @@ public class GuiHeart extends GuiContainer {
         }
         upgradeButton.enabled = ok;
         upgradeButton.visible = tier < HeartTiers.maxTier();
-        fontRenderer.drawString(I18n.format("container.inventory"), 8, ContainerHeart.INV_Y - 10, DIM);
+        // подпись «Инвентарь» налезала на ряд цены улучшения — показываем её, только когда цены нет
+        if (tier >= HeartTiers.maxTier()) {
+            fontRenderer.drawString(I18n.format("container.inventory"), 8, ContainerHeart.INV_Y - 10, DIM);
+        }
     }
 
     private void drawOwnTooltips(int mouseX, int mouseY) {

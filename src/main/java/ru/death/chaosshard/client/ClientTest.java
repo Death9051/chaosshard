@@ -518,21 +518,24 @@ public class ClientTest {
         // строки перевода, которые ломает String.format (одиночный %): на экране вышло бы «Format error»
         List<String> broken = new ArrayList<>();
         try (java.io.BufferedReader rd = new java.io.BufferedReader(new java.io.InputStreamReader(mc.getResourceManager()
-                .getResource(new ResourceLocation(Tags.MOD_ID, "lang/en_us.lang")).getInputStream(), StandardCharsets.UTF_8))) {
+                .getResource(new ResourceLocation(Tags.MOD_ID, "lang/" + mc.gameSettings.language.toLowerCase() + ".lang")).getInputStream(), StandardCharsets.UTF_8))) {
             String l;
             while ((l = rd.readLine()) != null) {
                 int eq = l.indexOf('=');
                 if (eq > 0 && !l.startsWith("#") && l.indexOf('%') >= 0) {
                     String k = l.substring(0, eq);
-                    if (I18n.format(k, "1", "2", "3", "4", "5", "6").startsWith("Format error")) {
+                    // эти три выводятся как есть (translateToLocal) — одиночный % там правилен
+                    boolean raw = k.equals("chaosshard.challenge.hint") || k.equals("item.chaosshard.velmor_staff.desc")
+                            || k.equals("item.chaosshard.lian_lute.desc");
+                    if (!raw && I18n.format(k, "1", "2", "3", "4", "5", "6", "7", "8", "9", "10").startsWith("Format error")) {
                         broken.add(k);
                     }
                 }
             }
         } catch (Exception ex) {
-            broken.add("не прочитать en_us.lang: " + ex);
+            broken.add("не прочитать перевод " + mc.gameSettings.language + ": " + ex);
         }
-        check(broken.isEmpty(), "строки с % форматируются" + (broken.isEmpty() ? "" : ", ломаются: " + broken));
+        check(broken.isEmpty(), "строки с % форматируются (" + mc.gameSettings.language + ")" + (broken.isEmpty() ? "" : ", ломаются: " + broken));
         check(noRender.isEmpty(), "отрисовщики существ" + (noRender.isEmpty() ? "" : ", нет у: " + noRender));
         check(noEntName.isEmpty(), "названия существ" + (noEntName.isEmpty() ? "" : ", нет у: " + noEntName));
     }
