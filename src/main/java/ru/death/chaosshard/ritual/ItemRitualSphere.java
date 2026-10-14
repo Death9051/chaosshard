@@ -114,7 +114,7 @@ public class ItemRitualSphere extends Item {
     @Override
     public void addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, ITooltipFlag flag) {
         Ritual r = Ritual.sphere(stack.getMetadata());
-        tooltip.add(TextFormatting.GRAY + I18n.translateToLocal(r.key() + ".desc"));
+        tooltip.add(TextFormatting.GRAY + I18n.translateToLocalFormatted(r.key() + ".desc"));
         if (r.duration > 0) {
             int t = ticks(stack);
             tooltip.add(TextFormatting.LIGHT_PURPLE + I18n.translateToLocalFormatted("chaosshard.ritual.sphere.left", t / 1200, (t / 20) % 60));

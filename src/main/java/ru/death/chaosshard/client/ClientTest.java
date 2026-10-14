@@ -361,6 +361,8 @@ public class ClientTest {
         if (id == ru.death.chaosshard.heart.HeartGuiHandler.ANCHOR && p.world.getTileEntity(at) instanceof ru.death.chaosshard.anchor.TileAnchor) {
             ((ru.death.chaosshard.anchor.TileAnchor) p.world.getTileEntity(at)).syncRec();
         }
+        // окно с контейнером закрывается, если игрок дальше 8 блоков — встать рядом
+        p.connection.setPlayerLocation(at.getX() + 0.5, at.getY() + 1, at.getZ() - 1.5, 0F, 30F);
         p.openGui(ChaosShard.INSTANCE, id, p.world, at.getX(), at.getY(), at.getZ());
     }
 
@@ -513,6 +515,24 @@ public class ClientTest {
                 noEntName.add(ee.getName());
             }
         }
+        // строки перевода, которые ломает String.format (одиночный %): на экране вышло бы «Format error»
+        List<String> broken = new ArrayList<>();
+        try (java.io.BufferedReader rd = new java.io.BufferedReader(new java.io.InputStreamReader(mc.getResourceManager()
+                .getResource(new ResourceLocation(Tags.MOD_ID, "lang/en_us.lang")).getInputStream(), StandardCharsets.UTF_8))) {
+            String l;
+            while ((l = rd.readLine()) != null) {
+                int eq = l.indexOf('=');
+                if (eq > 0 && !l.startsWith("#") && l.indexOf('%') >= 0) {
+                    String k = l.substring(0, eq);
+                    if (I18n.format(k, "1", "2", "3", "4", "5", "6").startsWith("Format error")) {
+                        broken.add(k);
+                    }
+                }
+            }
+        } catch (Exception ex) {
+            broken.add("не прочитать en_us.lang: " + ex);
+        }
+        check(broken.isEmpty(), "строки с % форматируются" + (broken.isEmpty() ? "" : ", ломаются: " + broken));
         check(noRender.isEmpty(), "отрисовщики существ" + (noRender.isEmpty() ? "" : ", нет у: " + noRender));
         check(noEntName.isEmpty(), "названия существ" + (noEntName.isEmpty() ? "" : ", нет у: " + noEntName));
     }
