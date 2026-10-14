@@ -40,6 +40,7 @@ public class Milestones {
     public static final String WITHER_SLAIN = "wither_slain";
     public static final String ORDER_RAID = "order_raid";
     public static final String CITADEL_RECALL = "citadel_recall";
+    public static final String CHAOS_LINK = "chaos_link";
     public static final String CROWN_OMEN = "crown_omen";
     public static final String BEACON_OUT = "beacon_out";
     public static final String CAPITAL_OPEN = "capital_open";

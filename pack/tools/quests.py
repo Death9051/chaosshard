@@ -451,7 +451,8 @@ q("st_attalt", "stars", 18, 5, "Алтарь настройки",
 q("st_attune", "stars", 20, 3, "§5Выбор пути",
   G + "Встань на алтарь настройки ночью и настройся на одно из главных созвездий: "
   "§aАэвитас§r, §cДисцидия§r, §eАрмара§r, §bВицио§r или §6Эворсио§r. Это корень твоего древа перков.\n\n"
-  "§7Выбор один раз. Подумай — или не думай, Лорду всё равно, мне тоже.§r",
+  "§7Выбор один раз. Подумай — или не думай, Лорду всё равно, мне тоже.§r\n\n"
+  "§5Есть и другой путь§r: сложи на алтаре метку Лорда.",
   A("blockattunementaltar"), adv("astralsorcery:attune_self"), [NIT(60), XP(5)], ["st_attalt", "st_altar2"], main=True)
 
 q("st_perk", "stars", 22, 2, "Первый перк",
@@ -1071,6 +1072,7 @@ q("a5_pylon", "act5", 14, 2, "Ядро пилона", "", I("minecraft:end_cryst
 q("a5_archon", "act5", 14, 3, "§5Архонт", "", I("minecraft:nether_star"), adv("archon_slain"), [XP(60)], ["a5_rift"], main=True)
 q("a5_end", "act5", 16, 3, "§5§lЗавеса пала", "", I("chaosshard:grimoire"), adv("game_complete"), [XP(100)], ["a5_archon"], main=True)
 q("a3_sigil", "act3", 14, 8, "Печать Цитадели", "", I("chaosshard:citadel_sigil"), adv("citadel_recall"), [NIT(20), XP(3)], ["a3_lair3"])
+q("st_chaos_link", "stars", 22, 4, "§5Связь с Хаосом", "", I("minecraft:nether_star"), adv("chaos_link"), [NIT(30), XP(5)], ["st_attalt", "st_chaos"])
 
 # ---------------------------------------------------------------- сборка
 
@@ -1148,7 +1150,7 @@ def build():
         "questSettings:10": {"betterquesting:10": {
             "editmode:1": 0, "hardcore:1": 0, "party_enable:1": 1,
             "livesdef:3": 3, "livesmax:3": 10,
-            "pack_name:8": PACK_NAME, "pack_version:3": 67,
+            "pack_name:8": PACK_NAME, "pack_version:3": 68,
             "home_image:8": "chaosshard:textures/gui/quest_home.png"}},
         "questDatabase:9": db,
         "questLines:9": lines,
