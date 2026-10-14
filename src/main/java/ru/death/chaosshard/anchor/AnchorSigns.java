@@ -147,7 +147,7 @@ public final class AnchorSigns {
     public static int thorns(TileAnchor a, Mods m, double th, boolean rain, double wh) {
         int hit = 0;
         for (EntityLivingBase e : enemies(a, m)) {
-            e.attackEntityFrom(DamageSource.MAGIC, (float) (2 * m.power * th));
+            AnchorSpecs.smite(a, e, (float) (2 * m.power * th));
             e.addPotionEffect(new PotionEffect(MobEffects.SLOWNESS, (int) (60 * m.dur), 0));
             if (a.power(Type.RAIN) > 0) {
                 // Кровотечение: под дождём вдвое
@@ -256,7 +256,7 @@ public final class AnchorSigns {
         }
         int hit = 0;
         for (EntityLivingBase e : enemies(a, m)) {
-            e.attackEntityFrom(DamageSource.MAGIC, amt);
+            AnchorSpecs.smite(a, e, amt);
             if (viscous) {
                 e.addPotionEffect(new PotionEffect(MobEffects.SLOWNESS, 40, 1));
                 e.addPotionEffect(new PotionEffect(MobEffects.MINING_FATIGUE, 40, 1));

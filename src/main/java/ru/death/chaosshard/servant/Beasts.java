@@ -493,7 +493,7 @@ public class Beasts {
         }
         // Владыка охоты: хозяин ранил врага издалека — тигр уже там
         if (src instanceof EntityPlayerMP && !Servants.isServant(hurt) && hurt != src && hurt instanceof EntityLiving
-                && hurt.getDistanceSq(src) > 64) {
+                && hurt.getDistanceSq(src) > 64 && !ru.death.chaosshard.anchor.AnchorSpecs.isAnchorHit(event.getSource())) {
             EntityPlayerMP p = (EntityPlayerMP) src;
             Entry e = entry(p.world, p.getUniqueID(), Beast.TIGER);
             if (e.level() >= 5) {

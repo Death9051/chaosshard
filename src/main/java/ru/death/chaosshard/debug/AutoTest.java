@@ -897,6 +897,9 @@ public final class AutoTest {
             ru.death.chaosshard.anchor.AnchorSigns.Mods m = ru.death.chaosshard.anchor.AnchorSigns.Mods.of(t);
             int hit = ru.death.chaosshard.anchor.AnchorSigns.thorns(t, m, 1, false, 0);
             check(hit >= 1 && z.getHealth() < z.getMaxHealth() && z.isPotionActive(net.minecraft.init.MobEffects.SLOWNESS), "Шипы: урон и замедление");
+            DamageSource last = z.getLastDamageSource();
+            check(ru.death.chaosshard.anchor.AnchorSpecs.isAnchorHit(last) && last.getTrueSource() == me && z.getRevengeTarget() == null,
+                    "Якорь бьёт от имени владельца (" + (last == null ? null : last.getTrueSource()) + "), моб не мстит ему");
             check(z.isPotionActive(net.minecraft.init.MobEffects.WITHER), "Шипы + Кровавый дождь: кровотечение");
             sk.hurtResistantTime = 0;
             float hp = sk.getHealth();
@@ -2062,6 +2065,16 @@ public final class AutoTest {
             ru.death.chaosshard.hero.TrophyPassives.discount(v, me);
             if (rl != null) for (net.minecraft.village.MerchantRecipe r : rl) after += r.getItemToBuy().getCount();
             check(rl != null && after < before, "Элис: цены жителя " + before + " → " + after);
+            if (rl != null) {
+                // новая сделка, открытая позже, тоже дешевеет при следующем разговоре; старые — не дважды
+                rl.add(new net.minecraft.village.MerchantRecipe(new net.minecraft.item.ItemStack(net.minecraft.init.Items.EMERALD, 20),
+                        new net.minecraft.item.ItemStack(net.minecraft.init.Items.DIAMOND)));
+                ru.death.chaosshard.hero.TrophyPassives.discount(v, me);
+                int again = 0;
+                for (int i = 0; i < rl.size() - 1; i++) again += rl.get(i).getItemToBuy().getCount();
+                int fresh = rl.get(rl.size() - 1).getItemToBuy().getCount();
+                check(fresh == 15 && again == after, "Элис: новая сделка 20 → " + fresh + ", старые не подешевели дважды (" + after + " → " + again + ")");
+            }
             v.setDead();
             // убрать трофей — пассивка гаснет
             ow.destroyBlock(lp.add(-3, 0, 2), true);

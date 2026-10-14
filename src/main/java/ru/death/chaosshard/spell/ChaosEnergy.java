@@ -91,7 +91,8 @@ public class ChaosEnergy {
     /** Голод Скверны (перк): убийство возвращает 5 энергии. */
     @SubscribeEvent
     public void onKill(net.minecraftforge.event.entity.living.LivingDeathEvent event) {
-        if (event.getSource().getTrueSource() instanceof EntityPlayerMP) {
+        if (event.getSource().getTrueSource() instanceof EntityPlayerMP
+                && !ru.death.chaosshard.anchor.AnchorSpecs.isAnchorHit(event.getSource())) {
             EntityPlayerMP p = (EntityPlayerMP) event.getSource().getTrueSource();
             if (ru.death.chaosshard.stars.Perks.hunger(p)) {
                 set(p, get(p) + 5);

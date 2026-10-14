@@ -1744,3 +1744,7 @@ advancement.chaosshard.m.anchor_borrow.title=Foreign Craft
 advancement.chaosshard.m.anchor_borrow.desc=An Anchor borrowed another path's effect
 advancement.chaosshard.m.anchor_sign.title=A Sign on the Anchor
 advancement.chaosshard.m.anchor_sign.desc=Placed a sign on an Anchor
+
+# Anchor strikes
+death.attack.chaosshard.anchor=%1$s was struck down by an Anchor's Corruption
+death.attack.chaosshard.anchor.player=%1$s was struck down by %2$s's Anchor

@@ -43,7 +43,8 @@ public final class TrophyPassives {
     public void onHurt(LivingHurtEvent event) {
         EntityLivingBase t = event.getEntityLiving();
         if (t.world.isRemote || !(event.getSource().getTrueSource() instanceof EntityPlayerMP)
-                || event.getSource().getTrueSource() != event.getSource().getImmediateSource()) {
+                || event.getSource().getTrueSource() != event.getSource().getImmediateSource()
+                || ru.death.chaosshard.anchor.AnchorSpecs.isAnchorHit(event.getSource())) {
             return;
         }
         EntityPlayerMP p = (EntityPlayerMP) event.getSource().getTrueSource();
@@ -97,22 +98,37 @@ public final class TrophyPassives {
         }
     }
 
-    /** Перстень Элис: цены жителя на четверть ниже (один раз на жителя). */
+    /** Сколько сделок жителя уже со скидкой (новые сделки, открытые позже, получают её при следующем разговоре). */
+    public static final String TAG_ELIS_COUNT = "chaosshard_elis_count";
+
+    /** Перстень Элис: цены жителя на четверть ниже. Каждая сделка дешевеет один раз, в том числе открытые позже. */
     public static boolean discount(EntityVillager v, EntityPlayer p) {
-        if (v.getEntityData().getBoolean(TAG_ELIS)) {
-            return false;
-        }
         MerchantRecipeList list = v.getRecipes(p);
         if (list == null) {
             return false;
         }
-        for (MerchantRecipe r : list) {
-            ItemStack buy = r.getItemToBuy();
+        net.minecraft.nbt.NBTTagCompound data = v.getEntityData();
+        int done;
+        if (data.hasKey(TAG_ELIS_COUNT)) {
+            done = data.getInteger(TAG_ELIS_COUNT);
+        } else if (data.getBoolean(TAG_ELIS)) {
+            // житель из 0.44: тогда скидку получили все сделки, что были; дальше — только новые
+            done = list.size();
+            data.removeTag(TAG_ELIS);
+        } else {
+            done = 0;
+        }
+        if (done >= list.size()) {
+            data.setInteger(TAG_ELIS_COUNT, list.size());
+            return false;
+        }
+        for (int i = done; i < list.size(); i++) {
+            ItemStack buy = list.get(i).getItemToBuy();
             if (buy.getCount() > 1) {
                 buy.setCount(Math.max(1, (int) Math.ceil(buy.getCount() * 0.75)));
             }
         }
-        v.getEntityData().setBoolean(TAG_ELIS, true);
+        data.setInteger(TAG_ELIS_COUNT, list.size());
         return true;
     }
 

@@ -264,8 +264,9 @@ public final class ChaosMaterials implements SpellMods.Hook {
     @SubscribeEvent
     public void onDeath(LivingDeathEvent event) {
         EntityLivingBase dead = event.getEntityLiving();
-        if (dead.world.isRemote || !(event.getSource().getTrueSource() instanceof EntityPlayerMP)) {
-            return;
+        if (dead.world.isRemote || !(event.getSource().getTrueSource() instanceof EntityPlayerMP)
+                || ru.death.chaosshard.anchor.AnchorSpecs.isAnchorHit(event.getSource())) {
+            return;   // убил Якорь, а не оружие в руке
         }
         EntityPlayerMP p = (EntityPlayerMP) event.getSource().getTrueSource();
         ItemStack main = p.getHeldItemMainhand();

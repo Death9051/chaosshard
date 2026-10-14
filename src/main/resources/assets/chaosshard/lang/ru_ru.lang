@@ -1767,3 +1767,7 @@ advancement.chaosshard.m.anchor_borrow.title=Чужое ремесло
 advancement.chaosshard.m.anchor_borrow.desc=Якорь взял эффект чужого пути
 advancement.chaosshard.m.anchor_sign.title=Знак на Якоре
 advancement.chaosshard.m.anchor_sign.desc=Поставил на Якорь знак
+
+# Удары Якоря
+death.attack.chaosshard.anchor=%1$s сражён Скверной Якоря
+death.attack.chaosshard.anchor.player=%1$s сражён Скверной Якоря %2$s

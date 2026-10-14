@@ -67,6 +67,35 @@ public final class AnchorSpecs {
     private static final UUID PATH_SPEED = UUID.fromString("6b1f3c2a-4d0e-4a7b-9c55-2f8e1a0d7c31");
     private static final GameProfile HARVEST_PROFILE = new GameProfile(UUID.fromString("8e0c6a10-5b4f-4c1a-a3d2-7f6b9e2c4d58"), "[Жатва]");
 
+    // ------------------------------------------------------------------ урон от имени владельца
+
+    /** Тип урона Якоря: колонна, знаки, поле Жатвы. */
+    public static final String HIT = "chaosshard.anchor";
+
+    /**
+     * Удар Якоря — от имени владельца сети, если он в этом мире: добыча и опыт как за его убийство,
+     * вехи и награды за врагов — ему. Иначе — безымянная магия (поле Жатвы — подставной игрок).
+     */
+    public static DamageSource hit(TileAnchor a) {
+        EntityPlayerMP o = owner(a);
+        if (o != null && o.connection != null && o.isEntityAlive() && o.world == a.getWorld()) {
+            return new net.minecraft.util.EntityDamageSource(HIT, o).setDamageBypassesArmor().setMagicDamage();
+        }
+        return new DamageSource(HIT).setDamageBypassesArmor().setMagicDamage();
+    }
+
+    /** Урон нанёс Якорь (а не сам игрок). */
+    public static boolean isAnchorHit(DamageSource s) {
+        return s != null && HIT.equals(s.getDamageType());
+    }
+
+    /** Ударить от имени Якоря: обидчиком моб владельца не считает — не бежит к нему через весь край. */
+    static boolean smite(TileAnchor a, EntityLivingBase target, float dmg) {
+        boolean hurt = target.attackEntityFrom(hit(a), dmg);
+        target.setRevengeTarget(null);
+        return hurt;
+    }
+
     // ------------------------------------------------------------------ тик Якоря
 
     public static void tick(TileAnchor a) {
@@ -185,7 +214,7 @@ public final class AnchorSpecs {
                         target.posX, target.posY + target.height * 0.6, target.posZ, color),
                 new net.minecraftforge.fml.common.network.NetworkRegistry.TargetPoint(a.getWorld().provider.getDimension(),
                         target.posX, target.posY, target.posZ, 96));
-        target.attackEntityFrom(DamageSource.MAGIC, dmg);
+        smite(a, target, dmg);
     }
 
     private static void pathRegen(TileAnchor a) {
@@ -465,9 +494,13 @@ public final class AnchorSpecs {
             }
         }
         if (pulse) {
-            FakePlayer fp = reaper(w);
+            // от имени владельца; нет его в этом мире — от подставного игрока, чтобы добыча оставалась «игровой»
+            DamageSource src = hit(a);
+            if (src.getTrueSource() == null) {
+                src = DamageSource.causePlayerDamage(reaper(w));
+            }
             for (EntityLiving m : mobs) {
-                m.attackEntityFrom(DamageSource.causePlayerDamage(fp), 3.0F);
+                m.attackEntityFrom(src, 3.0F);
                 m.setRevengeTarget(null);
                 ChaosNetwork.CHANNEL.sendToAllAround(new PacketHeartBolt(c.getX() + 0.5, c.getY() + a.level(), c.getZ() + 0.5,
                                 m.posX, m.posY + m.height * 0.5, m.posZ, 0x60FF90),
