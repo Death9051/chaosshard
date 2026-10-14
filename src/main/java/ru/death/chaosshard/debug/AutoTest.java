@@ -1514,17 +1514,61 @@ public final class AutoTest {
             check(!ow.getEntitiesWithinAABB(net.minecraft.entity.item.EntityItem.class, e.getEntityBoundingBox().grow(8),
                     x -> x.getItem().getItem() == ru.death.chaosshard.init.ModItems.ELIS_SIGNET).isEmpty(), "Перстень Элис у тела");
         });
-        step("Перстень Элис: королевская стража служит мне", () -> {
-            me.setHeldItem(EnumHand.MAIN_HAND, new net.minecraft.item.ItemStack(ru.death.chaosshard.init.ModItems.ELIS_SIGNET));
-            me.getHeldItemMainhand().getItem().onItemRightClick(ow, me, EnumHand.MAIN_HAND);
-            List<ru.death.chaosshard.structure.EntityOrderKnight> mine = ow.getEntitiesWithinAABB(ru.death.chaosshard.structure.EntityOrderKnight.class,
-                    me.getEntityBoundingBox().grow(6), k -> Servants.isServantOf(k, me.getUniqueID()));
-            check(mine.size() == 2, "стражей на службе: " + mine.size());
-            ru.death.chaosshard.structure.EntityOrderKnight enemy = new ru.death.chaosshard.structure.EntityOrderKnight(ow);
-            check(!mine.isEmpty() && !enemy.isOnSameTeam(mine.get(0)), "для Ордена они уже чужие");
-            for (ru.death.chaosshard.structure.EntityOrderKnight k : mine) k.setDead();
+        step("трофеи Светочей в Логове: пассивки", () -> {
+            BlockPos lp = base.add(-40, 1, 40);
+            ow.getChunk(lp);
+            for (BlockPos q : BlockPos.getAllInBox(lp.add(-4, -1, -4), lp.add(4, -1, 4))) ow.setBlockState(q, Blocks.STONE.getDefaultState(), 2);
+            for (BlockPos q : BlockPos.getAllInBox(lp.add(-4, 0, -4), lp.add(4, 3, 4))) ow.setBlockToAir(q);
+            ow.setBlockState(lp, ModBlocks.LAIR.getDefaultState(), 3);
+            ru.death.chaosshard.lair.TileLair tl = (ru.death.chaosshard.lair.TileLair) ow.getTileEntity(lp);
+            if (tl == null) { check(false, "нет Логова"); return; }
+            tl.setOwner(me);
+            BlockPos prevLair = ru.death.chaosshard.lair.LairData.get(ow).lairOf(me.getUniqueID(), 0);
+            ru.death.chaosshard.lair.LairData.get(ow).set(me.getUniqueID(), 0, lp);
+            me.setSneaking(true);
+            int x = -3;
+            for (ru.death.chaosshard.hero.Lightbearer h : ru.death.chaosshard.hero.Lightbearer.values()) {
+                me.setHeldItem(EnumHand.MAIN_HAND, ru.death.chaosshard.hero.Trophies.of(h));
+                ru.death.chaosshard.hero.Trophies.place(me, ow, lp.add(x, -1, 2), EnumFacing.UP, EnumHand.MAIN_HAND);
+                x += 1;
+            }
+            me.setSneaking(false);
             me.setHeldItem(EnumHand.MAIN_HAND, net.minecraft.item.ItemStack.EMPTY);
-            me.setPosition(base.getX() + 0.5, base.getY() + 1, base.getZ() + 0.5);
+            int placed = 0;
+            for (int dx = -3; dx <= 1; dx++) if (ow.getBlockState(lp.add(dx, 0, 2)).getBlock() == ModBlocks.TROPHY) placed++;
+            check(placed == 5, "трофеев на подставках: " + placed);
+            boolean all = true;
+            for (ru.death.chaosshard.hero.Lightbearer h : ru.death.chaosshard.hero.Lightbearer.values()) all &= ru.death.chaosshard.hero.TrophyData.has(me, h);
+            check(all, "все пять в Логове — пассивки включены");
+            // Каэль: первый удар слепит
+            net.minecraft.entity.monster.EntityZombie z = new net.minecraft.entity.monster.EntityZombie(ow);
+            z.setPosition(lp.getX() + 2.5, lp.getY(), lp.getZ() + 0.5);
+            ow.spawnEntity(z);
+            new ru.death.chaosshard.hero.TrophyPassives().onHurt(new net.minecraftforge.event.entity.living.LivingHurtEvent(z, DamageSource.causePlayerDamage(me), 1F));
+            check(z.isPotionActive(net.minecraft.init.MobEffects.BLINDNESS), "Каэль: первый удар ослепил");
+            z.setDead();
+            // Лиан: скорость
+            ru.death.chaosshard.hero.TrophyPassives.lian(me, true);
+            check(me.getEntityAttribute(net.minecraft.entity.SharedMonsterAttributes.MOVEMENT_SPEED).getModifier(
+                    java.util.UUID.fromString("6b2c7d1e-4a7f-4c5e-9f33-1a2b3c4d5e6f")) != null, "Лиан: скорость +10%");
+            ru.death.chaosshard.hero.TrophyPassives.lian(me, false);
+            // Элис: житель дешевле
+            net.minecraft.entity.passive.EntityVillager v = new net.minecraft.entity.passive.EntityVillager(ow, 0);
+            v.setPosition(lp.getX() + 0.5, lp.getY(), lp.getZ() - 2.5);
+            ow.spawnEntity(v);
+            net.minecraft.village.MerchantRecipeList rl = v.getRecipes(me);
+            int before = 0, after = 0;
+            if (rl != null) for (net.minecraft.village.MerchantRecipe r : rl) before += r.getItemToBuy().getCount();
+            ru.death.chaosshard.hero.TrophyPassives.discount(v, me);
+            if (rl != null) for (net.minecraft.village.MerchantRecipe r : rl) after += r.getItemToBuy().getCount();
+            check(rl != null && after < before, "Элис: цены жителя " + before + " → " + after);
+            v.setDead();
+            // убрать трофей — пассивка гаснет
+            ow.destroyBlock(lp.add(-3, 0, 2), true);
+            check(!ru.death.chaosshard.hero.TrophyData.has(me, ru.death.chaosshard.hero.Lightbearer.KAEL), "трофей убран — пассивка погасла");
+            for (BlockPos q : BlockPos.getAllInBox(lp.add(-4, 0, -4), lp.add(4, 3, 4))) ow.setBlockToAir(q);
+            for (ru.death.chaosshard.hero.Lightbearer h : ru.death.chaosshard.hero.Lightbearer.values()) ru.death.chaosshard.hero.TrophyData.get(ow).set(me.getUniqueID(), h, false);
+            ru.death.chaosshard.lair.LairData.get(ow).set(me.getUniqueID(), 0, prevLair);
         });
 
         section("Акт 4: дуэль с Гарротом и катсцена");

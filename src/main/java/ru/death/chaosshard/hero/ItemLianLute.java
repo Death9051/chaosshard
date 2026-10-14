@@ -33,25 +33,11 @@ public class ItemLianLute extends Item {
     }
 
     @Override
-    public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer p, EnumHand hand) {
-        ItemStack s = p.getHeldItem(hand);
-        if (!world.isRemote) {
-            p.addPotionEffect(new PotionEffect(MobEffects.STRENGTH, DURATION, 0));
-            p.addPotionEffect(new PotionEffect(MobEffects.SPEED, DURATION, 0));
-            for (EntityLiving m : world.getEntitiesWithinAABB(EntityLiving.class, p.getEntityBoundingBox().grow(16),
-                    x -> Servants.isServantOf(x, p.getUniqueID()))) {
-                m.addPotionEffect(new PotionEffect(MobEffects.STRENGTH, DURATION, 0));
-                m.addPotionEffect(new PotionEffect(MobEffects.SPEED, DURATION, 0));
-                ((WorldServer) world).spawnParticle(EnumParticleTypes.NOTE, m.posX, m.posY + m.height + 0.3, m.posZ, 4, 0.3, 0.2, 0.3, 1.0);
-            }
-            ((WorldServer) world).spawnParticle(EnumParticleTypes.NOTE, p.posX, p.posY + 2.2, p.posZ, 12, 1.0, 0.4, 1.0, 1.0);
-            for (int i = 0; i < 3; i++) {
-                world.playSound(null, p.getPosition(), SoundEvents.BLOCK_NOTE_HARP, SoundCategory.PLAYERS, 1.0F, 0.8F + i * 0.25F);
-            }
-        }
-        p.getCooldownTracker().setCooldown(this, COOLDOWN);
-        return new ActionResult<>(EnumActionResult.SUCCESS, s);
+    public net.minecraft.util.EnumActionResult onItemUse(EntityPlayer player, World world, net.minecraft.util.math.BlockPos pos, EnumHand hand,
+                                                        net.minecraft.util.EnumFacing facing, float hitX, float hitY, float hitZ) {
+        return Trophies.place(player, world, pos, facing, hand);
     }
+
 
     @Override
     public EnumRarity getRarity(ItemStack stack) {

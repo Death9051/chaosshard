@@ -33,32 +33,11 @@ public class ItemVelmorStaff extends Item {
     }
 
     @Override
-    public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer p, EnumHand hand) {
-        ItemStack s = p.getHeldItem(hand);
-        if (!world.isRemote) {
-            Vec3d eye = new Vec3d(p.posX, p.posY + p.getEyeHeight(), p.posZ);
-            Vec3d end = eye.add(p.getLookVec().scale(RANGE));
-            RayTraceResult hit = world.rayTraceBlocks(eye, end, false, true, false);
-            Vec3d to = end;
-            if (hit != null && hit.typeOfHit == RayTraceResult.Type.BLOCK) {
-                BlockPos b = hit.getBlockPos().offset(hit.sideHit);
-                to = new Vec3d(b.getX() + 0.5, b.getY(), b.getZ() + 0.5);
-            } else {
-                to = to.subtract(0, p.getEyeHeight(), 0);
-            }
-            BlockPos feet = new BlockPos(to);
-            if (!world.isAirBlock(feet) || !world.isAirBlock(feet.up())) {
-                return new ActionResult<>(EnumActionResult.FAIL, s);
-            }
-            ((WorldServer) world).spawnParticle(EnumParticleTypes.PORTAL, p.posX, p.posY + 1, p.posZ, 30, 0.3, 0.8, 0.3, 0.5);
-            p.setPositionAndUpdate(to.x, to.y, to.z);
-            p.fallDistance = 0;
-            ((WorldServer) world).spawnParticle(EnumParticleTypes.PORTAL, p.posX, p.posY + 1, p.posZ, 30, 0.3, 0.8, 0.3, 0.5);
-            world.playSound(null, p.getPosition(), SoundEvents.ENTITY_ENDERMEN_TELEPORT, SoundCategory.PLAYERS, 0.8F, 1.3F);
-        }
-        p.getCooldownTracker().setCooldown(this, COOLDOWN);
-        return new ActionResult<>(EnumActionResult.SUCCESS, s);
+    public net.minecraft.util.EnumActionResult onItemUse(EntityPlayer player, World world, net.minecraft.util.math.BlockPos pos, EnumHand hand,
+                                                        net.minecraft.util.EnumFacing facing, float hitX, float hitY, float hitZ) {
+        return Trophies.place(player, world, pos, facing, hand);
     }
+
 
     @Override
     public EnumRarity getRarity(ItemStack stack) {

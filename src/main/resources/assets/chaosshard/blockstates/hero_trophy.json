@@ -1,0 +1,19 @@
+{
+ "variants": {
+  "hero=0": {
+   "model": "chaosshard:hero_trophy"
+  },
+  "hero=1": {
+   "model": "chaosshard:hero_trophy"
+  },
+  "hero=2": {
+   "model": "chaosshard:hero_trophy"
+  },
+  "hero=3": {
+   "model": "chaosshard:hero_trophy"
+  },
+  "hero=4": {
+   "model": "chaosshard:hero_trophy"
+  }
+ }
+}

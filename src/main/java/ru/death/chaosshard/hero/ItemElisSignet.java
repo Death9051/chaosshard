@@ -33,26 +33,11 @@ public class ItemElisSignet extends Item {
     }
 
     @Override
-    public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer p, EnumHand hand) {
-        ItemStack s = p.getHeldItem(hand);
-        if (!world.isRemote) {
-            for (int i = 0; i < 2; i++) {
-                EntityOrderKnight k = new EntityOrderKnight(world);
-                k.setup(i == 0 ? EntityOrderKnight.CAPTAIN : EntityOrderKnight.GUARD);
-                k.removeTag(EntityOrderKnight.TAG);
-                k.setCustomNameTag(TextFormatting.GOLD + I18n.translateToLocal("chaosshard.hero.elis.royal"));
-                k.getEntityData().setUniqueId(Servants.TAG_OWNER, p.getUniqueID());
-                k.getEntityData().setLong(UNTIL, world.getTotalWorldTime() + SERVICE);
-                double a = i * Math.PI + world.rand.nextDouble();
-                k.setLocationAndAngles(p.posX + Math.cos(a) * 2, p.posY, p.posZ + Math.sin(a) * 2, p.rotationYaw, 0);
-                world.spawnEntity(k);
-                ((WorldServer) world).spawnParticle(EnumParticleTypes.FIREWORKS_SPARK, k.posX, k.posY + 1, k.posZ, 30, 0.3, 0.8, 0.3, 0.05);
-            }
-            world.playSound(null, p.getPosition(), SoundEvents.BLOCK_NOTE_BASS, SoundCategory.PLAYERS, 2.0F, 0.6F);
-        }
-        p.getCooldownTracker().setCooldown(this, COOLDOWN);
-        return new ActionResult<>(EnumActionResult.SUCCESS, s);
+    public net.minecraft.util.EnumActionResult onItemUse(EntityPlayer player, World world, net.minecraft.util.math.BlockPos pos, EnumHand hand,
+                                                        net.minecraft.util.EnumFacing facing, float hitX, float hitY, float hitZ) {
+        return Trophies.place(player, world, pos, facing, hand);
     }
+
 
     @Override
     public EnumRarity getRarity(ItemStack stack) {

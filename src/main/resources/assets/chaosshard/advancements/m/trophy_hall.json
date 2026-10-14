@@ -1,0 +1,23 @@
+{
+ "parent": "chaosshard:m/root",
+ "display": {
+  "icon": {
+   "item": "minecraft:end_rod"
+  },
+  "title": {
+   "translate": "advancement.chaosshard.m.trophy_hall.title"
+  },
+  "description": {
+   "translate": "advancement.chaosshard.m.trophy_hall.desc"
+  },
+  "frame": "task",
+  "show_toast": false,
+  "announce_to_chat": false,
+  "hidden": true
+ },
+ "criteria": {
+  "done": {
+   "trigger": "minecraft:impossible"
+  }
+ }
+}

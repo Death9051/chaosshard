@@ -1,5 +1,9 @@
 package ru.death.chaosshard.hero;
 
+import net.minecraft.entity.player.EntityPlayer;
+
+import net.minecraft.util.EnumHand;
+
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.MobEffects;
@@ -32,6 +36,12 @@ public class ItemKaelBlade extends ItemSword {
             target.addPotionEffect(new PotionEffect(MobEffects.GLOWING, 100, 0));
         }
         return super.hitEntity(stack, target, attacker);
+    }
+
+    @Override
+    public net.minecraft.util.EnumActionResult onItemUse(EntityPlayer player, World world, net.minecraft.util.math.BlockPos pos, EnumHand hand,
+                                                        net.minecraft.util.EnumFacing facing, float hitX, float hitY, float hitZ) {
+        return Trophies.place(player, world, pos, facing, hand);
     }
 
     @Override

@@ -60,6 +60,8 @@ public class ClientProxy extends CommonProxy {
         MagicKeys.register();
         MinecraftForge.EVENT_BUS.register(new MagicKeys());
         MinecraftForge.EVENT_BUS.register(new OreSight());
+        net.minecraftforge.fml.client.registry.ClientRegistry.bindTileEntitySpecialRenderer(
+                ru.death.chaosshard.hero.TileTrophy.class, new ru.death.chaosshard.hero.client.TrophyRenderer());
         MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.cutscene.client.CutsceneClient());
         if (ChaosShard.astralLoaded && ChaosConfig.stars.enabled) {
             MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.stars.client.AstralSkyClient());

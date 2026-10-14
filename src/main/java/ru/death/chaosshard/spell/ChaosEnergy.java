@@ -73,6 +73,9 @@ public class ChaosEnergy {
             if (ru.death.chaosshard.stars.Perks.night(player)) {
                 regen *= 1.25;
             }
+            if (ru.death.chaosshard.hero.TrophyData.has(player, ru.death.chaosshard.hero.Lightbearer.VELMOR)) {
+                regen *= 1.25;   // Посох Вельмора в Логове: тайное знание
+            }
             player.getEntityData().setFloat(TAG, (float) Math.min(max, now + regen));
         }
         int key = (int) get(player) * 1000 + max;

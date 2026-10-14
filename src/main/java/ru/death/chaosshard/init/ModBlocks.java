@@ -30,6 +30,7 @@ public final class ModBlocks {
     public static Block CHALK;
     /** Сегменты выросшего Якоря (без предмета). */
     public static Block ANCHOR_PART;
+    public static Block TROPHY;
     public static Block RITUAL_BOWL;
     public static Block STAR_PUMP;
     public static Block DEFILED_GENERATOR;
@@ -119,6 +120,12 @@ public final class ModBlocks {
         ANCHOR_PART.setRegistryName(Tags.MOD_ID, "anchor_part");
         ANCHOR_PART.setTranslationKey(Tags.MOD_ID + ".chaos_anchor");
         event.getRegistry().register(ANCHOR_PART);
+        TROPHY = new ru.death.chaosshard.hero.BlockTrophy();
+        TROPHY.setRegistryName(Tags.MOD_ID, "hero_trophy");
+        TROPHY.setTranslationKey(Tags.MOD_ID + ".hero_trophy");
+        event.getRegistry().register(TROPHY);
+        net.minecraftforge.fml.common.registry.GameRegistry.registerTileEntity(ru.death.chaosshard.hero.TileTrophy.class,
+                new net.minecraft.util.ResourceLocation(Tags.MOD_ID, "hero_trophy"));
     }
 
     @SubscribeEvent

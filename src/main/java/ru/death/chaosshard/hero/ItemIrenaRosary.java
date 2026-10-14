@@ -31,25 +31,11 @@ public class ItemIrenaRosary extends Item {
     }
 
     @Override
-    public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer p, EnumHand hand) {
-        ItemStack s = p.getHeldItem(hand);
-        if (!world.isRemote) {
-            p.heal(8.0F);
-            List<PotionEffect> bad = new ArrayList<>();
-            for (PotionEffect e : p.getActivePotionEffects()) {
-                if (e.getPotion().isBadEffect()) {
-                    bad.add(e);
-                }
-            }
-            for (PotionEffect e : bad) {
-                p.removePotionEffect(e.getPotion());
-            }
-            ((WorldServer) world).spawnParticle(EnumParticleTypes.HEART, p.posX, p.posY + 1.8, p.posZ, 6, 0.4, 0.3, 0.4, 0.0);
-            world.playSound(null, p.getPosition(), SoundEvents.BLOCK_NOTE_BELL, SoundCategory.PLAYERS, 1.0F, 1.4F);
-        }
-        p.getCooldownTracker().setCooldown(this, COOLDOWN);
-        return new ActionResult<>(EnumActionResult.SUCCESS, s);
+    public net.minecraft.util.EnumActionResult onItemUse(EntityPlayer player, World world, net.minecraft.util.math.BlockPos pos, EnumHand hand,
+                                                        net.minecraft.util.EnumFacing facing, float hitX, float hitY, float hitZ) {
+        return Trophies.place(player, world, pos, facing, hand);
     }
+
 
     @Override
     public EnumRarity getRarity(ItemStack stack) {
