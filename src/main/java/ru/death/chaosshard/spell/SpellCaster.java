@@ -690,7 +690,7 @@ public final class SpellCaster {
         ws.spawnParticle(EnumParticleTypes.DRAGON_BREATH, at.x, at.y, at.z, 60, 1.2, 0.8, 1.2, 0.03);
         p.world.playSound(null, new BlockPos(at), SoundEvents.ENTITY_GENERIC_EXPLODE, SoundCategory.PLAYERS, 0.8F, 1.3F);
         int n = 0;
-        for (EntityLivingBase e : p.world.getEntitiesWithinAABB(EntityLivingBase.class, new AxisAlignedBB(at, at).grow(3),
+        for (EntityLivingBase e : p.world.getEntitiesWithinAABB(EntityLivingBase.class, new AxisAlignedBB(at.x, at.y, at.z, at.x, at.y, at.z).grow(3),
                 x -> x != p && x.isEntityAlive() && !Servants.isServantOf(x, p.getUniqueID()) && !(x instanceof EntityPlayer))) {
             hit(p, e, dmg * 0.8F);
             n++;
