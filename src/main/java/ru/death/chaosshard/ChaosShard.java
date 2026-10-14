@@ -159,6 +159,10 @@ public class ChaosShard {
     @Mod.EventHandler
     public void postInit(FMLPostInitializationEvent event) {
         proxy.postInit(event);
+        if (Loader.isModLoaded("tconstruct") && ChaosConfig.compat.tinkers) {
+            // сплавы в плавильне: жидкости других модов (платина, кровь, звёздный металл) к этому времени уже есть
+            ru.death.chaosshard.compat.tinkers.TinkersCompat.postInit();
+        }
     }
 
     /** -Dchaosshard.autotest=true: сразу после старта сервера — автотест, затем выключение (для CI). */
