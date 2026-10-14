@@ -622,7 +622,7 @@ public final class AutoTest {
         final BlockPos[] specA = new BlockPos[1];
         final net.minecraft.entity.EntityLiving[] specMob = new net.minecraft.entity.EntityLiving[1];
         step("путь не выбрать до 3-го уровня, на 3-м — можно", () -> {
-            BlockPos at = ow.getHeight(anchorPos.add(-320, 0, 0));
+            BlockPos at = ow.getHeight(anchorPos.add(-64, 0, 40));   // в спавн-чанках: там твари живут и без игрока
             ow.setBlockState(at.down(), net.minecraft.init.Blocks.STONE.getDefaultState(), 3);
             ow.setBlockState(at, ModBlocks.CHAOS_ANCHOR.getDefaultState(), 3);
             TileAnchor t = (TileAnchor) ow.getTileEntity(at);

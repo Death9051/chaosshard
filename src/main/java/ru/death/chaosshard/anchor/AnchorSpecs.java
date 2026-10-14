@@ -284,9 +284,12 @@ public final class AnchorSpecs {
         World w = a.getWorld();
         Random r = w.rand;
         int rad = Math.max(8, a.radius());
-        for (int tries = 0; tries < 40; tries++) {
+        for (int tries = 0; tries < 80; tries++) {
             int x = a.getPos().getX() + r.nextInt(rad * 2 + 1) - rad;
             int z = a.getPos().getZ() + r.nextInt(rad * 2 + 1) - rad;
+            if (!w.isBlockLoaded(new BlockPos(x, 0, z))) {
+                continue;
+            }
             BlockPos top = w.getHeight(new BlockPos(x, 0, z));
             if (top.getY() < 16) {
                 continue;
@@ -497,7 +500,9 @@ public final class AnchorSpecs {
             m.onInitialSpawn(w.getDifficultyForLocation(at), null);
             m.enablePersistence();
             m.getEntityData().setLong(TAG_FIELD, c.toLong());
-            w.spawnEntity(m);
+            if (!w.spawnEntity(m)) {
+                return null;
+            }
             w.spawnParticle(EnumParticleTypes.SPELL_WITCH, m.posX, m.posY + 1, m.posZ, 10, 0.3, 0.5, 0.3, 0.02);
             return m;
         }
