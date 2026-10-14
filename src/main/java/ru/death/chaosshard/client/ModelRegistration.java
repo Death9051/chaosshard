@@ -35,7 +35,10 @@ public final class ModelRegistration {
             ModelLoader.setCustomModelResourceLocation(ru.death.chaosshard.init.ModItems.HERO_ECHO, h.ordinal(),
                     new ModelResourceLocation(Tags.MOD_ID + ":hero_echo_" + h.id(), "inventory"));
         }
-        ru.death.chaosshard.compat.body.BodyModels.register();
+        // BodyModels тянет класс импланта (он наследует интерфейс Cyberware) — трогать только при Cyberware
+        if (ru.death.chaosshard.compat.body.Body.cyber()) {
+            ru.death.chaosshard.compat.body.BodyModels.register();
+        }
     }
 
     private ModelRegistration() {
