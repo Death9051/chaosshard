@@ -424,7 +424,7 @@ public final class SpellCaster {
                 list.add(into.getAxis() == EnumFacing.Axis.Y ? q.offset(p.getHorizontalFacing()) : q.down());
             }
         } else {
-            int r = depth > 0 ? 2 : 1;
+            int r = (depth > 0 ? 2 : 1) + SpellMods.area(p, Spell.RIFT);
             for (BlockPos q : BlockPos.getAllInBox(pos.add(-r, -r, -r), pos.add(r, r, r))) {
                 list.add(q.toImmutable());
             }
@@ -787,7 +787,7 @@ public final class SpellCaster {
                 status(player, new TextComponentTranslation("chaosshard.spell.locked", spell.minThread));
                 return false;
             }
-            if (ChaosEnergy.get(player) < cost(player, spell)) {
+            if (ChaosEnergy.get(player) + SpellMods.extraEnergy(player, spell) < cost(player, spell)) {
                 status(player, new TextComponentTranslation("chaosshard.spell.no_energy", cost(player, spell), (int) ChaosEnergy.get(player)));
                 return false;
             }
@@ -805,10 +805,13 @@ public final class SpellCaster {
             status(player, new TextComponentTranslation("chaosshard.spell.fizzle"));
             return;
         }
+        boolean free = false;
         if (!player.isCreative()) {
-            ChaosEnergy.spend(player, cost);
+            free = SpellMods.pay(player, spell, cost);
         }
-        setCooldown(player, spell);
+        if (!free) {
+            setCooldown(player, spell);
+        }
         SpellMods.after(player, spell, cost);
         ru.death.chaosshard.quest.Milestones.grant(player, ru.death.chaosshard.quest.Milestones.SPELL);
         World world = player.world;

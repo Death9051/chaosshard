@@ -1,0 +1,11 @@
+{
+ "conditions": [{"type": "forge:mod_loaded", "modid": "astralsorcery"}],
+ "type": "minecraft:crafting_shapeless",
+ "ingredients": [
+  {"item": "chaosshard:chaos_stone"}, {"item": "chaosshard:chaos_stone"},
+  {"item": "astralsorcery:itemrockcrystalsimple"},
+  {"item": "minecraft:quartz"}, {"item": "minecraft:quartz"},
+  {"item": "chaosshard:chaos_essence"}
+ ],
+ "result": {"item": "chaosshard:crystal_chaos_ingot", "count": 2}
+}

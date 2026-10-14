@@ -1,0 +1,11 @@
+{
+ "conditions": [{"type": "forge:mod_loaded", "modid": "evilcraft"}],
+ "type": "minecraft:crafting_shapeless",
+ "ingredients": [
+  {"type": "forge:ore_dict", "ore": "ingotPlatinum"}, {"type": "forge:ore_dict", "ore": "ingotPlatinum"},
+  {"item": "evilcraft:hardened_blood_shard"}, {"item": "evilcraft:hardened_blood_shard"},
+  {"item": "evilcraft:hardened_blood_shard"}, {"item": "evilcraft:hardened_blood_shard"},
+  {"item": "chaosshard:chaos_essence"}, {"item": "chaosshard:chaos_essence"}
+ ],
+ "result": {"item": "chaosshard:blood_platinum_ingot", "count": 2}
+}

@@ -39,6 +39,7 @@ public final class ModItems {
     public static Item RIFT_KEY, ROYAL_CROWN;
     /** Печать Цитадели — домой, к своей Цитадели. */
     public static Item CITADEL_SIGIL;
+    public static Item CRYSTAL_CHAOS_INGOT, BLOOD_PLATINUM_INGOT, STARLIGHT_INGOT;
     /** Мел Хаоса — рисует знаки ритуального круга. */
     public static Item CHALK;
     /** Ключ обломка — вход в Испытание. */
@@ -88,6 +89,9 @@ public final class ModItems {
         CITADEL_SIGIL = add(new ru.death.chaosshard.lair.ItemCitadelSigil(), "citadel_sigil");
         CITADEL_SIGIL.setCreativeTab(ru.death.chaosshard.ChaosTab.TAB);
         DISTORTED_STARMETAL = add(new ru.death.chaosshard.item.ItemLore("chaosshard.distorted_starmetal.lore", true), "distorted_starmetal");
+        CRYSTAL_CHAOS_INGOT = add(new ru.death.chaosshard.item.ItemLore("chaosshard.crystal_chaos_ingot.lore", true), "crystal_chaos_ingot");
+        BLOOD_PLATINUM_INGOT = add(new ru.death.chaosshard.item.ItemLore("chaosshard.blood_platinum_ingot.lore", true), "blood_platinum_ingot");
+        STARLIGHT_INGOT = add(new ru.death.chaosshard.item.ItemLore("chaosshard.starlight_ingot.lore", true), "starlight_ingot");
         CHALK = add(new ru.death.chaosshard.ritual.ItemChalk(), "chaos_chalk");
         TRIAL_KEY = add(new ru.death.chaosshard.trial.ItemTrialKey(), "trial_key");
         DRAGON_SCALE = add(new ru.death.chaosshard.item.ItemLore("chaosshard.dragon_scale.lore", true), "dragon_scale");

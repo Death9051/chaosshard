@@ -24,7 +24,8 @@ public class ChaosEnergy {
     public static int max(EntityPlayer player) {
         int core = ru.death.chaosshard.compat.body.Body.hasCore(player) ? ChaosConfig.body.coreEnergy : 0;
         int perks = (ru.death.chaosshard.stars.Perks.spark(player) ? 10 : 0) + (ru.death.chaosshard.stars.Perks.well(player) ? 30 : 0);
-        return ChaosConfig.magic.energyBase + ChaosConfig.magic.energyPerLevel * ThreadBonus.level(player) + core + perks;
+        return ChaosConfig.magic.energyBase + ChaosConfig.magic.energyPerLevel * ThreadBonus.level(player) + core + perks
+                + SpellMods.maxEnergy(player);
     }
 
     public static float get(EntityPlayer player) {

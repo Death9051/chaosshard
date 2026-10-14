@@ -1,0 +1,10 @@
+{
+ "conditions": [{"type": "forge:mod_loaded", "modid": "astralsorcery"}],
+ "type": "minecraft:crafting_shapeless",
+ "ingredients": [
+  {"item": "astralsorcery:itemcraftingcomponent", "data": 1}, {"item": "astralsorcery:itemcraftingcomponent", "data": 1},
+  {"item": "astralsorcery:itemcraftingcomponent", "data": 2}, {"item": "astralsorcery:itemcraftingcomponent", "data": 2},
+  {"item": "chaosshard:chaos_essence"}, {"item": "chaosshard:chaos_essence"}
+ ],
+ "result": {"item": "chaosshard:starlight_ingot", "count": 2}
+}

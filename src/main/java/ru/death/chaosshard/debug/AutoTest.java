@@ -2168,6 +2168,48 @@ public final class AutoTest {
             me.setPosition(base.getX() + 0.5, base.getY() + 1, base.getZ() + 0.5);
         });
 
+        if (Loader.isModLoaded("tconstruct")) {
+            step("материалы Хаоса: уровни и модификаторы заклинаний", () -> {
+                java.util.List<slimeknights.tconstruct.library.materials.Material> mats = java.util.Arrays.asList(
+                        slimeknights.tconstruct.library.TinkerRegistry.getMaterial(ru.death.chaosshard.compat.tinkers.ChaosMaterials.BLOOD),
+                        slimeknights.tconstruct.library.TinkerRegistry.getMaterial(ru.death.chaosshard.compat.tinkers.ChaosMaterials.CRYSTAL),
+                        slimeknights.tconstruct.library.TinkerRegistry.getMaterial(ru.death.chaosshard.compat.tinkers.ChaosMaterials.CHAOS));
+                net.minecraft.item.ItemStack sword = slimeknights.tconstruct.tools.melee.TinkerMeleeWeapons.broadSword.buildItem(mats);
+                check(ru.death.chaosshard.compat.tinkers.ChaosMaterials.materials(sword).size() == 3, "в мече три материала Хаоса");
+                check(ru.death.chaosshard.compat.tinkers.ChaosMaterials.level(sword, ru.death.chaosshard.compat.tinkers.ChaosMaterials.CRYSTAL) == 1, "новый — 1-й уровень");
+                ru.death.chaosshard.compat.tinkers.ChaosMaterials.addXp(sword, 150, me);
+                check(ru.death.chaosshard.compat.tinkers.ChaosMaterials.level(sword, ru.death.chaosshard.compat.tinkers.ChaosMaterials.BLOOD) == 2, "опыт 150 — 2-й уровень");
+                me.setHeldItem(EnumHand.MAIN_HAND, sword);
+                me.setHeldItem(EnumHand.OFF_HAND, new net.minecraft.item.ItemStack(ru.death.chaosshard.init.ModItems.GRIMOIRE));
+                int base = ru.death.chaosshard.spell.ChaosEnergy.max(me);
+                me.setHeldItem(EnumHand.OFF_HAND, net.minecraft.item.ItemStack.EMPTY);
+                int without = ru.death.chaosshard.spell.ChaosEnergy.max(me);
+                me.setHeldItem(EnumHand.OFF_HAND, new net.minecraft.item.ItemStack(ru.death.chaosshard.init.ModItems.GRIMOIRE));
+                check(base - without == 20, "Хаосит 2-го уровня: +20 к запасу энергии (" + without + " → " + base + ")");
+                ru.death.chaosshard.compat.tinkers.ChaosMaterials.setStore(sword, 100);
+                check(ru.death.chaosshard.compat.tinkers.ChaosMaterials.store(sword) == 40, "кристалл держит 20 за уровень: " + ru.death.chaosshard.compat.tinkers.ChaosMaterials.store(sword));
+                net.minecraft.entity.monster.EntityZombie z = new net.minecraft.entity.monster.EntityZombie(ow);
+                z.setPosition(me.posX + 3, me.posY, me.posZ);
+                ow.spawnEntity(z);
+                ru.death.chaosshard.spell.SpellCaster.clearCooldowns(me);
+                ru.death.chaosshard.spell.ChaosEnergy.set(me, 50);
+                ru.death.chaosshard.spell.SpellCaster.castAt(me, ru.death.chaosshard.spell.Spell.BOLT, null, EnumFacing.UP, z, null);
+                check(ru.death.chaosshard.compat.tinkers.ChaosMaterials.store(sword) < 40 && ru.death.chaosshard.spell.ChaosEnergy.get(me) >= 49,
+                        "заклинание взяло энергию из кристалла: " + ru.death.chaosshard.compat.tinkers.ChaosMaterials.store(sword));
+                ru.death.chaosshard.compat.tinkers.ChaosMaterials.setStore(sword, 0);
+                ru.death.chaosshard.spell.SpellCaster.clearCooldowns(me);
+                ru.death.chaosshard.spell.ChaosEnergy.set(me, 0);
+                me.setHealth(me.getMaxHealth());
+                boolean ok = ru.death.chaosshard.spell.SpellCaster.castAt(me, ru.death.chaosshard.spell.Spell.BOLT, null, EnumFacing.UP, z, null);
+                check(ok && me.getHealth() < me.getMaxHealth(), "Кровавая платина: без энергии заплатил кровью, здоровье " + me.getHealth());
+                z.setDead();
+                me.setHealth(me.getMaxHealth());
+                me.setHeldItem(EnumHand.MAIN_HAND, net.minecraft.item.ItemStack.EMPTY);
+                me.setHeldItem(EnumHand.OFF_HAND, net.minecraft.item.ItemStack.EMPTY);
+                ru.death.chaosshard.spell.SpellCaster.clearCooldowns(me);
+            });
+        }
+
         section("Цитадель Логова");
         step("Цитадель жжёт врагов, чинит снаряжение, не пускает тварей", () -> {
             BlockPos lp = base.add(40, 1, -40);

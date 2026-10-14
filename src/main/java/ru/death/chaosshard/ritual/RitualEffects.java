@@ -199,6 +199,11 @@ public final class RitualEffects {
                 return ru.death.chaosshard.act5.Crown.omen(p, world, pos);
             case SCENT:
                 return ru.death.chaosshard.plans.MinorPlans.scent(p, world, pos);
+            case MATERIAL_TEMPER:
+                if (!net.minecraftforge.fml.common.Loader.isModLoaded("tconstruct")) {
+                    return false;
+                }
+                return ru.death.chaosshard.compat.tinkers.ChaosMaterials.temper(p);
             case SPELL_RESET:
                 ru.death.chaosshard.spell.SpellData.reset(p);
                 p.sendMessage(ru.death.chaosshard.breach.Breach.grimoire("chaosshard.ritual.spell_reset.done"));
