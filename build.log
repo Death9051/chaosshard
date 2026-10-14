@@ -35,14 +35,14 @@ Using cached decompiled jar from /home/runner/.gradle/caches/retro_futura_gradle
 
 > Task :cleanupDecompSrgJar
 Fixup stage 1 - applying FF patches
-  Stage 1 took 445 ms
+  Stage 1 took 452 ms
 Fixup stage 2 - applying MCP patches
-  Stage 2 took 180 ms
+  Stage 2 took 167 ms
 Fixup stage 3 - applying MCP cleanup
-  Stage 3 took 8101 ms
+  Stage 3 took 6501 ms
 Fixup stage 4 - injecting package-info
   Injected 119 package-infos
-  Stage 4 took 4 ms
+  Stage 4 took 5 ms
 Saving the fixed-up jar
 
 > Task :patchDecompiledJar
@@ -86,15 +86,20 @@ Note: Supported obfuscation types: ObfuscationServiceMCP supports [searge,notch]
 Note: Writing refmap to /home/runner/work/chaosshard/chaosshard/build/tmp/mixins/mixins.chaosshard.refmap.json
 Note: Writing refmap to /home/runner/work/chaosshard/chaosshard/build/tmp/mixins/mixins.chaosshard.refmap.json
 Note: Writing searge output SRGs to /home/runner/work/chaosshard/chaosshard/build/tmp/mixins/mixins.srg
-/home/runner/work/chaosshard/chaosshard/src/main/java/ru/death/chaosshard/spell/SpellAccel.java:4: error: cannot find symbol
-import net.minecraft.tileentity.ITickable;
-                               ^
-  symbol:   class ITickable
-  location: package net.minecraft.tileentity
 Note: Writing refmap to /home/runner/work/chaosshard/chaosshard/build/tmp/mixins/mixins.chaosshard.refmap.json
 Note: Writing refmap to /home/runner/work/chaosshard/chaosshard/build/tmp/mixins/mixins.chaosshard.refmap.json
 Note: Writing searge output SRGs to /home/runner/work/chaosshard/chaosshard/build/tmp/mixins/mixins.srg
-1 error
+/home/runner/work/chaosshard/chaosshard/src/main/java/ru/death/chaosshard/spell/SpellCaster.java:610: error: reference to spawnParticle is ambiguous
+        ws.spawnParticle(EnumParticleTypes.SWEEP_ATTACK, t.posX, t.posY + t.height / 2, t.posZ, 1, 0, 0, 0, 0);
+          ^
+  both method spawnParticle(net.minecraft.util.EnumParticleTypes,double,double,double,double,double,double,int...) in net.minecraft.world.World and method spawnParticle(net.minecraft.util.EnumParticleTypes,double,double,double,int,double,double,double,double,int...) in net.minecraft.world.WorldServer match
+/home/runner/work/chaosshard/chaosshard/src/main/java/ru/death/chaosshard/spell/SpellCaster.java:689: error: reference to spawnParticle is ambiguous
+        ws.spawnParticle(EnumParticleTypes.EXPLOSION_LARGE, at.x, at.y, at.z, 1, 0, 0, 0, 0);
+          ^
+  both method spawnParticle(net.minecraft.util.EnumParticleTypes,double,double,double,double,double,double,int...) in net.minecraft.world.World and method spawnParticle(net.minecraft.util.EnumParticleTypes,double,double,double,int,double,double,double,double,int...) in net.minecraft.world.WorldServer match
+Note: Some input files use or override a deprecated API.
+Note: Recompile with -Xlint:deprecation for details.
+2 errors
 
 > Task :compileJava FAILED
 
@@ -106,7 +111,7 @@ FAILURE: Build failed with an exception.
 Execution failed for task ':compileJava' (registered by plugin class 'org.gradle.api.plugins.JavaBasePlugin').
 > Compilation failed; see the compiler output below.
   Note: SpongePowered MIXIN Annotation Processor Version=0.8.7
-  1 error
+  2 errors
 
 * Try:
 > Run with --scan to get full insights from a Build Scan (powered by Develocity).
@@ -183,15 +188,20 @@ Note: Supported obfuscation types: ObfuscationServiceMCP supports [searge,notch]
 Note: Writing refmap to /home/runner/work/chaosshard/chaosshard/build/tmp/mixins/mixins.chaosshard.refmap.json
 Note: Writing refmap to /home/runner/work/chaosshard/chaosshard/build/tmp/mixins/mixins.chaosshard.refmap.json
 Note: Writing searge output SRGs to /home/runner/work/chaosshard/chaosshard/build/tmp/mixins/mixins.srg
-/home/runner/work/chaosshard/chaosshard/src/main/java/ru/death/chaosshard/spell/SpellAccel.java:4: error: cannot find symbol
-import net.minecraft.tileentity.ITickable;
-                               ^
-  symbol:   class ITickable
-  location: package net.minecraft.tileentity
 Note: Writing refmap to /home/runner/work/chaosshard/chaosshard/build/tmp/mixins/mixins.chaosshard.refmap.json
 Note: Writing refmap to /home/runner/work/chaosshard/chaosshard/build/tmp/mixins/mixins.chaosshard.refmap.json
 Note: Writing searge output SRGs to /home/runner/work/chaosshard/chaosshard/build/tmp/mixins/mixins.srg
-1 error
+/home/runner/work/chaosshard/chaosshard/src/main/java/ru/death/chaosshard/spell/SpellCaster.java:610: error: reference to spawnParticle is ambiguous
+        ws.spawnParticle(EnumParticleTypes.SWEEP_ATTACK, t.posX, t.posY + t.height / 2, t.posZ, 1, 0, 0, 0, 0);
+          ^
+  both method spawnParticle(net.minecraft.util.EnumParticleTypes,double,double,double,double,double,double,int...) in net.minecraft.world.World and method spawnParticle(net.minecraft.util.EnumParticleTypes,double,double,double,int,double,double,double,double,int...) in net.minecraft.world.WorldServer match
+/home/runner/work/chaosshard/chaosshard/src/main/java/ru/death/chaosshard/spell/SpellCaster.java:689: error: reference to spawnParticle is ambiguous
+        ws.spawnParticle(EnumParticleTypes.EXPLOSION_LARGE, at.x, at.y, at.z, 1, 0, 0, 0, 0);
+          ^
+  both method spawnParticle(net.minecraft.util.EnumParticleTypes,double,double,double,double,double,double,int...) in net.minecraft.world.World and method spawnParticle(net.minecraft.util.EnumParticleTypes,double,double,double,int,double,double,double,double,int...) in net.minecraft.world.WorldServer match
+Note: Some input files use or override a deprecated API.
+Note: Recompile with -Xlint:deprecation for details.
+2 errors
 	at org.gradle.api.internal.tasks.compile.JdkJavaCompiler.execute(JdkJavaCompiler.java:88)
 	at org.gradle.api.internal.tasks.compile.JdkJavaCompiler.execute(JdkJavaCompiler.java:49)
 	at org.gradle.api.internal.tasks.compile.daemon.CompilerWorkAction.execute(CompilerWorkAction.java:52)
@@ -225,5 +235,5 @@ You can use '--warning-mode all' to show the individual deprecation warnings and
 
 For more on this, please refer to https://docs.gradle.org/9.7.0/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
 
-BUILD FAILED in 1m 46s
+BUILD FAILED in 1m 43s
 17 actionable tasks: 17 executed
