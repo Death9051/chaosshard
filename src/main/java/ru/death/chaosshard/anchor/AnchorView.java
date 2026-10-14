@@ -19,6 +19,16 @@ import java.util.UUID;
 public final class AnchorView {
 
     public static final int SCRY = 96;
+    /** Карта местности меняется редко: обновляется раз в 10 секунд, существа — каждый раз. */
+    private static final int COLOR_TTL = 200;
+    private static final java.util.Map<Long, byte[]> COLORS = new java.util.HashMap<>();
+    private static final java.util.Map<Long, long[]> STAMP = new java.util.HashMap<>();
+
+    /** Сбросить кэш (выход из мира). */
+    public static void clear() {
+        COLORS.clear();
+        STAMP.clear();
+    }
 
     /** Тип точки: 0 — враг, 1 — отряд, 2 — чужой игрок, 3 — свой (ты и слуги). */
     private static int type(EntityLivingBase e, UUID owner) {
@@ -65,15 +75,34 @@ public final class AnchorView {
     public static NBTTagCompound scry(WorldServer w, BlockPos center, UUID owner) {
         NBTTagCompound t = new NBTTagCompound();
         int x0 = center.getX() - SCRY / 2, z0 = center.getZ() - SCRY / 2;
-        byte[] c = new byte[SCRY * SCRY];
-        BlockPos.MutableBlockPos m = new BlockPos.MutableBlockPos();
-        for (int dz = 0; dz < SCRY; dz++) {
-            for (int dx = 0; dx < SCRY; dx++) {
-                int x = x0 + dx, z = z0 + dz;
-                int y = w.getHeight(x, z) - 1;
-                IBlockState s = w.getBlockState(m.setPos(x, Math.max(0, y), z));
-                c[dz * SCRY + dx] = (byte) s.getMapColor(w, m).colorIndex;
+        long key = center.toLong() ^ ((long) w.provider.getDimension() << 58);
+        byte[] c = null;
+        long now = w.getTotalWorldTime();
+        long[] stamp = STAMP.get(key);
+        if (stamp != null && now - stamp[0] < COLOR_TTL) {
+            c = COLORS.get(key);
+        }
+        if (c == null) {
+            // карту берём из чанков напрямую: Якорь сети обычно в незагруженных землях,
+            // а getHeight у незагруженного чанка даёт 0 (на первом кадре был бы бедрок)
+            c = new byte[SCRY * SCRY];
+            BlockPos.MutableBlockPos m = new BlockPos.MutableBlockPos();
+            for (int dz = 0; dz < SCRY; dz++) {
+                for (int dx = 0; dx < SCRY; dx++) {
+                    int x = x0 + dx, z = z0 + dz;
+                    net.minecraft.world.chunk.Chunk ch = w.getChunk(x >> 4, z >> 4);
+                    int y = ch.getHeightValue(x & 15, z & 15) - 1;
+                    m.setPos(x, Math.max(0, y), z);
+                    IBlockState s = ch.getBlockState(m);
+                    c[dz * SCRY + dx] = (byte) s.getMapColor(w, m).colorIndex;
+                }
             }
+            if (COLORS.size() > 16) {
+                COLORS.clear();
+                STAMP.clear();
+            }
+            COLORS.put(key, c);
+            STAMP.put(key, new long[]{now});
         }
         t.setByteArray("c", c);
         t.setInteger("x0", x0);

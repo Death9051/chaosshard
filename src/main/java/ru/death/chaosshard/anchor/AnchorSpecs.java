@@ -205,10 +205,13 @@ public final class AnchorSpecs {
         for (EntityLivingBase e : a.getWorld().getEntitiesWithinAABB(EntityLivingBase.class, land(a),
                 x -> inLand(a, x) && (enemy(x, o) || (x instanceof EntityPlayer && o != null && !o.equals(x.getUniqueID())
                         && !(x instanceof FakePlayer))))) {
-            if (!e.getEntityData().getBoolean(TAG_SEEN)) {
-                e.getEntityData().setBoolean(TAG_SEEN, true);
+            // подсветка — при входе; ушёл с земли больше чем на полминуты и вернулся — снова
+            long now = a.getWorld().getTotalWorldTime();
+            long last = e.getEntityData().getLong(TAG_SEEN);
+            if (now - last > 600) {
                 e.addPotionEffect(new PotionEffect(MobEffects.GLOWING, 200, 0, true, false));
             }
+            e.getEntityData().setLong(TAG_SEEN, now);
         }
     }
 
@@ -713,6 +716,8 @@ public final class AnchorSpecs {
             ru.death.chaosshard.spell.ChaosEnergy.spend(p, cost);
         }
         List<EntityLiving> company = free ? Servants.near(p, 8) : java.util.Collections.emptyList();
+        // Якорь назначения обычно в незагруженных землях: без загрузки чанка высота — 0, и перенос — в бедрок
+        p.world.getChunk(to.add(2, 0, 0));
         BlockPos at = p.world.getHeight(to.add(2, 0, 0));
         ((WorldServer) p.world).spawnParticle(EnumParticleTypes.PORTAL, p.posX, p.posY + 1, p.posZ, 40, 0.4, 0.8, 0.4, 0.5);
         p.closeScreen();

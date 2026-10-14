@@ -319,6 +319,15 @@ public class EntityHero extends EntityMob implements ru.death.chaosshard.hero.Po
             return;
         }
         bossInfo.setPercent(getHealth() / getMaxHealth());
+        if (ticksExisted % 40 == 0) {
+            if (Pillars.stray(this)) {
+                ((WorldServer) world).spawnParticle(EnumParticleTypes.FIREWORKS_SPARK, posX, posY + 1, posZ, 30, 0.3, 0.8, 0.3, 0.05);
+                holdPeace = false;
+                setDead();
+                return;
+            }
+            Pillars.seen(this);
+        }
         if (scripted) {
             setAttackTarget(null);
             return;
@@ -527,6 +536,7 @@ public class EntityHero extends EntityMob implements ru.death.chaosshard.hero.Po
     private void blink(double x, double y, double z) {
         ((WorldServer) world).spawnParticle(EnumParticleTypes.PORTAL, posX, posY + 1, posZ, 40, 0.3, 0.8, 0.3, 0.6);
         setPositionAndUpdate(x, y, z);
+        Pillars.seen(this);
         ((WorldServer) world).spawnParticle(EnumParticleTypes.PORTAL, posX, posY + 1, posZ, 40, 0.3, 0.8, 0.3, 0.6);
         world.playSound(null, getPosition(), SoundEvents.ENTITY_ENDERMEN_TELEPORT, SoundCategory.HOSTILE, 1.0F, 1.2F);
     }
@@ -1051,5 +1061,27 @@ public class EntityHero extends EntityMob implements ru.death.chaosshard.hero.Po
     @Override
     protected net.minecraft.util.SoundEvent getDeathSound() {
         return SoundEvents.ENTITY_PLAYER_DEATH;
+    }
+
+    // ------------------------------------------------------------------ мирный режим
+    /** Мирный режим не уносит сюжетного противника: EntityMob в «Мирном» сам себя убирает. */
+    private boolean holdPeace;
+
+    @Override
+    public void onUpdate() {
+        holdPeace = !world.isRemote && world.getDifficulty() == net.minecraft.world.EnumDifficulty.PEACEFUL;
+        try {
+            super.onUpdate();
+        } finally {
+            holdPeace = false;
+        }
+    }
+
+    @Override
+    public void setDead() {
+        if (holdPeace && getHealth() > 0 && posY >= -64) {
+            return;
+        }
+        super.setDead();
     }
 }

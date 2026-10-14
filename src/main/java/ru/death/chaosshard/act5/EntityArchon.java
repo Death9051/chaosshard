@@ -382,4 +382,26 @@ public class EntityArchon extends EntityMob implements Pose.Posed {
         }
         bossInfo.setName(getDisplayName());
     }
+
+    // ------------------------------------------------------------------ мирный режим
+    /** Мирный режим не уносит сюжетного противника: EntityMob в «Мирном» сам себя убирает. */
+    private boolean holdPeace;
+
+    @Override
+    public void onUpdate() {
+        holdPeace = !world.isRemote && world.getDifficulty() == net.minecraft.world.EnumDifficulty.PEACEFUL;
+        try {
+            super.onUpdate();
+        } finally {
+            holdPeace = false;
+        }
+    }
+
+    @Override
+    public void setDead() {
+        if (holdPeace && getHealth() > 0 && posY >= -64) {
+            return;
+        }
+        super.setDead();
+    }
 }

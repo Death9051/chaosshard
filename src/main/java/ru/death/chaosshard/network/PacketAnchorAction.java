@@ -78,7 +78,16 @@ public class PacketAnchorAction implements IMessage {
                 }
                 break;
             case SCRY:
-                c.scry = m.arg < 0 ? null : BlockPos.fromLong(m.pos);
+                if (m.arg < 0) {
+                    c.scry = null;
+                } else {
+                    // смотреть можно только глазами Якорей своей сети
+                    BlockPos to = BlockPos.fromLong(m.pos);
+                    ru.death.chaosshard.anchor.AnchorData.Rec r = ru.death.chaosshard.anchor.AnchorData.get(a.getWorld()).rec(to);
+                    if (r != null && r.owner != null && r.owner.equals(a.getOwner())) {
+                        c.scry = to;
+                    }
+                }
                 break;
             case BORROW:
                 if (mine) {

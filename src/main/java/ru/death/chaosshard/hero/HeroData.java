@@ -27,6 +27,12 @@ public class HeroData extends WorldSavedData {
         public final java.util.List<Long> linked = new java.util.ArrayList<>();
         /** Святыни этих построек, когда они встали. */
         public final java.util.List<BlockPos> shrines = new java.util.ArrayList<>();
+        /** Где Светоч встал на Опоре (для ремонта, если он пропал); null — неизвестно. */
+        public BlockPos heroAt;
+        /** Где Светоча видели в последний раз (Вельмор умеет сбегать к печатям). */
+        public BlockPos lastSeen;
+        /** Сам Светоч этой Опоры. */
+        public java.util.UUID heroId;
 
         public BlockPos pos() {
             return new BlockPos(x, y, z);
@@ -95,6 +101,9 @@ public class HeroData extends WorldSavedData {
             for (long l : readLongs(t, "Shrines")) {
                 p.shrines.add(BlockPos.fromLong(l));
             }
+            p.heroAt = t.hasKey("HeroAt") ? BlockPos.fromLong(t.getLong("HeroAt")) : null;
+            p.lastSeen = t.hasKey("Seen") ? BlockPos.fromLong(t.getLong("Seen")) : null;
+            p.heroId = t.hasUniqueId("Hero") ? t.getUniqueId("Hero") : null;
         }
     }
 
@@ -117,6 +126,15 @@ public class HeroData extends WorldSavedData {
                 sh.add(b.toLong());
             }
             writeLongs(t, "Shrines", sh);
+            if (p.heroAt != null) {
+                t.setLong("HeroAt", p.heroAt.toLong());
+            }
+            if (p.lastSeen != null) {
+                t.setLong("Seen", p.lastSeen.toLong());
+            }
+            if (p.heroId != null) {
+                t.setUniqueId("Hero", p.heroId);
+            }
             tag.setTag(h.id(), t);
         }
         return tag;

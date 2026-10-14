@@ -1102,4 +1102,10 @@ public class TrialManager {
             event.setResult(Event.Result.DENY);
         }
     }
+
+    /** Сервер остановлен (в одиночной игре — выход из мира): ничего не тянется в следующий мир. */
+    public static void clearState() {
+        COLLAPSING.clear();
+        ECHOES.clear();
+    }
 }

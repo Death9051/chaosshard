@@ -706,4 +706,9 @@ public class ChallengeManager {
     private static IBlockState air() {
         return Blocks.AIR.getDefaultState();
     }
+
+    /** Сервер остановлен (в одиночной игре — выход из мира): ничего не тянется в следующий мир. */
+    public static void clearState() {
+        ACTIVE.clear();
+    }
 }

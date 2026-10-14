@@ -366,4 +366,10 @@ public class AltarRituals {
             event.setDroppedExperience(event.getDroppedExperience() * 2);
         }
     }
+
+    /** Сервер остановлен (в одиночной игре — выход из мира): ничего не тянется в следующий мир. */
+    public static void clearState() {
+        RUNNING.clear();
+        MOONS.clear();
+    }
 }

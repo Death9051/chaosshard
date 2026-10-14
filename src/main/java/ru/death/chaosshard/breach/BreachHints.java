@@ -145,4 +145,9 @@ public class BreachHints {
     private static void dust(WorldServer world, EntityPlayerMP player, double x, double y, double z, float r, float g, float b) {
         world.spawnParticle(player, EnumParticleTypes.REDSTONE, true, x, y, z, 0, r == 0 ? 0.001 : r, g, b, 1.0);
     }
+
+    /** Сервер остановлен (в одиночной игре — выход из мира): ничего не тянется в следующий мир. */
+    public static void clearState() {
+        HINTS.clear();
+    }
 }

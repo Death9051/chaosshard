@@ -394,6 +394,7 @@ public class TileAnchor extends TileEntity implements ITickable {
 
     /** Обновить кэш сетевых сил. */
     public void refreshNet() {
+        radiusTick = -1;
         boolean net = AnchorNet.isNetWorld(world) && owner != null;
         netAlpha = net ? AnchorNet.alphaLevel(world, owner) : 0;
         java.util.List<BlockPos> awake = net ? AnchorNet.awakeAlphas(world, owner) : java.util.Collections.emptyList();
@@ -406,9 +407,9 @@ public class TileAnchor extends TileEntity implements ITickable {
             checkBorrow();
         }
         for (AnchorSpec s : AnchorSpec.values()) {
-            if (AnchorNet.isNetWorld(world) && owner != null) {
-                netF[s.ordinal()] = AnchorNet.factor(world, owner, s, false);
-                netS[s.ordinal()] = AnchorNet.factor(world, owner, s, true);
+            if (net) {
+                netF[s.ordinal()] = AnchorNet.factor(world, owner, s, false, netAlpha);
+                netS[s.ordinal()] = AnchorNet.factor(world, owner, s, true, netAlpha);
             } else {
                 // вне сети работает только своя специализация
                 netF[s.ordinal()] = spec == s.ordinal() ? 1 : 0;
@@ -783,7 +784,23 @@ public class TileAnchor extends TileEntity implements ITickable {
         return base + (int) Math.round(6 * power(ItemAnchorSeal.Type.REACH) + 6 * netStage(AnchorSpec.ROOTS));
     }
 
+    /** Радиус за этот тик (его спрашивают на каждого моба: урон, смерть, появление). */
+    private int radiusCache = -1;
+    private long radiusTick = -1;
+
     public int radius() {
+        if (world != null && !world.isRemote) {
+            long t = world.getTotalWorldTime();
+            if (t != radiusTick) {
+                radiusTick = t;
+                radiusCache = computeRadius();
+            }
+            return radiusCache;
+        }
+        return computeRadius();
+    }
+
+    private int computeRadius() {
         return Math.min(radiusCap(), ChaosConfig.anchor.startRadius + corrupted / ChaosConfig.anchor.blocksPerRadius
                 + (int) Math.round(6 * power(ItemAnchorSeal.Type.REACH) + 6 * netStage(AnchorSpec.ROOTS)));
     }
@@ -903,6 +920,7 @@ public class TileAnchor extends TileEntity implements ITickable {
     private int shownLevel = 0;
 
     private void changed() {
+        radiusTick = -1;
         markDirty();
         if (world != null && !world.isRemote) {
             net.minecraft.block.state.IBlockState st = world.getBlockState(pos);
@@ -1143,6 +1161,7 @@ public class TileAnchor extends TileEntity implements ITickable {
             corrupted = max;
             AnchorNet.overflow(world, owner, pos, surplus);
         }
+        radiusTick = -1;
         markDirty();
         int after = level();
         for (int l = before + 1; l <= after; l++) {

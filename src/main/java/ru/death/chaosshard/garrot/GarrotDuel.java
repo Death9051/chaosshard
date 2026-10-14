@@ -556,4 +556,9 @@ public class GarrotDuel {
         }
         DUELS.clear();
     }
+
+    /** Сервер остановлен (в одиночной игре — выход из мира): ничего не тянется в следующий мир. */
+    public static void clearState() {
+        DUELS.clear();
+    }
 }

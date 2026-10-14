@@ -193,7 +193,8 @@ public final class AnchorNet {
             for (AnchorData.Rec r : alphaGrow) {
                 r.inbox += alphaEach;
             }
-            if (rest > 0 && alphaGrow.isEmpty()) {
+            // остаток от деления не теряется — в запас сети
+            if (rest > 0) {
                 d.reserve.merge(owner, rest, Integer::sum);
             }
         }
@@ -258,7 +259,11 @@ public final class AnchorNet {
     }
 
     public static double factor(World w, UUID owner, AnchorSpec spec, boolean stage) {
-        int al = alphaLevel(w, owner);
+        return factor(w, owner, spec, stage, alphaLevel(w, owner));
+    }
+
+    /** То же, когда уровень Альфы сети уже известен (al). */
+    public static double factor(World w, UUID owner, AnchorSpec spec, boolean stage, int al) {
         double f = stack(count(w, owner, spec, stage), al >= 8);
         return stage && al >= 10 ? f * 1.5 : f;
     }

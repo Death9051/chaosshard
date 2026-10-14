@@ -116,4 +116,9 @@ public class Resync {
             }
         }
     }
+
+    /** Сервер остановлен (в одиночной игре — выход из мира): ничего не тянется в следующий мир. */
+    public static void clearState() {
+        QUEUE.clear();
+    }
 }

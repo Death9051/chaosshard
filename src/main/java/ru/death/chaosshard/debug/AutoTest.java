@@ -202,6 +202,16 @@ public final class AutoTest {
         // без этого измерение без игроков выгружает их каждый тик.
         for (EntityPlayerMP f : TestHooks.FAKES.values()) {
             ((WorldServer) f.world).getPlayerChunkMap().updateMovingPlayer(f);
+            // ближние 5×5 чанков — сразу, а не в очередь: сущности тикают, только если вокруг них ±32 блока загружено
+            int cx = net.minecraft.util.math.MathHelper.floor(f.posX) >> 4, cz = net.minecraft.util.math.MathHelper.floor(f.posZ) >> 4;
+            net.minecraft.world.gen.ChunkProviderServer cp = ((WorldServer) f.world).getChunkProvider();
+            for (int dx = -2; dx <= 2; dx++) {
+                for (int dz = -2; dz <= 2; dz++) {
+                    if (!cp.chunkExists(cx + dx, cz + dz)) {
+                        cp.provideChunk(cx + dx, cz + dz);
+                    }
+                }
+            }
         }
         if (sleep > 0) {
             sleep--;
@@ -312,6 +322,7 @@ public final class AutoTest {
     private ru.death.chaosshard.hero.EntityHero velmor;
     private BlockPos sealHere;
     private ru.death.chaosshard.hero.EntityHero lian;
+    private UUID lostHero;
     private int challengeNit, challengeCorrupt;
 
     /** Подобрать с земли рядом сферу нужного ритуала (true — была). */
@@ -1915,11 +1926,25 @@ public final class AutoTest {
             check(!lian.singing() && lian.silent(), "песнь сбита, Лиан молчит");
             lian.startSong(ru.death.chaosshard.hero.EntityHero.SONG_CHOIR);
         });
-        sleep(ru.death.chaosshard.hero.EntityHero.SONG_LEN + 20);
+        until("хор допет", () -> {
+            if (lian == null) return true;
+            // объект мог устареть (чанк перезагрузился) — берём Лиана из мира заново
+            ru.death.chaosshard.hero.EntityHero now = ru.death.chaosshard.hero.Pillars.heroOf(ow, ru.death.chaosshard.hero.Lightbearer.LIAN,
+                    ru.death.chaosshard.hero.HeroData.get(ow).of(ru.death.chaosshard.hero.Lightbearer.LIAN));
+            if (now != null && now != lian) {
+                line("  (Лиан в мире — уже другой объект: чанк перезагружался)");
+                lian = now;
+            }
+            return !lian.singing();
+        }, ru.death.chaosshard.hero.EntityHero.SONG_LEN + 200);
         step("допетый хор — двое новых стражей; Лиан пал — лютня", () -> {
             if (lian == null) return;
             ru.death.chaosshard.hero.HeroData.Pillar p = ru.death.chaosshard.hero.HeroData.get(ow).of(ru.death.chaosshard.hero.Lightbearer.LIAN);
             int guards = ow.getEntitiesWithinAABB(ru.death.chaosshard.structure.EntityOrderKnight.class, lian.getEntityBoundingBox().grow(16)).size();
+            if (guards != 2) {
+                line("  Лиан: в мире " + ow.loadedEntityList.contains(lian) + ", мёртв " + lian.isDead + ", поёт " + lian.singing()
+                        + ", округа загружена " + ow.isAreaLoaded(lian.getPosition(), 32) + ", здоровье " + lian.getHealth());
+            }
             check(guards == 2, "хор привёл стражей: " + guards);
             kill(lian);
             check(p.state == ru.death.chaosshard.hero.HeroData.FALLEN, "Опора Лиана пала");
@@ -1939,6 +1964,22 @@ public final class AutoTest {
         });
         until("Опора Элис встала", () -> ru.death.chaosshard.hero.HeroData.get(ow).of(ru.death.chaosshard.hero.Lightbearer.ELIS).state
                 == ru.death.chaosshard.hero.HeroData.STANDING, 1500);
+        until("Элис на своей Опоре (или вернулась ремонтом)", () -> ru.death.chaosshard.hero.Pillars.heroOf(ow, ru.death.chaosshard.hero.Lightbearer.ELIS,
+                ru.death.chaosshard.hero.HeroData.get(ow).of(ru.death.chaosshard.hero.Lightbearer.ELIS)) != null, 400);
+        step("Светоч пропал — Опора ставит его снова", () -> {
+            ru.death.chaosshard.hero.HeroData.Pillar p = ru.death.chaosshard.hero.HeroData.get(ow).of(ru.death.chaosshard.hero.Lightbearer.ELIS);
+            ru.death.chaosshard.hero.EntityHero e = ru.death.chaosshard.hero.Pillars.heroOf(ow, ru.death.chaosshard.hero.Lightbearer.ELIS, p);
+            check(p.heroAt != null && p.heroId != null, "Опора помнит точку и Светоча");
+            if (e != null) {
+                lostHero = e.getUniqueID();
+                e.setDead();
+            }
+        });
+        until("Элис встала снова", () -> {
+            ru.death.chaosshard.hero.EntityHero e = ru.death.chaosshard.hero.Pillars.heroOf(ow, ru.death.chaosshard.hero.Lightbearer.ELIS,
+                    ru.death.chaosshard.hero.HeroData.get(ow).of(ru.death.chaosshard.hero.Lightbearer.ELIS));
+            return e != null && !e.getUniqueID().equals(lostHero);
+        }, 400);
         step("королевская стража прикрывает Элис", () -> {
             ru.death.chaosshard.hero.HeroData.Pillar p = ru.death.chaosshard.hero.HeroData.get(ow).of(ru.death.chaosshard.hero.Lightbearer.ELIS);
             ru.death.chaosshard.hero.EntityHero e = ru.death.chaosshard.hero.Pillars.heroOf(ow, ru.death.chaosshard.hero.Lightbearer.ELIS, p);

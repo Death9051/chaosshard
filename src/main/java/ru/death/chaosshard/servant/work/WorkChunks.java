@@ -160,4 +160,9 @@ public class WorkChunks implements ForgeChunkManager.LoadingCallback {
             STATIONS.put(key(dim, chest), s);
         }
     }
+
+    /** Сервер остановлен (в одиночной игре — выход из мира): ничего не тянется в следующий мир. */
+    public static void clearState() {
+        STATIONS.clear();
+    }
 }

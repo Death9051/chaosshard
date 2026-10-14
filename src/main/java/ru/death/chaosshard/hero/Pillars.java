@@ -304,20 +304,125 @@ public class Pillars {
         pl.x = e.x;
         pl.y = e.y;
         pl.z = e.z;
+        pl.heroAt = heroAt;
+        pl.lastSeen = heroAt;
         data.markDirty();
-        EntityHero hero = new EntityHero(ws);
-        hero.setup(h);
-        hero.structureId = e.id;
-        hero.setLocationAndAngles(heroAt.getX() + 0.5, heroAt.getY(), heroAt.getZ() + 0.5, ws.rand.nextFloat() * 360, 0);
-        hero.setHomePosAndDistance(e.origin().up(VeilPillar.FLOOR + 1), VeilPillar.R + 4);
-        ws.getChunk(heroAt);
-        if (!ws.spawnEntity(hero)) {
-            ru.death.chaosshard.ChaosShard.LOG.warn("Светоч {} не появился на Опоре у {} — повтор при следующей проверке", h, heroAt);
+        if (spawnHero(ws, h, pl) == null) {
+            ru.death.chaosshard.ChaosShard.LOG.warn("Светоч {} не появился на Опоре у {} — встанет, когда рядом будет игрок", h, heroAt);
         }
         if (ChaosConfig.compat.pillarWaystones) {
             ru.death.chaosshard.compat.life.ChaosWaystones.place(ws, e.origin(), WAYSTONE[h.ordinal()], VeilPillar.R + 4, VeilPillar.R + 10);
         }
     }
+
+    /** Где Светоч стоит на Опоре: запомненная точка или площадка над основанием (старые сохранения). */
+    static BlockPos heroSpot(WorldServer ws, HeroData.Pillar pl) {
+        if (pl.heroAt != null) {
+            return pl.heroAt;
+        }
+        OrderStructureData.Entry e = pl.entry >= 0 ? OrderStructureData.get(ws).byId(pl.entry) : null;
+        return (e != null ? e.origin() : pl.pos()).up(VeilPillar.FLOOR + 1);
+    }
+
+    /** Поставить Светоча на его Опору. null — не вышло (чанк не принял). */
+    static EntityHero spawnHero(WorldServer ws, Lightbearer h, HeroData.Pillar pl) {
+        OrderStructureData.Entry e = pl.entry >= 0 ? OrderStructureData.get(ws).byId(pl.entry) : null;
+        BlockPos at = heroSpot(ws, pl);
+        EntityHero hero = new EntityHero(ws);
+        hero.setup(h);
+        hero.structureId = e != null ? e.id : pl.entry;
+        hero.setLocationAndAngles(at.getX() + 0.5, at.getY(), at.getZ() + 0.5, ws.rand.nextFloat() * 360, 0);
+        hero.setHomePosAndDistance((e != null ? e.origin() : pl.pos()).up(VeilPillar.FLOOR + 1), VeilPillar.R + 4);
+        ws.getChunk(at);
+        if (!ws.spawnEntity(hero)) {
+            return null;
+        }
+        pl.heroId = hero.getUniqueID();
+        pl.lastSeen = at;
+        HeroData.get(ws).markDirty();
+        return hero;
+    }
+
+    /** Светоч жив: запомнить, где его видели (раз в пару секунд и после каждого перемещения). */
+    public static void seen(EntityHero hero) {
+        if (!(hero.world instanceof WorldServer) || hero.world.provider.getDimension() != Breach.luchezariyaDim()) {
+            return;
+        }
+        HeroData data = HeroData.get(hero.world);
+        HeroData.Pillar pl = data.of(hero.hero());
+        if (pl.state != HeroData.STANDING) {
+            return;
+        }
+        if (pl.heroId == null) {
+            pl.heroId = hero.getUniqueID();
+        }
+        if (!pl.heroId.equals(hero.getUniqueID())) {
+            return;
+        }
+        BlockPos at = hero.getPosition();
+        if (pl.lastSeen == null || pl.lastSeen.distanceSq(at) > 4) {
+            pl.lastSeen = at;
+            data.markDirty();
+        }
+    }
+
+    /** Лишний Светоч (у Опоры уже другой или она пала) — уходит. */
+    public static boolean stray(EntityHero hero) {
+        if (!(hero.world instanceof WorldServer) || hero.world.provider.getDimension() != Breach.luchezariyaDim()) {
+            return false;
+        }
+        HeroData.Pillar pl = HeroData.get(hero.world).of(hero.hero());
+        if (pl.state == HeroData.FALLEN) {
+            return true;
+        }
+        if (pl.state != HeroData.STANDING || pl.heroId == null || pl.heroId.equals(hero.getUniqueID())) {
+            return false;
+        }
+        net.minecraft.entity.Entity other = ((WorldServer) hero.world).getEntityFromUuid(pl.heroId);
+        return other != null && other.isEntityAlive();
+    }
+
+    /**
+     * Ремонт: Опора стоит, а Светоча нет (не появился, пропал). Когда игрок подходит к месту, где героя видели
+     * в последний раз, и вокруг всё загружено, — Светоч встаёт на Опору заново.
+     */
+    static void repair(WorldServer ws, Lightbearer h, HeroData.Pillar pl) {
+        if (pl.heroId != null) {
+            net.minecraft.entity.Entity e = ws.getEntityFromUuid(pl.heroId);
+            if (e != null && e.isEntityAlive()) {
+                return;
+            }
+        }
+        BlockPos seen = pl.lastSeen != null ? pl.lastSeen : heroSpot(ws, pl);
+        boolean near = false;
+        for (EntityPlayer p : ws.playerEntities) {
+            // подставные игроки модов в playerEntities не попадают; попадает только подставной игрок автотеста
+            double dx = p.posX - seen.getX() - 0.5, dz = p.posZ - seen.getZ() - 0.5;
+            if (p instanceof EntityPlayerMP && !p.isSpectator() && dx * dx + dz * dz < REPAIR_RANGE * REPAIR_RANGE) {
+                near = true;
+                break;
+            }
+        }
+        if (!near || !ws.isAreaLoaded(seen, 40)) {
+            return;
+        }
+        EntityHero found = heroOf(ws, h, pl);
+        if (found == null) {
+            List<EntityHero> l = ws.getEntitiesWithinAABB(EntityHero.class, new AxisAlignedBB(seen).grow(48),
+                    x -> x.isEntityAlive() && x.hero() == h);
+            found = l.isEmpty() ? null : l.get(0);
+        }
+        if (found != null) {
+            pl.heroId = found.getUniqueID();
+            HeroData.get(ws).markDirty();
+            return;
+        }
+        if (spawnHero(ws, h, pl) != null) {
+            ChaosShard.LOG.warn("Светоча {} не было на Опоре — он встал снова у {}", h, heroSpot(ws, pl));
+        }
+    }
+
+    public static final int REPAIR_RANGE = 48;
 
     /** Имена путевых камней у Опор. */
     static final String[] WAYSTONE = {"Опора Каэля", "Опора Ирены", "Опора Вельмора", "Опора Лиана", "Опора Элис"};
@@ -482,6 +587,9 @@ public class Pillars {
             }
             if (pl.state == HeroData.STANDING && !pl.introShown && now % 10 == 3) {
                 tryIntro(ws, h, pl);
+            }
+            if (pl.state == HeroData.STANDING && now % 100 == 41) {
+                repair(ws, h, pl);
             }
             if (pl.fallRing >= 0 && now % 4 == 0) {
                 defileRing(ws, pl.pos(), pl.fallRing);

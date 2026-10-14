@@ -322,7 +322,11 @@ public final class AnchorSigns {
                 continue;
             }
             double ang = r.nextDouble() * Math.PI * 2, d = 3 + r.nextDouble() * 3;
-            BlockPos to = a.getWorld().getHeight(new BlockPos(e.posX + Math.cos(ang) * d, 0, e.posZ + Math.sin(ang) * d));
+            BlockPos col = new BlockPos(e.posX + Math.cos(ang) * d, 0, e.posZ + Math.sin(ang) * d);
+            if (!a.getWorld().isBlockLoaded(col)) {
+                continue;
+            }
+            BlockPos to = a.getWorld().getHeight(col);
             ((WorldServer) a.getWorld()).spawnParticle(EnumParticleTypes.PORTAL, e.posX, e.posY + 1, e.posZ, 15, 0.3, 0.5, 0.3, 0.3);
             e.setPositionAndUpdate(to.getX() + 0.5, to.getY(), to.getZ() + 0.5);
         }
@@ -352,5 +356,10 @@ public final class AnchorSigns {
 
     public static AnchorSigns events() {
         return new AnchorSigns();
+    }
+
+    /** Сервер остановлен (в одиночной игре — выход из мира): ничего не тянется в следующий мир. */
+    public static void clearState() {
+        SIGN_XP.clear();
     }
 }

@@ -213,4 +213,9 @@ public class BreachRitual {
     public static void clear() {
         RUNNING.clear();
     }
+
+    /** Сервер остановлен (в одиночной игре — выход из мира): ничего не тянется в следующий мир. */
+    public static void clearState() {
+        RUNNING.clear();
+    }
 }

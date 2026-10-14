@@ -169,6 +169,32 @@ public class ChaosShard {
         }
     }
 
+    /** Мир закрыт: сбросить всё, что живёт в памяти между тиками, — иначе оно перетекает в следующий мир одиночной игры. */
+    @Mod.EventHandler
+    public void serverStopped(net.minecraftforge.fml.common.event.FMLServerStoppedEvent event) {
+        ru.death.chaosshard.servant.Beasts.clearState();
+        ru.death.chaosshard.servant.Servants.clearState();
+        ru.death.chaosshard.servant.AltarAscension.clearState();
+        ru.death.chaosshard.servant.work.WorkChunks.clearState();
+        ru.death.chaosshard.servant.work.Work.clearState();
+        ru.death.chaosshard.servant.Resync.clearState();
+        ru.death.chaosshard.challenge.ChallengeManager.clearState();
+        ru.death.chaosshard.anchor.AnchorSigns.clearState();
+        ru.death.chaosshard.garrot.GarrotDuel.clearState();
+        ru.death.chaosshard.garrot.GarrotRaids.clearState();
+        ru.death.chaosshard.breach.BreachHints.clearState();
+        ru.death.chaosshard.breach.BreachRitual.clearState();
+        ru.death.chaosshard.hero.TrophyPassives.clearState();
+        ru.death.chaosshard.spell.SpellAccel.clearState();
+        ru.death.chaosshard.order.Shrines.clearState();
+        ru.death.chaosshard.cutscene.CutsceneManager.clearState();
+        ru.death.chaosshard.ritual.RitualEvents.clearState();
+        ru.death.chaosshard.ritual.AltarRituals.clearState();
+        ru.death.chaosshard.trial.TrialManager.clearState();
+        ru.death.chaosshard.stars.ChaosLink.clearState();
+        ru.death.chaosshard.anchor.AnchorView.clear();
+    }
+
     @Mod.EventHandler
     public void serverStarting(FMLServerStartingEvent event) {
         event.registerServerCommand(new CommandChaosShard());

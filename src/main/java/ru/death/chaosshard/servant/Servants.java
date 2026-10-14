@@ -551,4 +551,9 @@ public class Servants {
     public static List<EntityLiving> near(EntityPlayer p, double r) {
         return p.world.getEntitiesWithinAABB(EntityLiving.class, p.getEntityBoundingBox().grow(r), e -> isServantOf(e, p.getUniqueID()));
     }
+
+    /** Сервер остановлен (в одиночной игре — выход из мира): ничего не тянется в следующий мир. */
+    public static void clearState() {
+        MOVED.clear();
+    }
 }

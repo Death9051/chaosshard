@@ -783,4 +783,11 @@ public class Beasts {
         return b.key() + ": ур. " + e.level() + ", опыт " + e.xp + ", перки " + Integer.toBinaryString(e.perks)
                 + ", очков " + e.points() + (e.returnAt > 0 ? ", в Нити ещё " + (e.returnAt - p.world.getTotalWorldTime()) / 20 + " с" : "");
     }
+
+    /** Сервер остановлен (в одиночной игре — выход из мира): ничего не тянется в следующий мир. */
+    public static void clearState() {
+        DIRTY.clear();
+        OPEN_BAGS.clear();
+        RECALL.clear();
+    }
 }

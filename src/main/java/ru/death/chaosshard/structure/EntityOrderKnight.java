@@ -156,6 +156,7 @@ public class EntityOrderKnight extends EntityMob {
         if (!world.isRemote && ticksExisted % 20 == 0 && getEntityData().hasKey(ru.death.chaosshard.hero.ItemElisSignet.UNTIL)
                 && world.getTotalWorldTime() > getEntityData().getLong(ru.death.chaosshard.hero.ItemElisSignet.UNTIL)) {
             ((WorldServer) world).spawnParticle(EnumParticleTypes.FIREWORKS_SPARK, posX, posY + 1, posZ, 30, 0.3, 0.8, 0.3, 0.05);
+            holdPeace = false;
             setDead();
             return;
         }
@@ -276,5 +277,27 @@ public class EntityOrderKnight extends EntityMob {
     @Override
     protected net.minecraft.util.SoundEvent getDeathSound() {
         return SoundEvents.ENTITY_PLAYER_DEATH;
+    }
+
+    // ------------------------------------------------------------------ мирный режим
+    /** Мирный режим не уносит сюжетного противника: EntityMob в «Мирном» сам себя убирает. */
+    private boolean holdPeace;
+
+    @Override
+    public void onUpdate() {
+        holdPeace = !world.isRemote && world.getDifficulty() == net.minecraft.world.EnumDifficulty.PEACEFUL;
+        try {
+            super.onUpdate();
+        } finally {
+            holdPeace = false;
+        }
+    }
+
+    @Override
+    public void setDead() {
+        if (holdPeace && getHealth() > 0 && posY >= -64) {
+            return;
+        }
+        super.setDead();
     }
 }

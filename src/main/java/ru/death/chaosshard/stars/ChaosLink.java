@@ -220,4 +220,10 @@ public final class ChaosLink {
 
     private ChaosLink() {
     }
+
+    /** Сервер остановлен (в одиночной игре — выход из мира): ничего не тянется в следующий мир. */
+    public static void clearState() {
+        PROGRESS.clear();
+        WARNED.clear();
+    }
 }

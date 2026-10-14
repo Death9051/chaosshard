@@ -326,4 +326,11 @@ public class Work {
             Milestones.grant((EntityPlayerMP) p, "servant_bind");
         }
     }
+
+    /** Сервер остановлен (в одиночной игре — выход из мира): ничего не тянется в следующий мир. */
+    public static void clearState() {
+        SELECTED.clear();
+        SELECTED_AT.clear();
+        CLAIMS.clear();
+    }
 }

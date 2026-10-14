@@ -531,4 +531,9 @@ public class GarrotRaids {
         }
         return data.getCompoundTag(EntityPlayer.PERSISTED_NBT_TAG);
     }
+
+    /** Сервер остановлен (в одиночной игре — выход из мира): ничего не тянется в следующий мир. */
+    public static void clearState() {
+        RETREATS.clear();
+    }
 }

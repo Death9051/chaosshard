@@ -115,4 +115,9 @@ public final class TrophyPassives {
         v.getEntityData().setBoolean(TAG_ELIS, true);
         return true;
     }
+
+    /** Сервер остановлен (в одиночной игре — выход из мира): ничего не тянется в следующий мир. */
+    public static void clearState() {
+        LAST_TARGET.clear();
+    }
 }
