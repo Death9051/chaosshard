@@ -343,6 +343,29 @@ public final class SelfTest {
                 missing.add(id);
             }
         }
+        // задачи-достижения: такое достижение должно быть в игре
+        Set<String> advMissing = new TreeSet<>();
+        net.minecraft.server.MinecraftServer srv = net.minecraftforge.fml.common.FMLCommonHandler.instance().getMinecraftServerInstance();
+        if (srv != null) {
+            List<String> advs = new ArrayList<>();
+            collectKey(root, "advancement_id:8", advs);
+            for (String a : advs) {
+                if (srv.getAdvancementManager().getAdvancement(new ResourceLocation(a)) == null) {
+                    advMissing.add(a);
+                }
+            }
+            line("Задач-достижений в квестах: " + advs.size());
+            check(advMissing.isEmpty(), "все достижения квестов есть в игре" + (advMissing.isEmpty() ? "" : ": нет " + advMissing));
+            List<String> ents = new ArrayList<>();
+            collectKey(root, "target:8", ents);
+            Set<String> entMissing = new TreeSet<>();
+            for (String en : ents) {
+                if (en.contains(":") && !ForgeRegistries.ENTITIES.containsKey(new ResourceLocation(en))) {
+                    entMissing.add(en);
+                }
+            }
+            check(entMissing.isEmpty(), "все существа охоты есть в игре" + (entMissing.isEmpty() ? "" : ": нет " + entMissing));
+        }
         line("Ссылок на предметы в квестах: " + ids.size());
         check(missing.isEmpty(), "все предметы квестов существуют" + (missing.isEmpty() ? "" : ": нет " + missing));
         if (Loader.isModLoaded("betterquesting")) {
@@ -351,6 +374,22 @@ public final class SelfTest {
             int inFile = root.getAsJsonObject("questDatabase:9").entrySet().size();
             check(inWorld == inFile, "квесты в мире совпадают с файлом (" + inWorld + "/" + inFile + ")"
                     + (inWorld == inFile ? "" : " — выполните /bq_admin default load"));
+        }
+    }
+
+    private static void collectKey(JsonElement e, String key, List<String> out) {
+        if (e.isJsonObject()) {
+            for (Map.Entry<String, JsonElement> en : e.getAsJsonObject().entrySet()) {
+                if (en.getKey().equals(key) && en.getValue().isJsonPrimitive()) {
+                    out.add(en.getValue().getAsString());
+                } else {
+                    collectKey(en.getValue(), key, out);
+                }
+            }
+        } else if (e.isJsonArray()) {
+            for (JsonElement c : e.getAsJsonArray()) {
+                collectKey(c, key, out);
+            }
         }
     }
 

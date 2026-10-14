@@ -122,6 +122,22 @@ public final class AutoTest {
         }
         AutoTest a = new AutoTest(server, shutdown);
         a.plan();
+        if (Boolean.getBoolean("chaosshard.dumponly")) {
+            // прогон со всей сборкой: только подготовка, выписка реестров и самотест
+            java.util.List<Object[]> keep = new java.util.ArrayList<>();
+            String sec = "";
+            for (Object[] st : a.steps) {
+                String n = (String) st[0];
+                if (n.startsWith("§")) {
+                    sec = n.substring(1);
+                }
+                if (sec.equals("Подготовка") || sec.startsWith("Справка") || sec.equals("Самотест")) {
+                    keep.add(st);
+                }
+            }
+            a.steps.clear();
+            a.steps.addAll(keep);
+        }
         running = a;
         MinecraftForge.EVENT_BUS.register(a);
         a.line("Автотест «Осколка Хаоса» " + new java.util.Date());

@@ -1,0 +1,114 @@
+name: Сервер со всей сборкой
+
+# Вручную: сервер Forge со всеми модами из pack/manifest.json (кроме чисто клиентских) и overrides сборки.
+# Запускает только выписку реестров и самотест (-Dchaosshard.dumponly), чтобы сверить квесты, рецепты и
+# скрипты CraftTweaker с настоящей сборкой. Отчёты — в ветку ci-logs, папка full/. Берёт последний собранный jar.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: read
+
+concurrency:
+  group: fullpack
+  cancel-in-progress: true
+
+jobs:
+  full:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Java 8
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 8
+
+      - name: Мод из ветки ci-logs
+        run: |
+          git fetch origin ci-logs
+          mkdir -p /tmp/jar
+          for f in $(git ls-tree --name-only origin/ci-logs | grep '^chaosshard-.*\.jar$' | grep -v -- '-dev\|-sources'); do git show "origin/ci-logs:$f" > "/tmp/jar/$f"; done
+          ls -la /tmp/jar
+
+      - name: Кэш сервера Forge
+        uses: actions/cache@v4
+        with:
+          path: server-base
+          key: forge-1.12.2-14.23.5.2860-v1
+
+      - name: Установить сервер Forge
+        run: |
+          if [ ! -f server-base/forge-1.12.2-14.23.5.2860.jar ]; then
+            mkdir -p server-base && cd server-base
+            curl -sfL -o installer.jar https://maven.minecraftforge.net/net/minecraftforge/forge/1.12.2-14.23.5.2860/forge-1.12.2-14.23.5.2860-installer.jar
+            java -jar installer.jar --installServer > install.log 2>&1 || (tail -50 install.log; exit 1)
+            rm -f installer.jar
+          fi
+
+      - name: Кэш модов сборки
+        uses: actions/cache@v4
+        with:
+          path: modcache
+          key: fullpack-${{ hashFiles('pack/manifest.json') }}
+
+      - name: Моды сборки
+        run: |
+          rm -rf server && cp -r server-base server && mkdir -p server/mods modcache
+          cp /tmp/jar/*.jar server/mods/
+          # чисто клиентские: JourneyMap, Controlling, Mouse Tweaks, Inventory Tweaks
+          skip=" 32274 250398 461660 223094 "
+          python3 - > /tmp/files.txt <<'PY'
+          import json
+          for f in json.load(open('pack/manifest.json'))['files']:
+              print(f['projectID'], f['fileID'])
+          PY
+          while read -r pid fid; do
+            case "$skip" in *" $pid "*) echo "skip $pid"; continue;; esac
+            f="modcache/${pid}-${fid}.jar"
+            if [ ! -s "$f" ]; then
+              curl -sfL -o "$f" "https://curse.cleanroommc.com/curse/maven/mod-${pid}/${fid}/mod-${pid}-${fid}.jar" || { echo "FAIL $pid $fid"; rm -f "$f"; continue; }
+            fi
+            cp "$f" server/mods/
+          done < /tmp/files.txt
+          ls server/mods | wc -l
+          cp -r pack/overrides/config server/ 2>/dev/null || true
+          cp -r pack/overrides/scripts server/ 2>/dev/null || true
+          cp -r pack/overrides/resourcepacks server/ 2>/dev/null || true
+
+      - name: Прогон
+        run: |
+          cd server
+          echo "eula=true" > eula.txt
+          printf 'online-mode=false\nlevel-seed=chaosshard\nspawn-protection=0\nmax-tick-time=-1\nview-distance=4\n' > server.properties
+          set +e
+          timeout 2100 java -Xmx6G -Dchaosshard.autotest=true -Dchaosshard.dumponly=true -Dfml.queryResult=confirm -jar forge-1.12.2-14.23.5.2860.jar nogui > console.log 2>&1
+          echo "код выхода: $?" >> console.log
+          set -e
+          tail -30 console.log
+
+      - name: Отчёт в ci-logs
+        if: always()
+        run: |
+          mkdir -p /tmp/t
+          cp server/chaosshard-autotest.txt server/chaosshard-selftest.txt server/chaosshard-registry.txt /tmp/t/ 2>/dev/null || true
+          cp server/crafttweaker.log /tmp/t/ 2>/dev/null || true
+          cp server/console.log /tmp/t/ 2>/dev/null || true
+          cp server/logs/latest.log /tmp/t/latest.log 2>/dev/null || true
+          cp server/crash-reports/*.txt /tmp/t/ 2>/dev/null || true
+          ls server/mods > /tmp/t/mods.txt 2>/dev/null || true
+          echo "${{ job.status }} ${{ github.sha }}" > /tmp/t/status.txt
+          git config user.name "ci-bot"
+          git config user.email "ci-bot@users.noreply.github.com"
+          for i in 1 2 3; do
+            git fetch origin ci-logs
+            git checkout -f -B ci-logs origin/ci-logs
+            rm -rf full && mkdir -p full && cp /tmp/t/* full/
+            git add -A full
+            git commit -m "Сборка целиком ${{ github.sha }}" || true
+            git push origin ci-logs && break
+            sleep 5
+          done
