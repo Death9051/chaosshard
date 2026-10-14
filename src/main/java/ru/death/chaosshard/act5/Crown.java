@@ -308,6 +308,9 @@ public final class Crown {
                 }
             }
         }
+        if (d.state == CapitalData.OPEN && d.introShown && t % 100 == 57) {
+            repairKing(ws, d);
+        }
         if (d.state == CapitalData.OPEN && !d.introShown && t % 10 == 0) {
             EntityKing k = kingOf(ws);
             if (k == null) {
@@ -323,6 +326,25 @@ public final class Crown {
                         break;
                     }
                 }
+            }
+        }
+    }
+
+    /**
+     * Ремонт: барьер пал, сцена была, а Короля нет (пропал, не встал). Когда игрок рядом с тронным залом
+     * и округа загружена — Король снова перед троном.
+     */
+    static void repairKing(WorldServer ws, CapitalData d) {
+        if (d.king == null || kingOf(ws) != null || !ws.isAreaLoaded(d.king, 40)) {
+            return;
+        }
+        for (EntityPlayer p : ws.playerEntities) {
+            double dx = p.posX - d.king.getX() - 0.5, dz = p.posZ - d.king.getZ() - 0.5;
+            if (p instanceof EntityPlayerMP && !p.isSpectator() && dx * dx + dz * dz < 48 * 48) {
+                if (spawnKing(ws) != null) {
+                    ChaosShard.LOG.warn("Короля не было у трона — он встал снова у {}", d.king);
+                }
+                return;
             }
         }
     }

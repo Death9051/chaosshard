@@ -7,6 +7,9 @@ import net.minecraft.entity.player.EntityPlayerMP;
 public final class AstralOverflow {
 
     public static void give(EntityPlayerMP player, int exp) {
+        if (player.connection == null) {
+            return;   // подставной игрок модов (машины с инструментом): Astral шлёт ему пакет — некуда
+        }
         ResearchManager.modifyExp(player, exp);
     }
 

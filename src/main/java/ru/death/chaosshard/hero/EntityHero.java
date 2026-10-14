@@ -556,6 +556,7 @@ public class EntityHero extends EntityMob implements ru.death.chaosshard.hero.Po
             pillarHomeR = (int) getMaximumHomeDistance();
         }
         say("escape");
+        world.getChunk(seal.add(2, 0, 0));   // высота незагруженного столбца — 0
         BlockPos at = world.getHeight(seal.add(2, 0, 0));
         blink(seal.getX() + 2.5, Math.max(at.getY(), seal.getY() - 1), seal.getZ() + 0.5);
         setPose(Pose.RAISE, 0);

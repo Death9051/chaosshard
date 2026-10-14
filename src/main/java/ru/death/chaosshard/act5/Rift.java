@@ -311,6 +311,15 @@ public final class Rift {
         t.saved.clear();
     }
 
+    /** Сервер останавливается: края арены — на место до сохранения мира (разрывы живут только в памяти). */
+    public static void restoreOnStop() {
+        WorldServer w = DimensionManager.getWorld(RiftDimension.id());
+        if (w != null) {
+            restoreAllTears(w);
+        }
+        TEARS.clear();
+    }
+
     static void restoreAllTears(WorldServer w) {
         for (Tear t : TEARS) {
             restore(w, t);

@@ -50,7 +50,15 @@ public final class ThreadManager {
         return levelFor(getPoints(player));
     }
 
+    /** Подставной игрок модов (Жатва бьёт мобов от его имени): Нити у него нет и слать ему некуда. */
+    static boolean ghost(EntityPlayerMP player) {
+        return player == null || player.connection == null;
+    }
+
     public static void addPoints(EntityPlayerMP player, int delta) {
+        if (ghost(player)) {
+            return;
+        }
         // Приёмник Нити (имплант Хаоса): прибавка Нити на 25% больше
         if (delta > 0 && ru.death.chaosshard.compat.body.Body.hasReceiver(player)) {
             delta = (int) Math.ceil(delta * 1.25);
@@ -174,6 +182,9 @@ public final class ThreadManager {
     }
 
     public static void sync(EntityPlayerMP player) {
+        if (ghost(player)) {
+            return;
+        }
         ChaosNetwork.CHANNEL.sendTo(new PacketThreadSync(getPoints(player)), player);
     }
 

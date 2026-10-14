@@ -749,10 +749,19 @@ public final class SpellCaster {
         if (form == 2) {
             BlockPos best = null;
             double bd = Double.MAX_VALUE;
-            for (BlockPos a : ru.death.chaosshard.anchor.AnchorData.get(p.world).anchors) {
-                TileEntity te = p.world.getTileEntity(a);
-                if (te instanceof ru.death.chaosshard.anchor.TileAnchor
-                        && p.getUniqueID().equals(((ru.death.chaosshard.anchor.TileAnchor) te).getOwner())) {
+            ru.death.chaosshard.anchor.AnchorData ad = ru.death.chaosshard.anchor.AnchorData.get(p.world);
+            for (BlockPos a : ad.anchors) {
+                // владельца берём из сводки сети, чтобы не грузить чанк каждого Якоря; старые Якоря без сводки — по блоку
+                ru.death.chaosshard.anchor.AnchorData.Rec rec = ad.rec(a);
+                boolean mine;
+                if (rec != null && rec.owner != null) {
+                    mine = p.getUniqueID().equals(rec.owner);
+                } else {
+                    TileEntity te = p.world.getTileEntity(a);
+                    mine = te instanceof ru.death.chaosshard.anchor.TileAnchor
+                            && p.getUniqueID().equals(((ru.death.chaosshard.anchor.TileAnchor) te).getOwner());
+                }
+                if (mine) {
                     double d = a.distanceSq(p.getPosition());
                     if (d < bd) {
                         bd = d;

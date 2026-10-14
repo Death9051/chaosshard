@@ -671,6 +671,18 @@ public class TrialManager {
         }
     }
 
+    /** Сервер останавливается: провалившиеся плитки — на место до сохранения мира. */
+    public static void restoreCollapse() {
+        for (java.util.Map.Entry<Long, Object[]> e : COLLAPSING.entrySet()) {
+            World w = (World) e.getValue()[0];
+            BlockPos q = BlockPos.fromLong(e.getKey());
+            if (w.isBlockLoaded(q) && w.isAirBlock(q)) {
+                w.setBlockState(q, (net.minecraft.block.state.IBlockState) e.getValue()[3], 2);
+            }
+        }
+        COLLAPSING.clear();
+    }
+
     /** Сколько плиток Обвала сейчас ждёт падения или возврата (для автотеста). */
     public static int collapsing() {
         return COLLAPSING.size();

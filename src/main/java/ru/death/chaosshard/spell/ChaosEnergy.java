@@ -44,6 +44,9 @@ public class ChaosEnergy {
     }
 
     public static void sync(EntityPlayerMP player) {
+        if (player.connection == null) {
+            return;   // подставной игрок модов
+        }
         int e = (int) get(player);
         int m = max(player);
         player.getEntityData().setInteger(TAG_SENT, e * 1000 + m);

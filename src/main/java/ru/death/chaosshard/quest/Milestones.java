@@ -114,7 +114,7 @@ public class Milestones {
 
     public static void grant(EntityPlayerMP player, String id) {
         MinecraftServer server = player.getServer();
-        if (server == null) {
+        if (server == null || player.connection == null) {
             return;
         }
         Advancement adv = server.getAdvancementManager().getAdvancement(new ResourceLocation(Tags.MOD_ID, "m/" + id));

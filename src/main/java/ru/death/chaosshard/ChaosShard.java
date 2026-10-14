@@ -169,6 +169,17 @@ public class ChaosShard {
         }
     }
 
+    /** Мир вот-вот сохранится и закроется: вернуть на место то, что временно вынуто из него (разрывы Разлома, Обвал). */
+    @Mod.EventHandler
+    public void serverStopping(net.minecraftforge.fml.common.event.FMLServerStoppingEvent event) {
+        try {
+            ru.death.chaosshard.act5.Rift.restoreOnStop();
+            ru.death.chaosshard.trial.TrialManager.restoreCollapse();
+        } catch (RuntimeException e) {
+            LOG.warn("Не удалось вернуть блоки перед остановкой", e);
+        }
+    }
+
     /** Мир закрыт: сбросить всё, что живёт в памяти между тиками, — иначе оно перетекает в следующий мир одиночной игры. */
     @Mod.EventHandler
     public void serverStopped(net.minecraftforge.fml.common.event.FMLServerStoppedEvent event) {

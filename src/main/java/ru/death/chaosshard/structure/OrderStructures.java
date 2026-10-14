@@ -300,6 +300,21 @@ public class OrderStructures implements IWorldGenerator {
         OrderStructureData.Entry e = OrderStructureData.get(world).near(event.getPos(), RADIUS);
         if (e != null && "sanctum".equals(e.name) && e.state == OrderStructureData.PLACED && !e.keeperDead
                 && !event.getEntityPlayer().isCreative()) {
+            final long id = e.id;
+            if (world.getEntitiesWithinAABB(EntityOrderKnight.class, new net.minecraft.util.math.AxisAlignedBB(event.getPos()).grow(64, 32, 64),
+                    k -> k.isEntityAlive() && k.variant() == EntityOrderKnight.KEEPER && (k.structureId == id || k.structureId < 0)).isEmpty()) {
+                // Хранителя нет (пропал или не появился) — тайник не должен остаться запертым навсегда
+                e.keeperDead = true;
+                OrderStructureData.get(world).markDirty();
+                for (BlockPos p : e.beams) {
+                    TileEntity te = world.getTileEntity(p);
+                    if (te instanceof TileOrderBeacon) {
+                        ((TileOrderBeacon) te).setLit(false);
+                    }
+                }
+                ChaosShard.LOG.warn("Хранителя святилища {} нет — тайник открыт", e.id);
+                return;
+            }
             event.setCanceled(true);
             event.getEntityPlayer().sendStatusMessage(new TextComponentTranslation("chaosshard.order.keeper_alive"), true);
         }
