@@ -2382,8 +2382,23 @@ public final class AutoTest {
                 TileAnchor a = (TileAnchor) ow.getTileEntity(anchorPos);
                 if (a == null || !a.isCaptured()) { check(false, "нет захваченного Якоря"); return; }
                 boolean made = false;
-                for (int i = 0; i < 100 && !made; i++) {
+                // демоны не селятся ближе 12 блоков к игроку — подставной игрок отходит повыше, пока ищем место
+                double my = me.posY;
+                me.setPosition(me.posX, my + 48, me.posZ);
+                for (int i = 0; i < 400 && !made; i++) {
                     made = ru.death.chaosshard.compat.world.WildChaos.populate(ow, a);
+                }
+                me.setPosition(me.posX, my, me.posZ);
+                if (!made) {
+                    int corrupted = 0, tries = 0;
+                    java.util.Random rr = new java.util.Random(1);
+                    for (int i = 0; i < 200; i++) {
+                        int r = a.radius();
+                        BlockPos g = ow.getHeight(anchorPos.add(rr.nextInt(2 * r + 1) - r, 0, rr.nextInt(2 * r + 1) - r)).down();
+                        tries++;
+                        if (ru.death.chaosshard.anchor.Corruption.isCorrupted(ow.getBlockState(g))) corrupted++;
+                    }
+                    line("  демон не подселился: осквернённых столбцов " + corrupted + " из " + tries + ", радиус " + a.radius());
                 }
                 List<EntityLiving> ds = ow.getEntitiesWithinAABB(EntityLiving.class, new AxisAlignedBB(anchorPos).grow(a.radius(), 32, a.radius()),
                         x -> x.getTags().contains(ru.death.chaosshard.compat.world.WildChaos.TAG_DEMON));

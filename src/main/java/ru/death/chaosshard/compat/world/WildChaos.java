@@ -104,7 +104,9 @@ public final class WildChaos {
             }
             d.onInitialSpawn(ws.getDifficultyForLocation(ground), null);
             d.addTag(TAG_DEMON);
-            ws.spawnEntity(d);
+            if (!ws.spawnEntity(d)) {
+                continue;   // не пустили (незагруженный чанк, чужой мод) — пробуем другое место
+            }
             ws.spawnParticle(EnumParticleTypes.PORTAL, d.posX, d.posY + 1, d.posZ, 30, 0.4, 0.8, 0.4, 0.4);
             return true;
         }
