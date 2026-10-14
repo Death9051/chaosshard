@@ -16,7 +16,16 @@ mods.jei.JEI.addDescription(<evilcraft:dark_gem>,
     "На земле Якоря Хаоса в осквернённом камне вызревает тёмная руда.",
     "Кровяной насытитель делает Тёмный самоцвет из Эссенции Хаоса.");
 mods.jei.JEI.addDescription(<forge:bucketfilled>.withTag({FluidName: "evilcraftblood", Amount: 1000}),
-    "На захваченной Скверной земле стоячая вода понемногу темнеет и становится кровью.");
+    "Якорь Хаоса пьёт кровь: ПКМ ёмкостью по Якорю или труба в основание — Якорь переплавляет её в опыт.",
+    "Знак Кровавого дождя понемногу наполняет бак Якоря сам.");
 mods.jei.JEI.addDescription(<chaosshard:anchor_seal_blood>,
-    "Печать Якоря: любая смерть в пределах Якоря — зверя, жителя, твари, солдата Гаррота — питает Скверну.",
-    "ПКМ по Якорю — навесить. Одна печать на уровень Якоря.");
+    "Печать Якоря: любая смерть в пределах Якоря — зверя, жителя, твари, солдата Гаррота — питает Скверну, а кровь в баке Якоря перерабатывается быстрее.",
+    "Ставится в окне Якоря (ПКМ по Якорю).");
+
+# Без зелий: где EvilCraft просит зелье, Хаос даёт своё
+# Ящик вечного заточения: вместо зелий слабости — Осколки Завесы
+recipes.removeByRecipeName("evilcraft:box_of_eternal_closure");
+recipes.addShaped("chaosshard_box_of_eternal_closure", <evilcraft:box_of_eternal_closure>, [
+    [<evilcraft:dark_gem_crushed>, <evilcraft:dark_gem_crushed>, <evilcraft:dark_gem_crushed>],
+    [veil, <minecraft:ender_chest>, veil],
+    [<evilcraft:dark_gem_crushed>, <evilcraft:dark_gem_crushed>, <evilcraft:dark_gem_crushed>]]);
