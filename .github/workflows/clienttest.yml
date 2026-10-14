@@ -1,0 +1,67 @@
+name: Тест клиента
+
+# Вручную: клиент Minecraft с модом (runClient) в виртуальном экране. Главное меню, плоский мир, блоки и существа мода,
+# окна Гримуара, Сердца, Якоря, вкладка творческого инвентаря — со снимками; проверка моделей и названий.
+# Отчёт, снимки и журнал — в ветку ci-logs, папка client/.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: clienttest
+  cancel-in-progress: true
+
+jobs:
+  client:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 50
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Java 25 для Gradle
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 25
+          cache: gradle
+
+      - name: Виртуальный экран
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y -q xvfb x11-xserver-utils libgl1-mesa-dri libglx-mesa0 mesa-utils libxxf86vm1 libopenal1 > /dev/null
+
+      - name: Прогон клиента
+        run: |
+          chmod +x gradlew
+          export LIBGL_ALWAYS_SOFTWARE=1
+          set +e
+          timeout 2400 xvfb-run -a -s "-screen 0 1280x720x24" ./gradlew --no-daemon runClient \
+            "-Pextra_jvm_args=-Dchaosshard.clienttest=true" > client.log 2>&1
+          echo "код выхода: $?" >> client.log
+          set -e
+          tail -40 client.log
+
+      - name: Отчёт в ci-logs
+        if: always()
+        run: |
+          mkdir -p /tmp/t
+          cp client.log /tmp/t/ 2>/dev/null || true
+          f=$(find . -name chaosshard-clienttest.txt -not -path './.git/*' | head -1); [ -n "$f" ] && cp "$f" /tmp/t/
+          d=$(dirname "$(find . -path '*/logs/latest.log' -not -path './.git/*' | head -1)")
+          [ -f "$d/latest.log" ] && cp "$d/latest.log" /tmp/t/latest.log
+          find . -name 'ct_*.png' -not -path './.git/*' -exec cp {} /tmp/t/ \;
+          find . -path '*crash-reports/*.txt' -not -path './.git/*' -exec cp {} /tmp/t/ \;
+          echo "${{ job.status }} ${{ github.sha }}" > /tmp/t/status.txt
+          git config user.name "ci-bot"
+          git config user.email "ci-bot@users.noreply.github.com"
+          for i in 1 2 3; do
+            git fetch origin ci-logs
+            git checkout -f -B ci-logs origin/ci-logs
+            rm -rf client && mkdir -p client && cp /tmp/t/* client/
+            git add -A client
+            git commit -m "Тест клиента ${{ github.sha }}" || true
+            git push origin ci-logs && break
+            sleep 5
+          done
