@@ -2918,10 +2918,19 @@ public final class AutoTest {
             line("  рецептов с зельями: " + n);
         });
         step("выписать предметы, блоки, тайлы и существ", () -> {
-            String[] mods = {"xreliquary", "reliquary", "bountifulbaubles", "apotheosis", "waystones", "extrautils2", "cyclicmagic",
-                    "lycanitesmobs", "harvestcraft"};
+            // все пространства имён на сервере: по ним скрипт сверки проверяет рецепты, квесты и .zs
+            java.util.TreeSet<String> modSet = new java.util.TreeSet<>();
+            for (net.minecraft.item.Item it : net.minecraftforge.fml.common.registry.ForgeRegistries.ITEMS) {
+                if (it.getRegistryName() != null) modSet.add(it.getRegistryName().getNamespace());
+            }
+            for (net.minecraft.block.Block b : net.minecraftforge.fml.common.registry.ForgeRegistries.BLOCKS) {
+                if (b.getRegistryName() != null) modSet.add(b.getRegistryName().getNamespace());
+            }
+            for (net.minecraftforge.fml.common.registry.EntityEntry en : net.minecraftforge.fml.common.registry.ForgeRegistries.ENTITIES) {
+                if (en.getRegistryName() != null) modSet.add(en.getRegistryName().getNamespace());
+            }
             StringBuilder sb = new StringBuilder();
-            for (String m : mods) {
+            for (String m : modSet) {
                 sb.append("=== ").append(m).append('\n');
                 for (net.minecraft.item.Item it : net.minecraftforge.fml.common.registry.ForgeRegistries.ITEMS) {
                     if (it.getRegistryName() != null && m.equals(it.getRegistryName().getNamespace())) {
@@ -2940,6 +2949,11 @@ public final class AutoTest {
                         sb.append('\n');
                     }
                 }
+                for (net.minecraft.block.Block b : net.minecraftforge.fml.common.registry.ForgeRegistries.BLOCKS) {
+                    if (b.getRegistryName() != null && m.equals(b.getRegistryName().getNamespace())) {
+                        sb.append("block ").append(b.getRegistryName()).append('\n');
+                    }
+                }
                 for (net.minecraftforge.fml.common.registry.EntityEntry en : net.minecraftforge.fml.common.registry.ForgeRegistries.ENTITIES) {
                     if (en.getRegistryName() != null && m.equals(en.getRegistryName().getNamespace())) {
                         sb.append("entity ").append(en.getRegistryName()).append('\n');
@@ -2952,6 +2966,9 @@ public final class AutoTest {
                         sb.append("tile ").append(id).append('\n');
                     }
                 }
+            }
+            for (String fl : net.minecraftforge.fluids.FluidRegistry.getRegisteredFluids().keySet()) {
+                sb.append("fluid ").append(fl).append('\n');
             }
             for (ResourceLocation id : net.minecraft.world.storage.loot.LootTableList.getAll()) {
                 sb.append("loot ").append(id).append('\n');
