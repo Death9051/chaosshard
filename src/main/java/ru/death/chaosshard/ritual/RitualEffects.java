@@ -230,6 +230,8 @@ public final class RitualEffects {
                 ru.death.chaosshard.quest.Milestones.grant(p, ru.death.chaosshard.quest.Milestones.ANCHOR_RESHAPE);
                 return true;
             }
+            case RECLAIM:
+                return ru.death.chaosshard.death.DeathItems.reclaim(p);
             case SPELL_RESET:
                 ru.death.chaosshard.spell.SpellData.reset(p);
                 p.sendMessage(ru.death.chaosshard.breach.Breach.grimoire("chaosshard.ritual.spell_reset.done"));

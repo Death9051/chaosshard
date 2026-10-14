@@ -1345,6 +1345,31 @@ public final class AutoTest {
             check(useSphere(ru.death.chaosshard.ritual.Ritual.RECALL, base), "заяц в Нити — сфера разбита");
             check(e.returnAt > 0 && e.returnAt <= ow.getTotalWorldTime(), "заяц отпущен из Нити сейчас");
         });
+        step("Смерть: Гримуар остаётся, сфера Возврата переносит вещи с места гибели", () -> {
+            me.inventory.clear();
+            me.inventory.setInventorySlotContents(3, new net.minecraft.item.ItemStack(ru.death.chaosshard.init.ModItems.GRIMOIRE));
+            ru.death.chaosshard.death.DeathItems.onDeath(new net.minecraftforge.event.entity.living.LivingDeathEvent(me, net.minecraft.util.DamageSource.GENERIC));
+            check(me.inventory.getStackInSlot(3).isEmpty(), "при смерти Гримуар не выпадает (убран из инвентаря)");
+            ru.death.chaosshard.death.DeathItems.onRespawn(new net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerRespawnEvent(me, false));
+            check(me.inventory.hasItemStack(new net.minecraft.item.ItemStack(ru.death.chaosshard.init.ModItems.GRIMOIRE)), "после возрождения Гримуар снова у игрока");
+            BlockPos fell = base.add(-30, 0, 30);
+            java.util.ArrayList<net.minecraft.entity.item.EntityItem> drops = new java.util.ArrayList<>();
+            for (int i = 0; i < 3; i++) {
+                net.minecraft.entity.item.EntityItem ei = new net.minecraft.entity.item.EntityItem(ow, fell.getX() + 0.5, fell.getY() + 1, fell.getZ() + 0.5,
+                        new net.minecraft.item.ItemStack(net.minecraft.init.Items.DIAMOND, 2));
+                ow.spawnEntity(ei);
+                drops.add(ei);
+            }
+            ru.death.chaosshard.death.DeathItems.onDrops(new net.minecraftforge.event.entity.player.PlayerDropsEvent(me, net.minecraft.util.DamageSource.GENERIC, drops, false));
+            int before = me.inventory.clearMatchingItems(net.minecraft.init.Items.DIAMOND, -1, 0, null);
+            check(ru.death.chaosshard.death.DeathItems.reclaim(me), "сфера Возврата сработала");
+            int got = me.inventory.clearMatchingItems(net.minecraft.init.Items.DIAMOND, -1, 0, null);
+            check(got == 6 && before == 0, "вернулось 6 алмазов: " + got);
+            boolean gone = true;
+            for (net.minecraft.entity.item.EntityItem ei : drops) gone &= ei.isDead;
+            check(gone, "на месте гибели копий не осталось");
+            check(!ru.death.chaosshard.death.DeathItems.reclaim(me), "второй раз возвращать нечего — сфера цела");
+        });
         step("Кровавая луна: сфера встаёт и держит луну", () -> {
             moonPos = base.add(-24, 0, 4);
             me.setHeldItem(EnumHand.MAIN_HAND, ru.death.chaosshard.ritual.ItemRitualSphere.of(ru.death.chaosshard.ritual.Ritual.BLOOD_MOON, 0));

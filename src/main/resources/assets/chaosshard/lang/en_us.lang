@@ -1752,3 +1752,8 @@ advancement.chaosshard.m.anchor_sign.desc=Placed a sign on an Anchor
 # Anchor strikes
 death.attack.chaosshard.anchor=%1$s was struck down by an Anchor's Corruption
 death.attack.chaosshard.anchor.player=%1$s was struck down by %2$s's Anchor
+item.chaosshard.ritual_sphere.reclaim.name=Sphere of Reclaiming
+chaosshard.ritual.reclaim=Reclaiming
+chaosshard.ritual.reclaim.desc=Sphere. Break it anywhere — items dropped at my latest deaths vanish from where I fell and come back to me. They never despawn there. The Grimoire stays with me on death anyway.
+chaosshard.ritual.reclaim.none=Nothing to reclaim: no items left where I fell.
+chaosshard.ritual.reclaim.done="Mine, to me." Items returned: %s.

@@ -1775,3 +1775,8 @@ advancement.chaosshard.m.anchor_sign.desc=Поставил на Якорь зн�
 # Удары Якоря
 death.attack.chaosshard.anchor=%1$s сражён Скверной Якоря
 death.attack.chaosshard.anchor.player=%1$s сражён Скверной Якоря %2$s
+item.chaosshard.ritual_sphere.reclaim.name=Сфера Возврата
+chaosshard.ritual.reclaim=Возврат
+chaosshard.ritual.reclaim.desc=Сфера. Разбей где угодно — вещи, выпавшие при последних смертях, исчезнут с места гибели и вернутся ко мне. Со временем они там не пропадают. Гримуар при смерти и так остаётся со мной.
+chaosshard.ritual.reclaim.none=Нечего возвращать: вещей с мест гибели не осталось.
+chaosshard.ritual.reclaim.done=«Моё — ко мне». Вернулось предметов: %s.

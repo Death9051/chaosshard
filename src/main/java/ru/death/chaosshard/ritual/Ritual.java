@@ -109,7 +109,11 @@ public enum Ritual {
     ANCHOR_RESHAPE(2, 0, offer("chaosshard:chaos_essence", 0, 12), offer("chaosshard:veil_shard", 0, 4), offer("minecraft:ender_pearl", 0, 2)),
     /** Эволюция (сфера): на земле своего Якоря 5-го уровня — сделать его Альфой. */
     ANCHOR_ALPHA(4, 0, offer("chaosshard:chaos_essence", 0, 32), offer("chaosshard:world_shard", 0, 8), offer("chaosshard:veil_shard", 0, 8),
-            offer("minecraft:nether_star", 0, 1));
+            offer("minecraft:nether_star", 0, 1)),
+
+    // ---------------------------------------------------------------- Смерть; только в конец
+    /** Возврат (сфера): вещи, выпавшие при последних смертях, исчезают с места гибели и приходят ко мне. */
+    RECLAIM(1, 0, offer("chaosshard:chaos_essence", 0, 4), offer("minecraft:ender_pearl", 0, 2), offer("minecraft:gold_ingot", 0, 2));
 
     /** Старшие ритуалы — на Алтаре Прорыва, а не в Чаше. */
     public boolean isAltar() {
@@ -152,7 +156,7 @@ public enum Ritual {
     /** Ритуалы с эффектом на месте: запечатываются в сферу, которую ставят, где нужно. */
     public static final Ritual[] SPHERES = {GROWTH, WARD, STORM, CORRUPTION, PULL,
             DUSK, BREED, SIGHT, RECALL, BLOOD_MOON, GREAT_SURGE,
-            OMEN_KAEL, OMEN_IRENA, OMEN_VELMOR, OMEN_LIAN, OMEN_ELIS, HOLY_DEFILE, FALLEN_FEATHER, SCENT, OMEN_CROWN, SPELL_RESET, MATERIAL_TEMPER, ANCHOR_RESHAPE, ANCHOR_ALPHA};
+            OMEN_KAEL, OMEN_IRENA, OMEN_VELMOR, OMEN_LIAN, OMEN_ELIS, HOLY_DEFILE, FALLEN_FEATHER, SCENT, OMEN_CROWN, SPELL_RESET, MATERIAL_TEMPER, ANCHOR_RESHAPE, ANCHOR_ALPHA, RECLAIM};
 
     /** Номер сферы (метаданные предмета) или -1. */
     public int sphereIndex() {
