@@ -2067,9 +2067,13 @@ public final class AutoTest {
             check(rl != null && after < before, "Элис: цены жителя " + before + " → " + after);
             if (rl != null) {
                 // новая сделка, открытая позже, тоже дешевеет при следующем разговоре; старые — не дважды
-                rl.add(new net.minecraft.village.MerchantRecipe(new net.minecraft.item.ItemStack(net.minecraft.init.Items.EMERALD, 20),
+                // getRecipes отдаёт копию списка (событие Forge) — новую сделку кладём в настоящий список жителя
+                net.minecraft.village.MerchantRecipeList real = net.minecraftforge.fml.common.ObfuscationReflectionHelper.getPrivateValue(
+                        net.minecraft.entity.passive.EntityVillager.class, v, "field_70963_i");
+                real.add(new net.minecraft.village.MerchantRecipe(new net.minecraft.item.ItemStack(net.minecraft.init.Items.EMERALD, 20),
                         new net.minecraft.item.ItemStack(net.minecraft.init.Items.DIAMOND)));
                 ru.death.chaosshard.hero.TrophyPassives.discount(v, me);
+                rl = v.getRecipes(me);
                 int again = 0;
                 for (int i = 0; i < rl.size() - 1; i++) again += rl.get(i).getItemToBuy().getCount();
                 int fresh = rl.get(rl.size() - 1).getItemToBuy().getCount();
