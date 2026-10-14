@@ -467,6 +467,9 @@ public class Servants {
         ItemStack held = p.getHeldItemMainhand();
         NBTTagCompound d = e.getEntityData();
         Kind kind = kindOf(e);
+        if (held.getItem() == ModItems.GRIMOIRE && !ru.death.chaosshard.spell.SpellCaster.bindMode(held)) {
+            return;   // указания — только в режиме Привязки
+        }
         if (held.getItem() == ModItems.GRIMOIRE && kind != null && kind.gatherer()) {
             if (p.isSneaking()) {
                 ru.death.chaosshard.servant.work.Work.unbind((EntityCreature) e);

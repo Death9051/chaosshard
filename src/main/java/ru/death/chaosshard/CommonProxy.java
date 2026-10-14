@@ -58,4 +58,10 @@ public class CommonProxy {
     /** Энергия Хаоса пришла на клиент. */
     public void handleEnergy(int energy, int max) {
     }
+
+    public void handleSpellData(net.minecraft.nbt.NBTTagCompound data) {
+    }
+
+    public void handleOreSight(long[] pos, byte[] tier, int ticks) {
+    }
 }

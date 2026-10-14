@@ -62,6 +62,16 @@ public class GuiSpellWheel extends GuiScreen {
 
     @Override
     protected void mouseClicked(int mouseX, int mouseY, int button) {
+        if (button == 1 && hovered >= 0) {
+            // ПКМ по сектору — следующая форма заклинания
+            Spell s = spells.get(hovered);
+            if (MagicUi.unlocked(s)) {
+                int next = ru.death.chaosshard.spell.SpellData.nextForm(mc.player, s);
+                ChaosNetwork.CHANNEL.sendToServer(new ru.death.chaosshard.network.PacketSpellAction(
+                        ru.death.chaosshard.network.PacketSpellAction.FORM, s, next));
+            }
+            return;
+        }
         choose();
     }
 
@@ -113,11 +123,18 @@ public class GuiSpellWheel extends GuiScreen {
         if (show != null) {
             String name = I18n.format(show.key());
             boolean open = MagicUi.unlocked(show);
-            drawCenteredString(fontRenderer, name, cx, cy - 4, open ? 0xD9B8FF : 0x7A7288);
+            drawCenteredString(fontRenderer, name, cx, cy - 14, open ? 0xD9B8FF : 0x7A7288);
+            if (open) {
+                drawCenteredString(fontRenderer, I18n.format(ru.death.chaosshard.spell.SpellPerks.formKey(show,
+                        ru.death.chaosshard.spell.SpellData.form(mc.player, show))), cx, cy - 4, 0xC890FF);
+            }
             String sub = open ? I18n.format(show.key() + ".desc") : I18n.format("chaosshard.magic.need_thread", show.minThread);
             if (open) {
                 boolean enough = ru.death.chaosshard.client.ClientThreadCache.energy() >= ru.death.chaosshard.spell.SpellCaster.cost(mc.player, show);
                 drawCenteredString(fontRenderer, I18n.format("chaosshard.magic.cost", ru.death.chaosshard.spell.SpellCaster.cost(mc.player, show)), cx, cy + 7, enough ? 0xB89CFF : 0xD07070);
+                if (ru.death.chaosshard.spell.SpellPerks.forms(show).length > 1) {
+                    drawCenteredString(fontRenderer, I18n.format("chaosshard.magic.wheel_form"), cx, cy + (int) r1 + 4, 0x8A8098);
+                }
             }
             List<String> lines = fontRenderer.listFormattedStringToWidth(sub, 220);
             int y = cy + (int) r1 + 16;

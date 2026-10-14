@@ -18,12 +18,16 @@ public class MagicKeys {
     public static final String CATEGORY = "key.categories.chaosshard";
     public static KeyBinding WHEEL;
     public static KeyBinding BOOK;
+    public static KeyBinding CAST;
 
     public static void register() {
         WHEEL = new KeyBinding("key.chaosshard.spell_wheel", Keyboard.KEY_K, CATEGORY);
         BOOK = new KeyBinding("key.chaosshard.grimoire_magic", Keyboard.KEY_P, CATEGORY);
         ClientRegistry.registerKeyBinding(WHEEL);
         ClientRegistry.registerKeyBinding(BOOK);
+        // каст из любой руки (Гримуар во второй, оружие в основной); R занята Cyberware и др.
+        CAST = new KeyBinding("key.chaosshard.cast", Keyboard.KEY_X, CATEGORY);
+        ClientRegistry.registerKeyBinding(CAST);
     }
 
     public static ItemStack heldGrimoire(EntityPlayer player) {
@@ -59,6 +63,15 @@ public class MagicKeys {
             ItemStack g = heldGrimoire(mc.player);
             if (!g.isEmpty()) {
                 mc.displayGuiScreen(new GuiSpellWheel(g));
+            } else {
+                mc.player.sendStatusMessage(new net.minecraft.util.text.TextComponentTranslation("chaosshard.grimoire.need_hand"), true);
+            }
+        }
+        if (CAST.isPressed()) {
+            if (!heldGrimoire(mc.player).isEmpty()) {
+                ru.death.chaosshard.network.ChaosNetwork.CHANNEL.sendToServer(new ru.death.chaosshard.network.PacketSpellAction(
+                        ru.death.chaosshard.network.PacketSpellAction.CAST, null, 0));
+                mc.player.swingArm(net.minecraft.util.EnumHand.OFF_HAND);
             } else {
                 mc.player.sendStatusMessage(new net.minecraft.util.text.TextComponentTranslation("chaosshard.grimoire.need_hand"), true);
             }

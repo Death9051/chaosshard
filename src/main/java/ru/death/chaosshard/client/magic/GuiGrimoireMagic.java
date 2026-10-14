@@ -156,6 +156,9 @@ public class GuiGrimoireMagic extends GuiScreen {
                 return;
             }
         }
+        if (tab == 0 && clickSpell(mx, my)) {
+            return;
+        }
         // список
         if (mx >= left + 6 && mx < left + LIST_W && my >= top + 8) {
             int row = (my - top - 8) / ROW;
@@ -252,20 +255,96 @@ public class GuiGrimoireMagic extends GuiScreen {
         int x = left + LIST_W + 12, y = top + 10, w = W - LIST_W - 22;
         boolean open = MagicUi.unlocked(s);
         drawString(fontRenderer, "§l" + I18n.format(s.key()), x, y, open ? 0xD9B8FF : 0x8A8098);
-        y += 14;
+        y += 13;
         y = para(I18n.format(s.key() + ".desc"), x, y, w, 0xC9C3D6);
-        y += 6;
-        y = para(I18n.format(s.key() + ".lore"), x, y, w, 0x8A8098);
-        y += 8;
-        drawString(fontRenderer, I18n.format("chaosshard.magic.need_thread", s.minThread), x, y,
-                open ? 0x9AD08A : 0xD07070);
-        y += 11;
+        y += 4;
         boolean enough = ru.death.chaosshard.client.ClientThreadCache.energy() >= SpellCaster.cost(mc.player, s);
-        drawString(fontRenderer, I18n.format("chaosshard.magic.cost", SpellCaster.cost(mc.player, s)), x, y, enough ? 0xB89CFF : 0xD07070);
-        y += 11;
-        drawString(fontRenderer, I18n.format("chaosshard.magic.cooldown", cooldown(s.cooldown)), x, y, 0xB0A8C0);
-        y += 11;
-        drawString(fontRenderer, I18n.format(s.onBlock ? "chaosshard.magic.target.block" : "chaosshard.magic.target.air"), x, y, 0xB0A8C0);
+        String req = I18n.format("chaosshard.magic.need_thread", s.minThread);
+        drawString(fontRenderer, req, x, y, open ? 0x9AD08A : 0xD07070);
+        int rx = x + fontRenderer.getStringWidth(req) + 8;
+        String costS = I18n.format("chaosshard.magic.cost", SpellCaster.cost(mc.player, s));
+        drawString(fontRenderer, costS, rx, y, enough ? 0xB89CFF : 0xD07070);
+        drawString(fontRenderer, I18n.format("chaosshard.magic.cooldown", cooldown(SpellCaster.cooldown(mc.player, s))),
+                rx + fontRenderer.getStringWidth(costS) + 8, y, 0xB0A8C0);
+        y += 13;
+        // формы
+        formRects.clear();
+        String[] forms = ru.death.chaosshard.spell.SpellPerks.forms(s);
+        if (forms.length > 1) {
+            drawString(fontRenderer, I18n.format("chaosshard.magic.forms"), x, y + 3, 0x9A8FB0);
+            int fx = x + fontRenderer.getStringWidth(I18n.format("chaosshard.magic.forms")) + 6;
+            int cur = ru.death.chaosshard.spell.SpellData.form(mc.player, s);
+            for (int f = 0; f < forms.length; f++) {
+                String fn = I18n.format(ru.death.chaosshard.spell.SpellPerks.formKey(s, f));
+                int fw = fontRenderer.getStringWidth(fn) + 8;
+                boolean fo = ru.death.chaosshard.spell.SpellData.formOpen(mc.player, s, f);
+                int bg = f == cur ? 0xC04A2A70 : fo ? 0x80241830 : 0x60201A28;
+                Gui.drawRect(fx, y, fx + fw, y + 13, bg);
+                drawString(fontRenderer, fn, fx + 4, y + 3, f == cur ? 0xE8C8FF : fo ? 0xC9C3D6 : 0x5E566C);
+                formRects.add(new int[]{fx, y, fw, 13, f});
+                fx += fw + 3;
+            }
+            y += 17;
+        }
+        // перки
+        perkRects.clear();
+        ru.death.chaosshard.spell.SpellPerks.Perk[] perks = ru.death.chaosshard.spell.SpellPerks.perks(s);
+        int points = ru.death.chaosshard.spell.SpellData.points(mc.player);
+        int free = ru.death.chaosshard.spell.SpellData.free(mc.player, s);
+        drawString(fontRenderer, I18n.format("chaosshard.magic.perks", free, points), x, y, free > 0 ? 0xFFD27A : 0x9A8FB0);
+        y += 12;
+        String hoverPerk = null;
+        for (int k = 0; k < perks.length; k++) {
+            ru.death.chaosshard.spell.SpellPerks.Perk pk = perks[k];
+            int r = ru.death.chaosshard.spell.SpellData.rank(mc.player, s, pk.id);
+            boolean can = r < pk.max && free > 0 && open;
+            Gui.drawRect(x, y, x + 12, y + 12, can ? 0xFF6A3AA0 : 0xFF2A2236);
+            drawCenteredString(fontRenderer, r >= pk.max ? "*" : "+", x + 6, y + 2, can ? 0xFFFFFF : 0x6E6680);
+            perkRects.add(new int[]{x, y, 12, 12, k});
+            String name = I18n.format(pk.key(s));
+            drawString(fontRenderer, name, x + 16, y + 2, r > 0 ? 0xE8C8FF : 0xC9C3D6);
+            int px = x + 18 + fontRenderer.getStringWidth(name);
+            for (int q = 0; q < pk.max; q++) {
+                Gui.drawRect(px + q * 7, y + 4, px + q * 7 + 5, y + 9, q < r ? 0xFFB070FF : 0xFF3A3048);
+            }
+            if (mx >= x && mx < x + w && my >= y && my < y + 12) {
+                hoverPerk = I18n.format(pk.key(s) + ".desc");
+            }
+            y += 14;
+        }
+        y += 2;
+        if (hoverPerk != null) {
+            para(hoverPerk, x, y, w, 0xB0A8C0);
+        } else {
+            para(I18n.format(s.key() + ".lore"), x, y, w, 0x8A8098);
+        }
+    }
+
+    private final List<int[]> formRects = new ArrayList<>();
+    private final List<int[]> perkRects = new ArrayList<>();
+
+    /** Клик по форме или перку на странице заклинания. */
+    private boolean clickSpell(int mx, int my) {
+        Spell s = spells.get(selSpell);
+        for (int[] r : formRects) {
+            if (mx >= r[0] && mx < r[0] + r[2] && my >= r[1] && my < r[1] + r[3]) {
+                if (ru.death.chaosshard.spell.SpellData.formOpen(mc.player, s, r[4])) {
+                    ChaosNetwork.CHANNEL.sendToServer(new ru.death.chaosshard.network.PacketSpellAction(
+                            ru.death.chaosshard.network.PacketSpellAction.FORM, s, r[4]));
+                }
+                return true;
+            }
+        }
+        for (int[] r : perkRects) {
+            if (mx >= r[0] && mx < r[0] + r[2] && my >= r[1] && my < r[1] + r[3]) {
+                ChaosNetwork.CHANNEL.sendToServer(new ru.death.chaosshard.network.PacketSpellAction(
+                        ru.death.chaosshard.network.PacketSpellAction.BUY, s, r[4]));
+                mc.getSoundHandler().playSound(net.minecraft.client.audio.PositionedSoundRecord.getMasterRecord(
+                        net.minecraft.init.SoundEvents.BLOCK_ENCHANTMENT_TABLE_USE, 1.2F));
+                return true;
+            }
+        }
+        return false;
     }
 
     private static String cooldown(int ticks) {

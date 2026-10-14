@@ -110,6 +110,8 @@ public class ChaosShard {
         MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.garrot.GarrotRaids());
         MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.ritual.RitualEvents());
         MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.spell.ChaosEnergy());
+        MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.spell.SpellData());
+        MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.spell.SpellAccel());
         MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.trial.TrialManager());
         MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.servant.Servants());
         MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.servant.Beasts());

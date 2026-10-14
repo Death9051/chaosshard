@@ -96,7 +96,11 @@ public enum Ritual {
     // ---------------------------------------------------------------- Акт 5; только в конец
     /** Знамение Короны (старший, сфера): столица встаёт в нетронутых землях, Гримуар называет координаты. */
     OMEN_CROWN(5, 0, offer("chaosshard:order_seal", 0, 3), offer("chaosshard:chaos_essence", 0, 16),
-            offer("chaosshard:world_shard", 0, 6), offer("chaosshard:veil_shard", 0, 6));
+            offer("chaosshard:world_shard", 0, 6), offer("chaosshard:veil_shard", 0, 6)),
+
+    // ---------------------------------------------------------------- Заклинания; только в конец
+    /** Чистые страницы (сфера): сбросить все перки заклинаний — очки вернутся. */
+    SPELL_RESET(1, 0, offer("chaosshard:chaos_essence", 0, 4), offer("minecraft:paper", 0, 8), offer("minecraft:book", 0, 1));
 
     /** Старшие ритуалы — на Алтаре Прорыва, а не в Чаше. */
     public boolean isAltar() {
@@ -139,7 +143,7 @@ public enum Ritual {
     /** Ритуалы с эффектом на месте: запечатываются в сферу, которую ставят, где нужно. */
     public static final Ritual[] SPHERES = {GROWTH, WARD, STORM, CORRUPTION, PULL,
             DUSK, BREED, SIGHT, RECALL, BLOOD_MOON, GREAT_SURGE,
-            OMEN_KAEL, OMEN_IRENA, OMEN_VELMOR, OMEN_LIAN, OMEN_ELIS, HOLY_DEFILE, FALLEN_FEATHER, SCENT, OMEN_CROWN};
+            OMEN_KAEL, OMEN_IRENA, OMEN_VELMOR, OMEN_LIAN, OMEN_ELIS, HOLY_DEFILE, FALLEN_FEATHER, SCENT, OMEN_CROWN, SPELL_RESET};
 
     /** Номер сферы (метаданные предмета) или -1. */
     public int sphereIndex() {

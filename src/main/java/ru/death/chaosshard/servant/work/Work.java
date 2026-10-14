@@ -273,7 +273,7 @@ public class Work {
     @SubscribeEvent(priority = EventPriority.HIGH)
     public void onClickBlock(PlayerInteractEvent.RightClickBlock event) {
         EntityPlayer p = event.getEntityPlayer();
-        if (event.getWorld().isRemote || event.getHand() != EnumHand.MAIN_HAND || p.getHeldItemMainhand().getItem() != ModItems.GRIMOIRE) {
+        if (event.getWorld().isRemote || event.getHand() != EnumHand.MAIN_HAND || !ru.death.chaosshard.spell.SpellCaster.binding(p)) {
             return;
         }
         java.util.LinkedHashSet<UUID> ids = SELECTED.get(p.getUniqueID());

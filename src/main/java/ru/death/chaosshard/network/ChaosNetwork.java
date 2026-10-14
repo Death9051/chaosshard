@@ -23,6 +23,9 @@ public final class ChaosNetwork {
         CHANNEL.registerMessage(PacketCutscene.Handler.class, PacketCutscene.class, 9, Side.CLIENT);
         CHANNEL.registerMessage(PacketCutsceneSkip.Handler.class, PacketCutsceneSkip.class, 10, Side.SERVER);
         CHANNEL.registerMessage(PacketCredits.Handler.class, PacketCredits.class, 11, Side.CLIENT);
+        CHANNEL.registerMessage(PacketSpellData.Handler.class, PacketSpellData.class, 12, Side.CLIENT);
+        CHANNEL.registerMessage(PacketSpellAction.Handler.class, PacketSpellAction.class, 13, Side.SERVER);
+        CHANNEL.registerMessage(PacketOreSight.Handler.class, PacketOreSight.class, 14, Side.CLIENT);
     }
 
     private ChaosNetwork() {

@@ -199,6 +199,10 @@ public final class RitualEffects {
                 return ru.death.chaosshard.act5.Crown.omen(p, world, pos);
             case SCENT:
                 return ru.death.chaosshard.plans.MinorPlans.scent(p, world, pos);
+            case SPELL_RESET:
+                ru.death.chaosshard.spell.SpellData.reset(p);
+                p.sendMessage(ru.death.chaosshard.breach.Breach.grimoire("chaosshard.ritual.spell_reset.done"));
+                return true;
             case FALLEN_FEATHER: {
                 int n = 0;
                 for (net.minecraft.entity.EntityLiving e : world.getEntitiesWithinAABB(net.minecraft.entity.EntityLiving.class,

@@ -59,6 +59,7 @@ public class ClientProxy extends CommonProxy {
                 ru.death.chaosshard.ritual.TileRitualSphere.class, new ru.death.chaosshard.ritual.client.SphereRenderer());
         MagicKeys.register();
         MinecraftForge.EVENT_BUS.register(new MagicKeys());
+        MinecraftForge.EVENT_BUS.register(new OreSight());
         MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.cutscene.client.CutsceneClient());
         if (ChaosShard.astralLoaded && ChaosConfig.stars.enabled) {
             MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.stars.client.AstralSkyClient());
@@ -148,5 +149,15 @@ public class ClientProxy extends CommonProxy {
     @Override
     public void handleEnergy(int energy, int max) {
         Minecraft.getMinecraft().addScheduledTask(() -> ClientThreadCache.setEnergy(energy, max));
+    }
+
+    @Override
+    public void handleSpellData(net.minecraft.nbt.NBTTagCompound data) {
+        Minecraft.getMinecraft().addScheduledTask(() -> ru.death.chaosshard.spell.SpellData.client = data);
+    }
+
+    @Override
+    public void handleOreSight(long[] pos, byte[] tier, int ticks) {
+        Minecraft.getMinecraft().addScheduledTask(() -> OreSight.show(pos, tier, ticks));
     }
 }
