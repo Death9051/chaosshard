@@ -48,6 +48,10 @@ public class Milestones {
     public static final String ANCHOR_SPEC = "anchor_spec";
     public static final String ANCHOR_STAGE = "anchor_stage";
     public static final String ANCHOR_RESHAPE = "anchor_reshape";
+    public static final String ANCHOR_ALPHA = "anchor_alpha";
+    public static final String ANCHOR_ALPHA_MAX = "anchor_alpha_max";
+    public static final String ANCHOR_BORROW = "anchor_borrow";
+    public static final String ANCHOR_SIGN = "anchor_sign";
     public static final String CROWN_OMEN = "crown_omen";
     public static final String BEACON_OUT = "beacon_out";
     public static final String CAPITAL_OPEN = "capital_open";

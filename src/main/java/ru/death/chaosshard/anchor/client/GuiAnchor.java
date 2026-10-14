@@ -109,7 +109,7 @@ public class GuiAnchor extends GuiContainer {
         }
         GuiButton choose = button(BTN_CHOOSE);
         if (choose != null) {
-            choose.visible = tab == TAB_PATH && view.getInteger("spec") < 0;
+            choose.visible = tab == TAB_PATH && view.getInteger("spec") < 0 && !view.getBoolean("alpha");
             choose.enabled = edit && picked >= 0 && view.getInteger("level") >= AnchorSpec.CHOOSE_LEVEL;
         }
         GuiButton mapB = button(BTN_MAP);
@@ -156,7 +156,18 @@ public class GuiAnchor extends GuiContainer {
     protected void mouseClicked(int mouseX, int mouseY, int button) throws IOException {
         super.mouseClicked(mouseX, mouseY, button);
         int mx = mouseX - guiLeft, my = mouseY - guiTop;
-        if (tab == TAB_PATH) {
+        if (tab == TAB_PATH && view.getInteger("borrowSlots") > 0 && !view.getBoolean("alpha")) {
+            int slots = Math.min(3, view.getInteger("borrowSlots"));
+            int row = (my - BORROW_Y + 1) / 10;
+            if (my >= BORROW_Y - 1 && row >= 0 && row < slots && mx >= 8 && mx < 168) {
+                int[] b = borrowArr();
+                int cur = row < b.length ? b[row] : -1;
+                int nx = nextBorrow(cur);
+                ChaosNetwork.CHANNEL.sendToServer(new PacketAnchorAction(PacketAnchorAction.BORROW, (row << 8) | (nx + 1), null));
+                return;
+            }
+        }
+        if (tab == TAB_PATH && !view.getBoolean("alpha")) {
             for (AnchorSpec s : AnchorSpec.values()) {
                 int[] r = specRow(s);
                 if (mx >= r[0] && mx < r[0] + 78 && my >= r[1] - 1 && my < r[1] + 10) {
@@ -426,10 +437,17 @@ public class GuiAnchor extends GuiContainer {
         return new int[]{net ? 8 : 92, 30 + idx * 12};
     }
 
+    private static final int BORROW_Y = 164;
+
     private void drawPathTab(int mx, int my) {
         NBTTagCompound v = view;
         int spec = v.getInteger("spec");
         int lvl = v.getInteger("level");
+        if (v.getBoolean("alpha")) {
+            drawAlpha();
+            return;
+        }
+        drawBorrow(mx, my);
         if (spec >= 0) {
             AnchorSpec s = AnchorSpec.of(spec);
             fontRenderer.drawString(specName(spec), 8, 6, 0xFFD060);
@@ -457,8 +475,71 @@ public class GuiAnchor extends GuiContainer {
             fontRenderer.drawString(name + (n > 0 ? " §7×" + n : ""), r[0], r[1], col);
         }
         if (picked >= 0) {
-            drawSpecText(AnchorSpec.of(picked), 96, false);
+            drawSpecText(AnchorSpec.of(picked), 92, false);
         }
+    }
+
+    private void drawAlpha() {
+        NBTTagCompound v = view;
+        int al = v.getInteger("alphaLvl");
+        fontRenderer.drawString(I18n.format("chaosshard.anchor.gui.alpha_title", al), 8, 6, 0xFFD060);
+        String st = I18n.format(v.getBoolean("alphaAwake") ? "chaosshard.anchor.gui.alpha_awake" : "chaosshard.anchor.gui.alpha_asleep");
+        fontRenderer.drawString(st, 168 - fontRenderer.getStringWidth(st), 6, v.getBoolean("alphaAwake") ? 0x90E090 : 0xFF6060);
+        int xp = v.getInteger("alphaXp"), from = v.getInteger("alphaFrom"), next = v.getInteger("alphaNext");
+        String xs = next < 0 ? String.valueOf(xp) : xp + " / " + next;
+        fontRenderer.drawString(xs, 8, 18, DIM);
+        bar(8, 28, 160, next < 0 ? 1 : (double) (xp - from) / Math.max(1, next - from), 0xFFE0A0FF);
+        int y = 38;
+        String[] rows = {"odd", "2", "4", "6", "8", "10"};
+        int[] need = {1, 2, 4, 6, 8, 10};
+        for (int i = 0; i < rows.length; i++) {
+            for (String p : fontRenderer.listFormattedStringToWidth(I18n.format("chaosshard.anchor.gui.alpha_" + rows[i]), 160)) {
+                fontRenderer.drawString(p, 8, y, al >= need[i] ? TEXT : DIM);
+                y += 10;
+            }
+        }
+        fontRenderer.drawSplitString(I18n.format("chaosshard.anchor.gui.alpha_note"), 8, y + 6, 160, DIM);
+    }
+
+    private int[] borrowArr() {
+        return view.getIntArray("borrow");
+    }
+
+    /** Заимствования: строки внизу вкладки «Путь»; щелчок — следующий доступный эффект. */
+    private void drawBorrow(int mx, int my) {
+        int slots = view.getInteger("borrowSlots");
+        if (slots <= 0) {
+            return;
+        }
+        int[] b = borrowArr();
+        fontRenderer.drawString(I18n.format("chaosshard.anchor.gui.borrow", slots), 8, BORROW_Y - 11, ACCENT);
+        for (int i = 0; i < Math.min(slots, 3); i++) {
+            int fx = i < b.length ? b[i] : -1;
+            String name = fx < 0 ? I18n.format("chaosshard.anchor.gui.borrow_empty")
+                    : I18n.format("chaosshard.anchor.fx." + ru.death.chaosshard.anchor.AnchorFx.of(fx).key());
+            int y = BORROW_Y + i * 10;
+            boolean hover = mx >= 8 && mx < 168 && my >= y - 1 && my < y + 9;
+            fontRenderer.drawString((i + 1) + ". " + name, 8, y, hover ? ACCENT : fx < 0 ? DIM : TEXT);
+        }
+    }
+
+    /** Следующий эффект для места заимствования. */
+    private int nextBorrow(int cur) {
+        int own = view.getInteger("spec");
+        int[] free = view.getIntArray("borrowFree");
+        ru.death.chaosshard.anchor.AnchorFx[] all = ru.death.chaosshard.anchor.AnchorFx.values();
+        for (int k = 1; k <= all.length + 1; k++) {
+            int idx = cur + k;
+            if (idx >= all.length) {
+                return -1;
+            }
+            ru.death.chaosshard.anchor.AnchorFx fx = all[idx];
+            int sp = fx.spec.ordinal();
+            if (sp != own && sp < free.length && free[sp] > 0) {
+                return idx;
+            }
+        }
+        return -1;
     }
 
     /** Эффекты специализации, по строкам. Возвращает y после текста. */

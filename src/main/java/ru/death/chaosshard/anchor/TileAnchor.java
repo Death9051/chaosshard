@@ -78,6 +78,270 @@ public class TileAnchor extends TileEntity implements ITickable {
         return AnchorSpec.of(spec);
     }
 
+    // ------------------------------------------------------------------ Альфа
+    public static final int ALPHA_MAX_LEVEL = 10;
+    /** Опыт Альфы для уровней 2..10 и потолок (последний). */
+    public static final int[] ALPHA_T = {1000, 2500, 4500, 7000, 10000, 14000, 19000, 25000, 32000, 40000};
+    private boolean alpha;
+    private int alphaXp;
+    private double alphaCarry;
+    /** Кэш: уровень старшей бодрствующей Альфы сети, сколько Альф бодрствует, бодрствует ли эта. */
+    private int netAlpha;
+    private int netAlphas;
+    private boolean alphaAwake;
+    /** Кэш: сила печатей Альф сети по видам. */
+    private final double[] alphaSealF = new double[ItemAnchorSeal.Type.values().length];
+    /** Заимствованные эффекты (AnchorFx), −1 — пусто. */
+    private int[] borrow = new int[0];
+    /** На клиенте: открытых мест под печати и уровень Альфы. */
+    private int clientSlots = -1;
+    private int clientAlpha;
+
+    public boolean isAlpha() {
+        return alpha;
+    }
+
+    public int getAlphaXp() {
+        return alphaXp;
+    }
+
+    public int alphaLevel() {
+        if (!alpha) {
+            return 0;
+        }
+        if (world != null && world.isRemote) {
+            return Math.max(1, clientAlpha);
+        }
+        int l = 1;
+        for (int i = 0; i < ALPHA_MAX_LEVEL - 1; i++) {
+            if (alphaXp >= ALPHA_T[i]) {
+                l = i + 2;
+            }
+        }
+        return l;
+    }
+
+    /** Альфа бодрствует (одна на каждые 10 Якорей сети). */
+    public boolean alphaAwake() {
+        return alphaAwake;
+    }
+
+    public int netAlpha() {
+        return netAlpha;
+    }
+
+    /** Сколько заимствований может взять Якорь: по числу бодрствующих Альф. */
+    public int borrowSlots() {
+        return alpha ? 0 : netAlphas;
+    }
+
+    public int[] getBorrow() {
+        return borrow.clone();
+    }
+
+    /** Есть ли у Якоря эффект: своя специализация или заимствованный. */
+    public boolean hasFx(AnchorFx fx) {
+        if (AnchorFx.own(getSpec(), fx)) {
+            return true;
+        }
+        int n = Math.min(borrow.length, borrowSlots());
+        for (int i = 0; i < n; i++) {
+            if (borrow[i] == fx.ordinal()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /** Назначить заимствование в место slot (−1 — очистить). Проверка числа доноров. */
+    public boolean setBorrow(int slot, AnchorFx fx) {
+        if (slot < 0 || slot >= borrowSlots() || alpha) {
+            return false;
+        }
+        if (fx != null) {
+            if (fx.spec == getSpec()) {
+                return false;
+            }
+            int donors = AnchorNet.count(world, owner, fx.spec, false);
+            int used = AnchorNet.borrowers(world, owner, fx.spec, pos);
+            for (int i = 0; i < borrow.length; i++) {
+                AnchorFx b = AnchorFx.of(borrow[i]);
+                if (i != slot && b != null && b.spec == fx.spec) {
+                    used++;
+                }
+            }
+            if (used >= donors) {
+                return false;
+            }
+        }
+        if (borrow.length < borrowSlots()) {
+            int[] n = new int[borrowSlots()];
+            java.util.Arrays.fill(n, -1);
+            System.arraycopy(borrow, 0, n, 0, borrow.length);
+            borrow = n;
+        }
+        borrow[slot] = fx == null ? -1 : fx.ordinal();
+        markDirty();
+        syncRec();
+        return true;
+    }
+
+    /** Доноров стало меньше, чем заимствований, — лишние сбрасываются (сначала у Якорей с большими координатами). */
+    private void checkBorrow() {
+        boolean changedB = false;
+        for (int i = 0; i < borrow.length; i++) {
+            AnchorFx fx = AnchorFx.of(borrow[i]);
+            if (fx == null) {
+                continue;
+            }
+            boolean drop = i >= netAlphas || fx.spec == getSpec() || alpha;
+            if (!drop) {
+                int donors = AnchorNet.count(world, owner, fx.spec, false);
+                // место в очереди: заимствования этой специализации у Якорей «раньше» нас
+                int before = 0;
+                AnchorData d = AnchorData.get(world);
+                for (BlockPos p : AnchorNet.members(world, owner)) {
+                    if (p.toLong() >= pos.toLong()) {
+                        continue;
+                    }
+                    for (int b : d.rec(p).borrow) {
+                        AnchorFx o = AnchorFx.of(b);
+                        if (o != null && o.spec == fx.spec) {
+                            before++;
+                        }
+                    }
+                }
+                for (int j = 0; j < i; j++) {
+                    AnchorFx o = AnchorFx.of(borrow[j]);
+                    if (o != null && o.spec == fx.spec) {
+                        before++;
+                    }
+                }
+                drop = before >= donors;
+            }
+            if (drop) {
+                borrow[i] = -1;
+                changedB = true;
+            }
+        }
+        if (changedB) {
+            markDirty();
+            syncRec();
+        }
+    }
+
+    /** Высота колонны над основанием. */
+    public int columnHeight() {
+        return alpha ? 4 + alphaLevel() * 7 / 10 : level() - 1;
+    }
+
+    /**
+     * Эволюция в Альфу (ритуал): Якорь 5-го уровня, площадка 3×3 вокруг основания свободна и стоит на твёрдом,
+     * Альф в сети меньше, чем Якорей / 10. Возвращает ключ ошибки или null.
+     */
+    public String evolve() {
+        if (alpha) {
+            return "chaosshard.anchor.alpha.already";
+        }
+        if (level() < maxLevel()) {
+            return "chaosshard.anchor.alpha.level";
+        }
+        if (AnchorNet.isNetWorld(world) && owner != null
+                && AnchorNet.alphas(world, owner).size() >= AnchorNet.alphaAllowed(world, owner)) {
+            return "chaosshard.anchor.alpha.count";
+        }
+        for (int dx = -1; dx <= 1; dx++) {
+            for (int dz = -1; dz <= 1; dz++) {
+                if (dx == 0 && dz == 0) {
+                    continue;
+                }
+                BlockPos p = pos.add(dx, 0, dz);
+                net.minecraft.block.state.IBlockState st = world.getBlockState(p);
+                if (!(st.getBlock() instanceof BlockAnchorRim) && !world.isAirBlock(p) && !st.getBlock().isReplaceable(world, p)
+                        || !world.getBlockState(p.down()).isSideSolid(world, p.down(), net.minecraft.util.EnumFacing.UP)) {
+                    return "chaosshard.anchor.alpha.space";
+                }
+            }
+        }
+        if (spec >= 0) {
+            AnchorSpec was = getSpec();
+            spec = -1;
+            dropStorage();
+            if (was == AnchorSpec.NEST) {
+                AnchorSpecs.dismissNest(this);
+            }
+        }
+        borrow = new int[0];
+        alpha = true;
+        alphaXp = 0;
+        for (int dx = -1; dx <= 1; dx++) {
+            for (int dz = -1; dz <= 1; dz++) {
+                if (dx != 0 || dz != 0) {
+                    world.setBlockState(pos.add(dx, 0, dz), ru.death.chaosshard.init.ModBlocks.ANCHOR_RIM.getDefaultState(), 3);
+                }
+            }
+        }
+        growColumn();
+        syncRec();
+        refreshNet();
+        changed();
+        world.playSound(null, pos, SoundEvents.ENTITY_ENDERDRAGON_GROWL, SoundCategory.BLOCKS, 0.7F, 0.8F);
+        ru.death.chaosshard.network.ChaosNetwork.CHANNEL.sendToAllAround(
+                new ru.death.chaosshard.network.PacketHeartBolt(pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5,
+                        pos.getX() + 0.5, pos.getY() + 24, pos.getZ() + 0.5, 0xE0A0FF),
+                new net.minecraftforge.fml.common.network.NetworkRegistry.TargetPoint(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 128));
+        return null;
+    }
+
+    private void dropStorage() {
+        for (int i = 0; i < storage.getSlots(); i++) {
+            net.minecraft.item.ItemStack st = storage.getStackInSlot(i);
+            if (!st.isEmpty()) {
+                net.minecraft.inventory.InventoryHelper.spawnItemStack(world, pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5, st.copy());
+                storage.setStackInSlot(i, net.minecraft.item.ItemStack.EMPTY);
+            }
+        }
+        if (!sample.getStackInSlot(0).isEmpty()) {
+            net.minecraft.inventory.InventoryHelper.spawnItemStack(world, pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5, sample.getStackInSlot(0).copy());
+            sample.setStackInSlot(0, net.minecraft.item.ItemStack.EMPTY);
+        }
+    }
+
+    /** Опыт Альфы: свой — на четверть, перелив и кровь — полностью. */
+    private void addAlphaXp(int n, boolean full) {
+        double add = (full ? n : n * 0.25) + alphaCarry;
+        int whole = (int) Math.floor(add);
+        alphaCarry = add - whole;
+        if (whole <= 0) {
+            return;
+        }
+        int before = alphaLevel();
+        alphaXp += whole;
+        int max = ALPHA_T[ALPHA_T.length - 1];
+        if (alphaXp > max) {
+            int surplus = alphaXp - max;
+            alphaXp = max;
+            AnchorNet.overflow(world, owner, pos, surplus);
+        }
+        markDirty();
+        int after = alphaLevel();
+        if (after != before) {
+            EntityPlayerMP p = ownerOnline();
+            for (int l = before + 1; l <= after; l++) {
+                if (p != null) {
+                    ThreadManager.addPoints(p, 100);
+                    p.sendMessage(Breach.grimoire("chaosshard.anchor.alpha.level_up", pos.getX(), pos.getZ(), l));
+                    if (l >= ALPHA_MAX_LEVEL) {
+                        ru.death.chaosshard.quest.Milestones.grant(p, ru.death.chaosshard.quest.Milestones.ANCHOR_ALPHA_MAX);
+                    }
+                }
+            }
+            growColumn();
+            changed();
+        }
+        syncRec();
+    }
+
     /** Сетевая сила специализации у сети этого Якоря (кэш). */
     public double net(AnchorSpec s) {
         return netF[s.ordinal()];
@@ -94,7 +358,7 @@ public class TileAnchor extends TileEntity implements ITickable {
 
     /** Выбрать специализацию (окно). */
     public boolean chooseSpec(AnchorSpec s) {
-        if (s == null || spec >= 0 || level() < AnchorSpec.CHOOSE_LEVEL) {
+        if (s == null || spec >= 0 || alpha || level() < AnchorSpec.CHOOSE_LEVEL) {
             return false;
         }
         spec = s.ordinal();
@@ -118,17 +382,7 @@ public class TileAnchor extends TileEntity implements ITickable {
         corrupted = (int) (corrupted * 0.75);
         shownLevel = level();
         trimColumn();
-        for (int i = 0; i < storage.getSlots(); i++) {
-            net.minecraft.item.ItemStack st = storage.getStackInSlot(i);
-            if (!st.isEmpty()) {
-                net.minecraft.inventory.InventoryHelper.spawnItemStack(world, pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5, st.copy());
-                storage.setStackInSlot(i, net.minecraft.item.ItemStack.EMPTY);
-            }
-        }
-        if (!sample.getStackInSlot(0).isEmpty()) {
-            net.minecraft.inventory.InventoryHelper.spawnItemStack(world, pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5, sample.getStackInSlot(0).copy());
-            sample.setStackInSlot(0, net.minecraft.item.ItemStack.EMPTY);
-        }
+        dropStorage();
         if (was == AnchorSpec.NEST) {
             AnchorSpecs.dismissNest(this);
         }
@@ -140,6 +394,17 @@ public class TileAnchor extends TileEntity implements ITickable {
 
     /** Обновить кэш сетевых сил. */
     void refreshNet() {
+        boolean net = AnchorNet.isNetWorld(world) && owner != null;
+        netAlpha = net ? AnchorNet.alphaLevel(world, owner) : 0;
+        java.util.List<BlockPos> awake = net ? AnchorNet.awakeAlphas(world, owner) : java.util.Collections.emptyList();
+        netAlphas = awake.size();
+        alphaAwake = alpha && (!net || awake.contains(pos));
+        for (ItemAnchorSeal.Type t : ItemAnchorSeal.Type.values()) {
+            alphaSealF[t.ordinal()] = net ? AnchorNet.alphaSeals(world, owner, t.ordinal(), pos) : 0;
+        }
+        if (net) {
+            checkBorrow();
+        }
         for (AnchorSpec s : AnchorSpec.values()) {
             if (AnchorNet.isNetWorld(world) && owner != null) {
                 netF[s.ordinal()] = AnchorNet.factor(world, owner, s, false);
@@ -465,8 +730,8 @@ public class TileAnchor extends TileEntity implements ITickable {
             int r = a.radius();
             if (dx * dx + dz * dz <= (double) r * r) {
                 int size = AnchorNet.size(world, a.getOwner());
-                double m = AnchorNet.landMultiplier(size) + a.seals(ItemAnchorSeal.Type.WELL);
-                if (a.getSpec() == AnchorSpec.PULSE) {
+                double m = AnchorNet.landMultiplier(size, a.netAlpha) + a.power(ItemAnchorSeal.Type.WELL);
+                if (a.hasFx(AnchorFx.PULSE_REGEN)) {
                     m *= 1.5;   // Пульс: на своей земле энергия в полтора раза быстрее
                 }
                 best = Math.max(best, m);
@@ -515,24 +780,37 @@ public class TileAnchor extends TileEntity implements ITickable {
     public int radiusCap() {
         int[] r = ChaosConfig.anchor.levelRadius;
         int base = r.length == 0 ? 32 : r[Math.min(level(), r.length) - 1];
-        return base + 6 * seals(ItemAnchorSeal.Type.REACH) + (int) Math.round(6 * netStage(AnchorSpec.ROOTS));
+        return base + (int) Math.round(6 * power(ItemAnchorSeal.Type.REACH) + 6 * netStage(AnchorSpec.ROOTS));
     }
 
     public int radius() {
         return Math.min(radiusCap(), ChaosConfig.anchor.startRadius + corrupted / ChaosConfig.anchor.blocksPerRadius
-                + 6 * seals(ItemAnchorSeal.Type.REACH) + (int) Math.round(6 * netStage(AnchorSpec.ROOTS)));
+                + (int) Math.round(6 * power(ItemAnchorSeal.Type.REACH) + 6 * netStage(AnchorSpec.ROOTS)));
     }
 
     // ------------------------------------------------------------------ печати
 
     /** Всего мест под печати (открыты — по уровню). */
-    public static final int MAX_SEALS = 10;
+    public static final int MAX_SEALS = 12;
 
     /** Печати Якоря: ставятся и снимаются в окне. Работают только в открытых местах. */
     public final net.minecraftforge.items.ItemStackHandler sealInv = new net.minecraftforge.items.ItemStackHandler(MAX_SEALS) {
         @Override
         public boolean isItemValid(int slot, net.minecraft.item.ItemStack stack) {
-            return stack.getItem() instanceof ItemAnchorSeal && slot < sealSlots();
+            if (!(stack.getItem() instanceof ItemAnchorSeal) || slot >= sealSlots()) {
+                return false;
+            }
+            ItemAnchorSeal.Type t = ((ItemAnchorSeal) stack.getItem()).type;
+            if (t.sign) {
+                // знак — не больше одного на Якорь
+                for (int i = 0; i < getSlots(); i++) {
+                    net.minecraft.item.ItemStack o = getStackInSlot(i);
+                    if (i != slot && o.getItem() instanceof ItemAnchorSeal && ((ItemAnchorSeal) o.getItem()).type == t) {
+                        return false;
+                    }
+                }
+            }
+            return true;
         }
 
         @Override
@@ -543,12 +821,23 @@ public class TileAnchor extends TileEntity implements ITickable {
         @Override
         protected void onContentsChanged(int slot) {
             changed();
+            net.minecraft.item.ItemStack st = getStackInSlot(slot);
+            if (world != null && !world.isRemote && st.getItem() instanceof ItemAnchorSeal && ((ItemAnchorSeal) st.getItem()).type.sign) {
+                EntityPlayerMP p = ownerOnline();
+                if (p != null) {
+                    ru.death.chaosshard.quest.Milestones.grant(p, ru.death.chaosshard.quest.Milestones.ANCHOR_SIGN);
+                }
+            }
         }
     };
 
     /** Открытых мест под печати: по уровню. */
     public int sealSlots() {
-        return Math.min(MAX_SEALS, level());
+        if (world != null && world.isRemote && clientSlots >= 0) {
+            return clientSlots;
+        }
+        int base = alpha ? 5 + (alphaLevel() + 1) / 2 : level();
+        return Math.min(MAX_SEALS, base + (netAlpha >= 4 ? 1 : 0));
     }
 
     public java.util.List<ItemAnchorSeal.Type> getSeals() {
@@ -563,6 +852,7 @@ public class TileAnchor extends TileEntity implements ITickable {
         return out;
     }
 
+    /** Сколько печатей этого вида стоит в открытых местах. */
     public int seals(ItemAnchorSeal.Type type) {
         int n = 0;
         for (ItemAnchorSeal.Type t : getSeals()) {
@@ -571,6 +861,19 @@ public class TileAnchor extends TileEntity implements ITickable {
             }
         }
         return n;
+    }
+
+    /**
+     * Сила печати: силовые одинаковые складываются по убывающей; знак — 0 или 1.
+     * Плюс печати Альф сети (10% × уровень Альфы за печать).
+     */
+    public double power(ItemAnchorSeal.Type type) {
+        int n = seals(type);
+        double alphaF = alphaSealF[type.ordinal()];
+        if (type.sign) {
+            return Math.max(n > 0 ? 1.0 : 0.0, Math.min(1.0, alphaF));
+        }
+        return AnchorNet.stack(n, netAlpha >= 8) + alphaF;
     }
 
     /** Навесить печать в первое свободное открытое место; false — места нет. */
@@ -616,7 +919,7 @@ public class TileAnchor extends TileEntity implements ITickable {
                 world.setBlockState(pos, base.withProperty(BlockAnchor.GROWN, grown), 2);
             }
         }
-        int height = lvl - 1;
+        int height = columnHeight();
         for (int i = 1; i <= height; i++) {
             BlockPos p = pos.up(i);
             boolean top = i == height;
@@ -642,8 +945,8 @@ public class TileAnchor extends TileEntity implements ITickable {
 
     /** Убрать сегменты колонны выше уровня (после поражения в набеге). */
     private void trimColumn() {
-        int height = level() - 1;
-        for (int i = height + 1; i <= maxLevel() + 1; i++) {
+        int height = columnHeight();
+        for (int i = height + 1; i <= 16; i++) {
             BlockPos p = pos.up(i);
             if (world.getBlockState(p).getBlock() instanceof BlockAnchorPart) {
                 world.setBlockToAir(p);
@@ -736,7 +1039,7 @@ public class TileAnchor extends TileEntity implements ITickable {
             timer = 0;
             int done = 0;
             int attempts = (int) Math.round((ChaosConfig.anchor.attemptsPerSpread + (level() - 1) * ChaosConfig.anchor.attemptsPerLevel)
-                    * (1 + 0.5 * seals(ItemAnchorSeal.Type.FURY)) * (getSpec() == AnchorSpec.ROOTS ? 1.5 : 1.0))
+                    * (1 + 0.5 * power(ItemAnchorSeal.Type.FURY)) * (hasFx(AnchorFx.ROOTS_FURY) ? 1.5 : 1.0))
                     + (int) Math.round(hum.working() * ChaosConfig.tech.humAttempts * (1 + net(AnchorSpec.FORGE)));
             for (int i = 0; i < attempts; i++) {
                 if (spreadOnce(world.rand)) {
@@ -751,9 +1054,8 @@ public class TileAnchor extends TileEntity implements ITickable {
         if (wt % 20 == (pos.toLong() & 15)) {
             tickNet();
         }
-        if (spec >= 0 || netS[AnchorSpec.BASTION.ordinal()] > 0) {
-            AnchorSpecs.tick(this);
-        }
+        AnchorSpecs.tick(this);
+        AnchorSigns.tick(this);
         if (wt % 200 == 100) {
             growColumn();
             growWaystone();
@@ -780,7 +1082,7 @@ public class TileAnchor extends TileEntity implements ITickable {
             resendChunks();
         }
         if (captured && ChaosConfig.anchor.passiveThread > 0
-                && (passiveTimer += 1 + seals(ItemAnchorSeal.Type.HARVEST)) >= ChaosConfig.anchor.passiveInterval) {
+                && (passiveTimer += 1 + (int) Math.round(power(ItemAnchorSeal.Type.HARVEST))) >= ChaosConfig.anchor.passiveInterval) {
             passiveTimer = 0;
             EntityPlayerMP p = ownerOnline();
             if (p != null) {
@@ -820,7 +1122,16 @@ public class TileAnchor extends TileEntity implements ITickable {
 
     /** Добавить опыт. transfer — пришёл из сети. Излишек сверх 5-го уровня уходит в сеть. */
     public void addXp(int n, boolean transfer) {
+        addXp(n, transfer, false);
+    }
+
+    /** full — для Альфы засчитать полностью (кровь); перелив (transfer) засчитывается полностью всегда. */
+    public void addXp(int n, boolean transfer, boolean full) {
         if (n <= 0 || world == null || world.isRemote) {
+            return;
+        }
+        if (alpha) {
+            addAlphaXp(n, transfer || full);
             return;
         }
         int before = level();
@@ -855,8 +1166,9 @@ public class TileAnchor extends TileEntity implements ITickable {
                 d.markDirty();
                 addXp(in, true);
             }
-            if (corrupted < maxXp()) {
-                int got = AnchorNet.takeReserve(world, owner, maxXp() - corrupted);
+            int need = alpha ? ALPHA_T[ALPHA_T.length - 1] - alphaXp : maxXp() - corrupted;
+            if (need > 0) {
+                int got = AnchorNet.takeReserve(world, owner, need);
                 if (got > 0) {
                     addXp(got, true);
                 }
@@ -865,7 +1177,7 @@ public class TileAnchor extends TileEntity implements ITickable {
         // кровь: ведро за bloodTicksPerBucket, Кровавые печати ускоряют
         int amount = blood.getFluidAmount();
         if (amount > 0) {
-            double speed = 1.0 + ChaosConfig.anchor.bloodSealSpeed * seals(ItemAnchorSeal.Type.BLOOD);
+            double speed = 1.0 + ChaosConfig.anchor.bloodSealSpeed * power(ItemAnchorSeal.Type.BLOOD);
             double want = 1000.0 * 20 / Math.max(1, ChaosConfig.anchor.bloodTicksPerBucket) * speed + bloodCarry;
             int mb = (int) Math.min(amount, Math.floor(want));
             bloodCarry = mb < amount ? want - Math.floor(want) : 0;
@@ -874,14 +1186,16 @@ public class TileAnchor extends TileEntity implements ITickable {
                 xpCarry += mb * ChaosConfig.anchor.bloodXpPerBucket / 1000.0;
                 int x = (int) Math.floor(xpCarry);
                 xpCarry -= x;
-                addXp(x, false);
+                addXp(x, false, true);
             }
         }
         if (captured && ChaosConfig.anchor.passiveXpPerLevel > 0) {
             passiveXpTimer += 20;
             if (passiveXpTimer >= ChaosConfig.anchor.passiveXpInterval) {
                 passiveXpTimer = 0;
-                addXp((int) Math.round(level() * ChaosConfig.anchor.passiveXpPerLevel * (1 + 0.5 * net(AnchorSpec.ROOTS))), false);
+                double alphaBoost = netAlpha >= 6 ? 1.5 : 1.0;
+                addXp((int) Math.round((level() + alphaLevel()) * ChaosConfig.anchor.passiveXpPerLevel
+                        * (1 + 0.5 * net(AnchorSpec.ROOTS)) * alphaBoost), false);
             }
         }
         if (world.getTotalWorldTime() % 200 < 20) {
@@ -900,8 +1214,17 @@ public class TileAnchor extends TileEntity implements ITickable {
         }
         AnchorData.Rec r = d.recOrNew(pos);
         int lvl = level();
-        if (!owner.equals(r.owner) || r.level != lvl || r.xp != corrupted || r.land != land || r.captured != captured || r.spec != spec) {
+        int[] sc = new int[ItemAnchorSeal.Type.values().length];
+        for (ItemAnchorSeal.Type t : getSeals()) {
+            sc[t.ordinal()]++;
+        }
+        int al = alphaLevel();
+        if (!owner.equals(r.owner) || r.level != lvl || r.xp != corrupted || r.land != land || r.captured != captured || r.spec != spec
+                || r.alpha != al || !java.util.Arrays.equals(r.seals, sc) || !java.util.Arrays.equals(r.borrow, borrow)) {
             r.spec = spec;
+            r.alpha = al;
+            r.seals = sc;
+            r.borrow = borrow.clone();
             r.owner = owner;
             r.level = lvl;
             r.xp = corrupted;
@@ -1025,6 +1348,10 @@ public class TileAnchor extends TileEntity implements ITickable {
         tag.setInteger("corrupted", corrupted);
         tag.setInteger("land", land);
         tag.setInteger("spec", spec);
+        tag.setBoolean("alpha", alpha);
+        tag.setInteger("alphaXp", alphaXp);
+        tag.setDouble("alphaCarry", alphaCarry);
+        tag.setIntArray("borrow", borrow);
         tag.setTag("storage", storage.serializeNBT());
         tag.setTag("sample", sample.serializeNBT());
         tag.setInteger("fieldXp", fieldXp);
@@ -1054,6 +1381,10 @@ public class TileAnchor extends TileEntity implements ITickable {
         corrupted = tag.getInteger("corrupted");
         land = tag.hasKey("land") ? tag.getInteger("land") : corrupted;
         spec = tag.hasKey("spec") ? tag.getInteger("spec") : -1;
+        alpha = tag.getBoolean("alpha");
+        alphaXp = tag.getInteger("alphaXp");
+        alphaCarry = tag.getDouble("alphaCarry");
+        borrow = tag.getIntArray("borrow");
         if (tag.hasKey("storage")) {
             storage.deserializeNBT(tag.getCompoundTag("storage"));
         }
@@ -1119,6 +1450,9 @@ public class TileAnchor extends TileEntity implements ITickable {
         NBTTagCompound tag = super.getUpdateTag();
         tag.setInteger("corrupted", corrupted);
         tag.setInteger("spec", spec);
+        tag.setBoolean("alpha", alpha);
+        tag.setInteger("alphaLvl", alphaLevel());
+        tag.setInteger("slots", sealSlots());
         writeSeals(tag);
         return tag;
     }
@@ -1128,6 +1462,9 @@ public class TileAnchor extends TileEntity implements ITickable {
         super.handleUpdateTag(tag);
         corrupted = tag.getInteger("corrupted");
         spec = tag.hasKey("spec") ? tag.getInteger("spec") : -1;
+        alpha = tag.getBoolean("alpha");
+        clientAlpha = tag.getInteger("alphaLvl");
+        clientSlots = tag.hasKey("slots") ? tag.getInteger("slots") : -1;
         readSeals(tag);
     }
 
@@ -1143,7 +1480,7 @@ public class TileAnchor extends TileEntity implements ITickable {
 
     @Override
     public net.minecraft.util.math.AxisAlignedBB getRenderBoundingBox() {
-        return new net.minecraft.util.math.AxisAlignedBB(pos.add(-2, 0, -2), pos.add(3, 7, 3));
+        return new net.minecraft.util.math.AxisAlignedBB(pos.add(-2, 0, -2), pos.add(3, 15, 3));
     }
 
     /** Горн отдаёт энергию трубам и кабелям; принимать не умеет. */

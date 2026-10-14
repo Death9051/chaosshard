@@ -26,12 +26,28 @@ public class ItemAnchorSeal extends Item {
         /** Родник: энергия Хаоса на этой земле восстанавливается ещё быстрее. */
         WELL(0xC070FF),
         /** Кровь: смерти тварей в краю питают Скверну (+3 к осквернению за смерть за печать). */
-        BLOOD(0xB01020);
+        BLOOD(0xB01020),
+        // ---- знаки (каждый не больше одного на Якорь); только в конец
+        /** Шипы: чужаки на земле получают урон и замедление. */
+        THORNS(0x60C040, true),
+        /** Искажение: свои прыгают выше и не разбиваются, чужие снаряды сбиваются. */
+        DISTORT(0x40D0E0, true),
+        /** Кровавый дождь: лечит своих, ранит чужих. */
+        RAIN(0xE02040, true),
+        /** Шёпот: враги впадают в безумие. */
+        WHISPER(0x9060FF, true);
 
         public final int color;
+        /** Знак (иначе силовая печать). */
+        public final boolean sign;
 
         Type(int color) {
+            this(color, false);
+        }
+
+        Type(int color, boolean sign) {
             this.color = color;
+            this.sign = sign;
         }
     }
 
@@ -52,6 +68,7 @@ public class ItemAnchorSeal extends Item {
     @SideOnly(Side.CLIENT)
     public void addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, ITooltipFlag flag) {
         tooltip.add(TextFormatting.LIGHT_PURPLE + I18n.format("chaosshard.anchor_seal." + type.name().toLowerCase() + ".desc"));
+        tooltip.add(TextFormatting.GRAY + I18n.format(type.sign ? "chaosshard.anchor_seal.sign" : "chaosshard.anchor_seal." + type.name().toLowerCase() + ".signs"));
         tooltip.add(TextFormatting.DARK_GRAY + I18n.format("chaosshard.anchor_seal.hint"));
     }
 }

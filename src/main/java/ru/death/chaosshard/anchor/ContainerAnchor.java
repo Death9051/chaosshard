@@ -42,7 +42,7 @@ public class ContainerAnchor extends Container {
         final boolean mine = canEdit(player, tile);
         for (int i = 0; i < TileAnchor.MAX_SEALS; i++) {
             final int idx = i;
-            addSlotToContainer(new SlotItemHandler(tile.sealInv, i, SEAL_X + (i % 5) * 18, SEAL_Y + (i / 5) * 18) {
+            addSlotToContainer(new SlotItemHandler(tile.sealInv, i, SEAL_X + (i % 6) * 18, SEAL_Y + (i / 6) * 18) {
                 @Override
                 public boolean isItemValid(ItemStack stack) {
                     return mine && idx < tile.sealSlots() && super.isItemValid(stack);
@@ -221,7 +221,28 @@ public class ContainerAnchor extends Container {
         AnchorSpec sp = a.getSpec();
         t.setInteger("spec", sp == null ? -1 : sp.ordinal());
         t.setBoolean("stage", a.stage());
-        t.setInteger("storage", sp == null ? 0 : sp.storage);
+        t.setInteger("storage", sp != null ? sp.storage : a.hasFx(AnchorFx.VEIN_LOOT) ? AnchorSpec.VEIN.storage : 0);
+        t.setBoolean("alpha", a.isAlpha());
+        t.setInteger("alphaLvl", a.alphaLevel());
+        t.setInteger("alphaXp", a.getAlphaXp());
+        t.setBoolean("alphaAwake", a.alphaAwake());
+        t.setInteger("netAlpha", a.netAlpha());
+        if (a.isAlpha()) {
+            int al = a.alphaLevel();
+            t.setInteger("alphaFrom", al <= 1 ? 0 : TileAnchor.ALPHA_T[al - 2]);
+            t.setInteger("alphaNext", al >= TileAnchor.ALPHA_MAX_LEVEL ? -1 : TileAnchor.ALPHA_T[al - 1]);
+        }
+        t.setInteger("alphaAllowed", net ? AnchorNet.alphaAllowed(w, a.getOwner()) : 0);
+        t.setInteger("alphaCount", net ? AnchorNet.alphas(w, a.getOwner()).size() : 0);
+        t.setInteger("borrowSlots", a.borrowSlots());
+        t.setIntArray("borrow", a.getBorrow());
+        int[] free = new int[AnchorSpec.values().length];
+        if (net) {
+            for (AnchorSpec x : AnchorSpec.values()) {
+                free[x.ordinal()] = AnchorNet.count(w, a.getOwner(), x, false) - AnchorNet.borrowers(w, a.getOwner(), x, null);
+            }
+        }
+        t.setIntArray("borrowFree", free);
         t.setInteger("fieldXp", a.fieldXp);
         t.setInteger("forgeRate", sp == AnchorSpec.FORGE ? AnchorSpecs.forgeRate(a) : 0);
         t.setInteger("forgeEnergy", a.forgeEnergy);

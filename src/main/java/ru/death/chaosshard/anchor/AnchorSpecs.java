@@ -84,58 +84,47 @@ public final class AnchorSpecs {
             watch(a);
         }
         AnchorSpec s = a.getSpec();
-        if (s == null) {
-            return;
+        boolean boost = a.netAlpha() >= 10;   // Альфа 10-го уровня: ступени сильнее
+        if (a.hasFx(AnchorFx.CITADEL_STRIKE) && wt % 60 == ph % 60) {
+            strike(a, hostileNear(a, a.radius()), 8.0F, 0xB070FF);
         }
-        switch (s) {
-            case CITADEL:
-                if (wt % 60 == ph % 60) {
-                    strike(a, hostileNear(a, a.radius()), 8.0F, 0xB070FF);
+        if (a.hasFx(AnchorFx.PATH_REGEN) && wt % 80 == ph % 80) {
+            pathRegen(a);
+        }
+        if (a.hasFx(AnchorFx.WATCH_REVEAL) && wt % 40 == (ph + 20) % 40) {
+            for (EntityLiving e : ws.getEntitiesWithinAABB(EntityLiving.class, land(a), x -> x instanceof IMob && x.isInvisible())) {
+                e.addPotionEffect(new PotionEffect(MobEffects.GLOWING, 60, 0, true, false));
+            }
+        }
+        if (a.hasFx(AnchorFx.VEIN_LOOT) && wt % 20 == ph % 20) {
+            a.specTimer += 20;
+            if (a.specTimer >= 6000) {
+                a.specTimer = 0;
+                veinLoot(a);
+            }
+            if (s == AnchorSpec.VEIN && a.stage()) {
+                a.veinTimer += 20;
+                if (a.veinTimer >= (boost ? 48000 : 72000)) {
+                    a.veinTimer = 0;
+                    vein(a);
                 }
-                break;
-            case PATH:
-                if (wt % 80 == ph % 80) {
-                    pathRegen(a);
-                }
-                break;
-            case WATCH:
-                if (wt % 40 == (ph + 20) % 40) {
-                    for (EntityLiving e : ws.getEntitiesWithinAABB(EntityLiving.class, land(a), x -> x instanceof IMob && x.isInvisible())) {
-                        e.addPotionEffect(new PotionEffect(MobEffects.GLOWING, 60, 0, true, false));
-                    }
-                }
-                break;
-            case VEIN:
-                if (wt % 20 == ph % 20) {
-                    a.specTimer += 20;
-                    if (a.specTimer >= 6000) {
-                        a.specTimer = 0;
-                        veinLoot(a);
-                    }
-                    if (a.stage()) {
-                        a.veinTimer += 20;
-                        if (a.veinTimer >= 72000) {
-                            a.veinTimer = 0;
-                            vein(a);
-                        }
-                    }
-                }
-                break;
-            case NEST:
-                if (wt % 200 == ph % 200) {
-                    nest(a);
-                }
-                break;
-            case FORGE:
-                forge(a, wt);
-                break;
-            case HARVEST:
-                if (wt % 20 == ph % 20) {
-                    field(a, wt % 40 == ph % 40);
-                }
-                break;
-            default:
-                break;
+            }
+        }
+        if (wt % 200 == ph % 200) {
+            if (a.hasFx(AnchorFx.NEST_GUARDS) || a.hasFx(AnchorFx.NEST_ESCORT)) {
+                nest(a);
+            } else if (!nestOf(a, false).isEmpty()) {
+                dismissNest(a);
+            }
+        }
+        if (s == AnchorSpec.FORGE) {
+            forge(a, wt, boost);
+        }
+        if (a.hasFx(AnchorFx.FORGE_SPEED)) {
+            machines(a, wt, s == AnchorSpec.FORGE && a.stage());
+        }
+        if (s == AnchorSpec.HARVEST && wt % 20 == ph % 20) {
+            field(a, wt % 40 == ph % 40);
         }
     }
 
@@ -248,7 +237,7 @@ public final class AnchorSpecs {
     /** Раз в 5 минут — добыча с осквернённой земли в хранилище. */
     public static int veinLoot(TileAnchor a) {
         Random r = a.getWorld().rand;
-        int rolls = (2 + a.level()) * 2;
+        int rolls = (2 + a.level()) * (a.getSpec() == AnchorSpec.VEIN ? 2 : 1);
         int put = 0;
         Item dark = Item.getByNameOrId("evilcraft:dark_gem");
         for (int i = 0; i < rolls; i++) {
@@ -350,8 +339,8 @@ public final class AnchorSpecs {
         if (o == null || o.world != a.getWorld()) {
             return;
         }
-        boolean stage = a.stage();
-        int want = 2 + a.level() + (stage ? 2 : 0);
+        boolean stage = a.getSpec() == AnchorSpec.NEST && a.stage();
+        int want = !a.hasFx(AnchorFx.NEST_GUARDS) ? 0 : 2 + a.level() + (stage ? (a.netAlpha() >= 10 ? 4 : 2) : 0);
         List<EntityLiving> guards = nestOf(a, false);
         if (guards.size() < want) {
             BlockPos at = a.getWorld().getHeight(a.getPos().add(a.getWorld().rand.nextInt(9) - 4, 0, a.getWorld().rand.nextInt(9) - 4));
@@ -376,7 +365,7 @@ public final class AnchorSpecs {
             }
         }
         // сопровождающие: появляются, пока хозяин на этой земле
-        if (inLand(a, o) && nestOf(a, true).size() < 2) {
+        if (a.hasFx(AnchorFx.NEST_ESCORT) && inLand(a, o) && nestOf(a, true).size() < 2) {
             EntityLiving m = Servants.spawn(o, Servants.Kind.HUSK, a.getWorld().getHeight(o.getPosition().add(1, 0, 1)));
             if (m != null) {
                 m.getEntityData().setLong(TAG_NEST, a.getPos().toLong());
@@ -407,8 +396,12 @@ public final class AnchorSpecs {
         return a.stage() ? r * 2 : r;
     }
 
-    private static void forge(TileAnchor a, long wt) {
-        a.forgeEnergy = Math.min(FORGE_BUFFER, a.forgeEnergy + forgeRate(a));
+    private static void forge(TileAnchor a, long wt, boolean boost) {
+        int rate = forgeRate(a);
+        if (boost && a.stage()) {
+            rate = rate * 3 / 2;
+        }
+        a.forgeEnergy = Math.min(FORGE_BUFFER, a.forgeEnergy + rate);
         World w = a.getWorld();
         for (EnumFacing f : EnumFacing.values()) {
             if (a.forgeEnergy <= 0) {
@@ -423,17 +416,22 @@ public final class AnchorSpecs {
                 a.forgeEnergy -= es.receiveEnergy(Math.min(a.forgeEnergy, 20000), false);
             }
         }
-        // машины у Якоря работают быстрее: в полтора раза, на 2-й ступени — вдвое
-        if (wt % (a.stage() ? 1 : 2) == 0) {
-            for (long key : a.hum.positions()) {
-                BlockPos p = BlockPos.fromLong(key);
-                if (!w.isBlockLoaded(p)) {
-                    continue;
-                }
-                TileEntity te = w.getTileEntity(p);
-                if (te instanceof ITickable && !te.isInvalid() && ru.death.chaosshard.spell.SpellAccel.accelerable(w, p)) {
-                    ((ITickable) te).update();
-                }
+    }
+
+    /** Машины у Якоря работают быстрее: в полтора раза, на 2-й ступени Горна — вдвое. */
+    private static void machines(TileAnchor a, long wt, boolean stage) {
+        if (wt % (stage ? 1 : 2) != 0) {
+            return;
+        }
+        World w = a.getWorld();
+        for (long key : a.hum.positions()) {
+            BlockPos p = BlockPos.fromLong(key);
+            if (!w.isBlockLoaded(p)) {
+                continue;
+            }
+            TileEntity te = w.getTileEntity(p);
+            if (te instanceof ITickable && !te.isInvalid() && ru.death.chaosshard.spell.SpellAccel.accelerable(w, p)) {
+                ((ITickable) te).update();
             }
         }
     }
@@ -556,11 +554,10 @@ public final class AnchorSpecs {
         }
         UUID o = a.getOwner();
         boolean ours = o.equals(victim.getUniqueID()) || Servants.isServantOf(victim, o);
-        AnchorSpec s = a.getSpec();
-        if (ours && enemy(src, o) && (s == AnchorSpec.BASTION || s == AnchorSpec.CITADEL)) {
+        if (ours && enemy(src, o) && (a.hasFx(AnchorFx.BASTION_GUARD) || a.hasFx(AnchorFx.CITADEL_FORCE))) {
             event.setAmount(event.getAmount() * 0.85F);
         }
-        if (!ours && s == AnchorSpec.CITADEL && Servants.isServantOf(src, o)) {
+        if (!ours && a.hasFx(AnchorFx.CITADEL_FORCE) && Servants.isServantOf(src, o)) {
             event.setAmount(event.getAmount() * 1.15F);
         }
     }
@@ -660,7 +657,9 @@ public final class AnchorSpecs {
             for (EntityLiving e : p.world.getEntitiesWithinAABB(EntityLiving.class, p.getEntityBoundingBox().grow(64),
                     x -> x.getEntityData().getBoolean(TAG_ESCORT) && Servants.isServantOf(x, p.getUniqueID()))) {
                 AnchorData.Rec r = d.rec(BlockPos.fromLong(e.getEntityData().getLong(TAG_NEST)));
-                if (r == null || r.spec != AnchorSpec.NEST.ordinal()) {
+                boolean ok = r != null && (r.spec == AnchorSpec.NEST.ordinal()
+                        || java.util.Arrays.stream(r.borrow).anyMatch(b -> b == AnchorFx.NEST_ESCORT.ordinal()));
+                if (!ok) {
                     e.setDead();
                 }
             }

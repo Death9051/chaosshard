@@ -28,6 +28,12 @@ public class AnchorData extends WorldSavedData {
         public int inbox;
         /** Специализация ({@link AnchorSpec}), −1 — нет. */
         public int spec = -1;
+        /** Уровень Альфы (0 — не Альфа). */
+        public int alpha;
+        /** Сколько печатей каждого вида стоит (для печатей Альфы на всю сеть). */
+        public int[] seals = new int[0];
+        /** Заимствованные эффекты ({@link AnchorFx}), −1 — пусто. */
+        public int[] borrow = new int[0];
     }
 
     public final java.util.Map<Long, Rec> recs = new java.util.HashMap<>();
@@ -93,6 +99,9 @@ public class AnchorData extends WorldSavedData {
             r.captured = t.getBoolean("c");
             r.inbox = t.getInteger("i");
             r.spec = t.hasKey("s") ? t.getInteger("s") : -1;
+            r.alpha = t.getInteger("a");
+            r.seals = t.getIntArray("se");
+            r.borrow = t.getIntArray("b");
             recs.put(t.getLong("p"), r);
         }
         reserve.clear();
@@ -127,6 +136,9 @@ public class AnchorData extends WorldSavedData {
             t.setBoolean("c", r.captured);
             t.setInteger("i", r.inbox);
             t.setInteger("s", r.spec);
+            t.setInteger("a", r.alpha);
+            t.setIntArray("se", r.seals);
+            t.setIntArray("b", r.borrow);
             rl.appendTag(t);
         }
         nbt.setTag("r", rl);

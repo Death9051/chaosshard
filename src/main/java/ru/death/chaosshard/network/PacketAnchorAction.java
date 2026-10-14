@@ -19,6 +19,7 @@ public class PacketAnchorAction implements IMessage {
     public static final int TRAVEL = 1;
     public static final int SCRY = 2;
     public static final int TAKE_XP = 3;
+    public static final int BORROW = 4;
 
     private int action;
     private int arg;
@@ -78,6 +79,14 @@ public class PacketAnchorAction implements IMessage {
                 break;
             case SCRY:
                 c.scry = m.arg < 0 ? null : BlockPos.fromLong(m.pos);
+                break;
+            case BORROW:
+                if (mine) {
+                    ru.death.chaosshard.anchor.AnchorFx fx = ru.death.chaosshard.anchor.AnchorFx.of((m.arg & 0xFF) - 1);
+                    if (a.setBorrow(m.arg >> 8, fx) && fx != null) {
+                        ru.death.chaosshard.quest.Milestones.grant(p, ru.death.chaosshard.quest.Milestones.ANCHOR_BORROW);
+                    }
+                }
                 break;
             case TAKE_XP:
                 if (mine) {

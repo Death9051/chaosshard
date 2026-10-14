@@ -170,7 +170,14 @@ public class BlockAnchor extends Block {
                     AnchorSpecs.dismissNest(ta);
                 }
             }
-            for (int i = 1; i <= 8 && world.getBlockState(pos.up(i)).getBlock() instanceof BlockAnchorPart; i++) {
+            for (int dx = -1; dx <= 1; dx++) {
+                for (int dz = -1; dz <= 1; dz++) {
+                    if (world.getBlockState(pos.add(dx, 0, dz)).getBlock() instanceof BlockAnchorRim) {
+                        world.setBlockState(pos.add(dx, 0, dz), net.minecraft.init.Blocks.AIR.getDefaultState(), 2);
+                    }
+                }
+            }
+            for (int i = 1; i <= 16 && world.getBlockState(pos.up(i)).getBlock() instanceof BlockAnchorPart; i++) {
                 world.setBlockState(pos.up(i), net.minecraft.init.Blocks.AIR.getDefaultState(), 2);
             }
         }

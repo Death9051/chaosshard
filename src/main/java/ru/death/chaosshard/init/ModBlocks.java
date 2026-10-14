@@ -30,6 +30,7 @@ public final class ModBlocks {
     public static Block CHALK;
     /** Сегменты выросшего Якоря (без предмета). */
     public static Block ANCHOR_PART;
+    public static Block ANCHOR_RIM;
     public static Block TROPHY;
     public static Block RITUAL_BOWL;
     public static Block STAR_PUMP;
@@ -120,6 +121,10 @@ public final class ModBlocks {
         ANCHOR_PART.setRegistryName(Tags.MOD_ID, "anchor_part");
         ANCHOR_PART.setTranslationKey(Tags.MOD_ID + ".chaos_anchor");
         event.getRegistry().register(ANCHOR_PART);
+        ANCHOR_RIM = new ru.death.chaosshard.anchor.BlockAnchorRim();
+        ANCHOR_RIM.setRegistryName(Tags.MOD_ID, "anchor_rim");
+        ANCHOR_RIM.setTranslationKey(Tags.MOD_ID + ".chaos_anchor");
+        event.getRegistry().register(ANCHOR_RIM);
         TROPHY = new ru.death.chaosshard.hero.BlockTrophy();
         TROPHY.setRegistryName(Tags.MOD_ID, "hero_trophy");
         TROPHY.setTranslationKey(Tags.MOD_ID + ".hero_trophy");

@@ -110,7 +110,7 @@ public class DarkCorruption {
         if (a == null) {
             return;
         }
-        int seals = a.seals(ItemAnchorSeal.Type.BLOOD);
+        double seals = a.power(ItemAnchorSeal.Type.BLOOD);
         if (seals <= 0) {
             return;
         }

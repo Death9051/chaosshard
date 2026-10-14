@@ -67,7 +67,7 @@ public class BlockAnchorPart extends Block {
     /** Основание колонны под этим сегментом. */
     public static BlockPos base(IBlockAccess world, BlockPos pos) {
         BlockPos p = pos.down();
-        for (int i = 0; i < 8; i++, p = p.down()) {
+        for (int i = 0; i < 16; i++, p = p.down()) {
             Block b = world.getBlockState(p).getBlock();
             if (b == ModBlocks.CHAOS_ANCHOR) {
                 return p;

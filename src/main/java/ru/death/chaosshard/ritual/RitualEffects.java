@@ -204,6 +204,21 @@ public final class RitualEffects {
                     return false;
                 }
                 return ru.death.chaosshard.compat.tinkers.ChaosMaterials.temper(p);
+            case ANCHOR_ALPHA: {
+                ru.death.chaosshard.anchor.TileAnchor a = ru.death.chaosshard.anchor.TileAnchor.covering(world, pos);
+                if (a == null || !p.getUniqueID().equals(a.getOwner())) {
+                    p.sendMessage(ru.death.chaosshard.breach.Breach.grimoire("chaosshard.anchor.alpha.none"));
+                    return false;
+                }
+                String err = a.evolve();
+                if (err != null) {
+                    p.sendMessage(ru.death.chaosshard.breach.Breach.grimoire(err));
+                    return false;
+                }
+                p.sendMessage(ru.death.chaosshard.breach.Breach.grimoire("chaosshard.anchor.alpha.done", a.getPos().getX(), a.getPos().getZ()));
+                ru.death.chaosshard.quest.Milestones.grant(p, ru.death.chaosshard.quest.Milestones.ANCHOR_ALPHA);
+                return true;
+            }
             case ANCHOR_RESHAPE: {
                 ru.death.chaosshard.anchor.TileAnchor a = ru.death.chaosshard.anchor.TileAnchor.covering(world, pos);
                 if (a == null || !p.getUniqueID().equals(a.getOwner()) || a.getSpec() == null) {

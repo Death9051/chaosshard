@@ -24,11 +24,11 @@ public class AnchorRenderer extends TileEntitySpecialRenderer<TileAnchor> {
     @Override
     public void render(TileAnchor te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
         List<ItemAnchorSeal.Type> seals = te.getSeals();
-        if (te.getWorld() == null || seals.isEmpty()) {
+        if (te.getWorld() == null || (seals.isEmpty() && !te.isAlpha())) {
             return;
         }
         float time = te.getWorld().getTotalWorldTime() + partialTicks;
-        double h = Math.max(1, te.level()) - 0.4;
+        double h = te.columnHeight() + 0.6;
         RenderManager rm = Minecraft.getMinecraft().getRenderManager();
         GlStateManager.pushMatrix();
         GlStateManager.translate(x + 0.5, y + h, z + 0.5);
@@ -39,6 +39,17 @@ public class AnchorRenderer extends TileEntitySpecialRenderer<TileAnchor> {
         GlStateManager.disableCull();
         OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240F, 240F);
         bindTexture(ORB);
+        if (te.isAlpha()) {
+            // Альфа: парящий кристалл над вершиной
+            GlStateManager.pushMatrix();
+            GlStateManager.translate(0, 1.6 + Math.sin(time * 0.05F) * 0.25, 0);
+            GlStateManager.rotate(-rm.playerViewY, 0, 1, 0);
+            GlStateManager.rotate(rm.playerViewX, 1, 0, 0);
+            float pulse = 0.85F + 0.15F * (float) Math.sin(time * 0.12F);
+            quad(0.75F * pulse, new float[]{0.75F, 0.35F, 1F}, 0.9F);
+            quad(0.35F, new float[]{1F, 0.85F, 1F}, 0.95F);
+            GlStateManager.popMatrix();
+        }
         int n = seals.size();
         for (int i = 0; i < n; i++) {
             ItemAnchorSeal.Type t = seals.get(i);

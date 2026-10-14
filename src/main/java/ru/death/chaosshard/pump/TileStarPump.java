@@ -74,7 +74,7 @@ public class TileStarPump extends TileEntity implements ITickable {
         if (!world.isDaytime()) {
             r *= 2;
         }
-        r *= 1 + 0.5 * anchor.seals(ItemAnchorSeal.Type.HARVEST);
+        r *= 1 + 0.5 * anchor.power(ItemAnchorSeal.Type.HARVEST);
         rate = (int) Math.round(r);
         int filled = tank.fillInternal(new FluidStack(f, rate), true);
         pumped += filled;
