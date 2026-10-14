@@ -599,7 +599,6 @@ public final class SpellCaster {
         p.setPositionAndUpdate(x, t.posY, z);
         p.rotationYaw = (float) (MathHelper.atan2(dir.z, dir.x) * 180 / Math.PI) - 90F;
         p.fallDistance = 0;
-        p.resetCooldown();
         p.attackTargetEntityWithCurrentItem(t);
         if (SpellData.has(p, Spell.DASH, "rush") && t.isEntityAlive()) {
             double dmg = p.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getAttributeValue() * 0.5;

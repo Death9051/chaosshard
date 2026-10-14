@@ -2201,7 +2201,8 @@ public final class AutoTest {
             check(cap != null && cap.getTags().contains(ru.death.chaosshard.act5.OrderRaids.TAG_CAPTAIN), "капитан набега");
             // рядом с капитаном — только его отряд (настоящий набег Якоря мог прийти сам и стоять в другом месте)
             List<ru.death.chaosshard.structure.EntityOrderKnight> squad = ow.getEntitiesWithinAABB(ru.death.chaosshard.structure.EntityOrderKnight.class,
-                    cap.getEntityBoundingBox().grow(8, 24, 8), x -> x.getTags().contains(ru.death.chaosshard.act5.OrderRaids.TAG_RAID));
+                    cap.getEntityBoundingBox().grow(8, 256, 8), x -> x.getTags().contains(ru.death.chaosshard.act5.OrderRaids.TAG_RAID));
+            // площадка теста висит в воздухе: рыцари с края встают на землю внизу — считаем по всей высоте
             if (squad.size() < 7) {
                 for (ru.death.chaosshard.structure.EntityOrderKnight k : ow.getEntitiesWithinAABB(ru.death.chaosshard.structure.EntityOrderKnight.class,
                         cap.getEntityBoundingBox().grow(64, 64, 64), x -> x.getTags().contains(ru.death.chaosshard.act5.OrderRaids.TAG_RAID))) {
