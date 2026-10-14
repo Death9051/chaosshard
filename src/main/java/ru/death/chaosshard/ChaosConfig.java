@@ -385,6 +385,24 @@ public final class ChaosConfig {
 
         @Config.Comment("Энергия Хаоса на осквернённой земле восстанавливается во столько раз быстрее")
         public double energyRegenMultiplier = 2.0;
+        @Config.Comment("Сеть Якорей: прибавка к восстановлению энергии за каждый Якорь сверх первого и предел множителя")
+        public double networkEnergyStep = 0.5;
+        public double networkEnergyMax = 5.0;
+        @Config.Comment("Какая доля излишка опыта Якоря 5-го уровня уходит другим Якорям сети")
+        public double overflowShare = 0.5;
+        @Config.Comment("Захваченный Якорь сам набирает опыт: столько за каждый уровень раз в interval тиков")
+        public int passiveXpPerLevel = 1;
+        public int passiveXpInterval = 1200;
+        @Config.Comment("Кровь в Якоре: объём бака (mB), опыт за ведро и тиков на переработку ведра")
+        public int bloodTank = 16000;
+        public int bloodXpPerBucket = 20;
+        public int bloodTicksPerBucket = 600;
+        @Config.Comment("Каждая Кровавая печать ускоряет переработку крови на эту долю")
+        public double bloodSealSpeed = 0.5;
+        @Config.Comment("Скверная флора: шанс посадить растение при осквернении поверхности захваченной земли и что сажать (чего нет — пропускается)")
+        public double floraChance = 0.02;
+        public String[] flora = {"defiledlands:vilespine", "defiledlands:scuronotte", "defiledlands:blastem",
+                "defiledlands:tenebra_sapling", "evilcraft:undead_sapling"};
 
         @Config.Comment("Захваченный край понемногу питает Нить владельца: очков и интервал (тиков)")
         public int passiveThread = 5;

@@ -29,8 +29,34 @@ public class TileAnchor extends TileEntity implements ITickable {
 
     private UUID owner;
     private String ownerName = "";
+    /** Опыт Якоря (осквернение, пассивный прирост, кровь, перелив). */
     private int corrupted;
+    /** Сколько блоков земли реально осквернено — от этого зависит захват края. */
+    private int land;
     private boolean captured;
+    private double xpCarry;
+    private double bloodCarry;
+    private int passiveXpTimer;
+    /** Бак крови: кровь постепенно перерабатывается в опыт. */
+    public final net.minecraftforge.fluids.FluidTank blood = new net.minecraftforge.fluids.FluidTank(ChaosConfig.anchor.bloodTank) {
+        @Override
+        public boolean canFillFluidType(net.minecraftforge.fluids.FluidStack fluid) {
+            return isBlood(fluid);
+        }
+
+        @Override
+        protected void onContentsChanged() {
+            markDirty();
+        }
+    };
+
+    {
+        blood.setCanDrain(false);
+    }
+
+    public static boolean isBlood(net.minecraftforge.fluids.FluidStack f) {
+        return f != null && f.getFluid() != null && f.getFluid().getName().toLowerCase(java.util.Locale.ROOT).contains("blood");
+    }
     private int timer;
     private int passiveTimer;
     /** Захват уже засчитан владельцу (для квестов). */
@@ -105,7 +131,7 @@ public class TileAnchor extends TileEntity implements ITickable {
                 return;
             }
             raidWarned = true;
-            TileAnchor target = c.get(world.rand.nextInt(c.size()));
+            TileAnchor target = nearestTo(c, o);
             raidTarget = target.pos.toLong();
             raidAngle = world.rand.nextDouble() * Math.PI * 2;
             if (order) {
@@ -201,6 +227,7 @@ public class TileAnchor extends TileEntity implements ITickable {
         int loss = Math.max(150, corrupted / 5);
         corrupted = Math.max(0, corrupted - loss);
         shownLevel = level();
+        syncRec();
         trimColumn();
         changed();
         world.playSound(null, pos, SoundEvents.ENTITY_WITHER_BREAK_BLOCK, SoundCategory.BLOCKS, 0.8F, 0.6F);
@@ -216,9 +243,7 @@ public class TileAnchor extends TileEntity implements ITickable {
 
     /** Скверна напиталась (Кровавая печать и пр.). */
     public void feed(int n) {
-        if (n > 0) {
-            addCorrupted(n);
-        }
+        addXp(n, false);
     }
 
     /** Якорь, на чьей земле стоит точка (ближайший из подходящих), или null. */
@@ -246,7 +271,7 @@ public class TileAnchor extends TileEntity implements ITickable {
 
     /** Набег отбит: Якорь крепнет. */
     public void repelled(int lvl) {
-        addCorrupted(50 * lvl);
+        addXp(50 * lvl, false);
     }
 
     /** Для отладки: набег прямо сейчас. */
@@ -319,9 +344,8 @@ public class TileAnchor extends TileEntity implements ITickable {
             double dx = p.getX() - at.getX(), dz = p.getZ() - at.getZ();
             int r = a.radius();
             if (dx * dx + dz * dz <= (double) r * r) {
-                int size = AnchorClusters.cluster(world, a).size();
-                double cluster = Math.min(1.0, 0.25 * (size - 1));
-                best = Math.max(best, ChaosConfig.anchor.energyRegenMultiplier + a.seals(ItemAnchorSeal.Type.WELL) + cluster);
+                int size = AnchorNet.size(world, a.getOwner());
+                best = Math.max(best, AnchorNet.landMultiplier(size) + a.seals(ItemAnchorSeal.Type.WELL));
             }
         }
         return best;
@@ -377,15 +401,47 @@ public class TileAnchor extends TileEntity implements ITickable {
 
     // ------------------------------------------------------------------ печати
 
-    private final java.util.List<ItemAnchorSeal.Type> seals = new java.util.ArrayList<>();
+    /** Всего мест под печати (открыты — по уровню). */
+    public static final int MAX_SEALS = 10;
+
+    /** Печати Якоря: ставятся и снимаются в окне. Работают только в открытых местах. */
+    public final net.minecraftforge.items.ItemStackHandler sealInv = new net.minecraftforge.items.ItemStackHandler(MAX_SEALS) {
+        @Override
+        public boolean isItemValid(int slot, net.minecraft.item.ItemStack stack) {
+            return stack.getItem() instanceof ItemAnchorSeal && slot < sealSlots();
+        }
+
+        @Override
+        public int getSlotLimit(int slot) {
+            return 1;
+        }
+
+        @Override
+        protected void onContentsChanged(int slot) {
+            changed();
+        }
+    };
+
+    /** Открытых мест под печати: по уровню. */
+    public int sealSlots() {
+        return Math.min(MAX_SEALS, level());
+    }
 
     public java.util.List<ItemAnchorSeal.Type> getSeals() {
-        return seals;
+        java.util.List<ItemAnchorSeal.Type> out = new java.util.ArrayList<>();
+        int open = sealSlots();
+        for (int i = 0; i < open; i++) {
+            net.minecraft.item.ItemStack st = sealInv.getStackInSlot(i);
+            if (st.getItem() instanceof ItemAnchorSeal) {
+                out.add(((ItemAnchorSeal) st.getItem()).type);
+            }
+        }
+        return out;
     }
 
     public int seals(ItemAnchorSeal.Type type) {
         int n = 0;
-        for (ItemAnchorSeal.Type t : seals) {
+        for (ItemAnchorSeal.Type t : getSeals()) {
             if (t == type) {
                 n++;
             }
@@ -393,23 +449,27 @@ public class TileAnchor extends TileEntity implements ITickable {
         return n;
     }
 
-    /** Навесить печать; false — нет места (печатей не больше уровня). */
+    /** Навесить печать в первое свободное открытое место; false — места нет. */
     public boolean addSeal(ItemAnchorSeal.Type type) {
-        if (seals.size() >= level()) {
-            return false;
+        int open = sealSlots();
+        for (int i = 0; i < open; i++) {
+            if (sealInv.getStackInSlot(i).isEmpty()) {
+                sealInv.setStackInSlot(i, new net.minecraft.item.ItemStack(ru.death.chaosshard.init.ModItems.SEALS.get(type)));
+                return true;
+            }
         }
-        seals.add(type);
-        changed();
-        return true;
+        return false;
     }
 
     public ItemAnchorSeal.Type removeSeal() {
-        if (seals.isEmpty()) {
-            return null;
+        for (int i = MAX_SEALS - 1; i >= 0; i--) {
+            net.minecraft.item.ItemStack st = sealInv.getStackInSlot(i);
+            if (st.getItem() instanceof ItemAnchorSeal) {
+                sealInv.setStackInSlot(i, net.minecraft.item.ItemStack.EMPTY);
+                return ((ItemAnchorSeal) st.getItem()).type;
+            }
         }
-        ItemAnchorSeal.Type t = seals.remove(seals.size() - 1);
-        changed();
-        return t;
+        return null;
     }
 
     private int shownLevel = 0;
@@ -477,17 +537,21 @@ public class TileAnchor extends TileEntity implements ITickable {
         }
     }
 
-    private void onLevelUp(int lvl) {
+    /** Уровень вырос; transfer — опытом из сети (перелив/запас): тогда Нити вполовину. */
+    private void onLevelUp(int lvl, boolean transfer) {
         int[] rw = ChaosConfig.anchor.levelReward;
-        int reward = lvl - 1 < rw.length ? rw[lvl - 1] : 0;
+        // Нить за 2-й уровень выдаётся при захвате края — по реально осквернённой земле
+        int reward = lvl >= 3 && lvl - 1 < rw.length ? rw[lvl - 1] : 0;
+        if (transfer) {
+            reward /= 2;
+        }
         EntityPlayerMP p = ownerOnline();
-        if (lvl == 2) {
-            checkCapture();
-        } else if (p != null) {
+        if (p != null) {
             if (reward > 0) {
                 ThreadManager.addPoints(p, reward);
             }
-            p.sendMessage(Breach.grimoire("chaosshard.anchor.level_up", pos.getX(), pos.getZ(), lvl, radiusCap(), reward));
+            p.sendMessage(Breach.grimoire(reward > 0 ? "chaosshard.anchor.level_up" : "chaosshard.anchor.level_up_quiet",
+                    pos.getX(), pos.getZ(), lvl, radiusCap(), reward));
             if (lvl >= maxLevel()) {
                 ru.death.chaosshard.quest.Milestones.grant(p, ru.death.chaosshard.quest.Milestones.ANCHOR_MAX);
             }
@@ -556,6 +620,9 @@ public class TileAnchor extends TileEntity implements ITickable {
             }
         }
         long wt = world.getTotalWorldTime();
+        if (wt % 20 == (pos.toLong() & 15)) {
+            tickNet();
+        }
         if (wt % 200 == 100) {
             growColumn();
             growWaystone();
@@ -604,30 +671,140 @@ public class TileAnchor extends TileEntity implements ITickable {
         return done;
     }
 
+    /** Скверна осквернила n блоков: и земля, и опыт. */
     private void addCorrupted(int n) {
+        land += n;
+        addXp(n, false);
+        checkCapture();
+    }
+
+    public int getLand() {
+        return land;
+    }
+
+    public static int maxXp() {
+        int[] t = ChaosConfig.anchor.levelThresholds;
+        return t[t.length - 1];
+    }
+
+    /** Добавить опыт. transfer — пришёл из сети. Излишек сверх 5-го уровня уходит в сеть. */
+    public void addXp(int n, boolean transfer) {
+        if (n <= 0 || world == null || world.isRemote) {
+            return;
+        }
         int before = level();
         corrupted += n;
+        int max = maxXp();
+        if (corrupted > max) {
+            int surplus = corrupted - max;
+            corrupted = max;
+            AnchorNet.overflow(world, owner, pos, surplus);
+        }
         markDirty();
         int after = level();
         for (int l = before + 1; l <= after; l++) {
-            onLevelUp(l);
+            onLevelUp(l, transfer);
         }
         if (after != shownLevel) {
             shownLevel = after;
             changed();
         }
+        syncRec();
+    }
+
+    /** Раз в секунду: перелив из сети, запас, кровь, пассивный прирост, сводка для сети. */
+    private void tickNet() {
+        if (AnchorNet.isNetWorld(world) && owner != null) {
+            AnchorData d = AnchorData.get(world);
+            AnchorData.Rec r = d.rec(pos);
+            if (r != null && r.inbox > 0) {
+                int in = r.inbox;
+                r.inbox = 0;
+                d.markDirty();
+                addXp(in, true);
+            }
+            if (corrupted < maxXp()) {
+                int got = AnchorNet.takeReserve(world, owner, maxXp() - corrupted);
+                if (got > 0) {
+                    addXp(got, true);
+                }
+            }
+        }
+        // кровь: ведро за bloodTicksPerBucket, Кровавые печати ускоряют
+        int amount = blood.getFluidAmount();
+        if (amount > 0) {
+            double speed = 1.0 + ChaosConfig.anchor.bloodSealSpeed * seals(ItemAnchorSeal.Type.BLOOD);
+            double want = 1000.0 * 20 / Math.max(1, ChaosConfig.anchor.bloodTicksPerBucket) * speed + bloodCarry;
+            int mb = (int) Math.min(amount, Math.floor(want));
+            bloodCarry = mb < amount ? want - Math.floor(want) : 0;
+            if (mb > 0) {
+                blood.drainInternal(mb, true);
+                xpCarry += mb * ChaosConfig.anchor.bloodXpPerBucket / 1000.0;
+                int x = (int) Math.floor(xpCarry);
+                xpCarry -= x;
+                addXp(x, false);
+            }
+        }
+        if (captured && ChaosConfig.anchor.passiveXpPerLevel > 0) {
+            passiveXpTimer += 20;
+            if (passiveXpTimer >= ChaosConfig.anchor.passiveXpInterval) {
+                passiveXpTimer = 0;
+                addXp(level() * ChaosConfig.anchor.passiveXpPerLevel, false);
+            }
+        }
+        if (world.getTotalWorldTime() % 200 < 20) {
+            syncRec();
+        }
+    }
+
+    /** Обновить сводку Якоря для сети. */
+    public void syncRec() {
+        if (world == null || world.isRemote || owner == null || !AnchorNet.isNetWorld(world)) {
+            return;
+        }
+        AnchorData d = AnchorData.get(world);
+        if (!d.anchors.contains(pos)) {
+            return;
+        }
+        AnchorData.Rec r = d.recOrNew(pos);
+        int lvl = level();
+        if (!owner.equals(r.owner) || r.level != lvl || r.xp != corrupted || r.land != land || r.captured != captured) {
+            r.owner = owner;
+            r.level = lvl;
+            r.xp = corrupted;
+            r.land = land;
+            r.captured = captured;
+            d.markDirty();
+        }
+    }
+
+    /** Якорь сети ближе всех к игроку. */
+    private TileAnchor nearestTo(java.util.List<TileAnchor> c, EntityPlayerMP o) {
+        TileAnchor best = this;
+        double bd = Double.MAX_VALUE;
+        for (TileAnchor t : c) {
+            double d = o.getDistanceSq(t.pos);
+            if (d < bd) {
+                bd = d;
+                best = t;
+            }
+        }
+        return best;
     }
 
     /** Для отладки: сразу выставить число осквернённых блоков (уровни засчитываются). */
     public void setCorrupted(int n) {
         int before = level();
-        corrupted = Math.max(0, n);
+        corrupted = Math.max(0, Math.min(maxXp(), n));
+        land = Math.max(land, corrupted);
         int after = level();
         for (int l = before + 1; l <= after; l++) {
-            onLevelUp(l);
+            onLevelUp(l, false);
         }
+        checkCapture();
         growColumn();
         changed();
+        syncRec();
     }
 
     /** Одна попытка: поверхность случайного столбца в круге либо случайный блок в объёме (деревья, камень). */
@@ -652,10 +829,6 @@ public class TileAnchor extends TileEntity implements ITickable {
         boolean changed = false;
         if (rand.nextBoolean()) {
             BlockPos top = world.getHeight(new BlockPos(x, 0, z)).down();
-            // Скверна будит здешнюю тьму: стоячая вода темнеет в кровь (EvilCraft)
-            if (DarkCorruption.waterToBlood(world, top, rand)) {
-                return true;
-            }
             for (int d = 0; d < 3; d++) {
                 changed |= Corruption.corrupt(world, top.down(d));
             }
@@ -667,6 +840,9 @@ public class TileAnchor extends TileEntity implements ITickable {
             if (changed) {
                 ((WorldServer) world).spawnParticle(EnumParticleTypes.SPELL_WITCH, x + 0.5, top.getY() + 1.2, z + 0.5,
                         4, 0.3, 0.2, 0.3, 0.01);
+                if (captured) {
+                    Corruption.flora(world, top.up(), rand);
+                }
             }
         } else {
             int y = pos.getY() - 6 + rand.nextInt(18);
@@ -678,7 +854,8 @@ public class TileAnchor extends TileEntity implements ITickable {
     }
 
     private void checkCapture() {
-        if (captured || level() < 2) {
+        int[] t = ChaosConfig.anchor.levelThresholds;
+        if (captured || land < (t.length > 1 ? t[1] : 0)) {
             return;
         }
         captured = true;
@@ -713,6 +890,10 @@ public class TileAnchor extends TileEntity implements ITickable {
         }
         tag.setString("ownerName", ownerName);
         tag.setInteger("corrupted", corrupted);
+        tag.setInteger("land", land);
+        tag.setDouble("xpCarry", xpCarry);
+        tag.setInteger("passiveXp", passiveXpTimer);
+        tag.setTag("blood", blood.writeToNBT(new NBTTagCompound()));
         tag.setBoolean("captured", captured);
         tag.setBoolean("waystone", waystone);
         tag.setInteger("passive", passiveTimer);
@@ -732,6 +913,11 @@ public class TileAnchor extends TileEntity implements ITickable {
         owner = tag.hasUniqueId("owner") ? tag.getUniqueId("owner") : null;
         ownerName = tag.getString("ownerName");
         corrupted = tag.getInteger("corrupted");
+        land = tag.hasKey("land") ? tag.getInteger("land") : corrupted;
+        xpCarry = tag.getDouble("xpCarry");
+        passiveXpTimer = tag.getInteger("passiveXp");
+        blood.setFluid(null);
+        blood.readFromNBT(tag.getCompoundTag("blood"));
         captured = tag.getBoolean("captured");
         waystone = tag.getBoolean("waystone");
         passiveTimer = tag.getInteger("passive");
@@ -744,19 +930,35 @@ public class TileAnchor extends TileEntity implements ITickable {
         readSeals(tag);
     }
 
+    /** Печати по местам: ordinal или −1 (и для сохранения, и для клиента). */
     private void writeSeals(NBTTagCompound tag) {
-        int[] arr = new int[seals.size()];
-        for (int i = 0; i < arr.length; i++) {
-            arr[i] = seals.get(i).ordinal();
+        int[] arr = new int[MAX_SEALS];
+        for (int i = 0; i < MAX_SEALS; i++) {
+            net.minecraft.item.ItemStack st = sealInv.getStackInSlot(i);
+            arr[i] = st.getItem() instanceof ItemAnchorSeal ? ((ItemAnchorSeal) st.getItem()).type.ordinal() : -1;
         }
-        tag.setIntArray("seals", arr);
+        tag.setIntArray("sealSlots", arr);
     }
 
     private void readSeals(NBTTagCompound tag) {
-        seals.clear();
+        ItemAnchorSeal.Type[] types = ItemAnchorSeal.Type.values();
+        for (int i = 0; i < MAX_SEALS; i++) {
+            sealInv.setStackInSlot(i, net.minecraft.item.ItemStack.EMPTY);
+        }
+        if (tag.hasKey("sealSlots")) {
+            int[] arr = tag.getIntArray("sealSlots");
+            for (int i = 0; i < Math.min(arr.length, MAX_SEALS); i++) {
+                if (arr[i] >= 0 && arr[i] < types.length) {
+                    sealInv.setStackInSlot(i, new net.minecraft.item.ItemStack(ru.death.chaosshard.init.ModItems.SEALS.get(types[arr[i]])));
+                }
+            }
+            return;
+        }
+        // старое сохранение: список печатей подряд
+        int i = 0;
         for (int o : tag.getIntArray("seals")) {
-            if (o >= 0 && o < ItemAnchorSeal.Type.values().length) {
-                seals.add(ItemAnchorSeal.Type.values()[o]);
+            if (o >= 0 && o < types.length && i < MAX_SEALS) {
+                sealInv.setStackInSlot(i++, new net.minecraft.item.ItemStack(ru.death.chaosshard.init.ModItems.SEALS.get(types[o])));
             }
         }
     }
@@ -791,6 +993,20 @@ public class TileAnchor extends TileEntity implements ITickable {
     @Override
     public net.minecraft.util.math.AxisAlignedBB getRenderBoundingBox() {
         return new net.minecraft.util.math.AxisAlignedBB(pos.add(-2, 0, -2), pos.add(3, 7, 3));
+    }
+
+    @Override
+    public boolean hasCapability(net.minecraftforge.common.capabilities.Capability<?> cap, @javax.annotation.Nullable net.minecraft.util.EnumFacing f) {
+        return cap == net.minecraftforge.fluids.capability.CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY || super.hasCapability(cap, f);
+    }
+
+    @Override
+    @javax.annotation.Nullable
+    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> cap, @javax.annotation.Nullable net.minecraft.util.EnumFacing f) {
+        if (cap == net.minecraftforge.fluids.capability.CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
+            return net.minecraftforge.fluids.capability.CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.cast(blood);
+        }
+        return super.getCapability(cap, f);
     }
 
     @Override

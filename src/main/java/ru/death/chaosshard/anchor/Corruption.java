@@ -179,7 +179,49 @@ public final class Corruption {
     }
 
     /** Сбросить кэш правил (после смены конфига). */
+    private static java.util.List<Block> flora;
+
+    /** Растения Скверной флоры, которые есть в сборке. */
+    public static java.util.List<Block> floraBlocks() {
+        if (flora == null) {
+            flora = new java.util.ArrayList<>();
+            for (String id : ChaosConfig.anchor.flora) {
+                ResourceLocation rl = new ResourceLocation(id.trim());
+                if (ForgeRegistries.BLOCKS.containsKey(rl)) {
+                    Block b = ForgeRegistries.BLOCKS.getValue(rl);
+                    if (b != null && b != Blocks.AIR) {
+                        flora.add(b);
+                    }
+                }
+            }
+        }
+        return flora;
+    }
+
+    /** Скверная флора: изредка посадить растение на освободившееся место над осквернённой землёй. */
+    public static boolean flora(World world, BlockPos at, java.util.Random rand) {
+        if (rand.nextDouble() >= ChaosConfig.anchor.floraChance) {
+            return false;
+        }
+        return plant(world, at, rand);
+    }
+
+    /** Посадить случайное растение флоры, если место пустое и растение там приживётся. */
+    public static boolean plant(World world, BlockPos at, java.util.Random rand) {
+        java.util.List<Block> list = floraBlocks();
+        if (list.isEmpty() || !world.isAirBlock(at) || world.canSeeSky(at) == false) {
+            return false;
+        }
+        Block b = list.get(rand.nextInt(list.size()));
+        if (!b.canPlaceBlockAt(world, at)) {
+            return false;
+        }
+        world.setBlockState(at, b.getDefaultState(), 2);
+        return true;
+    }
+
     public static void reset() {
+        flora = null;
         rules = null;
     }
 

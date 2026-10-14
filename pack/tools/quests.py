@@ -1157,7 +1157,7 @@ def build():
         "questSettings:10": {"betterquesting:10": {
             "editmode:1": 0, "hardcore:1": 0, "party_enable:1": 1,
             "livesdef:3": 3, "livesmax:3": 10,
-            "pack_name:8": PACK_NAME, "pack_version:3": 69,
+            "pack_name:8": PACK_NAME, "pack_version:3": 70,
             "home_image:8": "chaosshard:textures/gui/quest_home.png"}},
         "questDatabase:9": db,
         "questLines:9": lines,

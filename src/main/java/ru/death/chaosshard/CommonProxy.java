@@ -64,4 +64,7 @@ public class CommonProxy {
 
     public void handleOreSight(long[] pos, byte[] tier, int ticks) {
     }
+
+    public void handleAnchorView(net.minecraft.nbt.NBTTagCompound data) {
+    }
 }

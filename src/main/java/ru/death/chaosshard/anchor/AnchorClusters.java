@@ -16,9 +16,8 @@ import java.util.Set;
 import java.util.UUID;
 
 /**
- * Кластеры Якорей: Якоря одного хозяина, чьи земли касаются (расстояние ≤ сумма радиусов), — одна сеть.
- * Сеть даёт: общий гарнизон (бойцы всех Якорей сети приходят на помощь туда, где набег), бонус энергии
- * (+25% за каждый Якорь сверх первого, до +100%), один набег на всю сеть вместо отдельного на каждый Якорь.
+ * Сеть Якорей в виде загруженных тайлов: все Якоря одного хозяина в Лучезарии — одна сеть.
+ * Общий гарнизон, один набег на всю сеть. Дуги рисуются только между Якорями, чьи земли касаются.
  */
 public final class AnchorClusters {
 
@@ -30,31 +29,26 @@ public final class AnchorClusters {
         return te instanceof TileAnchor ? (TileAnchor) te : null;
     }
 
-    /** Сеть, в которую входит Якорь (включая его самого). */
+    /**
+     * Сеть, в которую входит Якорь (включая его самого): все загруженные Якоря того же владельца в Лучезарии.
+     * Вне Лучезарии Якорь сам по себе.
+     */
     public static List<TileAnchor> cluster(World w, TileAnchor start) {
         List<TileAnchor> out = new ArrayList<>();
         if (start == null) {
             return out;
         }
-        List<TileAnchor> all = new ArrayList<>();
-        for (BlockPos p : AnchorData.get(w).anchors) {
-            TileAnchor a = at(w, p);
-            if (a != null && a.getOwner() != null && a.getOwner().equals(start.getOwner())) {
-                all.add(a);
-            }
+        out.add(start);
+        if (!AnchorNet.isNetWorld(w) || start.getOwner() == null) {
+            return out;
         }
-        Set<BlockPos> seen = new HashSet<>();
-        ArrayDeque<TileAnchor> q = new ArrayDeque<>();
-        q.add(start);
-        seen.add(start.getPos());
-        while (!q.isEmpty()) {
-            TileAnchor a = q.poll();
-            out.add(a);
-            for (TileAnchor b : all) {
-                if (!seen.contains(b.getPos()) && touch(a, b)) {
-                    seen.add(b.getPos());
-                    q.add(b);
-                }
+        for (BlockPos p : AnchorData.get(w).anchors) {
+            if (p.equals(start.getPos())) {
+                continue;
+            }
+            TileAnchor a = at(w, p);
+            if (a != null && start.getOwner().equals(a.getOwner())) {
+                out.add(a);
             }
         }
         return out;
@@ -89,6 +83,9 @@ public final class AnchorClusters {
         for (TileAnchor t : c) {
             n += t.level();
         }
+        if (!c.isEmpty() && AnchorNet.isNetWorld(c.get(0).getWorld())) {
+            n = Math.max(n, AnchorNet.levelSum(c.get(0).getWorld(), c.get(0).getOwner()));
+        }
         return n;
     }
 
@@ -108,10 +105,17 @@ public final class AnchorClusters {
             return out;
         }
         UUID owner = c.get(0).getOwner();
+        Set<Long> net = new HashSet<>();
+        for (TileAnchor t : c) {
+            net.add(t.getPos().toLong());
+        }
+        for (BlockPos p : AnchorNet.members(w, owner)) {
+            net.add(p.toLong());
+        }
         for (Entity e : w.loadedEntityList) {
             if (e instanceof EntityLiving && e.isEntityAlive() && owner != null && Servants.isServantOf(e, owner)
                     && e.getEntityData().hasKey(Servants.TAG_ANCHOR)
-                    && contains(c, BlockPos.fromLong(e.getEntityData().getLong(Servants.TAG_ANCHOR)))) {
+                    && net.contains(e.getEntityData().getLong(Servants.TAG_ANCHOR))) {
                 out.add((EntityLiving) e);
             }
         }

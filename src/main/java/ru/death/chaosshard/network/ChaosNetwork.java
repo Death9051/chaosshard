@@ -26,6 +26,7 @@ public final class ChaosNetwork {
         CHANNEL.registerMessage(PacketSpellData.Handler.class, PacketSpellData.class, 12, Side.CLIENT);
         CHANNEL.registerMessage(PacketSpellAction.Handler.class, PacketSpellAction.class, 13, Side.SERVER);
         CHANNEL.registerMessage(PacketOreSight.Handler.class, PacketOreSight.class, 14, Side.CLIENT);
+        CHANNEL.registerMessage(PacketAnchorView.Handler.class, PacketAnchorView.class, 15, Side.CLIENT);
     }
 
     private ChaosNetwork() {

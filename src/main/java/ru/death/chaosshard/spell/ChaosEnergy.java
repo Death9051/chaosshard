@@ -65,7 +65,7 @@ public class ChaosEnergy {
             if (AntechamberDimension.is(player.world)) {
                 regen *= ChaosConfig.magic.antechamberRegenMultiplier;
             } else {
-                regen *= ru.death.chaosshard.anchor.TileAnchor.energyMultiplier(player.world, player.getPosition());
+                regen *= ru.death.chaosshard.anchor.AnchorNet.regen(player);
             }
             if (ru.death.chaosshard.compat.body.Body.hasCore(player)) {
                 regen *= 1.5;

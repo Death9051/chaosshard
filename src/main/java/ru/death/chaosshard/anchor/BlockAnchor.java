@@ -98,7 +98,7 @@ public class BlockAnchor extends Block {
         }
         EntityPlayerMP player = (EntityPlayerMP) placer;
         String error = null;
-        if (AntechamberDimension.is(world)) {
+        if (!AnchorNet.isNetWorld(world)) {
             error = "chaosshard.anchor.not_here";
         } else if (!player.isCreative() && ThreadManager.getLevel(player) < ChaosConfig.anchor.threadLevel) {
             error = "chaosshard.anchor.thin";
@@ -133,6 +133,9 @@ public class BlockAnchor extends Block {
         AnchorData data = AnchorData.get(world);
         data.anchors.add(pos);
         data.markDirty();
+        if (te instanceof TileAnchor) {
+            ((TileAnchor) te).syncRec();
+        }
         player.sendMessage(Breach.grimoire("chaosshard.anchor.placed"));
         ru.death.chaosshard.quest.Milestones.grant(player, ru.death.chaosshard.quest.Milestones.ANCHOR);
     }
@@ -141,14 +144,18 @@ public class BlockAnchor extends Block {
     public void breakBlock(World world, BlockPos pos, IBlockState state) {
         if (!world.isRemote) {
             AnchorData data = AnchorData.get(world);
-            if (data.anchors.remove(pos)) {
+            if (data.anchors.remove(pos) | data.recs.remove(pos.toLong()) != null) {
                 data.markDirty();
             }
             // печати выпадают, колонна рассыпается
             TileEntity te = world.getTileEntity(pos);
             if (te instanceof TileAnchor) {
-                for (ItemAnchorSeal.Type t : ((TileAnchor) te).getSeals()) {
-                    spawnAsEntity(world, pos, new ItemStack(ru.death.chaosshard.init.ModItems.SEALS.get(t)));
+                TileAnchor ta = (TileAnchor) te;
+                for (int i = 0; i < TileAnchor.MAX_SEALS; i++) {
+                    ItemStack st = ta.sealInv.getStackInSlot(i);
+                    if (!st.isEmpty()) {
+                        spawnAsEntity(world, pos, st.copy());
+                    }
                 }
             }
             for (int i = 1; i <= 8 && world.getBlockState(pos.up(i)).getBlock() instanceof BlockAnchorPart; i++) {
@@ -164,56 +171,28 @@ public class BlockAnchor extends Block {
         if (hand != EnumHand.MAIN_HAND) {
             return false;
         }
-        if (!world.isRemote) {
-            TileEntity te = world.getTileEntity(pos);
-            if (te instanceof TileAnchor) {
-                TileAnchor a = (TileAnchor) te;
-                ItemStack held = player.getHeldItem(hand);
-                if (held.getItem() instanceof ItemAnchorSeal) {
-                    if (a.addSeal(((ItemAnchorSeal) held.getItem()).type)) {
-                        if (!player.isCreative()) {
-                            held.shrink(1);
-                        }
-                        world.playSound(null, pos, net.minecraft.init.SoundEvents.BLOCK_END_PORTAL_FRAME_FILL,
-                                net.minecraft.util.SoundCategory.BLOCKS, 0.8F, 0.8F);
-                        player.sendStatusMessage(Breach.grimoire("chaosshard.anchor.seal_added", a.getSeals().size(), a.level()), true);
-                    } else {
-                        player.sendStatusMessage(Breach.grimoire("chaosshard.anchor.seal_full", a.level()), true);
-                    }
-                    return true;
-                }
-                if (held.isEmpty() && player.isSneaking()) {
-                    ItemAnchorSeal.Type t = a.removeSeal();
-                    if (t != null) {
-                        net.minecraftforge.items.ItemHandlerHelper.giveItemToPlayer(player, new ItemStack(ru.death.chaosshard.init.ModItems.SEALS.get(t)));
-                    }
-                    return true;
-                }
-                int next = a.nextThreshold();
-                player.sendMessage(Breach.grimoire("chaosshard.anchor.info", a.getOwnerName(), a.level(), TileAnchor.maxLevel(),
-                        a.radius(), a.radiusCap(), a.getCorrupted(), next < 0 ? "—" : String.valueOf(next)));
-                StringBuilder sb = new StringBuilder();
-                for (ItemAnchorSeal.Type t : a.getSeals()) {
-                    sb.append(sb.length() == 0 ? "" : ", ").append(net.minecraft.util.text.translation.I18n.translateToLocal(
-                            "item.chaosshard.anchor_seal_" + t.name().toLowerCase() + ".name"));
-                }
-                player.sendMessage(Breach.grimoire("chaosshard.anchor.info_seals", a.getSeals().size(), a.level(),
-                        sb.length() == 0 ? "—" : sb.toString()));
-                player.sendMessage(Breach.grimoire(a.isCaptured() ? "chaosshard.anchor.info_captured" : "chaosshard.anchor.info_open"));
-                if (a.hum.working() > 0) {
-                    player.sendMessage(Breach.grimoire("chaosshard.anchor.info_hum", a.hum.working(), ChaosConfig.tech.humMax));
-                }
-                java.util.List<TileAnchor> c = AnchorClusters.cluster(world, a);
-                int garrison = AnchorClusters.garrison((net.minecraft.world.WorldServer) world, c).size();
-                player.sendMessage(Breach.grimoire("chaosshard.anchor.info_cluster", c.size(), garrison,
-                        AnchorClusters.garrisonLimit(c), (int) (100 * Math.min(1.0, 0.25 * (c.size() - 1)))));
-                for (TileAnchor t : c) {
-                    if (AnchorClusters.isLead(c, t) && t.isCaptured() && t.raidTimer() >= 0) {
-                        player.sendMessage(Breach.grimoire("chaosshard.anchor.info_raid", Math.max(1, t.raidTimer() / 1200),
-                                AnchorClusters.maxLevel(c), AnchorClusters.maxLevel(c) >= 4 ? 2 : 1));
-                    }
-                }
+        TileEntity te = world.getTileEntity(pos);
+        if (!(te instanceof TileAnchor)) {
+            return false;
+        }
+        TileAnchor a = (TileAnchor) te;
+        ItemStack held = player.getHeldItem(hand);
+        // кровь из ведра, Вытягивателя, бака — в Якорь
+        net.minecraftforge.fluids.FluidStack inHand = net.minecraftforge.fluids.FluidUtil.getFluidContained(held);
+        if (inHand != null && TileAnchor.isBlood(inHand)) {
+            if (!world.isRemote) {
+                int before = a.blood.getFluidAmount();
+                net.minecraftforge.fluids.FluidUtil.interactWithFluidHandler(player, hand, a.blood);
+                int poured = a.blood.getFluidAmount() - before;
+                player.sendStatusMessage(Breach.grimoire(poured > 0 ? "chaosshard.anchor.blood_in" : "chaosshard.anchor.blood_full",
+                        poured, a.blood.getFluidAmount() / 1000, a.blood.getCapacity() / 1000), true);
             }
+            return true;
+        }
+        if (!world.isRemote) {
+            a.syncRec();
+            player.openGui(ru.death.chaosshard.ChaosShard.INSTANCE, ru.death.chaosshard.heart.HeartGuiHandler.ANCHOR, world,
+                    pos.getX(), pos.getY(), pos.getZ());
         }
         return true;
     }

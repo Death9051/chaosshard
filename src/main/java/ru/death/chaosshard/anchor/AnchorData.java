@@ -17,6 +17,29 @@ public class AnchorData extends WorldSavedData {
     /** Сколько набегов Мрачной Армии уже было. */
     public int raids;
 
+    /** Сводка по Якорю — чтобы сеть знала о Якорях в незагруженных чанках. */
+    public static final class Rec {
+        public java.util.UUID owner;
+        public int level = 1;
+        public int xp;
+        public int land;
+        public boolean captured;
+        /** Опыт, пришедший переливом, пока Якорь не загружен. */
+        public int inbox;
+    }
+
+    public final java.util.Map<Long, Rec> recs = new java.util.HashMap<>();
+    /** Запас перелива по владельцам (уже с коэффициентом). */
+    public final java.util.Map<java.util.UUID, Integer> reserve = new java.util.HashMap<>();
+
+    public Rec rec(BlockPos p) {
+        return recs.get(p.toLong());
+    }
+
+    public Rec recOrNew(BlockPos p) {
+        return recs.computeIfAbsent(p.toLong(), k -> new Rec());
+    }
+
     public AnchorData(String name) {
         super(name);
     }
@@ -54,6 +77,29 @@ public class AnchorData extends WorldSavedData {
         for (int i = 0; i < list.tagCount(); i++) {
             anchors.add(BlockPos.fromLong(((net.minecraft.nbt.NBTTagLong) list.get(i)).getLong()));
         }
+        recs.clear();
+        NBTTagList rl = nbt.getTagList("r", 10);
+        for (int i = 0; i < rl.tagCount(); i++) {
+            NBTTagCompound t = rl.getCompoundTagAt(i);
+            Rec r = new Rec();
+            if (t.hasUniqueId("o")) {
+                r.owner = t.getUniqueId("o");
+            }
+            r.level = t.getInteger("l");
+            r.xp = t.getInteger("x");
+            r.land = t.getInteger("d");
+            r.captured = t.getBoolean("c");
+            r.inbox = t.getInteger("i");
+            recs.put(t.getLong("p"), r);
+        }
+        reserve.clear();
+        NBTTagList res = nbt.getTagList("res", 10);
+        for (int i = 0; i < res.tagCount(); i++) {
+            NBTTagCompound t = res.getCompoundTagAt(i);
+            if (t.hasUniqueId("o")) {
+                reserve.put(t.getUniqueId("o"), t.getInteger("n"));
+            }
+        }
     }
 
     @Override
@@ -64,6 +110,30 @@ public class AnchorData extends WorldSavedData {
         }
         nbt.setTag("a", list);
         nbt.setInteger("raids", raids);
+        NBTTagList rl = new NBTTagList();
+        for (java.util.Map.Entry<Long, Rec> e : recs.entrySet()) {
+            Rec r = e.getValue();
+            NBTTagCompound t = new NBTTagCompound();
+            t.setLong("p", e.getKey());
+            if (r.owner != null) {
+                t.setUniqueId("o", r.owner);
+            }
+            t.setInteger("l", r.level);
+            t.setInteger("x", r.xp);
+            t.setInteger("d", r.land);
+            t.setBoolean("c", r.captured);
+            t.setInteger("i", r.inbox);
+            rl.appendTag(t);
+        }
+        nbt.setTag("r", rl);
+        NBTTagList res = new NBTTagList();
+        for (java.util.Map.Entry<java.util.UUID, Integer> e : reserve.entrySet()) {
+            NBTTagCompound t = new NBTTagCompound();
+            t.setUniqueId("o", e.getKey());
+            t.setInteger("n", e.getValue());
+            res.appendTag(t);
+        }
+        nbt.setTag("res", res);
         return nbt;
     }
 }

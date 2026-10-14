@@ -162,4 +162,9 @@ public class ClientProxy extends CommonProxy {
     public void handleOreSight(long[] pos, byte[] tier, int ticks) {
         Minecraft.getMinecraft().addScheduledTask(() -> OreSight.show(pos, tier, ticks));
     }
+
+    @Override
+    public void handleAnchorView(net.minecraft.nbt.NBTTagCompound data) {
+        Minecraft.getMinecraft().addScheduledTask(() -> ru.death.chaosshard.anchor.client.GuiAnchor.view = data);
+    }
 }
