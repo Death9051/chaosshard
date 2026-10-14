@@ -83,6 +83,25 @@ public final class AutoTest {
     private FakePlayer me, meA;
     private final int[] bloodXp = {-1};
     private final int[] mainXp = {-1};
+    private final int[] forgeE = {0};
+    private final int[] xpBefore = {0};
+
+    private TileAnchor specT(BlockPos p) {
+        TileAnchor t = p == null ? null : (TileAnchor) ow.getTileEntity(p);
+        if (t == null) check(false, "Якоря специализаций нет");
+        return t;
+    }
+
+    /** Сменить путь тестового Якоря (уровень — заданный). */
+    private TileAnchor respec(BlockPos p, ru.death.chaosshard.anchor.AnchorSpec s, int lvl) {
+        TileAnchor t = specT(p);
+        if (t == null) return null;
+        t.resetSpec();
+        t.setCorrupted(ChaosConfig.anchor.levelThresholds[lvl - 1]);
+        boolean ok = t.chooseSpec(s);
+        check(ok && t.getSpec() == s, "путь: " + s + ", уровень " + t.level());
+        return ok ? t : null;
+    }
     private BlockPos base, anchorPos, chest, genPos, capPos;
     private final Map<Servants.Kind, EntityLiving> servants = new EnumMap<>(Servants.Kind.class);
     private EntityLiving miner;
@@ -597,6 +616,173 @@ public final class AutoTest {
             if (a != null && mainXp[0] >= 0) a.setCorrupted(mainXp[0]);
             ru.death.chaosshard.anchor.AnchorData.get(ow).reserve.remove(me.getUniqueID());
             check(ru.death.chaosshard.anchor.AnchorData.get(ow).rec(farA[0]) == null, "сводки нет");
+        });
+
+        section("Специализации Якоря");
+        final BlockPos[] specA = new BlockPos[1];
+        final net.minecraft.entity.EntityLiving[] specMob = new net.minecraft.entity.EntityLiving[1];
+        step("путь не выбрать до 3-го уровня, на 3-м — можно", () -> {
+            BlockPos at = ow.getHeight(anchorPos.add(-320, 0, 0));
+            ow.setBlockState(at.down(), net.minecraft.init.Blocks.STONE.getDefaultState(), 3);
+            ow.setBlockState(at, ModBlocks.CHAOS_ANCHOR.getDefaultState(), 3);
+            TileAnchor t = (TileAnchor) ow.getTileEntity(at);
+            if (t == null) { check(false, "Якорь не встал"); return; }
+            t.setOwner(me);
+            ru.death.chaosshard.anchor.AnchorData ad = ru.death.chaosshard.anchor.AnchorData.get(ow);
+            ad.anchors.add(at);
+            ad.markDirty();
+            t.syncRec();
+            specA[0] = at;
+            check(!t.chooseSpec(ru.death.chaosshard.anchor.AnchorSpec.BASTION), "на 1-м уровне путь закрыт");
+            t.setCorrupted(ChaosConfig.anchor.levelThresholds[2]);
+            check(t.chooseSpec(ru.death.chaosshard.anchor.AnchorSpec.BASTION), "на 3-м уровне выбран Бастион");
+            check(ad.rec(at).spec == ru.death.chaosshard.anchor.AnchorSpec.BASTION.ordinal(), "сеть знает о пути");
+            check(!t.chooseSpec(ru.death.chaosshard.anchor.AnchorSpec.ROOTS), "второй путь без Перекройки не взять");
+            check(Math.abs(ru.death.chaosshard.anchor.AnchorNet.stack(3) - 1.75) < 1e-9, "одинаковые складываются по убывающей: 1 + ½ + ¼");
+        });
+        sleep(25);
+        step("Бастион: гарнизон сети +2", () -> {
+            TileAnchor t = specT(specA[0]);
+            if (t == null) return;
+            List<TileAnchor> c = ru.death.chaosshard.anchor.AnchorClusters.cluster(ow, t);
+            int lim = ru.death.chaosshard.anchor.AnchorClusters.garrisonLimit(c);
+            int lv = ru.death.chaosshard.anchor.AnchorNet.levelSum(ow, me.getUniqueID());
+            int base = 0;
+            for (BlockPos p : ru.death.chaosshard.anchor.AnchorNet.members(ow, me.getUniqueID()))
+                base += Math.max(1, ru.death.chaosshard.anchor.AnchorData.get(ow).rec(p).level);
+            check(lv == base + 2, "предел гарнизона " + lv + " = уровни " + base + " + 2");
+            check(t.siegeLimit() > 1200 + 900 * (t.level() - 1), "осада держится дольше: " + t.siegeLimit());
+        });
+        step("Перекройка: путь сброшен, −25% опыта", () -> {
+            TileAnchor t = specT(specA[0]);
+            if (t == null) return;
+            int xp = t.getCorrupted();
+            check(t.resetSpec() && t.getSpec() == null, "путь сброшен");
+            check(t.getCorrupted() == (int) (xp * 0.75), "опыт " + xp + " → " + t.getCorrupted());
+        });
+        step("Жила: добыча в хранилище, рудная жила", () -> {
+            TileAnchor t = respec(specA[0], ru.death.chaosshard.anchor.AnchorSpec.VEIN, 5);
+            if (t == null) return;
+            int put = ru.death.chaosshard.anchor.AnchorSpecs.veinLoot(t);
+            int items = 0;
+            for (int i = 0; i < 9; i++) items += t.storage.getStackInSlot(i).getCount();
+            check(put > 0 && items > 0, "в хранилище " + items + " предметов");
+            BlockPos v = ru.death.chaosshard.anchor.AnchorSpecs.vein(t);
+            check(v != null && !ow.isAirBlock(v), "жила вышла: " + v);
+        });
+        step("Горн: энергия и кабель", () -> {
+            TileAnchor t = respec(specA[0], ru.death.chaosshard.anchor.AnchorSpec.FORGE, 3);
+            if (t == null) return;
+            check(t.hasCapability(net.minecraftforge.energy.CapabilityEnergy.ENERGY, EnumFacing.UP), "у Горна есть энергия для кабелей");
+            check(ru.death.chaosshard.anchor.AnchorSpecs.forgeRate(t) > 0, "выработка " + ru.death.chaosshard.anchor.AnchorSpecs.forgeRate(t) + " RF/т");
+            forgeE[0] = t.forgeEnergy;
+        });
+        sleep(20);
+        step("Горн копит энергию", () -> {
+            TileAnchor t = specT(specA[0]);
+            if (t == null) return;
+            check(t.forgeEnergy > forgeE[0], "запас " + forgeE[0] + " → " + t.forgeEnergy);
+            net.minecraftforge.energy.IEnergyStorage es = t.getCapability(net.minecraftforge.energy.CapabilityEnergy.ENERGY, EnumFacing.UP);
+            check(es != null && es.extractEnergy(100, false) == 100, "кабель забирает энергию");
+        });
+        step("Жатва: моб на поле, добыча и опыт — в Якорь", () -> {
+            TileAnchor t = respec(specA[0], ru.death.chaosshard.anchor.AnchorSpec.HARVEST, 3);
+            if (t == null) return;
+            net.minecraft.entity.EntityLiving m = null;
+            for (int i = 0; i < 20 && m == null; i++) m = ru.death.chaosshard.anchor.AnchorSpecs.spawnField(t, ow);
+            check(m != null, "на поле пришёл моб: " + (m == null ? "—" : m.getName()));
+            if (m == null) return;
+            check(m.getEntityData().getLong(ru.death.chaosshard.anchor.AnchorSpecs.TAG_FIELD) == specA[0].toLong(), "моб с поля");
+            int xp = t.fieldXp;
+            m.attackEntityFrom(net.minecraft.util.DamageSource.causePlayerDamage(me), 1000F);
+            check(!m.isEntityAlive(), "моб убит");
+            specMob[0] = m;
+            xpBefore[0] = xp;
+        });
+        sleep(25);
+        step("Жатва: опыт копится в колонне", () -> {
+            TileAnchor t = specT(specA[0]);
+            if (t == null || specMob[0] == null) return;
+            check(t.fieldXp > xpBefore[0], "опыт поля " + xpBefore[0] + " → " + t.fieldXp);
+            int had = me.experienceTotal;
+            ru.death.chaosshard.anchor.AnchorSpecs.takeXp(me, t);
+            check(t.fieldXp == 0 && me.experienceTotal > had, "опыт забран");
+        });
+        step("Гнездо: твари у колонны вне лимита свиты", () -> {
+            TileAnchor t = respec(specA[0], ru.death.chaosshard.anchor.AnchorSpec.NEST, 3);
+            if (t == null) return;
+            int before = Servants.count(me);
+            me.setPosition(specA[0].getX() + 3.5, specA[0].getY(), specA[0].getZ() + 0.5);
+            ru.death.chaosshard.anchor.AnchorSpecs.nest(t);
+            List<net.minecraft.entity.EntityLiving> g = ru.death.chaosshard.anchor.AnchorSpecs.nestOf(t, false);
+            check(!g.isEmpty(), "тварь Гнезда пришла");
+            check(!ru.death.chaosshard.anchor.AnchorSpecs.nestOf(t, true).isEmpty(), "сопровождающая пришла");
+            check(Servants.count(me) == before, "в лимит свиты не идут");
+            t.resetSpec();
+            check(ru.death.chaosshard.anchor.AnchorSpecs.nestOf(t, false).isEmpty(), "Гнездо распущено — твари ушли");
+        });
+        step("Пульс: заклинания дешевле, энергии больше на своей земле", () -> {
+            TileAnchor t = respec(specA[0], ru.death.chaosshard.anchor.AnchorSpec.PULSE, 3);
+            if (t == null) return;
+            me.setPosition(specA[0].getX() + 3.5, specA[0].getY(), specA[0].getZ() + 0.5);
+            check(ru.death.chaosshard.anchor.AnchorSpecs.PULSE.cost(me, ru.death.chaosshard.spell.Spell.values()[0]) < 1.0, "цена ниже");
+            check(ru.death.chaosshard.anchor.AnchorSpecs.PULSE.maxEnergy(me) == 20, "максимум +20");
+            check(TileAnchor.energyMultiplier(ow, specA[0].add(3, 0, 0)) > ru.death.chaosshard.anchor.AnchorNet.landMultiplier(
+                    ru.death.chaosshard.anchor.AnchorNet.size(ow, me.getUniqueID())), "энергия на своей земле ×1,5");
+        });
+        step("Тропа: перенос к Якорю сети", () -> {
+            TileAnchor t = respec(specA[0], ru.death.chaosshard.anchor.AnchorSpec.PATH, 3);
+            if (t == null) return;
+            ru.death.chaosshard.spell.ChaosEnergy.set(me, 100);
+            boolean ok = ru.death.chaosshard.anchor.AnchorSpecs.travel(me, t, anchorPos);
+            check(ok && me.getDistanceSq(anchorPos) < 64, "перенесён к Якорю: " + (int) Math.sqrt(me.getDistanceSq(anchorPos)) + " блоков");
+            check(ru.death.chaosshard.spell.ChaosEnergy.get(me) <= 70.5F, "потрачено 30 энергии");
+        });
+        step("Цитадель: тварь на земле — под молнией; спавн закрыт на 5-м", () -> {
+            TileAnchor t = respec(specA[0], ru.death.chaosshard.anchor.AnchorSpec.CITADEL, 5);
+            if (t == null) return;
+            net.minecraft.entity.monster.EntityZombie z = new net.minecraft.entity.monster.EntityZombie(ow);
+            BlockPos zp = ow.getHeight(specA[0].add(5, 0, 0));
+            z.setLocationAndAngles(zp.getX() + 0.5, zp.getY(), zp.getZ() + 0.5, 0, 0);
+            z.enablePersistence();
+            ow.spawnEntity(z);
+            specMob[0] = z;
+            net.minecraft.entity.monster.EntityZombie probe = new net.minecraft.entity.monster.EntityZombie(ow);
+            probe.setPosition(zp.getX() + 0.5, zp.getY(), zp.getZ() + 0.5);
+            net.minecraftforge.event.entity.living.LivingSpawnEvent.CheckSpawn ev = new net.minecraftforge.event.entity.living.LivingSpawnEvent.CheckSpawn(
+                    probe, ow, (float) probe.posX, (float) probe.posY, (float) probe.posZ, false);
+            MinecraftForge.EVENT_BUS.post(ev);
+            check(ev.getResult() == net.minecraftforge.fml.common.eventhandler.Event.Result.DENY, "спавн тварей запрещён");
+        });
+        sleep(70);
+        step("Цитадель ударила", () -> {
+            net.minecraft.entity.EntityLiving z = specMob[0];
+            check(z != null && (!z.isEntityAlive() || z.getHealth() < z.getMaxHealth()), "зомби ранен: " + (z == null ? -1 : z.getHealth()));
+            if (z != null) z.setDead();
+        });
+        step("Дозор: вошедший враг подсвечен, карта сети", () -> {
+            TileAnchor t = respec(specA[0], ru.death.chaosshard.anchor.AnchorSpec.WATCH, 5);
+            if (t == null) return;
+            net.minecraft.entity.monster.EntityZombie z = new net.minecraft.entity.monster.EntityZombie(ow);
+            BlockPos zp = ow.getHeight(specA[0].add(6, 0, 2));
+            z.setLocationAndAngles(zp.getX() + 0.5, zp.getY(), zp.getZ() + 0.5, 0, 0);
+            z.enablePersistence();
+            ow.spawnEntity(z);
+            specMob[0] = z;
+            net.minecraft.nbt.NBTTagCompound v = ru.death.chaosshard.anchor.ContainerAnchor.view(t, me);
+            check(v.getBoolean("watch") && v.hasKey("dots"), "карта сети в окне");
+            net.minecraft.nbt.NBTTagCompound sc = ru.death.chaosshard.anchor.AnchorView.scry(ow, anchorPos, me.getUniqueID());
+            check(sc.getByteArray("c").length == 96 * 96, "взгляд: вид сверху 96×96");
+        });
+        sleep(45);
+        step("Дозор подсветил", () -> {
+            net.minecraft.entity.EntityLiving z = specMob[0];
+            check(z != null && z.isPotionActive(net.minecraft.init.MobEffects.GLOWING), "зомби светится");
+            if (z != null) z.setDead();
+        });
+        step("Якорь специализаций убран", () -> {
+            if (specA[0] != null) ow.setBlockToAir(specA[0]);
+            check(ru.death.chaosshard.anchor.AnchorData.get(ow).rec(specA[0]) == null, "сводки нет");
         });
 
         section("Рудокоп");

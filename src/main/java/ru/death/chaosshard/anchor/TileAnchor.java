@@ -98,9 +98,9 @@ public class TileAnchor extends TileEntity implements ITickable {
             return false;
         }
         spec = s.ordinal();
+        syncRec();
         refreshNet();
         changed();
-        syncRec();
         EntityPlayerMP p = ownerOnline();
         if (p != null && level() >= AnchorSpec.STAGE_LEVEL) {
             ru.death.chaosshard.quest.Milestones.grant(p, ru.death.chaosshard.quest.Milestones.ANCHOR_STAGE);
@@ -132,9 +132,9 @@ public class TileAnchor extends TileEntity implements ITickable {
         if (was == AnchorSpec.NEST) {
             AnchorSpecs.dismissNest(this);
         }
+        syncRec();
         refreshNet();
         changed();
-        syncRec();
         return true;
     }
 

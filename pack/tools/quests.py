@@ -1080,6 +1080,8 @@ q("tc_crystal", "tech", 2, 4, "§5Кристаллизованный Хаос", 
 q("tc_blood", "tech", 4, 4, "§5Кровавая платина", "", I("chaosshard:blood_platinum_ingot"), got(I("chaosshard:blood_platinum_ingot")), [NIT(15), XP(3)], ["tc_distorted"])
 q("tc_star", "tech", 6, 4, "§5Свет звезды", "", I("chaosshard:starlight_ingot"), got(I("chaosshard:starlight_ingot")), [NIT(15), XP(3)], ["tc_distorted", "st_attune"])
 q("tc_matmax", "tech", 8, 4, "Металл помнит", "", I("minecraft:diamond_sword"), adv("material_max"), [NIT(40), XP(8)], ["tc_crystal"])
+q("a3_spec", "act3", 10, 5, "§5Путь Якоря", "", I("chaosshard:chaos_anchor"), adv("anchor_spec"), [NIT(25), XP(5)], ["a3_three"])
+q("a3_stage", "act3", 12, 6, "Вторая ступень", "", I("chaosshard:chaos_anchor"), adv("anchor_stage"), [NIT(40), XP(8)], ["a3_spec", "a3_pillar"])
 
 # ---------------------------------------------------------------- сборка
 
@@ -1157,7 +1159,7 @@ def build():
         "questSettings:10": {"betterquesting:10": {
             "editmode:1": 0, "hardcore:1": 0, "party_enable:1": 1,
             "livesdef:3": 3, "livesmax:3": 10,
-            "pack_name:8": PACK_NAME, "pack_version:3": 70,
+            "pack_name:8": PACK_NAME, "pack_version:3": 71,
             "home_image:8": "chaosshard:textures/gui/quest_home.png"}},
         "questDatabase:9": db,
         "questLines:9": lines,
@@ -1168,7 +1170,7 @@ def build():
 # ---------------------------------------------------------------- автораскладка глав
 # Главы, разложенные вручную (координаты подобраны оптимизатором пересечений и выверены): ключ → (столбец, строка)
 MANUAL = {
-    "act3": {"a3_anchor": [0, 6], "a3_place": [2, 6], "a3_capture": [4, 6], "a3_three": [8, 6], "a3_final": [14, 6], "a3_abode": [8, 10], "a3_bane": [8, 0], "a3_blood": [8, 7], "a3_bloodseal": [14, 11], "a3_cluster": [12, 1], "a3_defiled": [4, 7], "a3_demons": [6, 5], "a3_desecrate": [4, 2], "a3_garrison": [10, 1], "a3_garrot": [6, 1], "a3_garrot3": [8, 2], "a2_heart4": [6, 4], "a3_holy_defile": [6, 0], "a3_holywater": [4, 1], "a3_lair2": [8, 8], "a3_lair3": [12, 8], "a3_sigil": [14, 8], "a3_light": [8, 5], "a3_pillar": [10, 7], "a3_power": [12, 10], "a3_raid_hard": [12, 2], "a3_seal": [4, 11], "a3_shrine": [2, 3], "a3_village": [6, 10], "a3_waystone": [6, 8]},
+    "act3": {"a3_spec": [10, 5], "a3_stage": [12, 6], "a3_anchor": [0, 6], "a3_place": [2, 6], "a3_capture": [4, 6], "a3_three": [8, 6], "a3_final": [14, 6], "a3_abode": [8, 10], "a3_bane": [8, 0], "a3_blood": [8, 7], "a3_bloodseal": [14, 11], "a3_cluster": [12, 1], "a3_defiled": [4, 7], "a3_demons": [6, 5], "a3_desecrate": [4, 2], "a3_garrison": [10, 1], "a3_garrot": [6, 1], "a3_garrot3": [8, 2], "a2_heart4": [6, 4], "a3_holy_defile": [6, 0], "a3_holywater": [4, 1], "a3_lair2": [8, 8], "a3_lair3": [12, 8], "a3_sigil": [14, 8], "a3_light": [8, 5], "a3_pillar": [10, 7], "a3_power": [12, 10], "a3_raid_hard": [12, 2], "a3_seal": [4, 11], "a3_shrine": [2, 3], "a3_village": [6, 10], "a3_waystone": [6, 8]},
 }
 
 
