@@ -43,7 +43,7 @@ public final class DeathItems {
     /** Последним из обработчиков смерти (смерть на арене Вызова отменена раньше и сюда не доходит). */
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onDeath(LivingDeathEvent event) {
-        if (!(event.getEntityLiving() instanceof EntityPlayerMP) || event.getEntityLiving() instanceof net.minecraftforge.common.util.FakePlayer) {
+        if (!(event.getEntityLiving() instanceof EntityPlayerMP)) {
             return;
         }
         EntityPlayerMP p = (EntityPlayerMP) event.getEntityLiving();
@@ -112,7 +112,7 @@ public final class DeathItems {
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onDrops(PlayerDropsEvent event) {
         EntityPlayer p = event.getEntityPlayer();
-        if (p.world.isRemote || event.isCanceled() || event.getDrops().isEmpty() || p instanceof net.minecraftforge.common.util.FakePlayer) {
+        if (p.world.isRemote || event.isCanceled() || event.getDrops().isEmpty()) {
             return;
         }
         NBTTagCompound rec = new NBTTagCompound();
