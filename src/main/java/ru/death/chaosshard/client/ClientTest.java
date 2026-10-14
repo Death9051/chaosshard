@@ -110,6 +110,9 @@ public class ClientTest {
             finish();
             return;
         }
+        if (shot != null) {
+            return;   // кадры в виртуальном экране редкие: ждём, пока снимок снят, и только потом меняем экран
+        }
         if (wait > 0) {
             wait--;
             return;
@@ -131,6 +134,14 @@ public class ClientTest {
                     return;
                 }
                 line("=== Осколок Хаоса — клиентский прогон ===");
+                mc.gameSettings.pauseOnLostFocus = false;
+                mc.gameSettings.chatVisibility = net.minecraft.entity.player.EntityPlayer.EnumChatVisibility.HIDDEN;
+                try {
+                    org.lwjgl.opengl.Display.setDisplayMode(new org.lwjgl.opengl.DisplayMode(1600, 900));
+                    ReflectionHelper.findMethod(Minecraft.class, "resize", "func_71370_a", int.class, int.class).invoke(mc, 1600, 900);
+                } catch (Throwable t) {
+                    line("  окно 1600x900 не задалось: " + t);
+                }
                 check(true, "главное меню открылось");
                 assets();
                 wait = 40;

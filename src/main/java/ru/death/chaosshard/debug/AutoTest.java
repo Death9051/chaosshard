@@ -914,8 +914,11 @@ public final class AutoTest {
             int hit = ru.death.chaosshard.anchor.AnchorSigns.thorns(t, m, 1, false, 0);
             check(hit >= 1 && z.getHealth() < z.getMaxHealth() && z.isPotionActive(net.minecraft.init.MobEffects.SLOWNESS), "Шипы: урон и замедление");
             DamageSource last = z.getLastDamageSource();
-            check(ru.death.chaosshard.anchor.AnchorSpecs.isAnchorHit(last) && last.getTrueSource() == me && z.getRevengeTarget() == null,
-                    "Якорь бьёт от имени владельца (" + (last == null ? null : last.getTrueSource()) + "), моб не мстит ему");
+            check(ru.death.chaosshard.anchor.AnchorSpecs.isAnchorHit(last) && last.getTrueSource() != null
+                            && me.getUniqueID().equals(last.getTrueSource().getUniqueID()),
+                    "Якорь бьёт от имени владельца (" + (last == null ? null : last.getTrueSource()) + ")");
+            check(z.getRevengeTarget() == null || !me.getUniqueID().equals(z.getRevengeTarget().getUniqueID()),
+                    "моб не мстит владельцу (" + z.getRevengeTarget() + ")");
             check(z.isPotionActive(net.minecraft.init.MobEffects.WITHER), "Шипы + Кровавый дождь: кровотечение");
             sk.hurtResistantTime = 0;
             float hp = sk.getHealth();
