@@ -69,7 +69,7 @@ public final class AnchorSpecs {
 
     // ------------------------------------------------------------------ тик Якоря
 
-    static void tick(TileAnchor a) {
+    public static void tick(TileAnchor a) {
         World w = a.getWorld();
         if (!(w instanceof WorldServer)) {
             return;
@@ -140,13 +140,13 @@ public final class AnchorSpecs {
     }
 
     /** Земля Якоря как коробка. */
-    static AxisAlignedBB land(TileAnchor a) {
+    public static AxisAlignedBB land(TileAnchor a) {
         int r = a.radius();
         BlockPos p = a.getPos();
         return new AxisAlignedBB(p.getX() - r, p.getY() - 32, p.getZ() - r, p.getX() + r + 1, p.getY() + 48, p.getZ() + r + 1);
     }
 
-    static boolean inLand(TileAnchor a, Entity e) {
+    public static boolean inLand(TileAnchor a, Entity e) {
         double dx = e.posX - a.getPos().getX() - 0.5, dz = e.posZ - a.getPos().getZ() - 0.5;
         return dx * dx + dz * dz <= (double) a.radius() * a.radius();
     }
@@ -246,7 +246,7 @@ public final class AnchorSpecs {
     }
 
     /** Раз в 5 минут — добыча с осквернённой земли в хранилище. */
-    static int veinLoot(TileAnchor a) {
+    public static int veinLoot(TileAnchor a) {
         Random r = a.getWorld().rand;
         int rolls = (2 + a.level()) * 2;
         int put = 0;
@@ -280,7 +280,7 @@ public final class AnchorSpecs {
     }
 
     /** Раз в час — рудная жила в камне под землёй Якоря. */
-    static BlockPos vein(TileAnchor a) {
+    public static BlockPos vein(TileAnchor a) {
         World w = a.getWorld();
         Random r = w.rand;
         int rad = Math.max(8, a.radius());
@@ -333,7 +333,7 @@ public final class AnchorSpecs {
 
     // ------------------------------------------------------------------ Гнездо
 
-    static List<EntityLiving> nestOf(TileAnchor a, boolean escorts) {
+    public static List<EntityLiving> nestOf(TileAnchor a, boolean escorts) {
         long key = a.getPos().toLong();
         AxisAlignedBB box = escorts ? land(a).grow(256, 64, 256) : land(a).grow(16);
         return a.getWorld().getEntitiesWithinAABB(EntityLiving.class, box, x -> x.isEntityAlive()
@@ -342,7 +342,7 @@ public final class AnchorSpecs {
     }
 
     /** Гнездо: держать число тварей-защитников и двух сопровождающих. */
-    static void nest(TileAnchor a) {
+    public static void nest(TileAnchor a) {
         EntityPlayerMP o = owner(a);
         if (o == null || o.world != a.getWorld()) {
             return;
@@ -357,7 +357,9 @@ public final class AnchorSpecs {
                 boolean leader = stage && guards.stream().noneMatch(x -> x.getEntityData().getBoolean("chaosshard_nest_leader"));
                 m.getEntityData().setLong(TAG_NEST, a.getPos().toLong());
                 m.getEntityData().setLong(Servants.TAG_ANCHOR, a.getPos().toLong());
-                m.setHomePosAndDistance(a.getPos(), Math.max(16, a.radius()));
+                if (m instanceof net.minecraft.entity.EntityCreature) {
+                    ((net.minecraft.entity.EntityCreature) m).setHomePosAndDistance(a.getPos(), Math.max(16, a.radius()));
+                }
                 double hp = m.getMaxHealth() * (stage ? 1.5 : 1.0) * (leader ? 2.0 : 1.0);
                 m.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(hp);
                 if (leader) {
@@ -382,7 +384,7 @@ public final class AnchorSpecs {
     }
 
     /** Гнездо больше не Гнездо — твари уходят. */
-    static void dismissNest(TileAnchor a) {
+    public static void dismissNest(TileAnchor a) {
         long key = a.getPos().toLong();
         for (WorldServer w : a.getWorld().getMinecraftServer().worlds) {
             for (Entity e : new java.util.ArrayList<>(w.loadedEntityList)) {
@@ -435,7 +437,7 @@ public final class AnchorSpecs {
 
     // ------------------------------------------------------------------ Жатва
 
-    static List<EntityLiving> fieldMobs(TileAnchor a) {
+    public static List<EntityLiving> fieldMobs(TileAnchor a) {
         long key = a.getPos().toLong();
         return a.getWorld().getEntitiesWithinAABB(EntityLiving.class, new AxisAlignedBB(a.getPos()).grow(48),
                 x -> x.isEntityAlive() && x.getEntityData().getLong(TAG_FIELD) == key);
@@ -475,7 +477,7 @@ public final class AnchorSpecs {
     }
 
     /** Поставить моба на поле Жатвы (без оглядки на свет). */
-    static EntityLiving spawnField(TileAnchor a, WorldServer w) {
+    public static EntityLiving spawnField(TileAnchor a, WorldServer w) {
         Random r = w.rand;
         BlockPos c = a.getPos();
         for (int tries = 0; tries < 6; tries++) {
