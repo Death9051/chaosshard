@@ -341,6 +341,18 @@ public class TileAnchor extends TileEntity implements ITickable {
         return lvl;
     }
 
+    /** Якорь ещё растёт — руны горят (клиент знает число осквернённых блоков). */
+    public boolean growing() {
+        int[] t = ChaosConfig.anchor.levelThresholds;
+        return corrupted < t[t.length - 1];
+    }
+
+    /** Горят ли руны колонны над основанием base. */
+    public static boolean litAt(net.minecraft.world.IBlockAccess world, BlockPos base) {
+        TileEntity te = base == null ? null : world.getTileEntity(base);
+        return te instanceof TileAnchor && ((TileAnchor) te).growing();
+    }
+
     public static int maxLevel() {
         return ChaosConfig.anchor.levelThresholds.length;
     }

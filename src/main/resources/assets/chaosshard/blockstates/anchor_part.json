@@ -1,10 +1,16 @@
 {
  "variants": {
-  "top=false": {
+  "lit=false,top=false": {
    "model": "chaosshard:anchor_part_mid"
   },
-  "top=true": {
+  "lit=true,top=false": {
+   "model": "chaosshard:anchor_part_mid_lit"
+  },
+  "lit=false,top=true": {
    "model": "chaosshard:anchor_part_top"
+  },
+  "lit=true,top=true": {
+   "model": "chaosshard:anchor_part_top_lit"
   }
  }
 }

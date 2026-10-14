@@ -1,10 +1,16 @@
 {
  "variants": {
-  "grown=false": {
+  "grown=false,lit=false": {
    "model": "chaosshard:chaos_anchor"
   },
-  "grown=true": {
+  "grown=false,lit=true": {
+   "model": "chaosshard:chaos_anchor_lit"
+  },
+  "grown=true,lit=false": {
    "model": "chaosshard:anchor_base_grown"
+  },
+  "grown=true,lit=true": {
+   "model": "chaosshard:anchor_base_grown_lit"
   }
  }
 }

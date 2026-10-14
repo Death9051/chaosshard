@@ -42,13 +42,16 @@ public class BlockRitualSpire extends ModBlocks.SimpleBlock {
     }
 
     public static final PropertyEnum<Half> HALF = PropertyEnum.create("half", Half.class);
+    /** Руны и кристалл горят, пока на алтаре идёт ритуал. */
+    public static final net.minecraft.block.properties.PropertyBool LIT = net.minecraft.block.properties.PropertyBool.create("lit");
 
     private static final AxisAlignedBB LOWER_BOX = new AxisAlignedBB(0, 0, 0, 1, 1, 1);
     private static final AxisAlignedBB UPPER_BOX = new AxisAlignedBB(0.125, 0, 0.125, 0.875, 1, 0.875);
 
     public BlockRitualSpire() {
         super(Material.ROCK, SoundType.STONE, 2.0F, 20.0F, 0.0F);
-        setDefaultState(blockState.getBaseState().withProperty(HALF, Half.LOWER));
+        setDefaultState(blockState.getBaseState().withProperty(HALF, Half.LOWER).withProperty(LIT, false));
+        setTickRandomly(true);
     }
 
     public static boolean isLower(IBlockState state) {
@@ -63,17 +66,17 @@ public class BlockRitualSpire extends ModBlocks.SimpleBlock {
 
     @Override
     protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer(this, HALF);
+        return new BlockStateContainer(this, HALF, LIT);
     }
 
     @Override
     public IBlockState getStateFromMeta(int meta) {
-        return getDefaultState().withProperty(HALF, (meta & 1) == 1 ? Half.UPPER : Half.LOWER);
+        return getDefaultState().withProperty(HALF, (meta & 1) == 1 ? Half.UPPER : Half.LOWER).withProperty(LIT, (meta & 2) == 2);
     }
 
     @Override
     public int getMetaFromState(IBlockState state) {
-        return state.getValue(HALF) == Half.UPPER ? 1 : 0;
+        return (state.getValue(HALF) == Half.UPPER ? 1 : 0) | (state.getValue(LIT) ? 2 : 0);
     }
 
     // ------------------------------------------------------------------ установка и поломка
@@ -87,6 +90,9 @@ public class BlockRitualSpire extends ModBlocks.SimpleBlock {
     @Override
     public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
         world.setBlockState(pos.up(), getDefaultState().withProperty(HALF, Half.UPPER), 2);
+        if (state.getValue(LIT)) {
+            world.setBlockState(pos, state.withProperty(LIT, false), 2);
+        }
     }
 
     @Override
@@ -117,6 +123,41 @@ public class BlockRitualSpire extends ModBlocks.SimpleBlock {
                 world.destroyBlock(low, true);
             }
         }
+    }
+
+    @Override
+    public int getLightValue(IBlockState state, net.minecraft.world.IBlockAccess world, BlockPos pos) {
+        return state.getBlock() == this && state.getValue(LIT) ? 10 : 0;
+    }
+
+    /** Зажечь или погасить четыре шпиля вокруг алтаря. */
+    public static void setLit(World world, BlockPos altar, boolean lit) {
+        for (BlockPos p : BreachRitual.pillars(altar)) {
+            for (BlockPos q : new BlockPos[]{p, p.up()}) {
+                IBlockState st = world.getBlockState(q);
+                if (st.getBlock() instanceof BlockRitualSpire && st.getValue(LIT) != lit) {
+                    world.setBlockState(q, st.withProperty(LIT, lit), 2);
+                }
+            }
+        }
+    }
+
+    /** Подстраховка: шпиль, забытый зажжённым (сервер перезапущен посреди ритуала), гаснет сам. */
+    @Override
+    public void updateTick(World world, BlockPos pos, IBlockState state, Random rand) {
+        if (world.isRemote || !state.getValue(LIT)) {
+            return;
+        }
+        BlockPos low = state.getValue(HALF) == Half.UPPER ? pos.down() : pos;
+        for (int dx : new int[]{-2, 2}) {
+            for (int dz : new int[]{-2, 2}) {
+                BlockPos altar = low.add(dx, 0, dz);
+                if (ru.death.chaosshard.ritual.AltarRituals.runningAt(altar) || BreachRitual.runningAt(altar)) {
+                    return;
+                }
+            }
+        }
+        world.setBlockState(pos, state.withProperty(LIT, false), 2);
     }
 
     @Override

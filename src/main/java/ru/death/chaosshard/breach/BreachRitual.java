@@ -79,12 +79,22 @@ public class BreachRitual {
         return null;
     }
 
+    public static boolean runningAt(BlockPos altar) {
+        for (Running r : RUNNING.values()) {
+            if (r.altar.equals(altar)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static boolean isRunning(EntityPlayerMP player) {
         return RUNNING.containsKey(player.getUniqueID());
     }
 
     public static void start(EntityPlayerMP player, BlockPos altar) {
         RUNNING.put(player.getUniqueID(), new Running(altar, player.dimension));
+        BlockRitualSpire.setLit(player.world, altar, true);
         player.sendMessage(Breach.grimoire("chaosshard.breach.start"));
         player.world.playSound(null, altar, SoundEvents.BLOCK_PORTAL_TRIGGER, SoundCategory.BLOCKS, 0.6F, 0.6F);
     }
@@ -107,6 +117,7 @@ public class BreachRitual {
                 || player.getDistanceSq(r.altar) > 8 * 8
                 || world.getBlockState(r.altar).getBlock() != ModBlocks.BREACH_ALTAR) {
             RUNNING.remove(player.getUniqueID());
+            BlockRitualSpire.setLit(world, r.altar, false);
             player.sendMessage(Breach.grimoire("chaosshard.breach.broken"));
             return;
         }
@@ -129,6 +140,7 @@ public class BreachRitual {
         }
         if (r.ticks >= DURATION) {
             RUNNING.remove(player.getUniqueID());
+            BlockRitualSpire.setLit(world, r.altar, false);
             finish(player, r);
         }
     }

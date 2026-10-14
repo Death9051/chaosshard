@@ -89,6 +89,16 @@ public class AltarRituals {
     }
 
     /** ПКМ Гримуаром по Алтарю. */
+    /** Идёт ли старший ритуал на этом алтаре. */
+    public static boolean runningAt(BlockPos altar) {
+        for (Running r : RUNNING.values()) {
+            if (r.altar.equals(altar)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static void tryStart(EntityPlayerMP p, BlockPos altar) {
         if (isRunning(p) || BreachRitual.isRunning(p)) {
             return;
@@ -126,6 +136,7 @@ public class AltarRituals {
         Running run = new Running(altar, p.dimension, r, paid);
         run.challenge = challenge;
         RUNNING.put(p.getUniqueID(), run);
+        BlockRitualSpire.setLit(p.world, altar, true);
         p.sendMessage(Breach.grimoire("chaosshard.altar.ritual.start", new TextComponentTranslation(r.key())));
         p.world.playSound(null, altar, SoundEvents.BLOCK_PORTAL_TRIGGER, SoundCategory.BLOCKS, 0.6F, 1.1F);
     }
@@ -155,6 +166,7 @@ public class AltarRituals {
         if (p.dimension != r.dim || p.isDead || p.getDistanceSq(r.altar) > 16 * 16
                 || ws.getBlockState(r.altar).getBlock() != ModBlocks.BREACH_ALTAR) {
             RUNNING.remove(p.getUniqueID());
+            BlockRitualSpire.setLit(ws, r.altar, false);
             if (p.dimension == r.dim) {
                 for (ItemStack s : r.paid) {
                     net.minecraft.inventory.InventoryHelper.spawnItemStack(ws, r.altar.getX() + 0.5, r.altar.getY() + 1.2, r.altar.getZ() + 0.5, s.copy());
@@ -179,6 +191,7 @@ public class AltarRituals {
         }
         if (r.ticks >= DURATION) {
             RUNNING.remove(p.getUniqueID());
+            BlockRitualSpire.setLit(ws, r.altar, false);
             ws.spawnParticle(EnumParticleTypes.END_ROD, cx, cy, cz, 60, 0.4, 0.4, 0.4, 0.15);
             // старший ритуал запечатывается в сферу — её применяют там, где нужно
             EntityItem ei = new EntityItem(ws, cx, cy, cz, r.challenge != null ? ru.death.chaosshard.challenge.ItemChallengeSphere.of(r.challenge)

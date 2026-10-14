@@ -31,6 +31,7 @@ import java.util.Random;
 public class BlockAnchorPart extends Block {
 
     public static final PropertyBool TOP = PropertyBool.create("top");
+    public static final PropertyBool LIT = PropertyBool.create("lit");
     private static final AxisAlignedBB MID_BOX = new AxisAlignedBB(0.1875, 0, 0.1875, 0.8125, 1, 0.8125);
     private static final AxisAlignedBB TOP_BOX = new AxisAlignedBB(0.25, 0, 0.25, 0.75, 1, 0.75);
 
@@ -40,12 +41,17 @@ public class BlockAnchorPart extends Block {
         setHardness(6.0F);
         setResistance(2000.0F);
         setHarvestLevel("pickaxe", 1);
-        setDefaultState(blockState.getBaseState().withProperty(TOP, false));
+        setDefaultState(blockState.getBaseState().withProperty(TOP, false).withProperty(LIT, false));
     }
 
     @Override
     protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer(this, TOP);
+        return new BlockStateContainer(this, TOP, LIT);
+    }
+
+    @Override
+    public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
+        return state.withProperty(LIT, TileAnchor.litAt(world, base(world, pos)));
     }
 
     @Override

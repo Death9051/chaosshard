@@ -35,6 +35,8 @@ public class BlockAnchor extends Block {
     private static final AxisAlignedBB GROWN_BOX = new AxisAlignedBB(0.0625, 0, 0.0625, 0.9375, 1.0, 0.9375);
     /** Якорь вырос (уровень 2+): основание колонны. */
     public static final net.minecraft.block.properties.PropertyBool GROWN = net.minecraft.block.properties.PropertyBool.create("grown");
+    /** Только для отрисовки: руны горят, пока Якорь растёт. */
+    public static final net.minecraft.block.properties.PropertyBool LIT = net.minecraft.block.properties.PropertyBool.create("lit");
 
     public BlockAnchor() {
         super(Material.ROCK);
@@ -44,12 +46,17 @@ public class BlockAnchor extends Block {
         setLightLevel(0.6F);
         setHarvestLevel("pickaxe", 1);
         setCreativeTab(ru.death.chaosshard.ChaosTab.TAB);
-        setDefaultState(blockState.getBaseState().withProperty(GROWN, false));
+        setDefaultState(blockState.getBaseState().withProperty(GROWN, false).withProperty(LIT, false));
     }
 
     @Override
     protected net.minecraft.block.state.BlockStateContainer createBlockState() {
-        return new net.minecraft.block.state.BlockStateContainer(this, GROWN);
+        return new net.minecraft.block.state.BlockStateContainer(this, GROWN, LIT);
+    }
+
+    @Override
+    public IBlockState getActualState(IBlockState state, net.minecraft.world.IBlockAccess world, BlockPos pos) {
+        return state.withProperty(LIT, TileAnchor.litAt(world, pos));
     }
 
     @Override

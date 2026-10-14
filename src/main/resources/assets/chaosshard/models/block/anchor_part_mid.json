@@ -2,11 +2,11 @@
  "parent": "block/block",
  "ambientocclusion": false,
  "textures": {
-  "particle": "chaosshard:blocks/anchor_stone",
-  "s": "chaosshard:blocks/anchor_stone",
-  "g": "chaosshard:blocks/heart_core",
-  "v": "chaosshard:blocks/spire_stone",
-  "t": "chaosshard:blocks/spire_trim"
+  "particle": "chaosshard:blocks/pillar_stone",
+  "s": "chaosshard:blocks/pillar_stone",
+  "b": "chaosshard:blocks/pillar_band",
+  "r": "chaosshard:blocks/pillar_runes",
+  "c": "chaosshard:blocks/chaos_crystal"
  },
  "elements": [
   {
@@ -22,54 +22,54 @@
    ],
    "faces": {
     "north": {
-     "texture": "#v"
+     "texture": "#r"
     },
     "south": {
-     "texture": "#v"
+     "texture": "#r"
     },
     "east": {
-     "texture": "#v"
+     "texture": "#r"
     },
     "west": {
-     "texture": "#v"
-    },
-    "down": {
-     "texture": "#v"
+     "texture": "#r"
     },
     "up": {
-     "texture": "#v"
+     "texture": "#s"
+    },
+    "down": {
+     "texture": "#s"
     }
    }
   },
   {
    "from": [
-    2.5,
+    2,
     7,
-    2.5
+    2
    ],
    "to": [
-    13.5,
+    14,
     8.5,
-    13.5
+    14
    ],
    "faces": {
     "north": {
-     "texture": "#t"
+     "texture": "#b"
     },
     "south": {
-     "texture": "#t"
+     "texture": "#b"
     },
     "east": {
-     "texture": "#t"
+     "texture": "#b"
     },
     "west": {
-     "texture": "#t"
-    },
-    "down": {
-     "texture": "#t"
+     "texture": "#b"
     },
     "up": {
-     "texture": "#t"
+     "texture": "#b"
+    },
+    "down": {
+     "texture": "#b"
     }
    }
   },
@@ -86,22 +86,22 @@
    ],
    "faces": {
     "north": {
-     "texture": "#g"
+     "texture": "#b"
     },
     "south": {
-     "texture": "#g"
+     "texture": "#b"
     },
     "east": {
-     "texture": "#g"
+     "texture": "#b"
     },
     "west": {
-     "texture": "#g"
-    },
-    "down": {
-     "texture": "#g"
+     "texture": "#b"
     },
     "up": {
-     "texture": "#g"
+     "texture": "#b"
+    },
+    "down": {
+     "texture": "#b"
     }
    }
   },
@@ -118,22 +118,22 @@
    ],
    "faces": {
     "north": {
-     "texture": "#g"
+     "texture": "#b"
     },
     "south": {
-     "texture": "#g"
+     "texture": "#b"
     },
     "east": {
-     "texture": "#g"
+     "texture": "#b"
     },
     "west": {
-     "texture": "#g"
-    },
-    "down": {
-     "texture": "#g"
+     "texture": "#b"
     },
     "up": {
-     "texture": "#g"
+     "texture": "#b"
+    },
+    "down": {
+     "texture": "#b"
     }
    }
   },
@@ -150,22 +150,22 @@
    ],
    "faces": {
     "north": {
-     "texture": "#g"
+     "texture": "#b"
     },
     "south": {
-     "texture": "#g"
+     "texture": "#b"
     },
     "east": {
-     "texture": "#g"
+     "texture": "#b"
     },
     "west": {
-     "texture": "#g"
-    },
-    "down": {
-     "texture": "#g"
+     "texture": "#b"
     },
     "up": {
-     "texture": "#g"
+     "texture": "#b"
+    },
+    "down": {
+     "texture": "#b"
     }
    }
   },
@@ -182,22 +182,22 @@
    ],
    "faces": {
     "north": {
-     "texture": "#g"
+     "texture": "#b"
     },
     "south": {
-     "texture": "#g"
+     "texture": "#b"
     },
     "east": {
-     "texture": "#g"
+     "texture": "#b"
     },
     "west": {
-     "texture": "#g"
-    },
-    "down": {
-     "texture": "#g"
+     "texture": "#b"
     },
     "up": {
-     "texture": "#g"
+     "texture": "#b"
+    },
+    "down": {
+     "texture": "#b"
     }
    }
   }
