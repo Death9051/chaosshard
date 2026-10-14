@@ -72,7 +72,8 @@ jobs:
             if [ ! -s "$f" ]; then
               curl -sfL -o "$f" "https://curse.cleanroommc.com/curse/maven/mod-${pid}/${fid}/mod-${pid}-${fid}.jar" || { echo "FAIL $pid $fid"; rm -f "$f"; continue; }
             fi
-            cp "$f" server/mods/
+            # библиотеки-coremod (ConfigAnytime, MixinBooter) должны грузиться раньше: Forge идёт по именам файлов
+            case " 870276 419286 " in *" $pid "*) cp "$f" "server/mods/0-$(basename "$f")";; *) cp "$f" server/mods/;; esac
           done < /tmp/files.txt
           ls server/mods | wc -l
           cp -r pack/overrides/config server/ 2>/dev/null || true
