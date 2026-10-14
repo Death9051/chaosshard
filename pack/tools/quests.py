@@ -1073,6 +1073,13 @@ q("a5_archon", "act5", 14, 3, "§5Архонт", "", I("minecraft:nether_star"),
 q("a5_end", "act5", 16, 3, "§5§lЗавеса пала", "", I("chaosshard:grimoire"), adv("game_complete"), [XP(100)], ["a5_archon"], main=True)
 q("a3_sigil", "act3", 14, 8, "Печать Цитадели", "", I("chaosshard:citadel_sigil"), adv("citadel_recall"), [NIT(20), XP(3)], ["a3_lair3"])
 q("st_chaos_link", "stars", 22, 4, "§5Связь с Хаосом", "", I("minecraft:nether_star"), adv("chaos_link"), [NIT(30), XP(5)], ["st_attalt", "st_chaos"])
+q("a0_perk", "act0", 6, 1, "Своя страница", "", I("minecraft:writable_book"), adv("spell_perk"), [NIT(10), XP(2)], ["a0_spell"])
+q("a0_form", "act0", 8, 1, "Другая форма", "", I("chaosshard:grimoire"), adv("spell_form"), [NIT(10), XP(2)], ["a0_perk"])
+q("a4_trophy", "act4", 22, 5, "Зал трофеев", "", I("chaosshard:kael_blade"), adv("trophy_hall"), [NIT(20), XP(5)], ["a4_blade", "a3_lair2"])
+q("tc_crystal", "tech", 2, 4, "§5Кристаллизованный Хаос", "", I("chaosshard:crystal_chaos_ingot"), got(I("chaosshard:crystal_chaos_ingot")), [NIT(15), XP(3)], ["tc_distorted"])
+q("tc_blood", "tech", 4, 4, "§5Кровавая платина", "", I("chaosshard:blood_platinum_ingot"), got(I("chaosshard:blood_platinum_ingot")), [NIT(15), XP(3)], ["tc_distorted"])
+q("tc_star", "tech", 6, 4, "§5Свет звезды", "", I("chaosshard:starlight_ingot"), got(I("chaosshard:starlight_ingot")), [NIT(15), XP(3)], ["tc_distorted", "st_attune"])
+q("tc_matmax", "tech", 8, 4, "Металл помнит", "", I("minecraft:diamond_sword"), adv("material_max"), [NIT(40), XP(8)], ["tc_crystal"])
 
 # ---------------------------------------------------------------- сборка
 
@@ -1150,7 +1157,7 @@ def build():
         "questSettings:10": {"betterquesting:10": {
             "editmode:1": 0, "hardcore:1": 0, "party_enable:1": 1,
             "livesdef:3": 3, "livesmax:3": 10,
-            "pack_name:8": PACK_NAME, "pack_version:3": 68,
+            "pack_name:8": PACK_NAME, "pack_version:3": 69,
             "home_image:8": "chaosshard:textures/gui/quest_home.png"}},
         "questDatabase:9": db,
         "questLines:9": lines,

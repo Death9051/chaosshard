@@ -8,7 +8,7 @@
    "livesdef:3": 3,
    "livesmax:3": 10,
    "pack_name:8": "Осколок Хаоса",
-   "pack_version:3": 68,
+   "pack_version:3": 69,
    "home_image:8": "chaosshard:textures/gui/quest_home.png"
   }
  },
@@ -307,7 +307,7 @@
    "properties:10": {
     "betterquesting:10": {
      "name:8": "§5Страницы заклинаний",
-     "desc:8": "У Гримуара два режима: §dЗаписи§r и §dМагия§r — переключаются §eShift+ПКМ§r в воздух. В Магии §eПКМ§r читает выбранное заклинание, §eK§r — колесо заклинаний, §eP§r — описания.\n\nДля начала: §dРосток§r делает из корки траву, §dМост пустоты§r тянет дорожку над бездной. Остальные страницы откроются с Нитью.\n\n§7Энергия Хаоса — полоска у панели быстрого доступа. В Преддверии копится вдвое быстрее.§r",
+     "desc:8": "У Гримуара три режима: §dКнига§r, §dМагия§r и §dПривязка§r — по кругу §eShift+ПКМ§r в воздух. В Магии §eПКМ§r читает выбранное заклинание, в Привязке Гримуар только отдаёт указания слугам. §eK§r — колесо заклинаний, §eX§r — заклинание, даже если Гримуар во второй руке, §eP§r — описания.\n\nДля начала: §dРосток§r делает из корки траву, §dМост пустоты§r тянет дорожку над бездной. Остальные страницы откроются с Нитью.\n\n§7Энергия Хаоса — полоска у панели быстрого доступа. В Преддверии копится вдвое быстрее.§r",
      "icon:10": {
       "id:8": "chaosshard:grimoire",
       "Count:3": 1,
@@ -10651,7 +10651,7 @@
    "properties:10": {
     "betterquesting:10": {
      "name:8": "§5Свита",
-     "desc:8": "Если позвать по Нити как следует, приходят §dслуги§r. Один Осколок — это немного. Осколок со свитой — уже вторжение.\n\n§7Призыв — ритуал в Чаше; кто есть и что им нужно — вкладка «Слуги» в окне магии (§eP§r).\n§eПКМ Гримуаром§r по слуге — «за мной» / «стереги здесь». §eПКМ гнилью или костью§r — подлечить. §eShift+ПКМ пустой рукой§r — отпустить. Своего можно ударить только присев. Обычных слуг — не больше 2 + уровень Нити.§r\n\n§8Откроется после: «Первый ритуал» (Акт 0. Пробуждение)§r",
+     "desc:8": "Если позвать по Нити как следует, приходят §dслуги§r. Один Осколок — это немного. Осколок со свитой — уже вторжение.\n\n§7Призыв — ритуал в Чаше; кто есть и что им нужно — вкладка «Слуги» в окне магии (§eP§r).\nГримуар в режиме §dПривязки§r: §eПКМ§r по слуге — «за мной» / «стереги здесь». §eПКМ гнилью или костью§r — подлечить. §eShift+ПКМ пустой рукой§r — отпустить. Своего можно ударить только присев. Обычных слуг — не больше 2 + уровень Нити.§r\n\n§8Откроется после: «Первый ритуал» (Акт 0. Пробуждение)§r",
      "icon:10": {
       "id:8": "minecraft:rotten_flesh",
       "Count:3": 1,
@@ -11615,7 +11615,7 @@
    "properties:10": {
     "betterquesting:10": {
      "name:8": "§eДобытчики",
-     "desc:8": "Не всякий слуга рождён для драки. §dДобытчики§r — жнец, лесоруб, рудокоп — работают у сундука и шлют добытое туда.\n\n§7§eПКМ Гримуаром§r по добытчику, затем по сундуку — закрепить; §eShift+ПКМ§r — открепить. Рудокоп роет в ту сторону, куда я смотрю. Сундук держит чанки, пока у него есть работники, — они трудятся и без меня. Несколько добытчиков у одного сундука делят работу.§r",
+     "desc:8": "Не всякий слуга рождён для драки. §dДобытчики§r — жнец, лесоруб, рудокоп — работают у сундука и шлют добытое туда.\n\n§7Гримуар в Привязке: §eПКМ§r по добытчику, затем по сундуку — закрепить; §eShift+ПКМ§r — открепить. Рудокоп роет в ту сторону, куда я смотрю. Сундук держит чанки, пока у него есть работники, — они трудятся и без меня. Несколько добытчиков у одного сундука делят работу.§r",
      "icon:10": {
       "id:8": "minecraft:iron_pickaxe",
       "Count:3": 1,
@@ -11787,7 +11787,7 @@
    "properties:10": {
     "betterquesting:10": {
      "name:8": "Гарнизон",
-     "desc:8": "Бойцам не обязательно ходить за мной — пусть стерегут Якорь от Гаррота.\n\n§7§eПКМ Гримуаром§r по бойцу, затем по Якорю — гарнизон. Он не занимает места в свите; предел — сумма уровней Якорей сети. §eShift+ПКМ Гримуаром§r — снова за мной.§r\n\n§8Откроется после: «Первый слуга» (Слуги)§r",
+     "desc:8": "Бойцам не обязательно ходить за мной — пусть стерегут Якорь от Гаррота.\n\n§7Гримуар в Привязке: §eПКМ§r по бойцу, затем по Якорю — гарнизон. Он не занимает места в свите; предел — сумма уровней Якорей сети. §eShift+ПКМ Гримуаром§r — снова за мной.§r\n\n§8Откроется после: «Первый слуга» (Слуги)§r",
      "icon:10": {
       "id:8": "minecraft:iron_sword",
       "Count:3": 1,
@@ -18187,6 +18187,443 @@
      "index:3": 1
     }
    }
+  },
+  "289:10": {
+   "questID:3": 289,
+   "preRequisites:11": [
+    4
+   ],
+   "properties:10": {
+    "betterquesting:10": {
+     "name:8": "Своя страница",
+     "desc:8": "Каждый узел Нити — ещё одна строка на каждой странице. Страницы можно дописывать по-своему.\n\n§7Взять перк любого заклинания. Сброс — сфера «Чистые страницы».§r",
+     "icon:10": {
+      "id:8": "minecraft:writable_book",
+      "Count:3": 1,
+      "Damage:2": 0,
+      "OreDict:8": ""
+     },
+     "visibility:8": "NORMAL",
+     "ismain:1": 0,
+     "questlogic:8": "AND",
+     "tasklogic:8": "AND",
+     "repeattime:3": -1,
+     "repeat_relative:1": 1,
+     "autoclaim:1": 0,
+     "issilent:1": 0,
+     "lockedprogress:1": 1,
+     "simultaneous:1": 0,
+     "globalshare:1": 0,
+     "partysinglereward:1": 0,
+     "snd_complete:8": "minecraft:entity.player.levelup",
+     "snd_update:8": "minecraft:entity.player.levelup"
+    }
+   },
+   "tasks:9": {
+    "0:10": {
+     "taskID:8": "bq_standard:advancement",
+     "advancement_id:8": "chaosshard:m/spell_perk",
+     "index:3": 0
+    }
+   },
+   "rewards:9": {
+    "0:10": {
+     "rewardID:8": "bq_standard:command",
+     "command:8": "/oh nit add VAR_NAME 10",
+     "title:8": "Нить +10",
+     "description:8": "Нить +10",
+     "asScript:1": 1,
+     "hideBlockIcon:1": 1,
+     "viaPlayer:1": 0,
+     "index:3": 0
+    },
+    "1:10": {
+     "rewardID:8": "bq_standard:xp",
+     "amount:3": 2,
+     "isLevels:1": 1,
+     "index:3": 1
+    }
+   }
+  },
+  "290:10": {
+   "questID:3": 290,
+   "preRequisites:11": [
+    289
+   ],
+   "properties:10": {
+    "betterquesting:10": {
+     "name:8": "Другая форма",
+     "desc:8": "Одно и то же слово можно сказать по-разному: стрела, цепь, взрыв.\n\n§7Сменить форму заклинания: ПКМ по сектору в колесе (K) или на странице в окне P.§r",
+     "icon:10": {
+      "id:8": "chaosshard:grimoire",
+      "Count:3": 1,
+      "Damage:2": 0,
+      "OreDict:8": ""
+     },
+     "visibility:8": "NORMAL",
+     "ismain:1": 0,
+     "questlogic:8": "AND",
+     "tasklogic:8": "AND",
+     "repeattime:3": -1,
+     "repeat_relative:1": 1,
+     "autoclaim:1": 0,
+     "issilent:1": 0,
+     "lockedprogress:1": 1,
+     "simultaneous:1": 0,
+     "globalshare:1": 0,
+     "partysinglereward:1": 0,
+     "snd_complete:8": "minecraft:entity.player.levelup",
+     "snd_update:8": "minecraft:entity.player.levelup"
+    }
+   },
+   "tasks:9": {
+    "0:10": {
+     "taskID:8": "bq_standard:advancement",
+     "advancement_id:8": "chaosshard:m/spell_form",
+     "index:3": 0
+    }
+   },
+   "rewards:9": {
+    "0:10": {
+     "rewardID:8": "bq_standard:command",
+     "command:8": "/oh nit add VAR_NAME 10",
+     "title:8": "Нить +10",
+     "description:8": "Нить +10",
+     "asScript:1": 1,
+     "hideBlockIcon:1": 1,
+     "viaPlayer:1": 0,
+     "index:3": 0
+    },
+    "1:10": {
+     "rewardID:8": "bq_standard:xp",
+     "amount:3": 2,
+     "isLevels:1": 1,
+     "index:3": 1
+    }
+   }
+  },
+  "291:10": {
+   "questID:3": 291,
+   "preRequisites:11": [
+    224,
+    166
+   ],
+   "properties:10": {
+    "betterquesting:10": {
+     "name:8": "Зал трофеев",
+     "desc:8": "Трофеи должны стоять там, где их видят. Пусть смотрят со стен моего Логова — и работают на меня.\n\n§7§eShift+ПКМ§r трофеем по блоку в стенах своего Логова. Вне Логова трофей — просто камень.§r\n\n§8Откроется после: «Башня» (Акт 3. Плацдарм)§r",
+     "icon:10": {
+      "id:8": "chaosshard:kael_blade",
+      "Count:3": 1,
+      "Damage:2": 0,
+      "OreDict:8": ""
+     },
+     "visibility:8": "NORMAL",
+     "ismain:1": 0,
+     "questlogic:8": "AND",
+     "tasklogic:8": "AND",
+     "repeattime:3": -1,
+     "repeat_relative:1": 1,
+     "autoclaim:1": 0,
+     "issilent:1": 0,
+     "lockedprogress:1": 1,
+     "simultaneous:1": 0,
+     "globalshare:1": 0,
+     "partysinglereward:1": 0,
+     "snd_complete:8": "minecraft:entity.player.levelup",
+     "snd_update:8": "minecraft:entity.player.levelup"
+    }
+   },
+   "tasks:9": {
+    "0:10": {
+     "taskID:8": "bq_standard:advancement",
+     "advancement_id:8": "chaosshard:m/trophy_hall",
+     "index:3": 0
+    }
+   },
+   "rewards:9": {
+    "0:10": {
+     "rewardID:8": "bq_standard:command",
+     "command:8": "/oh nit add VAR_NAME 20",
+     "title:8": "Нить +20",
+     "description:8": "Нить +20",
+     "asScript:1": 1,
+     "hideBlockIcon:1": 1,
+     "viaPlayer:1": 0,
+     "index:3": 0
+    },
+    "1:10": {
+     "rewardID:8": "bq_standard:xp",
+     "amount:3": 5,
+     "isLevels:1": 1,
+     "index:3": 1
+    }
+   }
+  },
+  "292:10": {
+   "questID:3": 292,
+   "preRequisites:11": [
+    88
+   ],
+   "properties:10": {
+    "betterquesting:10": {
+     "name:8": "§5Кристаллизованный Хаос",
+     "desc:8": "Хаос, загнанный в решётку кристалла, перестаёт течь — и начинает копить.\n\n§7Оружие из него копит энергию ударами и отдаёт её заклинаниям раньше моей. Гримуар — во второй руке.§r",
+     "icon:10": {
+      "id:8": "chaosshard:crystal_chaos_ingot",
+      "Count:3": 1,
+      "Damage:2": 0,
+      "OreDict:8": ""
+     },
+     "visibility:8": "NORMAL",
+     "ismain:1": 0,
+     "questlogic:8": "AND",
+     "tasklogic:8": "AND",
+     "repeattime:3": -1,
+     "repeat_relative:1": 1,
+     "autoclaim:1": 0,
+     "issilent:1": 0,
+     "lockedprogress:1": 1,
+     "simultaneous:1": 0,
+     "globalshare:1": 0,
+     "partysinglereward:1": 0,
+     "snd_complete:8": "minecraft:entity.player.levelup",
+     "snd_update:8": "minecraft:entity.player.levelup"
+    }
+   },
+   "tasks:9": {
+    "0:10": {
+     "taskID:8": "bq_standard:retrieval",
+     "requiredItems:9": {
+      "0:10": {
+       "id:8": "chaosshard:crystal_chaos_ingot",
+       "Count:3": 1,
+       "Damage:2": 0,
+       "OreDict:8": ""
+      }
+     },
+     "partialMatch:1": 1,
+     "ignoreNBT:1": 1,
+     "consume:1": 0,
+     "autoConsume:1": 0,
+     "groupDetect:1": 0,
+     "index:3": 0
+    }
+   },
+   "rewards:9": {
+    "0:10": {
+     "rewardID:8": "bq_standard:command",
+     "command:8": "/oh nit add VAR_NAME 15",
+     "title:8": "Нить +15",
+     "description:8": "Нить +15",
+     "asScript:1": 1,
+     "hideBlockIcon:1": 1,
+     "viaPlayer:1": 0,
+     "index:3": 0
+    },
+    "1:10": {
+     "rewardID:8": "bq_standard:xp",
+     "amount:3": 3,
+     "isLevels:1": 1,
+     "index:3": 1
+    }
+   }
+  },
+  "293:10": {
+   "questID:3": 293,
+   "preRequisites:11": [
+    88
+   ],
+   "properties:10": {
+    "betterquesting:10": {
+     "name:8": "§5Кровавая платина",
+     "desc:8": "Платина берёт кровь охотно. Хаос — ещё охотнее.\n\n§7Не хватит энергии — заклинание возьмёт здоровье. Гримуар — во второй руке.§r",
+     "icon:10": {
+      "id:8": "chaosshard:blood_platinum_ingot",
+      "Count:3": 1,
+      "Damage:2": 0,
+      "OreDict:8": ""
+     },
+     "visibility:8": "NORMAL",
+     "ismain:1": 0,
+     "questlogic:8": "AND",
+     "tasklogic:8": "AND",
+     "repeattime:3": -1,
+     "repeat_relative:1": 1,
+     "autoclaim:1": 0,
+     "issilent:1": 0,
+     "lockedprogress:1": 1,
+     "simultaneous:1": 0,
+     "globalshare:1": 0,
+     "partysinglereward:1": 0,
+     "snd_complete:8": "minecraft:entity.player.levelup",
+     "snd_update:8": "minecraft:entity.player.levelup"
+    }
+   },
+   "tasks:9": {
+    "0:10": {
+     "taskID:8": "bq_standard:retrieval",
+     "requiredItems:9": {
+      "0:10": {
+       "id:8": "chaosshard:blood_platinum_ingot",
+       "Count:3": 1,
+       "Damage:2": 0,
+       "OreDict:8": ""
+      }
+     },
+     "partialMatch:1": 1,
+     "ignoreNBT:1": 1,
+     "consume:1": 0,
+     "autoConsume:1": 0,
+     "groupDetect:1": 0,
+     "index:3": 0
+    }
+   },
+   "rewards:9": {
+    "0:10": {
+     "rewardID:8": "bq_standard:command",
+     "command:8": "/oh nit add VAR_NAME 15",
+     "title:8": "Нить +15",
+     "description:8": "Нить +15",
+     "asScript:1": 1,
+     "hideBlockIcon:1": 1,
+     "viaPlayer:1": 0,
+     "index:3": 0
+    },
+    "1:10": {
+     "rewardID:8": "bq_standard:xp",
+     "amount:3": 3,
+     "isLevels:1": 1,
+     "index:3": 1
+    }
+   }
+  },
+  "294:10": {
+   "questID:3": 294,
+   "preRequisites:11": [
+    88,
+    53
+   ],
+   "properties:10": {
+    "betterquesting:10": {
+     "name:8": "§5Свет звезды",
+     "desc:8": "Звёздный металл, в котором Хаос нашёл своё созвездие. Он помнит, под какой звездой я стою.\n\n§7Заклинания получают привкус моей настройки Astral; со Связью с Хаосом — всех созвездий вполсилы.§r\n\n§8Откроется после: «Выбор пути» (Звёзды Лучезарии)§r",
+     "icon:10": {
+      "id:8": "chaosshard:starlight_ingot",
+      "Count:3": 1,
+      "Damage:2": 0,
+      "OreDict:8": ""
+     },
+     "visibility:8": "NORMAL",
+     "ismain:1": 0,
+     "questlogic:8": "AND",
+     "tasklogic:8": "AND",
+     "repeattime:3": -1,
+     "repeat_relative:1": 1,
+     "autoclaim:1": 0,
+     "issilent:1": 0,
+     "lockedprogress:1": 1,
+     "simultaneous:1": 0,
+     "globalshare:1": 0,
+     "partysinglereward:1": 0,
+     "snd_complete:8": "minecraft:entity.player.levelup",
+     "snd_update:8": "minecraft:entity.player.levelup"
+    }
+   },
+   "tasks:9": {
+    "0:10": {
+     "taskID:8": "bq_standard:retrieval",
+     "requiredItems:9": {
+      "0:10": {
+       "id:8": "chaosshard:starlight_ingot",
+       "Count:3": 1,
+       "Damage:2": 0,
+       "OreDict:8": ""
+      }
+     },
+     "partialMatch:1": 1,
+     "ignoreNBT:1": 1,
+     "consume:1": 0,
+     "autoConsume:1": 0,
+     "groupDetect:1": 0,
+     "index:3": 0
+    }
+   },
+   "rewards:9": {
+    "0:10": {
+     "rewardID:8": "bq_standard:command",
+     "command:8": "/oh nit add VAR_NAME 15",
+     "title:8": "Нить +15",
+     "description:8": "Нить +15",
+     "asScript:1": 1,
+     "hideBlockIcon:1": 1,
+     "viaPlayer:1": 0,
+     "index:3": 0
+    },
+    "1:10": {
+     "rewardID:8": "bq_standard:xp",
+     "amount:3": 3,
+     "isLevels:1": 1,
+     "index:3": 1
+    }
+   }
+  },
+  "295:10": {
+   "questID:3": 295,
+   "preRequisites:11": [
+    292
+   ],
+   "properties:10": {
+    "betterquesting:10": {
+     "name:8": "Металл помнит",
+     "desc:8": "Металл помнит каждый удар и каждое слово, сказанное с ним в руке.\n\n§7Уровни материала Хаоса растут от убийств и заклинаний; на захваченной земле — вдвое. Ускорить — сфера «Закалка».§r",
+     "icon:10": {
+      "id:8": "minecraft:diamond_sword",
+      "Count:3": 1,
+      "Damage:2": 0,
+      "OreDict:8": ""
+     },
+     "visibility:8": "NORMAL",
+     "ismain:1": 0,
+     "questlogic:8": "AND",
+     "tasklogic:8": "AND",
+     "repeattime:3": -1,
+     "repeat_relative:1": 1,
+     "autoclaim:1": 0,
+     "issilent:1": 0,
+     "lockedprogress:1": 1,
+     "simultaneous:1": 0,
+     "globalshare:1": 0,
+     "partysinglereward:1": 0,
+     "snd_complete:8": "minecraft:entity.player.levelup",
+     "snd_update:8": "minecraft:entity.player.levelup"
+    }
+   },
+   "tasks:9": {
+    "0:10": {
+     "taskID:8": "bq_standard:advancement",
+     "advancement_id:8": "chaosshard:m/material_max",
+     "index:3": 0
+    }
+   },
+   "rewards:9": {
+    "0:10": {
+     "rewardID:8": "bq_standard:command",
+     "command:8": "/oh nit add VAR_NAME 40",
+     "title:8": "Нить +40",
+     "description:8": "Нить +40",
+     "asScript:1": 1,
+     "hideBlockIcon:1": 1,
+     "viaPlayer:1": 0,
+     "index:3": 0
+    },
+    "1:10": {
+     "rewardID:8": "bq_standard:xp",
+     "amount:3": 8,
+     "isLevels:1": 1,
+     "index:3": 1
+    }
+   }
   }
  },
  "questLines:9": {
@@ -18219,7 +18656,7 @@
     "1:10": {
      "id:3": 1,
      "x:3": 740,
-     "y:3": 776,
+     "y:3": 732,
      "sizeX:3": 24,
      "sizeY:3": 24
     },
@@ -18233,14 +18670,14 @@
     "3:10": {
      "id:3": 3,
      "x:3": 836,
-     "y:3": 776,
+     "y:3": 732,
      "sizeX:3": 24,
      "sizeY:3": 24
     },
     "4:10": {
      "id:3": 4,
      "x:3": 740,
-     "y:3": 908,
+     "y:3": 776,
      "sizeX:3": 24,
      "sizeY:3": 24
     },
@@ -18254,14 +18691,14 @@
     "6:10": {
      "id:3": 6,
      "x:3": 1028,
-     "y:3": 644,
+     "y:3": 864,
      "sizeX:3": 24,
      "sizeY:3": 24
     },
     "7:10": {
      "id:3": 7,
      "x:3": 1028,
-     "y:3": 688,
+     "y:3": 952,
      "sizeX:3": 24,
      "sizeY:3": 24
     },
@@ -18289,7 +18726,7 @@
     "11:10": {
      "id:3": 110,
      "x:3": 1028,
-     "y:3": 908,
+     "y:3": 644,
      "sizeX:3": 24,
      "sizeY:3": 24
     },
@@ -18303,7 +18740,21 @@
     "13:10": {
      "id:3": 165,
      "x:3": 1028,
-     "y:3": 864,
+     "y:3": 688,
+     "sizeX:3": 24,
+     "sizeY:3": 24
+    },
+    "14:10": {
+     "id:3": 289,
+     "x:3": 836,
+     "y:3": 776,
+     "sizeX:3": 24,
+     "sizeY:3": 24
+    },
+    "15:10": {
+     "id:3": 290,
+     "x:3": 932,
+     "y:3": 776,
      "sizeX:3": 24,
      "sizeY:3": 24
     }
@@ -19220,126 +19671,154 @@
     "0:10": {
      "id:3": 86,
      "x:3": 640,
-     "y:3": 728,
+     "y:3": 860,
      "sizeX:3": 32,
      "sizeY:3": 32
     },
     "1:10": {
      "id:3": 87,
      "x:3": 740,
-     "y:3": 820,
+     "y:3": 952,
      "sizeX:3": 24,
      "sizeY:3": 24
     },
     "2:10": {
      "id:3": 88,
      "x:3": 736,
-     "y:3": 728,
+     "y:3": 860,
      "sizeX:3": 32,
      "sizeY:3": 32
     },
     "3:10": {
      "id:3": 89,
      "x:3": 836,
-     "y:3": 820,
+     "y:3": 688,
      "sizeX:3": 24,
      "sizeY:3": 24
     },
     "4:10": {
      "id:3": 90,
      "x:3": 836,
-     "y:3": 688,
+     "y:3": 776,
      "sizeX:3": 24,
      "sizeY:3": 24
     },
     "5:10": {
      "id:3": 91,
      "x:3": 836,
-     "y:3": 776,
+     "y:3": 952,
      "sizeX:3": 24,
      "sizeY:3": 24
     },
     "6:10": {
      "id:3": 92,
      "x:3": 740,
-     "y:3": 644,
+     "y:3": 776,
      "sizeX:3": 24,
      "sizeY:3": 24
     },
     "7:10": {
      "id:3": 107,
      "x:3": 740,
-     "y:3": 776,
+     "y:3": 908,
      "sizeX:3": 24,
      "sizeY:3": 24
     },
     "8:10": {
      "id:3": 108,
      "x:3": 740,
-     "y:3": 688,
+     "y:3": 820,
      "sizeX:3": 24,
      "sizeY:3": 24
     },
     "9:10": {
      "id:3": 109,
      "x:3": 740,
-     "y:3": 864,
+     "y:3": 996,
      "sizeX:3": 24,
      "sizeY:3": 24
     },
     "10:10": {
      "id:3": 160,
      "x:3": 836,
-     "y:3": 644,
+     "y:3": 820,
      "sizeX:3": 24,
      "sizeY:3": 24
     },
     "11:10": {
      "id:3": 243,
      "x:3": 740,
-     "y:3": 908,
+     "y:3": 1084,
      "sizeX:3": 24,
      "sizeY:3": 24
     },
     "12:10": {
      "id:3": 244,
      "x:3": 932,
-     "y:3": 776,
+     "y:3": 820,
      "sizeX:3": 24,
      "sizeY:3": 24
     },
     "13:10": {
      "id:3": 245,
      "x:3": 836,
-     "y:3": 908,
+     "y:3": 1128,
      "sizeX:3": 24,
      "sizeY:3": 24
     },
     "14:10": {
      "id:3": 250,
      "x:3": 836,
-     "y:3": 996,
+     "y:3": 1040,
      "sizeX:3": 24,
      "sizeY:3": 24
     },
     "15:10": {
      "id:3": 251,
      "x:3": 836,
-     "y:3": 952,
+     "y:3": 1084,
      "sizeX:3": 24,
      "sizeY:3": 24
     },
     "16:10": {
      "id:3": 252,
      "x:3": 836,
-     "y:3": 1040,
+     "y:3": 996,
      "sizeX:3": 24,
      "sizeY:3": 24
     },
     "17:10": {
      "id:3": 253,
      "x:3": 836,
-     "y:3": 864,
+     "y:3": 1172,
+     "sizeX:3": 24,
+     "sizeY:3": 24
+    },
+    "18:10": {
+     "id:3": 292,
+     "x:3": 836,
+     "y:3": 644,
+     "sizeX:3": 24,
+     "sizeY:3": 24
+    },
+    "19:10": {
+     "id:3": 293,
+     "x:3": 836,
+     "y:3": 908,
+     "sizeX:3": 24,
+     "sizeY:3": 24
+    },
+    "20:10": {
+     "id:3": 294,
+     "x:3": 836,
+     "y:3": 732,
+     "sizeX:3": 24,
+     "sizeY:3": 24
+    },
+    "21:10": {
+     "id:3": 295,
+     "x:3": 932,
+     "y:3": 776,
      "sizeX:3": 24,
      "sizeY:3": 24
     }
@@ -20250,6 +20729,13 @@
      "id:3": 257,
      "x:3": 932,
      "y:3": 864,
+     "sizeX:3": 24,
+     "sizeY:3": 24
+    },
+    "26:10": {
+     "id:3": 291,
+     "x:3": 1028,
+     "y:3": 688,
      "sizeX:3": 24,
      "sizeY:3": 24
     }

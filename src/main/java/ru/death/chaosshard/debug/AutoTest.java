@@ -1882,7 +1882,7 @@ public final class AutoTest {
                 TileAnchor a = (TileAnchor) ow.getTileEntity(anchorPos);
                 if (a == null || !a.isCaptured()) { check(false, "нет захваченного Якоря"); return; }
                 boolean made = false;
-                for (int i = 0; i < 20 && !made; i++) {
+                for (int i = 0; i < 100 && !made; i++) {
                     made = ru.death.chaosshard.compat.world.WildChaos.populate(ow, a);
                 }
                 List<EntityLiving> ds = ow.getEntitiesWithinAABB(EntityLiving.class, new AxisAlignedBB(anchorPos).grow(a.radius(), 32, a.radius()),

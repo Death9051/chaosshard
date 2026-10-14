@@ -461,7 +461,16 @@ public class Servants {
     public void onInteract(PlayerInteractEvent.EntityInteract event) {
         Entity e = event.getTarget();
         EntityPlayer p = event.getEntityPlayer();
-        if (event.getWorld().isRemote || event.getHand() != EnumHand.MAIN_HAND || !isServantOf(e, p.getUniqueID())) {
+        if (event.getWorld().isRemote) {
+            // клиент не знает хозяина, но в Привязке Гримуар по существу — только указание: не читать и не листать
+            if (event.getHand() == EnumHand.MAIN_HAND && e instanceof net.minecraft.entity.EntityLiving
+                    && ru.death.chaosshard.spell.SpellCaster.binding(p)) {
+                event.setCanceled(true);
+                event.setCancellationResult(net.minecraft.util.EnumActionResult.SUCCESS);
+            }
+            return;
+        }
+        if (event.getHand() != EnumHand.MAIN_HAND || !isServantOf(e, p.getUniqueID())) {
             return;
         }
         ItemStack held = p.getHeldItemMainhand();
