@@ -127,7 +127,13 @@ public class BlockRitualSpire extends ModBlocks.SimpleBlock {
 
     @Override
     public int getLightValue(IBlockState state, net.minecraft.world.IBlockAccess world, BlockPos pos) {
-        return state.getBlock() == this && state.getValue(LIT) ? 10 : 0;
+        if (state.getBlock() != this) {
+            return 0;
+        }
+        if (state.getValue(LIT)) {
+            return 10;
+        }
+        return state.getValue(HALF) == Half.UPPER ? 5 : 0;
     }
 
     /** Зажечь или погасить четыре шпиля вокруг алтаря. */
@@ -206,11 +212,6 @@ public class BlockRitualSpire extends ModBlocks.SimpleBlock {
     @Override
     public BlockFaceShape getBlockFaceShape(IBlockAccess world, IBlockState state, BlockPos pos, EnumFacing face) {
         return face == EnumFacing.DOWN && state.getValue(HALF) == Half.LOWER ? BlockFaceShape.SOLID : BlockFaceShape.UNDEFINED;
-    }
-
-    @Override
-    public int getLightValue(IBlockState state, IBlockAccess world, BlockPos pos) {
-        return state.getValue(HALF) == Half.UPPER ? 5 : 0;
     }
 
     @Override
