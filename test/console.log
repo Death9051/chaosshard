@@ -1,0 +1,246 @@
+2026-10-14 06:07:30,109 main WARN Disabling terminal, you're running in an unsupported environment.
+[06:07:30] [main/INFO] [LaunchWrapper]: Loading tweak class name net.minecraftforge.fml.common.launcher.FMLServerTweaker
+[06:07:30] [main/INFO] [LaunchWrapper]: Using primary tweak class name net.minecraftforge.fml.common.launcher.FMLServerTweaker
+[06:07:30] [main/INFO] [LaunchWrapper]: Calling tweak class net.minecraftforge.fml.common.launcher.FMLServerTweaker
+[06:07:30] [main/INFO] [FML]: Forge Mod Loader version 14.23.5.2860 for Minecraft 1.12.2 loading
+[06:07:30] [main/INFO] [FML]: Java is OpenJDK 64-Bit Server VM, version 1.8.0_504, running on Linux:amd64:6.17.0-1022-azure, installed at /usr/lib/jvm/temurin-8-jdk-amd64/jre
+[06:07:30] [main/INFO] [FML]: Searching /home/runner/work/chaosshard/chaosshard/server/./mods for mods
+[06:07:30] [main/WARN] [FML]: Found FMLCorePluginContainsFMLMod marker in apotheosis.jar. This is not recommended, @Mods should be in a separate jar from the coremod.
+[06:07:30] [main/WARN] [FML]: The coremod ApotheosisCore (shadows.ApotheosisCore) is not signed!
+[06:07:30] [main/WARN] [FML]: Found FMLCorePluginContainsFMLMod marker in configanytime.jar. This is not recommended, @Mods should be in a separate jar from the coremod.
+[06:07:30] [main/WARN] [FML]: The coremod com.cleanroommc.configanytime.ConfigAnytimePlugin does not have a MCVersion annotation, it may cause issues with this version of Minecraft
+[06:07:30] [main/WARN] [FML]: The coremod ConfigAnytimePlugin (com.cleanroommc.configanytime.ConfigAnytimePlugin) is not signed!
+[06:07:30] [main/INFO] [FML]: Loading tweaker org.spongepowered.asm.launch.MixinTweaker from mixinbooter.jar
+[06:07:30] [main/INFO] [LaunchWrapper]: Loading tweak class name net.minecraftforge.fml.common.launcher.FMLInjectionAndSortingTweaker
+[06:07:30] [main/INFO] [LaunchWrapper]: Loading tweak class name org.spongepowered.asm.launch.MixinTweaker
+[06:07:30] [main/INFO] [mixin]: SpongePowered MIXIN Subsystem Version=0.8.7 Source=file:/home/runner/work/chaosshard/chaosshard/server/./mods/mixinbooter.jar Service=LaunchWrapper Env=SERVER
+[06:07:30] [main/WARN] [FML]: The coremod zone.rong.mixinbooter.MixinBooterPlugin does not have a MCVersion annotation, it may cause issues with this version of Minecraft
+[06:07:30] [main/WARN] [FML]: The coremod MixinBooter (zone.rong.mixinbooter.MixinBooterPlugin) is not signed!
+[06:07:30] [main/INFO] [MixinBooter]: Initializing Mixins...
+[06:07:30] [main/INFO] [mixin]: Compatibility level set to JAVA_8
+[06:07:30] [main/INFO] [MixinBooter]: Initializing MixinExtras...
+[06:07:31] [main/INFO] [MixinBooter]: Gathering present mods...
+[06:07:31] [main/INFO] [MixinBooter]: Finished gathering 3 coremods...
+[06:07:31] [main/INFO] [LaunchWrapper]: Loading tweak class name net.minecraftforge.fml.common.launcher.FMLDeobfTweaker
+[06:07:31] [main/INFO] [LaunchWrapper]: Calling tweak class net.minecraftforge.fml.common.launcher.FMLInjectionAndSortingTweaker
+[06:07:31] [main/INFO] [LaunchWrapper]: Calling tweak class net.minecraftforge.fml.common.launcher.FMLInjectionAndSortingTweaker
+[06:07:31] [main/INFO] [LaunchWrapper]: Calling tweak class net.minecraftforge.fml.relauncher.CoreModManager$FMLPluginWrapper
+[06:07:33] [main/INFO] [FML]: Found valid fingerprint for Minecraft Forge. Certificate fingerprint e3c3d50c7c986df74c645c0ac54639741c90a557
+[06:07:33] [main/INFO] [LaunchWrapper]: Calling tweak class net.minecraftforge.fml.relauncher.CoreModManager$FMLPluginWrapper
+[06:07:33] [main/INFO] [LaunchWrapper]: Calling tweak class net.minecraftforge.fml.relauncher.CoreModManager$FMLPluginWrapper
+[06:07:33] [main/INFO] [LaunchWrapper]: Calling tweak class org.spongepowered.asm.launch.MixinTweaker
+[06:07:33] [main/INFO] [mixin]: Initialised Mixin FML Remapper Adapter with net.minecraftforge.fml.common.asm.transformers.deobf.FMLDeobfuscatingRemapper@1dcca8d3
+[06:07:33] [main/INFO] [LaunchWrapper]: Calling tweak class net.minecraftforge.fml.common.launcher.FMLDeobfTweaker
+[06:07:33] [main/INFO] [LaunchWrapper]: Calling tweak class net.minecraftforge.fml.relauncher.CoreModManager$FMLPluginWrapper
+[06:07:33] [main/INFO] [LaunchWrapper]: Loading tweak class name net.minecraftforge.fml.common.launcher.TerminalTweaker
+[06:07:33] [main/INFO] [LaunchWrapper]: Loading tweak class name org.spongepowered.asm.mixin.EnvironmentStateTweaker
+[06:07:33] [main/INFO] [LaunchWrapper]: Calling tweak class net.minecraftforge.fml.common.launcher.TerminalTweaker
+[06:07:33] [main/INFO] [LaunchWrapper]: Calling tweak class org.spongepowered.asm.mixin.EnvironmentStateTweaker
+[06:07:33] [main/INFO] [MixinExtras|Service]: Initializing MixinExtras via com.llamalad7.mixinextras.service.MixinExtrasServiceImpl(version=0.5.0).
+[06:07:34] [main/INFO] [Apotheosis : Core]: Transforming EntityLivingBase...
+[06:07:34] [main/INFO] [Apotheosis : Core]: Successfully transformed EntityLivingBase
+[06:07:34] [main/INFO] [LaunchWrapper]: Launching wrapped minecraft {net.minecraft.server.MinecraftServer}
+[06:07:34] [main/INFO] [Apotheosis : Core]: Transforming Item...
+[06:07:34] [main/INFO] [Apotheosis : Core]: Successfully transformed Item
+[06:07:34] [main/INFO] [Apotheosis : Core]: Transforming BlockBed...
+[06:07:34] [main/INFO] [Apotheosis : Core]: Successfully transformed BlockBed
+[06:07:36] [main/INFO] [Apotheosis : Core]: Transforming SharedMonsterAttributes...
+[06:07:36] [main/INFO] [Apotheosis : Core]: Successfully transformed SharedMonsterAttributes
+[06:07:36] [main/INFO] [Apotheosis : Core]: Transforming ItemArrow...
+[06:07:36] [main/INFO] [Apotheosis : Core]: Successfully transformed ItemArrow
+[06:07:36] [main/INFO] [Apotheosis : Core]: Transforming PotionEffect...
+[06:07:36] [main/INFO] [Apotheosis : Core]: Successfully transformed PotionEffect
+[06:07:36] [main/INFO] [Apotheosis : Core]: Transforming EntityAITempt...
+[06:07:36] [main/INFO] [Apotheosis : Core]: Successfully transformed EntityAITempt
+[06:07:37] [main/INFO] [Apotheosis : Core]: Transforming TileEntityMobSpawner$2...
+[06:07:37] [main/INFO] [Apotheosis : Core]: Successfully transformed TileEntityMobSpawner$2
+[06:07:37] [Server thread/INFO] [minecraft/DedicatedServer]: Starting minecraft server version 1.12.2
+[06:07:37] [Server thread/INFO] [FML]: MinecraftForge v14.23.5.2860 Initialized
+[06:07:37] [Server thread/INFO] [FML]: Starts to replace vanilla recipe ingredients with ore ingredients.
+[06:07:37] [Server thread/INFO] [FML]: Invalid recipe found with multiple oredict ingredients in the same ingredient...
+[06:07:38] [Server thread/INFO] [FML]: Replaced 1227 ore ingredients
+[06:07:38] [Server thread/INFO] [FML]: Config directory created successfully
+[06:07:38] [Server thread/INFO] [MixinBooter]: Initializing MixinBooter's Mod Container.
+[06:07:38] [Server thread/INFO] [FML]: Searching /home/runner/work/chaosshard/chaosshard/server/./mods for mods
+[06:07:39] [Server thread/WARN] [FML]: Mod codechickenlib is missing the required element 'version' and a version.properties file could not be found. Falling back to metadata version 3.2.3.358
+[06:07:39] [Server thread/WARN] [FML]: Mod cyclicmagic is missing the required element 'version' and a version.properties file could not be found. Falling back to metadata version 1.20.12
+[06:07:40] [Server thread/WARN] [FML]: Mod waystones is missing the required element 'version' and a version.properties file could not be found. Falling back to metadata version 4.1.0
+[06:07:40] [Server thread/INFO] [FML]: Forge Mod Loader has identified 33 mods to load
+[06:07:40] [Server thread/WARN] [FML]: Missing English translation for FML: assets/fml/lang/en_us.lang
+[06:07:40] [Server thread/WARN] [FML]: Missing English translation for ancientwarfareautomation: assets/ancientwarfareautomation/lang/en_us.lang
+[06:07:40] [Server thread/WARN] [FML]: Missing English translation for ancientwarfarenpc: assets/ancientwarfarenpc/lang/en_us.lang
+[06:07:40] [Server thread/WARN] [FML]: Missing English translation for ancientwarfarestructure: assets/ancientwarfarestructure/lang/en_us.lang
+[06:07:40] [Server thread/WARN] [FML]: Missing English translation for ancientwarfarevehicle: assets/ancientwarfarevehicle/lang/en_us.lang
+[06:07:40] [Server thread/WARN] [FML]: Missing English translation for codechickenlib: assets/codechickenlib/lang/en_us.lang
+[06:07:40] [Server thread/WARN] [FML]: Missing English translation for configanytime: assets/configanytime/lang/en_us.lang
+[06:07:40] [Server thread/WARN] [FML]: Missing English translation for mantle: assets/mantle/lang/en_us.lang
+[06:07:40] [Server thread/WARN] [FML]: Missing English translation for placebo: assets/placebo/lang/en_us.lang
+[06:07:40] [Server thread/INFO] [MixinBooter]: Loading late loader [ru.death.chaosshard.mixin.ChaosMixinLoader] for its mixins.
+[06:07:41] [Server thread/INFO] [FML]: Attempting connection with missing mods [minecraft, mcp, FML, forge, mixinbooter, ancientwarfareautomation, ancientwarfare, ancientwarfarenpc, ancientwarfarestructure, ancientwarfarevehicle, apotheosis, baubles, bookshelf, bountifulbaubles, champions, chaosshard, codechickenlib, configanytime, cyberware, cyclicmagic, cyclopscore, defiledlands, evilcraft, evilcraftcompat, extrautils2, gamestages, harvestcraft, lycanitesmobs, mantle, placebo, xreliquary, tconstruct, waystones] at CLIENT
+[06:07:41] [Server thread/INFO] [FML]: Attempting connection with missing mods [minecraft, mcp, FML, forge, mixinbooter, ancientwarfareautomation, ancientwarfare, ancientwarfarenpc, ancientwarfarestructure, ancientwarfarevehicle, apotheosis, baubles, bookshelf, bountifulbaubles, champions, chaosshard, codechickenlib, configanytime, cyberware, cyclicmagic, cyclopscore, defiledlands, evilcraft, evilcraftcompat, extrautils2, gamestages, harvestcraft, lycanitesmobs, mantle, placebo, xreliquary, tconstruct, waystones] at SERVER
+[06:07:41] [Server thread/ERROR] [FML]: The mod cyberware is expecting signature 67a0e286dc0d4b502f3c92ac20b953517b52d0a9 for source cyberware.jar, however there is no signature matching that description
+[06:07:41] [Server thread/INFO] [STDOUT]: [flaxbeard.cyberware.Cyberware:onFingerprintViolation:72]: [Cyberware] Invalid fingerprint detected
+[06:07:42] [Server thread/INFO] [Pulsar-tconstruct]: Skipping Pulse chiselIntegration; missing dependency: chisel
+[06:07:42] [Server thread/INFO] [Pulsar-tconstruct]: Skipping Pulse chiselsandbitsIntegration; missing dependency: chiselsandbits
+[06:07:42] [Server thread/INFO] [Pulsar-tconstruct]: Skipping Pulse craftingtweaksIntegration; missing dependency: craftingtweaks
+[06:07:42] [Server thread/INFO] [Pulsar-tconstruct]: Skipping Pulse wailaIntegration; missing dependency: waila
+[06:07:42] [Server thread/INFO] [Pulsar-tconstruct]: Skipping Pulse theoneprobeIntegration; missing dependency: theoneprobe
+[06:07:42] [Server thread/INFO] [Pulsar-tconstruct]: Skipping Pulse quarkIntegration; missing dependency: quark
+[06:07:42] [Server thread/INFO] [tconstruct]: Preparing to take over the world
+[06:07:43] [Server thread/INFO] [FML]: Processing ObjectHolder annotations
+[06:07:43] [Server thread/INFO] [FML]: Found 1700 ObjectHolder annotations
+[06:07:43] [Server thread/INFO] [FML]: Identifying ItemStackHolder annotations
+[06:07:43] [Server thread/INFO] [FML]: Found 0 ItemStackHolder annotations
+[06:07:44] [Server thread/INFO] [FML]: Configured a dormant chunk cache size of 0
+[06:07:44] [Forge Version Check/INFO] [forge.VersionCheck]: [codechickenlib] Starting version check at http://chickenbones.net/Files/notification/version.php?query=forge&version=1.12&file=CodeChickenLib
+[06:07:44] [Forge Version Check/INFO] [forge.VersionCheck]: [codechickenlib] Found status: BETA Target: null
+[06:07:44] [Forge Version Check/INFO] [forge.VersionCheck]: [forge] Starting version check at http://files.minecraftforge.net/maven/net/minecraftforge/forge/promotions_slim.json
+[06:07:45] [Server thread/INFO] [gamestages]: Reloading fakeplayers stage data from gameStagesFakePlayerData.json.
+[06:07:45] [Server thread/ERROR] [minecraft/MinecraftServer]: Encountered an unexpected exception
+net.minecraftforge.fml.common.LoaderExceptionModCrash: Caught exception from Chaos Shard (chaosshard)
+
+Caused by: java.lang.NoClassDefFoundError: net/minecraft/client/util/ITooltipFlag
+	at java.lang.Class.getDeclaredConstructors0(Native Method) ~[?:1.8.0_504]
+	at java.lang.Class.privateGetDeclaredConstructors(Class.java:2671) ~[?:1.8.0_504]
+	at java.lang.Class.getConstructor0(Class.java:3075) ~[?:1.8.0_504]
+	at java.lang.Class.getConstructor(Class.java:1825) ~[?:1.8.0_504]
+	at net.minecraftforge.fml.common.eventhandler.EventBus.register(EventBus.java:128) ~[EventBus.class:?]
+	at net.minecraftforge.fml.common.eventhandler.EventBus.register(EventBus.java:112) ~[EventBus.class:?]
+	at ru.death.chaosshard.compat.tinkers.TinkersCompat.preInit(TinkersCompat.java:65) ~[TinkersCompat.class:?]
+	at ru.death.chaosshard.ChaosShard.preInit(ChaosShard.java:133) ~[ChaosShard.class:?]
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[?:1.8.0_504]
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) ~[?:1.8.0_504]
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[?:1.8.0_504]
+	at java.lang.reflect.Method.invoke(Method.java:498) ~[?:1.8.0_504]
+	at net.minecraftforge.fml.common.FMLModContainer.handleModStateEvent(FMLModContainer.java:637) ~[forge-1.12.2-14.23.5.2860.jar:?]
+	at sun.reflect.GeneratedMethodAccessor9.invoke(Unknown Source) ~[?:?]
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[?:1.8.0_504]
+	at java.lang.reflect.Method.invoke(Method.java:498) ~[?:1.8.0_504]
+	at com.google.common.eventbus.Subscriber.invokeSubscriberMethod(Subscriber.java:91) ~[minecraft_server.1.12.2.jar:?]
+	at com.google.common.eventbus.Subscriber$SynchronizedSubscriber.invokeSubscriberMethod(Subscriber.java:150) ~[minecraft_server.1.12.2.jar:?]
+	at com.google.common.eventbus.Subscriber$1.run(Subscriber.java:76) ~[minecraft_server.1.12.2.jar:?]
+	at com.google.common.util.concurrent.MoreExecutors$DirectExecutor.execute(MoreExecutors.java:399) ~[minecraft_server.1.12.2.jar:?]
+	at com.google.common.eventbus.Subscriber.dispatchEvent(Subscriber.java:71) ~[minecraft_server.1.12.2.jar:?]
+	at com.google.common.eventbus.Dispatcher$PerThreadQueuedDispatcher.dispatch(Dispatcher.java:116) ~[minecraft_server.1.12.2.jar:?]
+	at com.google.common.eventbus.EventBus.post(EventBus.java:217) ~[minecraft_server.1.12.2.jar:?]
+	at net.minecraftforge.fml.common.LoadController.sendEventToModContainer(LoadController.java:219) ~[LoadController.class:?]
+	at net.minecraftforge.fml.common.LoadController.propogateStateMessage(LoadController.java:197) ~[LoadController.class:?]
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[?:1.8.0_504]
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) ~[?:1.8.0_504]
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[?:1.8.0_504]
+	at java.lang.reflect.Method.invoke(Method.java:498) ~[?:1.8.0_504]
+	at com.google.common.eventbus.Subscriber.invokeSubscriberMethod(Subscriber.java:91) ~[minecraft_server.1.12.2.jar:?]
+	at com.google.common.eventbus.Subscriber$SynchronizedSubscriber.invokeSubscriberMethod(Subscriber.java:150) ~[minecraft_server.1.12.2.jar:?]
+	at com.google.common.eventbus.Subscriber$1.run(Subscriber.java:76) ~[minecraft_server.1.12.2.jar:?]
+	at com.google.common.util.concurrent.MoreExecutors$DirectExecutor.execute(MoreExecutors.java:399) ~[minecraft_server.1.12.2.jar:?]
+	at com.google.common.eventbus.Subscriber.dispatchEvent(Subscriber.java:71) ~[minecraft_server.1.12.2.jar:?]
+	at com.google.common.eventbus.Dispatcher$PerThreadQueuedDispatcher.dispatch(Dispatcher.java:116) ~[minecraft_server.1.12.2.jar:?]
+	at com.google.common.eventbus.EventBus.post(EventBus.java:217) ~[minecraft_server.1.12.2.jar:?]
+	at net.minecraftforge.fml.common.LoadController.distributeStateMessage(LoadController.java:136) ~[LoadController.class:?]
+	at net.minecraftforge.fml.common.Loader.preinitializeMods(Loader.java:629) ~[Loader.class:?]
+	at net.minecraftforge.fml.server.FMLServerHandler.beginServerLoading(FMLServerHandler.java:99) ~[FMLServerHandler.class:?]
+	at net.minecraftforge.fml.common.FMLCommonHandler.onServerStart(FMLCommonHandler.java:333) ~[FMLCommonHandler.class:?]
+	at net.minecraft.server.dedicated.DedicatedServer.func_71197_b(DedicatedServer.java:125) ~[nz.class:?]
+	at net.minecraft.server.MinecraftServer.run(MinecraftServer.java:486) [MinecraftServer.class:?]
+	at java.lang.Thread.run(Thread.java:750) [?:1.8.0_504]
+Caused by: java.lang.ClassNotFoundException: net.minecraft.client.util.ITooltipFlag
+	at net.minecraft.launchwrapper.LaunchClassLoader.findClass(LaunchClassLoader.java:191) ~[launchwrapper-1.12.jar:?]
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:418) ~[?:1.8.0_504]
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:351) ~[?:1.8.0_504]
+	at java.lang.Class.getDeclaredConstructors0(Native Method) ~[?:1.8.0_504]
+	at java.lang.Class.privateGetDeclaredConstructors(Class.java:2671) ~[?:1.8.0_504]
+	at java.lang.Class.getConstructor0(Class.java:3075) ~[?:1.8.0_504]
+	at java.lang.Class.getConstructor(Class.java:1825) ~[?:1.8.0_504]
+	at net.minecraftforge.fml.common.eventhandler.EventBus.register(EventBus.java:128) ~[EventBus.class:?]
+	at net.minecraftforge.fml.common.eventhandler.EventBus.register(EventBus.java:112) ~[EventBus.class:?]
+	at ru.death.chaosshard.compat.tinkers.TinkersCompat.preInit(TinkersCompat.java:65) ~[TinkersCompat.class:?]
+	at ru.death.chaosshard.ChaosShard.preInit(ChaosShard.java:133) ~[ChaosShard.class:?]
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[?:1.8.0_504]
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) ~[?:1.8.0_504]
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[?:1.8.0_504]
+	at java.lang.reflect.Method.invoke(Method.java:498) ~[?:1.8.0_504]
+	at net.minecraftforge.fml.common.FMLModContainer.handleModStateEvent(FMLModContainer.java:637) ~[forge-1.12.2-14.23.5.2860.jar:?]
+	at sun.reflect.GeneratedMethodAccessor9.invoke(Unknown Source) ~[?:?]
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[?:1.8.0_504]
+	at java.lang.reflect.Method.invoke(Method.java:498) ~[?:1.8.0_504]
+	at com.google.common.eventbus.Subscriber.invokeSubscriberMethod(Subscriber.java:91) ~[minecraft_server.1.12.2.jar:?]
+	at com.google.common.eventbus.Subscriber$SynchronizedSubscriber.invokeSubscriberMethod(Subscriber.java:150) ~[minecraft_server.1.12.2.jar:?]
+	at com.google.common.eventbus.Subscriber$1.run(Subscriber.java:76) ~[minecraft_server.1.12.2.jar:?]
+	at com.google.common.util.concurrent.MoreExecutors$DirectExecutor.execute(MoreExecutors.java:399) ~[minecraft_server.1.12.2.jar:?]
+	at com.google.common.eventbus.Subscriber.dispatchEvent(Subscriber.java:71) ~[minecraft_server.1.12.2.jar:?]
+	at com.google.common.eventbus.Dispatcher$PerThreadQueuedDispatcher.dispatch(Dispatcher.java:116) ~[minecraft_server.1.12.2.jar:?]
+	at com.google.common.eventbus.EventBus.post(EventBus.java:217) ~[minecraft_server.1.12.2.jar:?]
+	at net.minecraftforge.fml.common.LoadController.sendEventToModContainer(LoadController.java:219) ~[LoadController.class:?]
+	at net.minecraftforge.fml.common.LoadController.propogateStateMessage(LoadController.java:197) ~[LoadController.class:?]
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[?:1.8.0_504]
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) ~[?:1.8.0_504]
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[?:1.8.0_504]
+	at java.lang.reflect.Method.invoke(Method.java:498) ~[?:1.8.0_504]
+	at com.google.common.eventbus.Subscriber.invokeSubscriberMethod(Subscriber.java:91) ~[minecraft_server.1.12.2.jar:?]
+	at com.google.common.eventbus.Subscriber$SynchronizedSubscriber.invokeSubscriberMethod(Subscriber.java:150) ~[minecraft_server.1.12.2.jar:?]
+	at com.google.common.eventbus.Subscriber$1.run(Subscriber.java:76) ~[minecraft_server.1.12.2.jar:?]
+	at com.google.common.util.concurrent.MoreExecutors$DirectExecutor.execute(MoreExecutors.java:399) ~[minecraft_server.1.12.2.jar:?]
+	at com.google.common.eventbus.Subscriber.dispatchEvent(Subscriber.java:71) ~[minecraft_server.1.12.2.jar:?]
+	at com.google.common.eventbus.Dispatcher$PerThreadQueuedDispatcher.dispatch(Dispatcher.java:116) ~[minecraft_server.1.12.2.jar:?]
+	at com.google.common.eventbus.EventBus.post(EventBus.java:217) ~[minecraft_server.1.12.2.jar:?]
+	at net.minecraftforge.fml.common.LoadController.distributeStateMessage(LoadController.java:136) ~[LoadController.class:?]
+	at net.minecraftforge.fml.common.Loader.preinitializeMods(Loader.java:629) ~[Loader.class:?]
+	at net.minecraftforge.fml.server.FMLServerHandler.beginServerLoading(FMLServerHandler.java:99) ~[FMLServerHandler.class:?]
+	at net.minecraftforge.fml.common.FMLCommonHandler.onServerStart(FMLCommonHandler.java:333) ~[FMLCommonHandler.class:?]
+	at net.minecraft.server.dedicated.DedicatedServer.func_71197_b(DedicatedServer.java:125) ~[nz.class:?]
+	at net.minecraft.server.MinecraftServer.run(MinecraftServer.java:486) ~[MinecraftServer.class:?]
+	at java.lang.Thread.run(Thread.java:750) ~[?:1.8.0_504]
+Caused by: java.lang.NullPointerException
+	at net.minecraft.launchwrapper.LaunchClassLoader.findClass(LaunchClassLoader.java:182) ~[launchwrapper-1.12.jar:?]
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:418) ~[?:1.8.0_504]
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:351) ~[?:1.8.0_504]
+	at java.lang.Class.getDeclaredConstructors0(Native Method) ~[?:1.8.0_504]
+	at java.lang.Class.privateGetDeclaredConstructors(Class.java:2671) ~[?:1.8.0_504]
+	at java.lang.Class.getConstructor0(Class.java:3075) ~[?:1.8.0_504]
+	at java.lang.Class.getConstructor(Class.java:1825) ~[?:1.8.0_504]
+	at net.minecraftforge.fml.common.eventhandler.EventBus.register(EventBus.java:128) ~[EventBus.class:?]
+	at net.minecraftforge.fml.common.eventhandler.EventBus.register(EventBus.java:112) ~[EventBus.class:?]
+	at ru.death.chaosshard.compat.tinkers.TinkersCompat.preInit(TinkersCompat.java:65) ~[TinkersCompat.class:?]
+	at ru.death.chaosshard.ChaosShard.preInit(ChaosShard.java:133) ~[ChaosShard.class:?]
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[?:1.8.0_504]
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) ~[?:1.8.0_504]
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[?:1.8.0_504]
+	at java.lang.reflect.Method.invoke(Method.java:498) ~[?:1.8.0_504]
+	at net.minecraftforge.fml.common.FMLModContainer.handleModStateEvent(FMLModContainer.java:637) ~[forge-1.12.2-14.23.5.2860.jar:?]
+	at sun.reflect.GeneratedMethodAccessor9.invoke(Unknown Source) ~[?:?]
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[?:1.8.0_504]
+	at java.lang.reflect.Method.invoke(Method.java:498) ~[?:1.8.0_504]
+	at com.google.common.eventbus.Subscriber.invokeSubscriberMethod(Subscriber.java:91) ~[minecraft_server.1.12.2.jar:?]
+	at com.google.common.eventbus.Subscriber$SynchronizedSubscriber.invokeSubscriberMethod(Subscriber.java:150) ~[minecraft_server.1.12.2.jar:?]
+	at com.google.common.eventbus.Subscriber$1.run(Subscriber.java:76) ~[minecraft_server.1.12.2.jar:?]
+	at com.google.common.util.concurrent.MoreExecutors$DirectExecutor.execute(MoreExecutors.java:399) ~[minecraft_server.1.12.2.jar:?]
+	at com.google.common.eventbus.Subscriber.dispatchEvent(Subscriber.java:71) ~[minecraft_server.1.12.2.jar:?]
+	at com.google.common.eventbus.Dispatcher$PerThreadQueuedDispatcher.dispatch(Dispatcher.java:116) ~[minecraft_server.1.12.2.jar:?]
+	at com.google.common.eventbus.EventBus.post(EventBus.java:217) ~[minecraft_server.1.12.2.jar:?]
+	at net.minecraftforge.fml.common.LoadController.sendEventToModContainer(LoadController.java:219) ~[LoadController.class:?]
+	at net.minecraftforge.fml.common.LoadController.propogateStateMessage(LoadController.java:197) ~[LoadController.class:?]
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[?:1.8.0_504]
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) ~[?:1.8.0_504]
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[?:1.8.0_504]
+	at java.lang.reflect.Method.invoke(Method.java:498) ~[?:1.8.0_504]
+	at com.google.common.eventbus.Subscriber.invokeSubscriberMethod(Subscriber.java:91) ~[minecraft_server.1.12.2.jar:?]
+	at com.google.common.eventbus.Subscriber$SynchronizedSubscriber.invokeSubscriberMethod(Subscriber.java:150) ~[minecraft_server.1.12.2.jar:?]
+	at com.google.common.eventbus.Subscriber$1.run(Subscriber.java:76) ~[minecraft_server.1.12.2.jar:?]
+	at com.google.common.util.concurrent.MoreExecutors$DirectExecutor.execute(MoreExecutors.java:399) ~[minecraft_server.1.12.2.jar:?]
+	at com.google.common.eventbus.Subscriber.dispatchEvent(Subscriber.java:71) ~[minecraft_server.1.12.2.jar:?]
+	at com.google.common.eventbus.Dispatcher$PerThreadQueuedDispatcher.dispatch(Dispatcher.java:116) ~[minecraft_server.1.12.2.jar:?]
+	at com.google.common.eventbus.EventBus.post(EventBus.java:217) ~[minecraft_server.1.12.2.jar:?]
+	at net.minecraftforge.fml.common.LoadController.distributeStateMessage(LoadController.java:136) ~[LoadController.class:?]
+	at net.minecraftforge.fml.common.Loader.preinitializeMods(Loader.java:629) ~[Loader.class:?]
+	at net.minecraftforge.fml.server.FMLServerHandler.beginServerLoading(FMLServerHandler.java:99) ~[FMLServerHandler.class:?]
+	at net.minecraftforge.fml.common.FMLCommonHandler.onServerStart(FMLCommonHandler.java:333) ~[FMLCommonHandler.class:?]
+	at net.minecraft.server.dedicated.DedicatedServer.func_71197_b(DedicatedServer.java:125) ~[nz.class:?]
+	at net.minecraft.server.MinecraftServer.run(MinecraftServer.java:486) ~[MinecraftServer.class:?]
+	at java.lang.Thread.run(Thread.java:750) ~[?:1.8.0_504]
+[06:07:45] [Server thread/ERROR] [minecraft/MinecraftServer]: This crash report has been saved to: /home/runner/work/chaosshard/chaosshard/server/./crash-reports/crash-2026-10-14_06.07.45-server.txt
+[06:07:45] [Server thread/INFO] [minecraft/MinecraftServer]: Stopping server
+[06:07:45] [Server thread/INFO] [minecraft/MinecraftServer]: Saving worlds
+[06:07:45] [Server thread/INFO] [FML]: The state engine was in incorrect state INITIALIZATION and forced into state SERVER_STOPPED. Errors may have been discarded.
+[06:07:45] [Server Shutdown Thread/INFO] [minecraft/MinecraftServer]: Stopping server
+[06:07:45] [Server Shutdown Thread/INFO] [minecraft/MinecraftServer]: Saving worlds
+код выхода: 0
