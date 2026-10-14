@@ -1,7 +1,7 @@
 package ru.death.chaosshard.spell;
 
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.tileentity.ITickable;
+import net.minecraft.util.ITickable;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityMobSpawner;
 import net.minecraft.util.EnumParticleTypes;
