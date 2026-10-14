@@ -329,7 +329,7 @@ public class Beasts {
             ws.spawnParticle(EnumParticleTypes.SPELL_WITCH, m.posX, m.posY + 1.5, m.posZ, 30, 0.2, 1.0, 0.2, 0.0);
             p.world.playSound(null, at, SoundEvents.EVOCATION_ILLAGER_CAST_SPELL, SoundCategory.NEUTRAL, 1.0F, 0.8F);
             p.world.playSound(null, at, SoundEvents.ENTITY_ENDERMEN_TELEPORT, SoundCategory.NEUTRAL, 0.8F, 0.6F);
-            p.sendMessage(Breach.grimoire("chaosshard.beast.returned", title(b, e)));
+            p.sendStatusMessage(Breach.grimoire("chaosshard.beast.returned", title(b, e)), true);
         }
         changed(p.world, p.getUniqueID());
     }
@@ -373,6 +373,12 @@ public class Beasts {
 
     @SubscribeEvent
     public void onJoin(EntityJoinWorldEvent event) {
+        if (!event.getWorld().isRemote && event.getEntity() instanceof net.minecraft.entity.monster.EntityCreeper) {
+            // криперы боятся Кошки Хаоса, как обычных оцелотов и кошек
+            net.minecraft.entity.monster.EntityCreeper c = (net.minecraft.entity.monster.EntityCreeper) event.getEntity();
+            c.tasks.addTask(3, new net.minecraft.entity.ai.EntityAIAvoidEntity<>(c, EntityChaosBeast.Cat.class, 6.0F, 1.0D, 1.2D));
+            return;
+        }
         if (event.getWorld().isRemote || !(event.getEntity() instanceof EntityChaosBeast)) {
             return;
         }
@@ -419,8 +425,8 @@ public class Beasts {
                     changed(dead.world, o);
                     EntityPlayer p = dead.world.getMinecraftServer().getPlayerList().getPlayerByUUID(o);
                     if (p != null) {
-                        p.sendMessage(Breach.grimoire("chaosshard.beast.to_thread",
-                                title(beast.beast(), e), ninth ? 1 : 5));
+                        p.sendStatusMessage(Breach.grimoire("chaosshard.beast.to_thread",
+                                title(beast.beast(), e), ninth ? 1 : 5), true);
                     }
                 }
             }

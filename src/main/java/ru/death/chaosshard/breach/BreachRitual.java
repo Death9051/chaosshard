@@ -95,7 +95,7 @@ public class BreachRitual {
     public static void start(EntityPlayerMP player, BlockPos altar) {
         RUNNING.put(player.getUniqueID(), new Running(altar, player.dimension));
         BlockRitualSpire.setLit(player.world, altar, true);
-        player.sendMessage(Breach.grimoire("chaosshard.breach.start"));
+        player.sendStatusMessage(Breach.grimoire("chaosshard.breach.start"), true);
         player.world.playSound(null, altar, SoundEvents.BLOCK_PORTAL_TRIGGER, SoundCategory.BLOCKS, 0.6F, 0.6F);
     }
 

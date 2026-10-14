@@ -542,7 +542,10 @@ public class CommandChaosShard extends CommandBase {
                     ThreadManager.addPoints(player, value);
                 }
                 int points = ThreadManager.getPoints(player);
-                notifyCommandListener(sender, this, "chaosshard.command.nit.changed", player.getName(), ThreadManager.levelFor(points), points);
+                // только тому, кто набрал команду: награды квестов (Better Questing) зовут её сотни раз — в чат не сыпать
+                if (sender instanceof net.minecraft.entity.player.EntityPlayer) {
+                    sender.sendMessage(new TextComponentTranslation("chaosshard.command.nit.changed", player.getName(), ThreadManager.levelFor(points), points));
+                }
                 break;
             }
             case "resync": {

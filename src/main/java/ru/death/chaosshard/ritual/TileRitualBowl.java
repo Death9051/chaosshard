@@ -288,7 +288,7 @@ public class TileRitualBowl extends TileEntity implements ITickable {
                 TileAnchor a = nearestAnchor();
                 if (a != null) {
                     int done = a.forceSpread(400);
-                    say(player, Breach.grimoire("chaosshard.ritual.corruption.done", done));
+                    player.sendStatusMessage(Breach.grimoire("chaosshard.ritual.corruption.done", done), true);
                 }
                 break;
             }

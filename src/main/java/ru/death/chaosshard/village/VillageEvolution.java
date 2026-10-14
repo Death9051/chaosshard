@@ -127,7 +127,7 @@ public final class VillageEvolution {
 
     /** Вся деревня (радиус + 8) становится биомом Скверны; блоки и дома не трогаются. */
     public static void corruptBiome(World world, BlockPos sigil) {
-        Village v = world.getVillageCollection().getNearestVillage(sigil, 32);
+        Village v = VillageData.villageOf(world, sigil);
         BlockPos c = v != null ? v.getCenter() : sigil;
         int r = (v != null ? v.getVillageRadius() : 32) + 8;
         java.util.Set<Long> chunks = new java.util.HashSet<>();
@@ -150,7 +150,7 @@ public final class VillageEvolution {
         if (ADEPT == null) {
             return 0;
         }
-        Village v = world.getVillageCollection().getNearestVillage(sigil, 32);
+        Village v = VillageData.villageOf(world, sigil);
         BlockPos c = v != null ? v.getCenter() : sigil;
         int r = v != null ? v.getVillageRadius() : 32;
         List<EntityVillager> list = world.getEntitiesWithinAABB(EntityVillager.class,

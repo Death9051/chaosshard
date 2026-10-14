@@ -35,22 +35,51 @@ public class VillageData extends WorldSavedData {
 
     /** Деревня под покровительством: в её пределах стоит Знак. */
     public boolean isPatron(Village v) {
+        return sigilOf(v) != null;
+    }
+
+    /** Знак, стоящий в этой деревне, или null. */
+    public BlockPos sigilOf(Village v) {
         for (BlockPos s : sigils) {
-            if (v.isBlockPosWithinSqVillageRadius(s)) {
+            if (belongs(v, s)) {
+                return s;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Знак принадлежит деревне, даже если она перестроилась и её центр уехал: с запасом 16 блоков к радиусу
+     * или если у Знака есть хоть одна её дверь (24 блока). Иначе деревня теряла защиту и падала под Скверной.
+     */
+    public static boolean belongs(Village v, BlockPos sigil) {
+        double r = v.getVillageRadius() + 16;
+        if (v.getCenter().distanceSq(sigil) <= r * r) {
+            return true;
+        }
+        for (net.minecraft.village.VillageDoorInfo d : v.getVillageDoorInfoList()) {
+            if (d.getDoorBlockPos().distanceSq(sigil) <= 24 * 24) {
                 return true;
             }
         }
         return false;
     }
 
-    /** Знак, стоящий в этой деревне, или null. */
-    public BlockPos sigilOf(Village v) {
-        for (BlockPos s : sigils) {
-            if (v.isBlockPosWithinSqVillageRadius(s)) {
-                return s;
+    /** Деревня Знака (ближайшая из тех, которым он принадлежит) или null. */
+    public static Village villageOf(World world, BlockPos sigil) {
+        Village best = null;
+        double bd = Double.MAX_VALUE;
+        for (Village v : world.getVillageCollection().getVillageList()) {
+            if (!belongs(v, sigil)) {
+                continue;
+            }
+            double d = v.getCenter().distanceSq(sigil);
+            if (d < bd) {
+                bd = d;
+                best = v;
             }
         }
-        return null;
+        return best;
     }
 
     public boolean isFallen(Village v) {

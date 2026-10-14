@@ -136,7 +136,7 @@ public class TilePatronSigil extends TileEntity implements ITickable {
             border = 0;
             return;
         }
-        Village v = world.getVillageCollection().getNearestVillage(pos, 32);
+        Village v = VillageData.villageOf(world, pos);
         if (v == null) {
             return;
         }
@@ -166,7 +166,7 @@ public class TilePatronSigil extends TileEntity implements ITickable {
             return;
         }
         timer = 0;
-        Village v = world.getVillageCollection().getNearestVillage(pos, 32);
+        Village v = VillageData.villageOf(world, pos);
         if (v == null) {
             return;
         }
@@ -233,7 +233,7 @@ public class TilePatronSigil extends TileEntity implements ITickable {
         }
         if (!any) {
             int left = Math.max(0, (ChaosConfig.order.tributeInterval - timer) / 20);
-            player.sendMessage(Breach.grimoire("chaosshard.village.empty", left / 60));
+            player.sendStatusMessage(Breach.grimoire("chaosshard.village.empty", left / 60), true);
         }
         markDirty();
     }

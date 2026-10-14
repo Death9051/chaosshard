@@ -132,7 +132,7 @@ public final class RitualEffects {
                     p.sendStatusMessage(ru.death.chaosshard.breach.Breach.grimoire("chaosshard.ritual.no_anchor"), true);
                     return false;
                 }
-                p.sendMessage(ru.death.chaosshard.breach.Breach.grimoire("chaosshard.ritual.corruption.done", a.forceSpread(400)));
+                p.sendStatusMessage(ru.death.chaosshard.breach.Breach.grimoire("chaosshard.ritual.corruption.done", a.forceSpread(400)), true);
                 return true;
             }
             case DUSK: {

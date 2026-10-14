@@ -402,7 +402,11 @@ public class ChallengeManager {
             w.spawnParticle(EnumParticleTypes.PORTAL, m.posX, m.posY + 1, m.posZ, 30, 0.3, 0.8, 0.3, 0.5);
         }
         w.playSound(null, c.center, SoundEvents.EVOCATION_ILLAGER_PREPARE_WOLOLO, SoundCategory.HOSTILE, 2.0F, 0.6F);
-        p.sendMessage(Breach.grimoire(boss ? "chaosshard.challenge.wave.boss" : "chaosshard.challenge.wave", c.wave + 1, wave.size()));
+        if (boss) {
+            p.sendMessage(Breach.grimoire("chaosshard.challenge.wave.boss", c.wave + 1, wave.size()));
+        } else {
+            p.sendStatusMessage(Breach.grimoire("chaosshard.challenge.wave", c.wave + 1, wave.size()), true);
+        }
         if (ChallengeMod.has(c.spec.mods, ChallengeMod.HUNTER) && c.hunter == null) {
             c.hunterReady = w.getTotalWorldTime();
         }

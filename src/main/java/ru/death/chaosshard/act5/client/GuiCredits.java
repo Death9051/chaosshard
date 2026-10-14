@@ -40,9 +40,13 @@ public class GuiCredits extends GuiScreen {
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         drawRect(0, 0, width, height, 0xFF08040C);
         float s = scroll + (Keyboard.isKeyDown(Keyboard.KEY_SPACE) ? 3.0F : 0.5F) * partialTicks;
-        int y0 = (int) (height + 20 - s);
+        // сдвиг дробный, через матрицу: строки едут плавно, по настоящим пикселям экрана, а не рывками по пикселю интерфейса
+        float y0 = height + 20 - s;
+        int whole = (int) Math.floor(y0);
+        net.minecraft.client.renderer.GlStateManager.pushMatrix();
+        net.minecraft.client.renderer.GlStateManager.translate(0, y0 - whole, 0);
         for (int i = 0; i < lines.size(); i++) {
-            int y = y0 + i * 14;
+            int y = whole + i * 14;
             if (y < -14 || y > height + 14) {
                 continue;
             }
@@ -50,6 +54,7 @@ public class GuiCredits extends GuiScreen {
             int col = l.startsWith("§") ? 0xFFFFFF : 0xC8B8E0;
             drawCenteredString(fontRenderer, l, width / 2, y, col);
         }
+        net.minecraft.client.renderer.GlStateManager.popMatrix();
         super.drawScreen(mouseX, mouseY, partialTicks);
     }
 
