@@ -58,6 +58,12 @@ public abstract class EntityChaosBeast extends EntityCreature {
 
     public abstract Beast beast();
 
+    /** Звери Хаоса не разбиваются при падении (идут за Осколком с обрывов и из полётов). */
+    @Override
+    public void fall(float distance, float damageMultiplier) {
+        fallDistance = 0;
+    }
+
     protected abstract double baseHp();
 
     protected abstract double speed();

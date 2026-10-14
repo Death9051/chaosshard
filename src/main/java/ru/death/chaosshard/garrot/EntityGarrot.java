@@ -287,6 +287,12 @@ public class EntityGarrot extends EntityCreature implements ru.death.chaosshard.
         if (scripted || yielded) {
             setAttackTarget(null);
             windup = -1;
+            if (yielded || kneeling()) {
+                // склонился — стоит на коленях на месте, а не ползёт за игроком
+                getNavigator().clearPath();
+                motionX = 0;
+                motionZ = 0;
+            }
             return;
         }
         EntityLivingBase target = getAttackTarget();

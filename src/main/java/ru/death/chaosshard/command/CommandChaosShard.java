@@ -130,7 +130,14 @@ public class CommandChaosShard extends CommandBase {
                 break;
             }
             case "autotest": {
-                // /oh autotest — сценарии без игрока, отчёт в chaosshard-autotest.txt
+                // /oh autotest confirm — сценарии без игрока, отчёт в chaosshard-autotest.txt.
+                // Ставит постройки, роняет Опоры, сносит деревни — в игровом мире только с явным «confirm»
+                if (args.length < 2 || !"confirm".equals(args[1])) {
+                    sender.sendMessage(new net.minecraft.util.text.TextComponentString(
+                            "§cАвтотест меняет мир: ставит постройки и остров, роняет Опоры, сносит деревни. "
+                                    + "Запускайте только в отдельном мире: /oh autotest confirm"));
+                    break;
+                }
                 boolean ok = ru.death.chaosshard.debug.AutoTest.start(server, false);
                 sender.sendMessage(new net.minecraft.util.text.TextComponentString(ok ? "Автотест запущен — отчёт в " + ru.death.chaosshard.debug.AutoTest.FILE : "Автотест уже идёт"));
                 break;
