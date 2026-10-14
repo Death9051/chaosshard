@@ -462,6 +462,15 @@ public final class Rift {
         }
     }
 
+    /** Вышел из игры посреди финальной сцены — при входе Разлом уже тих: домой и титры, а не взаперти. */
+    @SubscribeEvent
+    public static void onLogin(net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent event) {
+        if (event.player instanceof EntityPlayerMP && RiftDimension.is(event.player.world)
+                && data((WorldServer) event.player.world).defeated) {
+            home((EntityPlayerMP) event.player);
+        }
+    }
+
     /** После финала: домой, в Лучезарию, и титры. */
     public static void home(EntityPlayerMP p) {
         WorldServer lu = p.getServer().getWorld(Breach.luchezariyaDim());
