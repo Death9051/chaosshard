@@ -59,7 +59,7 @@ public class GuiGrimoireMagic extends GuiScreen {
     public void initGui() {
         org.lwjgl.input.Keyboard.enableRepeatEvents(true);
         left = (width - W) / 2;
-        top = (height - H) / 2;
+        top = (height - H + 16) / 2;   // вкладки над окном (16 px) тоже должны влезть в экран
         buttonList.clear();
         choose = new GuiButton(1, left + W - 96, top + H - 26, 86, 20, I18n.format("chaosshard.magic.choose"));
         buttonList.add(choose);
