@@ -887,6 +887,7 @@ public final class AutoTest {
             int hit = ru.death.chaosshard.anchor.AnchorSigns.thorns(t, m, 1, false, 0);
             check(hit >= 1 && z.getHealth() < z.getMaxHealth() && z.isPotionActive(net.minecraft.init.MobEffects.SLOWNESS), "Шипы: урон и замедление");
             check(z.isPotionActive(net.minecraft.init.MobEffects.WITHER), "Шипы + Кровавый дождь: кровотечение");
+            sk.hurtResistantTime = 0;
             float hp = sk.getHealth();
             net.minecraft.entity.EntityLiving serv = Servants.spawn(me, Servants.Kind.HUSK, ow.getHeight(alA[0].add(3, 0, 2)));
             if (serv != null) serv.setHealth(5);
@@ -904,6 +905,7 @@ public final class AutoTest {
             TileAnchor t = (TileAnchor) ow.getTileEntity(alA[0]);
             if (t == null) return;
             t.addSeal(ru.death.chaosshard.anchor.ItemAnchorSeal.Type.DISTORT);
+            me.setPosition(alA[0].getX() + 3.5, alA[0].getY(), alA[0].getZ() + 0.5);
             net.minecraftforge.event.entity.living.LivingFallEvent fe = new net.minecraftforge.event.entity.living.LivingFallEvent(me, 10, 1);
             MinecraftForge.EVENT_BUS.post(fe);
             check(fe.getDamageMultiplier() == 0, "урона от падения нет");
