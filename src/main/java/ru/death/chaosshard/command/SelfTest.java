@@ -398,6 +398,24 @@ public final class SelfTest {
         Object dist = Class.forName("slimeknights.tconstruct.library.TinkerRegistry")
                 .getMethod("getMaterial", String.class).invoke(null, "chaosshard_distorted");
         check(dist != null && dist != unknown, "материал «Искажённый звёздный металл» зарегистрирован");
+        // плавильня: жидкие металлы Хаоса, плавка слитков и сплавы из жидкостей
+        for (String f : new String[]{"chaosshard_chaos", "chaosshard_crystal", "chaosshard_bloodplatinum", "chaosshard_starlight"}) {
+            check(net.minecraftforge.fluids.FluidRegistry.isFluidRegistered(f), "жидкость " + f);
+        }
+        java.util.Set<String> alloys = new TreeSet<>();
+        for (Object a : (java.util.Collection<?>) Class.forName("slimeknights.tconstruct.library.TinkerRegistry").getMethod("getAlloys").invoke(null)) {
+            Object out = a.getClass().getMethod("getResult").invoke(a);
+            alloys.add(((net.minecraftforge.fluids.FluidStack) out).getFluid().getName());
+        }
+        if (net.minecraftforge.fluids.FluidRegistry.isFluidRegistered("platinum") && Loader.isModLoaded("evilcraft")) {
+            check(alloys.contains("chaosshard_bloodplatinum"), "сплав кровавой платины в плавильне");
+        }
+        if (net.minecraftforge.fluids.FluidRegistry.isFluidRegistered("starmetal") && Loader.isModLoaded("astralsorcery")) {
+            check(alloys.contains("chaosshard_starlight"), "сплав света звезды в плавильне");
+        }
+        Object melt = Class.forName("slimeknights.tconstruct.library.TinkerRegistry").getMethod("getMelting", ItemStack.class)
+                .invoke(null, new ItemStack(ModItems.CRYSTAL_CHAOS_INGOT));
+        check(melt != null, "слиток кристаллизованного Хаоса плавится");
     }
 
     private void quests() throws Exception {
