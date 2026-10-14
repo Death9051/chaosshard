@@ -76,8 +76,13 @@ public class DarkCorruption {
 
     /** Камень в толще края — изредка в тёмную руду. */
     public static boolean darkOre(World world, BlockPos pos, Random rand) {
+        return darkOre(world, pos, rand, 1.0);
+    }
+
+    /** То же, chance — множитель шанса (Жила в сети). */
+    public static boolean darkOre(World world, BlockPos pos, Random rand, double chance) {
         lookup();
-        if (darkOre == null || rand.nextInt(40) != 0) {
+        if (darkOre == null || rand.nextDouble() >= chance / 40.0) {
             return false;
         }
         IBlockState s = world.getBlockState(pos);

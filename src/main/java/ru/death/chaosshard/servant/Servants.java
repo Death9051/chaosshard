@@ -137,7 +137,7 @@ public class Servants {
         for (WorldServer w : p.getServer().worlds) {
             for (Entity e : w.loadedEntityList) {
                 if (isServantOf(e, p.getUniqueID()) && e.isEntityAlive() && !(e instanceof EntityChaosBeast)
-                        && !e.getEntityData().hasKey(TAG_ANCHOR)) {
+                        && !e.getEntityData().hasKey(TAG_ANCHOR) && !e.getEntityData().hasKey("chaosshard_nest")) {
                     n++;
                 }
             }

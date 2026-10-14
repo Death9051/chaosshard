@@ -204,6 +204,17 @@ public final class RitualEffects {
                     return false;
                 }
                 return ru.death.chaosshard.compat.tinkers.ChaosMaterials.temper(p);
+            case ANCHOR_RESHAPE: {
+                ru.death.chaosshard.anchor.TileAnchor a = ru.death.chaosshard.anchor.TileAnchor.covering(world, pos);
+                if (a == null || !p.getUniqueID().equals(a.getOwner()) || a.getSpec() == null) {
+                    p.sendMessage(ru.death.chaosshard.breach.Breach.grimoire("chaosshard.ritual.anchor_reshape.none"));
+                    return false;
+                }
+                a.resetSpec();
+                p.sendMessage(ru.death.chaosshard.breach.Breach.grimoire("chaosshard.ritual.anchor_reshape.done", a.getPos().getX(), a.getPos().getZ()));
+                ru.death.chaosshard.quest.Milestones.grant(p, ru.death.chaosshard.quest.Milestones.ANCHOR_RESHAPE);
+                return true;
+            }
             case SPELL_RESET:
                 ru.death.chaosshard.spell.SpellData.reset(p);
                 p.sendMessage(ru.death.chaosshard.breach.Breach.grimoire("chaosshard.ritual.spell_reset.done"));

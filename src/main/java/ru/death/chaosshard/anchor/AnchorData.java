@@ -26,6 +26,8 @@ public class AnchorData extends WorldSavedData {
         public boolean captured;
         /** Опыт, пришедший переливом, пока Якорь не загружен. */
         public int inbox;
+        /** Специализация ({@link AnchorSpec}), −1 — нет. */
+        public int spec = -1;
     }
 
     public final java.util.Map<Long, Rec> recs = new java.util.HashMap<>();
@@ -90,6 +92,7 @@ public class AnchorData extends WorldSavedData {
             r.land = t.getInteger("d");
             r.captured = t.getBoolean("c");
             r.inbox = t.getInteger("i");
+            r.spec = t.hasKey("s") ? t.getInteger("s") : -1;
             recs.put(t.getLong("p"), r);
         }
         reserve.clear();
@@ -123,6 +126,7 @@ public class AnchorData extends WorldSavedData {
             t.setInteger("d", r.land);
             t.setBoolean("c", r.captured);
             t.setInteger("i", r.inbox);
+            t.setInteger("s", r.spec);
             rl.appendTag(t);
         }
         nbt.setTag("r", rl);

@@ -157,6 +157,18 @@ public class BlockAnchor extends Block {
                         spawnAsEntity(world, pos, st.copy());
                     }
                 }
+                for (int i = 0; i < ta.storage.getSlots(); i++) {
+                    ItemStack st = ta.storage.getStackInSlot(i);
+                    if (!st.isEmpty()) {
+                        spawnAsEntity(world, pos, st.copy());
+                    }
+                }
+                if (!ta.sample.getStackInSlot(0).isEmpty()) {
+                    spawnAsEntity(world, pos, ta.sample.getStackInSlot(0).copy());
+                }
+                if (ta.getSpec() == AnchorSpec.NEST) {
+                    AnchorSpecs.dismissNest(ta);
+                }
             }
             for (int i = 1; i <= 8 && world.getBlockState(pos.up(i)).getBlock() instanceof BlockAnchorPart; i++) {
                 world.setBlockState(pos.up(i), net.minecraft.init.Blocks.AIR.getDefaultState(), 2);

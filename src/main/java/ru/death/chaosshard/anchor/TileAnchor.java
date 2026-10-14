@@ -37,6 +37,120 @@ public class TileAnchor extends TileEntity implements ITickable {
     private double xpCarry;
     private double bloodCarry;
     private int passiveXpTimer;
+
+    // ------------------------------------------------------------------ специализация
+    private int spec = -1;
+    /** Кэш сетевых сил специализаций (обновляется раз в секунду): [спец] и [спец + ступень]. */
+    private final double[] netF = new double[AnchorSpec.values().length];
+    private final double[] netS = new double[AnchorSpec.values().length];
+    /** Хранилище Жилы и Жатвы. */
+    public final net.minecraftforge.items.ItemStackHandler storage = new net.minecraftforge.items.ItemStackHandler(27) {
+        @Override
+        protected void onContentsChanged(int slot) {
+            markDirty();
+        }
+    };
+    /** Образец моба для поля Жатвы (2-я ступень). */
+    public final net.minecraftforge.items.ItemStackHandler sample = new net.minecraftforge.items.ItemStackHandler(1) {
+        @Override
+        public boolean isItemValid(int slot, net.minecraft.item.ItemStack stack) {
+            return stack.getItem() instanceof net.minecraft.item.ItemMonsterPlacer;
+        }
+
+        @Override
+        public int getSlotLimit(int slot) {
+            return 1;
+        }
+
+        @Override
+        protected void onContentsChanged(int slot) {
+            markDirty();
+        }
+    };
+    /** Опыт мобов, павших на поле Жатвы. */
+    public int fieldXp;
+    /** Запас энергии Горна (RF). */
+    public int forgeEnergy;
+    int specTimer;
+    int veinTimer;
+
+    public AnchorSpec getSpec() {
+        return AnchorSpec.of(spec);
+    }
+
+    /** Сетевая сила специализации у сети этого Якоря (кэш). */
+    public double net(AnchorSpec s) {
+        return netF[s.ordinal()];
+    }
+
+    public double netStage(AnchorSpec s) {
+        return netS[s.ordinal()];
+    }
+
+    /** Вторая ступень своей специализации открыта. */
+    public boolean stage() {
+        return spec >= 0 && level() >= AnchorSpec.STAGE_LEVEL;
+    }
+
+    /** Выбрать специализацию (окно). */
+    public boolean chooseSpec(AnchorSpec s) {
+        if (s == null || spec >= 0 || level() < AnchorSpec.CHOOSE_LEVEL) {
+            return false;
+        }
+        spec = s.ordinal();
+        refreshNet();
+        changed();
+        syncRec();
+        EntityPlayerMP p = ownerOnline();
+        if (p != null && level() >= AnchorSpec.STAGE_LEVEL) {
+            ru.death.chaosshard.quest.Milestones.grant(p, ru.death.chaosshard.quest.Milestones.ANCHOR_STAGE);
+        }
+        return true;
+    }
+
+    /** Сбросить специализацию (ритуал «Перекройка»): −25% опыта, хранилище высыпается. */
+    public boolean resetSpec() {
+        if (spec < 0) {
+            return false;
+        }
+        AnchorSpec was = getSpec();
+        spec = -1;
+        corrupted = (int) (corrupted * 0.75);
+        shownLevel = level();
+        trimColumn();
+        for (int i = 0; i < storage.getSlots(); i++) {
+            net.minecraft.item.ItemStack st = storage.getStackInSlot(i);
+            if (!st.isEmpty()) {
+                net.minecraft.inventory.InventoryHelper.spawnItemStack(world, pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5, st.copy());
+                storage.setStackInSlot(i, net.minecraft.item.ItemStack.EMPTY);
+            }
+        }
+        if (!sample.getStackInSlot(0).isEmpty()) {
+            net.minecraft.inventory.InventoryHelper.spawnItemStack(world, pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5, sample.getStackInSlot(0).copy());
+            sample.setStackInSlot(0, net.minecraft.item.ItemStack.EMPTY);
+        }
+        if (was == AnchorSpec.NEST) {
+            AnchorSpecs.dismissNest(this);
+        }
+        refreshNet();
+        changed();
+        syncRec();
+        return true;
+    }
+
+    /** Обновить кэш сетевых сил. */
+    void refreshNet() {
+        for (AnchorSpec s : AnchorSpec.values()) {
+            if (AnchorNet.isNetWorld(world) && owner != null) {
+                netF[s.ordinal()] = AnchorNet.factor(world, owner, s, false);
+                netS[s.ordinal()] = AnchorNet.factor(world, owner, s, true);
+            } else {
+                // вне сети работает только своя специализация
+                netF[s.ordinal()] = spec == s.ordinal() ? 1 : 0;
+                netS[s.ordinal()] = spec == s.ordinal() && level() >= AnchorSpec.STAGE_LEVEL ? 1 : 0;
+            }
+        }
+    }
     /** Бак крови: кровь постепенно перерабатывается в опыт. */
     public final net.minecraftforge.fluids.FluidTank blood = new net.minecraftforge.fluids.FluidTank(ChaosConfig.anchor.bloodTank) {
         @Override
@@ -125,9 +239,10 @@ public class TileAnchor extends TileEntity implements ITickable {
                 }
             }
         }
-        if (raidTimer <= WARN && !raidWarned) {
+        int warn = net(AnchorSpec.WATCH) > 0 ? WARN * 3 : WARN;
+        if (raidTimer <= warn && !raidWarned) {
             if (!near) {
-                raidTimer = WARN;
+                raidTimer = warn;
                 return;
             }
             raidWarned = true;
@@ -141,6 +256,10 @@ public class TileAnchor extends TileEntity implements ITickable {
             }
             o.sendMessage(Breach.grimoire("chaosshard.raid.warn", target.pos.getX(), target.pos.getZ(),
                     new net.minecraft.util.text.TextComponentTranslation("chaosshard.dir." + compass(raidAngle))));
+            if (net(AnchorSpec.WATCH) > 0) {
+                int lvl = AnchorClusters.maxLevel(c);
+                o.sendMessage(Breach.grimoire("chaosshard.anchor.spec.watch.raid", lvl, lvl >= 4 ? 2 : 1, warn / 1200));
+            }
             markDirty();
         }
         if (raidWarned && raidTimer > 0) {
@@ -196,7 +315,7 @@ public class TileAnchor extends TileEntity implements ITickable {
 
     /** Сколько армия должна простоять у Якоря, чтобы он пал: минута на 1-м уровне, +45 секунд за каждый следующий. */
     public int siegeLimit() {
-        return SIEGE + 900 * (Math.max(1, level()) - 1);
+        return (int) ((SIEGE + 900 * (Math.max(1, level()) - 1)) * (1 + 0.25 * net(AnchorSpec.BASTION)));
     }
 
     /** Солдат Мрачной Армии у Якоря (раз в секунду от каждого — считается раз в секунду). */
@@ -224,7 +343,8 @@ public class TileAnchor extends TileEntity implements ITickable {
     /** Отряд выстоял у Якоря: Якорь теряет силу (может откатиться на уровень). Армия уходит довольная. */
     private void fall() {
         int before = level();
-        int loss = Math.max(150, corrupted / 5);
+        double frac = 0.2 - 0.1 * Math.min(1.0, net(AnchorSpec.BASTION));
+        int loss = Math.max(150, (int) (corrupted * frac));
         corrupted = Math.max(0, corrupted - loss);
         shownLevel = level();
         syncRec();
@@ -345,7 +465,11 @@ public class TileAnchor extends TileEntity implements ITickable {
             int r = a.radius();
             if (dx * dx + dz * dz <= (double) r * r) {
                 int size = AnchorNet.size(world, a.getOwner());
-                best = Math.max(best, AnchorNet.landMultiplier(size) + a.seals(ItemAnchorSeal.Type.WELL));
+                double m = AnchorNet.landMultiplier(size) + a.seals(ItemAnchorSeal.Type.WELL);
+                if (a.getSpec() == AnchorSpec.PULSE) {
+                    m *= 1.5;   // Пульс: на своей земле энергия в полтора раза быстрее
+                }
+                best = Math.max(best, m);
             }
         }
         return best;
@@ -391,12 +515,12 @@ public class TileAnchor extends TileEntity implements ITickable {
     public int radiusCap() {
         int[] r = ChaosConfig.anchor.levelRadius;
         int base = r.length == 0 ? 32 : r[Math.min(level(), r.length) - 1];
-        return base + 6 * seals(ItemAnchorSeal.Type.REACH);
+        return base + 6 * seals(ItemAnchorSeal.Type.REACH) + (int) Math.round(6 * netStage(AnchorSpec.ROOTS));
     }
 
     public int radius() {
         return Math.min(radiusCap(), ChaosConfig.anchor.startRadius + corrupted / ChaosConfig.anchor.blocksPerRadius
-                + 6 * seals(ItemAnchorSeal.Type.REACH));
+                + 6 * seals(ItemAnchorSeal.Type.REACH) + (int) Math.round(6 * netStage(AnchorSpec.ROOTS)));
     }
 
     // ------------------------------------------------------------------ печати
@@ -555,6 +679,9 @@ public class TileAnchor extends TileEntity implements ITickable {
             if (lvl >= maxLevel()) {
                 ru.death.chaosshard.quest.Milestones.grant(p, ru.death.chaosshard.quest.Milestones.ANCHOR_MAX);
             }
+            if (lvl >= AnchorSpec.STAGE_LEVEL && spec >= 0) {
+                ru.death.chaosshard.quest.Milestones.grant(p, ru.death.chaosshard.quest.Milestones.ANCHOR_STAGE);
+            }
         }
         world.playSound(null, pos, SoundEvents.BLOCK_END_PORTAL_SPAWN, SoundCategory.BLOCKS, 0.5F, 0.6F + 0.1F * lvl);
         growColumn();
@@ -609,7 +736,8 @@ public class TileAnchor extends TileEntity implements ITickable {
             timer = 0;
             int done = 0;
             int attempts = (int) Math.round((ChaosConfig.anchor.attemptsPerSpread + (level() - 1) * ChaosConfig.anchor.attemptsPerLevel)
-                    * (1 + 0.5 * seals(ItemAnchorSeal.Type.FURY))) + hum.working() * ChaosConfig.tech.humAttempts;
+                    * (1 + 0.5 * seals(ItemAnchorSeal.Type.FURY)) * (getSpec() == AnchorSpec.ROOTS ? 1.5 : 1.0))
+                    + (int) Math.round(hum.working() * ChaosConfig.tech.humAttempts * (1 + net(AnchorSpec.FORGE)));
             for (int i = 0; i < attempts; i++) {
                 if (spreadOnce(world.rand)) {
                     done++;
@@ -622,6 +750,9 @@ public class TileAnchor extends TileEntity implements ITickable {
         long wt = world.getTotalWorldTime();
         if (wt % 20 == (pos.toLong() & 15)) {
             tickNet();
+        }
+        if (spec >= 0 || netS[AnchorSpec.BASTION.ordinal()] > 0) {
+            AnchorSpecs.tick(this);
         }
         if (wt % 200 == 100) {
             growColumn();
@@ -714,6 +845,7 @@ public class TileAnchor extends TileEntity implements ITickable {
 
     /** Раз в секунду: перелив из сети, запас, кровь, пассивный прирост, сводка для сети. */
     private void tickNet() {
+        refreshNet();
         if (AnchorNet.isNetWorld(world) && owner != null) {
             AnchorData d = AnchorData.get(world);
             AnchorData.Rec r = d.rec(pos);
@@ -749,7 +881,7 @@ public class TileAnchor extends TileEntity implements ITickable {
             passiveXpTimer += 20;
             if (passiveXpTimer >= ChaosConfig.anchor.passiveXpInterval) {
                 passiveXpTimer = 0;
-                addXp(level() * ChaosConfig.anchor.passiveXpPerLevel, false);
+                addXp((int) Math.round(level() * ChaosConfig.anchor.passiveXpPerLevel * (1 + 0.5 * net(AnchorSpec.ROOTS))), false);
             }
         }
         if (world.getTotalWorldTime() % 200 < 20) {
@@ -768,7 +900,8 @@ public class TileAnchor extends TileEntity implements ITickable {
         }
         AnchorData.Rec r = d.recOrNew(pos);
         int lvl = level();
-        if (!owner.equals(r.owner) || r.level != lvl || r.xp != corrupted || r.land != land || r.captured != captured) {
+        if (!owner.equals(r.owner) || r.level != lvl || r.xp != corrupted || r.land != land || r.captured != captured || r.spec != spec) {
+            r.spec = spec;
             r.owner = owner;
             r.level = lvl;
             r.xp = corrupted;
@@ -848,7 +981,7 @@ public class TileAnchor extends TileEntity implements ITickable {
             int y = pos.getY() - 6 + rand.nextInt(18);
             BlockPos deep = new BlockPos(x, y, z);
             // в осквернённом камне вызревает тёмная руда (EvilCraft)
-            changed = DarkCorruption.darkOre(world, deep, rand) || Corruption.corrupt(world, deep);
+            changed = DarkCorruption.darkOre(world, deep, rand, 1 + net(AnchorSpec.VEIN)) || Corruption.corrupt(world, deep);
         }
         return changed;
     }
@@ -891,6 +1024,12 @@ public class TileAnchor extends TileEntity implements ITickable {
         tag.setString("ownerName", ownerName);
         tag.setInteger("corrupted", corrupted);
         tag.setInteger("land", land);
+        tag.setInteger("spec", spec);
+        tag.setTag("storage", storage.serializeNBT());
+        tag.setTag("sample", sample.serializeNBT());
+        tag.setInteger("fieldXp", fieldXp);
+        tag.setInteger("forgeEnergy", forgeEnergy);
+        tag.setInteger("veinTimer", veinTimer);
         tag.setDouble("xpCarry", xpCarry);
         tag.setInteger("passiveXp", passiveXpTimer);
         tag.setTag("blood", blood.writeToNBT(new NBTTagCompound()));
@@ -914,6 +1053,16 @@ public class TileAnchor extends TileEntity implements ITickable {
         ownerName = tag.getString("ownerName");
         corrupted = tag.getInteger("corrupted");
         land = tag.hasKey("land") ? tag.getInteger("land") : corrupted;
+        spec = tag.hasKey("spec") ? tag.getInteger("spec") : -1;
+        if (tag.hasKey("storage")) {
+            storage.deserializeNBT(tag.getCompoundTag("storage"));
+        }
+        if (tag.hasKey("sample")) {
+            sample.deserializeNBT(tag.getCompoundTag("sample"));
+        }
+        fieldXp = tag.getInteger("fieldXp");
+        forgeEnergy = tag.getInteger("forgeEnergy");
+        veinTimer = tag.getInteger("veinTimer");
         xpCarry = tag.getDouble("xpCarry");
         passiveXpTimer = tag.getInteger("passiveXp");
         blood.setFluid(null);
@@ -969,6 +1118,7 @@ public class TileAnchor extends TileEntity implements ITickable {
     public NBTTagCompound getUpdateTag() {
         NBTTagCompound tag = super.getUpdateTag();
         tag.setInteger("corrupted", corrupted);
+        tag.setInteger("spec", spec);
         writeSeals(tag);
         return tag;
     }
@@ -977,6 +1127,7 @@ public class TileAnchor extends TileEntity implements ITickable {
     public void handleUpdateTag(NBTTagCompound tag) {
         super.handleUpdateTag(tag);
         corrupted = tag.getInteger("corrupted");
+        spec = tag.hasKey("spec") ? tag.getInteger("spec") : -1;
         readSeals(tag);
     }
 
@@ -995,8 +1146,48 @@ public class TileAnchor extends TileEntity implements ITickable {
         return new net.minecraft.util.math.AxisAlignedBB(pos.add(-2, 0, -2), pos.add(3, 7, 3));
     }
 
+    /** Горн отдаёт энергию трубам и кабелям; принимать не умеет. */
+    private final net.minecraftforge.energy.IEnergyStorage forgeOut = new net.minecraftforge.energy.IEnergyStorage() {
+        @Override
+        public int receiveEnergy(int max, boolean sim) {
+            return 0;
+        }
+
+        @Override
+        public int extractEnergy(int max, boolean sim) {
+            int e = Math.min(max, forgeEnergy);
+            if (!sim) {
+                forgeEnergy -= e;
+            }
+            return e;
+        }
+
+        @Override
+        public int getEnergyStored() {
+            return forgeEnergy;
+        }
+
+        @Override
+        public int getMaxEnergyStored() {
+            return AnchorSpecs.FORGE_BUFFER;
+        }
+
+        @Override
+        public boolean canExtract() {
+            return true;
+        }
+
+        @Override
+        public boolean canReceive() {
+            return false;
+        }
+    };
+
     @Override
     public boolean hasCapability(net.minecraftforge.common.capabilities.Capability<?> cap, @javax.annotation.Nullable net.minecraft.util.EnumFacing f) {
+        if (cap == net.minecraftforge.energy.CapabilityEnergy.ENERGY) {
+            return getSpec() == AnchorSpec.FORGE;
+        }
         return cap == net.minecraftforge.fluids.capability.CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY || super.hasCapability(cap, f);
     }
 
@@ -1005,6 +1196,9 @@ public class TileAnchor extends TileEntity implements ITickable {
     public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> cap, @javax.annotation.Nullable net.minecraft.util.EnumFacing f) {
         if (cap == net.minecraftforge.fluids.capability.CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY) {
             return net.minecraftforge.fluids.capability.CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY.cast(blood);
+        }
+        if (cap == net.minecraftforge.energy.CapabilityEnergy.ENERGY && getSpec() == AnchorSpec.FORGE) {
+            return net.minecraftforge.energy.CapabilityEnergy.ENERGY.cast(forgeOut);
         }
         return super.getCapability(cap, f);
     }

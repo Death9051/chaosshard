@@ -26,9 +26,15 @@ public class ContainerAnchor extends Container {
     public static final int SEAL_Y = 98;
     public static final int INV_Y = 140;
 
+    public static final int STORAGE_FIRST = TileAnchor.MAX_SEALS;
+    public static final int SAMPLE_SLOT = STORAGE_FIRST + 27;
+    public static final int INV_FIRST = SAMPLE_SLOT + 1;
+
     public final TileAnchor tile;
     private final EntityPlayer player;
     private int tick;
+    /** Взгляд Дозора: на какой Якорь сети смотрим (null — ни на какой). */
+    public BlockPos scry;
 
     public ContainerAnchor(EntityPlayer player, TileAnchor tile) {
         this.tile = tile;
@@ -53,6 +59,30 @@ public class ContainerAnchor extends Container {
                 }
             });
         }
+        for (int i = 0; i < 27; i++) {
+            addSlotToContainer(new SlotItemHandler(tile.storage, i, 8 + (i % 9) * 18, 18 + (i / 9) * 18) {
+                @Override
+                public boolean isItemValid(ItemStack stack) {
+                    return false;
+                }
+
+                @Override
+                public boolean canTakeStack(EntityPlayer p) {
+                    return mine;
+                }
+            });
+        }
+        addSlotToContainer(new SlotItemHandler(tile.sample, 0, 8, 104) {
+            @Override
+            public boolean isItemValid(ItemStack stack) {
+                return mine && super.isItemValid(stack);
+            }
+
+            @Override
+            public boolean canTakeStack(EntityPlayer p) {
+                return mine;
+            }
+        });
         for (int row = 0; row < 3; row++) {
             for (int col = 0; col < 9; col++) {
                 addSlotToContainer(new Slot(player.inventory, col + row * 9 + 9, 8 + col * 18, INV_Y + row * 18));
@@ -76,7 +106,11 @@ public class ContainerAnchor extends Container {
     public void detectAndSendChanges() {
         super.detectAndSendChanges();
         if (player instanceof EntityPlayerMP && tick++ % 20 == 0) {
-            ChaosNetwork.CHANNEL.sendTo(new PacketAnchorView(view(tile, player)), (EntityPlayerMP) player);
+            NBTTagCompound v = view(tile, player);
+            if (scry != null && tile.netStage(AnchorSpec.WATCH) > 0 && (tick / 20) % 2 == 0) {
+                v.setTag("scry", AnchorView.scry((WorldServer) tile.getWorld(), scry, tile.getOwner()));
+            }
+            ChaosNetwork.CHANNEL.sendTo(new PacketAnchorView(v), (EntityPlayerMP) player);
         }
     }
 
@@ -89,11 +123,20 @@ public class ContainerAnchor extends Container {
         ItemStack stack = slot.getStack();
         ItemStack copy = stack.copy();
         int seals = TileAnchor.MAX_SEALS;
-        if (index < seals) {
-            if (!mergeItemStack(stack, seals, inventorySlots.size(), true)) {
+        if (index < INV_FIRST) {
+            if (!slot.canTakeStack(p) || !mergeItemStack(stack, INV_FIRST, inventorySlots.size(), true)) {
                 return ItemStack.EMPTY;
             }
         } else {
+            if (stack.getItem() instanceof net.minecraft.item.ItemMonsterPlacer && canEdit(p, tile)) {
+                Slot sm = inventorySlots.get(SAMPLE_SLOT);
+                if (sm.getHasStack() || !sm.isItemValid(stack)) {
+                    return ItemStack.EMPTY;
+                }
+                sm.putStack(stack.splitStack(1));
+                slot.onSlotChanged();
+                return copy;
+            }
             if (!(stack.getItem() instanceof ItemAnchorSeal) || !canEdit(p, tile)) {
                 return ItemStack.EMPTY;
             }
@@ -164,6 +207,8 @@ public class ContainerAnchor extends Container {
                 AnchorData.Rec r = d.rec(p);
                 NBTTagCompound e = new NBTTagCompound();
                 e.setInteger("x", p.getX());
+                e.setInteger("y", p.getY());
+                e.setInteger("sp", r.spec);
                 e.setInteger("z", p.getZ());
                 e.setInteger("l", r.level);
                 e.setInteger("s", r.level >= TileAnchor.maxLevel() ? 2 : r.captured ? 1 : 0);
@@ -172,6 +217,28 @@ public class ContainerAnchor extends Container {
             }
         }
         t.setTag("list", list);
+        // специализация
+        AnchorSpec sp = a.getSpec();
+        t.setInteger("spec", sp == null ? -1 : sp.ordinal());
+        t.setBoolean("stage", a.stage());
+        t.setInteger("storage", sp == null ? 0 : sp.storage);
+        t.setInteger("fieldXp", a.fieldXp);
+        t.setInteger("forgeRate", sp == AnchorSpec.FORGE ? AnchorSpecs.forgeRate(a) : 0);
+        t.setInteger("forgeEnergy", a.forgeEnergy);
+        t.setBoolean("path", net && a.net(AnchorSpec.PATH) > 0);
+        t.setBoolean("pathFree", net && a.netStage(AnchorSpec.PATH) > 0);
+        t.setBoolean("watch", net && a.net(AnchorSpec.WATCH) > 0);
+        t.setBoolean("watchStage", net && a.netStage(AnchorSpec.WATCH) > 0);
+        NBTTagList specs = new NBTTagList();
+        for (AnchorSpec x : AnchorSpec.values()) {
+            NBTTagCompound e = new NBTTagCompound();
+            e.setInteger("n", net ? AnchorNet.count(w, a.getOwner(), x, false) : (sp == x ? 1 : 0));
+            specs.appendTag(e);
+        }
+        t.setTag("specs", specs);
+        if (net && a.net(AnchorSpec.WATCH) > 0) {
+            t.setTag("dots", AnchorView.dots(w, a.getOwner()));
+        }
         return t;
     }
 }

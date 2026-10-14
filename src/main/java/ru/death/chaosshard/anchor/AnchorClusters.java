@@ -115,7 +115,8 @@ public final class AnchorClusters {
         for (Entity e : w.loadedEntityList) {
             if (e instanceof EntityLiving && e.isEntityAlive() && owner != null && Servants.isServantOf(e, owner)
                     && e.getEntityData().hasKey(Servants.TAG_ANCHOR)
-                    && net.contains(e.getEntityData().getLong(Servants.TAG_ANCHOR))) {
+                    && net.contains(e.getEntityData().getLong(Servants.TAG_ANCHOR))
+                    && !e.getEntityData().hasKey(AnchorSpecs.TAG_NEST)) {
                 out.add((EntityLiving) e);
             }
         }

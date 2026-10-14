@@ -56,6 +56,18 @@ public final class MachineHum {
         return false;
     }
 
+    /** Машины с RF/FE у Якоря (по последнему замеру), не больше потолка гула. */
+    public java.util.List<Long> positions() {
+        java.util.List<Long> out = new java.util.ArrayList<>();
+        for (Long k : last.keySet()) {
+            if (out.size() >= ChaosConfig.tech.humMax) {
+                break;
+            }
+            out.add(k);
+        }
+        return out;
+    }
+
     /** Сколько машин работает (по последнему замеру). */
     public int working() {
         return working;

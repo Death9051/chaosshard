@@ -122,6 +122,8 @@ public class ChaosShard {
         MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.servant.ServantEffects());
         MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.servant.work.Work());
         MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.anchor.DarkCorruption());
+        MinecraftForge.EVENT_BUS.register(ru.death.chaosshard.anchor.AnchorSpecs.events());
+        ru.death.chaosshard.spell.SpellMods.register(ru.death.chaosshard.anchor.AnchorSpecs.PULSE);
         MinecraftForge.EVENT_BUS.register(WORK_CHUNKS);
         ru.death.chaosshard.compat.body.Body.init();
         net.minecraftforge.fml.common.registry.GameRegistry.registerWorldGenerator(new ru.death.chaosshard.order.ShrineGen(), 20);

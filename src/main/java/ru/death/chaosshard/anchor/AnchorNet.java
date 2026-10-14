@@ -78,6 +78,8 @@ public final class AnchorNet {
         for (BlockPos p : members(w, owner)) {
             n += Math.max(1, d.rec(p).level);
         }
+        // Бастион: +2 места за каждый (по убывающей), Цитадель: +1
+        n += (int) Math.round(2 * factor(w, owner, AnchorSpec.BASTION, false) + factor(w, owner, AnchorSpec.CITADEL, false));
         return n;
     }
 
@@ -95,7 +97,8 @@ public final class AnchorNet {
             return;
         }
         AnchorData d = AnchorData.get(w);
-        int give = (int) Math.floor(amount * ChaosConfig.anchor.overflowShare);
+        double share = Math.min(1.0, ChaosConfig.anchor.overflowShare + 0.25 * factor(w, owner, AnchorSpec.ROOTS, false));
+        int give = (int) Math.floor(amount * share);
         if (give <= 0) {
             return;
         }
@@ -138,6 +141,52 @@ public final class AnchorNet {
             d.markDirty();
         }
         return got;
+    }
+
+    /** Сколько Якорей сети с этой специализацией (stage — только достигшие 5-го уровня). */
+    public static int count(World w, UUID owner, AnchorSpec spec, boolean stage) {
+        if (w == null || owner == null || !isNetWorld(w)) {
+            return 0;
+        }
+        AnchorData d = AnchorData.get(w);
+        int n = 0;
+        for (BlockPos p : d.anchors) {
+            AnchorData.Rec r = d.rec(p);
+            if (r != null && owner.equals(r.owner) && r.spec == spec.ordinal()
+                    && (!stage || r.level >= AnchorSpec.STAGE_LEVEL)) {
+                n++;
+            }
+        }
+        return n;
+    }
+
+    /** Сила сетевого эффекта: одинаковые складываются по убывающей — 1 + 1/2 + 1/4 + … */
+    public static double stack(int n) {
+        double f = 0, part = 1;
+        for (int i = 0; i < n; i++) {
+            f += part;
+            part *= 0.5;
+        }
+        return f;
+    }
+
+    /** Сила сетевого эффекта специализации для владельца (в Лучезарии). */
+    public static double factor(UUID owner, AnchorSpec spec, boolean stage) {
+        WorldServer l = luch();
+        return l == null ? 0 : stack(count(l, owner, spec, stage));
+    }
+
+    public static double factor(World w, UUID owner, AnchorSpec spec, boolean stage) {
+        return stack(count(w, owner, spec, stage));
+    }
+
+    /** Якорь игрока, на чьей земле он стоит (или null). */
+    public static TileAnchor ownLand(EntityPlayer p) {
+        if (p == null || !isNetWorld(p.world)) {
+            return null;
+        }
+        TileAnchor a = TileAnchor.covering(p.world, p.getPosition());
+        return a != null && p.getUniqueID().equals(a.getOwner()) ? a : null;
     }
 
     private AnchorNet() {
