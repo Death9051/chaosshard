@@ -28,6 +28,9 @@ public class GuiGrimoireMagic extends GuiScreen {
     private static int selBeast = -1;  // -1 — страница «Отголоски»
     private static int selSpell;
     private static int selRitual = -1;  // -1 — страница «Как провести ритуал»
+    /** Строк списка ритуалов в окне (дальше — прокрутка колесом) и первая видимая строка. */
+    private static final int RIT_ROWS = 13;
+    private static int ritScroll;
 
     private final ItemStack grimoire;
     private final List<Spell> spells = new ArrayList<>();
@@ -164,8 +167,8 @@ public class GuiGrimoireMagic extends GuiScreen {
             int row = (my - top - 8) / ROW;
             if (tab == 0 && row >= 0 && row < spells.size()) {
                 selSpell = row;
-            } else if (tab == 1 && row >= 0 && row <= shownRituals().size()) {
-                selRitual = row - 1;
+            } else if (tab == 1 && row >= 0 && row < RIT_ROWS && ritScroll + row <= shownRituals().size()) {
+                selRitual = ritScroll + row - 1;
             } else if (tab == 2 && row >= 0 && row <= BeastPage.ROWS - 1 && row != BeastPage.HEADER_ROW) {
                 selBeast = row - 1;
             }
@@ -175,6 +178,19 @@ public class GuiGrimoireMagic extends GuiScreen {
         if (tab == 2 && selBeast >= 0 && selBeast < 3) {
             beasts.click(ru.death.chaosshard.servant.BeastData.Beast.values()[selBeast], mx, my);
         }
+    }
+
+    @Override
+    public void handleMouseInput() throws java.io.IOException {
+        super.handleMouseInput();
+        int d = org.lwjgl.input.Mouse.getEventDWheel();
+        if (d != 0 && tab == 1) {
+            ritScroll = clampScroll(ritScroll + (d > 0 ? -1 : 1), shownRituals().size() + 1);
+        }
+    }
+
+    private static int clampScroll(int v, int rows) {
+        return Math.max(0, Math.min(Math.max(0, rows - RIT_ROWS), v));
     }
 
     @Override
@@ -373,9 +389,11 @@ public class GuiGrimoireMagic extends GuiScreen {
         if (selRitual >= all.length) {
             selRitual = -1;
         }
+        ritScroll = clampScroll(ritScroll, all.length + 1);
         RenderHelper.enableGUIStandardItemLighting();
-        for (int i = -1; i < all.length; i++) {
-            int y = top + 8 + (i + 1) * ROW;
+        int last = Math.min(all.length, ritScroll + RIT_ROWS - 1);
+        for (int i = ritScroll - 1; i < last; i++) {
+            int y = top + 8 + (i + 1 - ritScroll) * ROW;
             if (i == selRitual) {
                 Gui.drawRect(left + 5, y - 1, left + LIST_W, y + ROW - 2, 0x804A2A70);
             }
@@ -386,6 +404,12 @@ public class GuiGrimoireMagic extends GuiScreen {
             fontRenderer.drawString(fontRenderer.trimStringToWidth(name, LIST_W - 32), left + 28, y + 4, open ? 0xC9C3D6 : 0x5E566C);
         }
         RenderHelper.disableStandardItemLighting();
+        // стрелки прокрутки, если список длиннее окна
+        if (all.length + 1 > RIT_ROWS) {
+            drawCenteredString(fontRenderer, "\u25B2", left + LIST_W - 16, top + H - 14, ritScroll > 0 ? 0xD9B8FF : 0x4A4058);
+            drawCenteredString(fontRenderer, "\u25BC", left + LIST_W - 6, top + H - 14,
+                    ritScroll + RIT_ROWS < all.length + 1 ? 0xD9B8FF : 0x4A4058);
+        }
 
         int x = left + LIST_W + 12, y = top + 10, w = W - LIST_W - 22;
         if (selRitual < 0) {

@@ -299,6 +299,7 @@ public final class ChaosConfig {
 
         @Config.Comment("Гул машин: радиус вокруг Якоря, как часто замерять (тики), сколько машин в зачёт и попыток Скверны за каждую")
         public int humRadius = 16;
+        @Config.RangeInt(min = 1, max = 100000)
         public int humInterval = 100;
         public int humMax = 8;
         public int humAttempts = 1;
@@ -368,6 +369,7 @@ public final class ChaosConfig {
 
         @Config.Comment("Начальный радиус Скверны; +1 к радиусу за каждые N осквернённых блоков (не больше потолка уровня)")
         public int startRadius = 4;
+        @Config.RangeInt(min = 1, max = 100000)
         public int blocksPerRadius = 25;
 
         @Config.Comment({"Уровни Якоря 1..5: сколько блоков осквернить для уровня. 2-й уровень — край захвачен.",
@@ -446,6 +448,7 @@ public final class ChaosConfig {
         @Config.Comment("Lycanite's Mobs: на захваченной Скверной земле селятся демоны — Осколка не трогают, Орден бьют")
         public boolean defiledDemons = true;
         @Config.Comment("Как часто (тики) Якорь подселяет демона и сколько их держит: база + уровень Якоря")
+        @Config.RangeInt(min = 1, max = 100000)
         public int demonInterval = 600;
         public int demonsBase = 1;
 
