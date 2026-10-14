@@ -50,7 +50,7 @@ public final class Trophies {
         net.minecraft.tileentity.TileEntity te = world.getTileEntity(at);
         if (te instanceof TileTrophy) {
             ((TileTrophy) te).setOwner(player.getUniqueID());
-            boolean ok = ((TileTrophy) te).validate();
+            boolean ok = ((TileTrophy) te).checkLair();
             player.sendStatusMessage(ru.death.chaosshard.breach.Breach.grimoire(ok ? "chaosshard.trophy.placed" : "chaosshard.trophy.no_lair"), true);
             if (ok && player instanceof net.minecraft.entity.player.EntityPlayerMP) {
                 ru.death.chaosshard.quest.Milestones.grant((net.minecraft.entity.player.EntityPlayerMP) player, ru.death.chaosshard.quest.Milestones.TROPHY_HALL);

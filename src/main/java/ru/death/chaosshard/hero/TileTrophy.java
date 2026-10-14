@@ -35,7 +35,7 @@ public class TileTrophy extends TileEntity implements ITickable {
     }
 
     /** Проверить, стоит ли трофей в стенах Логова хозяина, и записать это. */
-    public boolean validate() {
+    public boolean checkLair() {
         if (world == null || world.isRemote || owner == null) {
             return false;
         }
@@ -61,7 +61,7 @@ public class TileTrophy extends TileEntity implements ITickable {
     @Override
     public void update() {
         if (!world.isRemote && ++timer % 100 == 1) {
-            validate();
+            checkLair();
         }
     }
 
