@@ -2390,15 +2390,15 @@ public final class AutoTest {
                 }
                 me.setPosition(me.posX, my, me.posZ);
                 if (!made) {
-                    int corrupted = 0, tries = 0;
+                    int bad = 0, tries = 0;
                     java.util.Random rr = new java.util.Random(1);
                     for (int i = 0; i < 200; i++) {
                         int r = a.radius();
                         BlockPos g = ow.getHeight(anchorPos.add(rr.nextInt(2 * r + 1) - r, 0, rr.nextInt(2 * r + 1) - r)).down();
                         tries++;
-                        if (ru.death.chaosshard.anchor.Corruption.isCorrupted(ow.getBlockState(g))) corrupted++;
+                        if (ru.death.chaosshard.anchor.Corruption.isCorrupted(ow.getBlockState(g))) bad++;
                     }
-                    line("  демон не подселился: осквернённых столбцов " + corrupted + " из " + tries + ", радиус " + a.radius());
+                    line("  демон не подселился: осквернённых столбцов " + bad + " из " + tries + ", радиус " + a.radius());
                 }
                 List<EntityLiving> ds = ow.getEntitiesWithinAABB(EntityLiving.class, new AxisAlignedBB(anchorPos).grow(a.radius(), 32, a.radius()),
                         x -> x.getTags().contains(ru.death.chaosshard.compat.world.WildChaos.TAG_DEMON));
