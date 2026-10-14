@@ -46,7 +46,7 @@ public final class AnchorSigns {
         public double power, reach, freq, dur, thread;
         public int range;
 
-        static Mods of(TileAnchor a) {
+        public static Mods of(TileAnchor a) {
             Mods m = new Mods();
             m.power = 1 + 0.2 * a.power(Type.FURY);
             m.reach = a.power(Type.REACH);
@@ -113,13 +113,13 @@ public final class AnchorSigns {
         return dx * dx + dz * dz <= (double) range * range;
     }
 
-    static List<EntityLivingBase> enemies(TileAnchor a, Mods m) {
+    public static List<EntityLivingBase> enemies(TileAnchor a, Mods m) {
         UUID o = a.getOwner();
         return a.getWorld().getEntitiesWithinAABB(EntityLivingBase.class, box(a, m.range),
                 x -> inRange(a, x, m.range) && AnchorSpecs.enemy(x, o));
     }
 
-    static List<EntityLivingBase> ours(TileAnchor a, Mods m) {
+    public static List<EntityLivingBase> ours(TileAnchor a, Mods m) {
         UUID o = a.getOwner();
         return a.getWorld().getEntitiesWithinAABB(EntityLivingBase.class, box(a, m.range),
                 x -> o != null && x.isEntityAlive() && inRange(a, x, m.range) && (o.equals(x.getUniqueID()) || Servants.isServantOf(x, o)));
@@ -144,7 +144,7 @@ public final class AnchorSigns {
 
     // ------------------------------------------------------------------ Шипы
 
-    static int thorns(TileAnchor a, Mods m, double th, boolean rain, double wh) {
+    public static int thorns(TileAnchor a, Mods m, double th, boolean rain, double wh) {
         int hit = 0;
         for (EntityLivingBase e : enemies(a, m)) {
             e.attackEntityFrom(DamageSource.MAGIC, (float) (2 * m.power * th));
@@ -180,7 +180,7 @@ public final class AnchorSigns {
         return null;
     }
 
-    static int projectiles(TileAnchor a, Mods m, double di, boolean ricochet, boolean rain) {
+    public static int projectiles(TileAnchor a, Mods m, double di, boolean ricochet, boolean rain) {
         UUID o = a.getOwner();
         int n = 0;
         for (Entity p : a.getWorld().getEntitiesWithinAABB(Entity.class, box(a, m.range),
@@ -247,7 +247,7 @@ public final class AnchorSigns {
         return phase < active;
     }
 
-    static void rain(TileAnchor a, Mods m, double ra, boolean viscous) {
+    public static void rain(TileAnchor a, Mods m, double ra, boolean viscous) {
         WorldServer w = (WorldServer) a.getWorld();
         float amt = (float) (1 * m.power * ra);
         for (EntityLivingBase e : ours(a, m)) {
@@ -278,7 +278,7 @@ public final class AnchorSigns {
         return e.getEntityData().getLong(TAG_MAD) > e.world.getTotalWorldTime();
     }
 
-    static void madden(EntityLivingBase e, Mods m) {
+    public static void madden(EntityLivingBase e, Mods m) {
         e.getEntityData().setLong(TAG_MAD, e.world.getTotalWorldTime() + (long) (100 * m.dur));
         e.addPotionEffect(new PotionEffect(MobEffects.NAUSEA, (int) (100 * m.dur), 0));
         if (e instanceof EntityLiving) {
@@ -300,7 +300,7 @@ public final class AnchorSigns {
         ((WorldServer) e.world).spawnParticle(EnumParticleTypes.SPELL_MOB, e.posX, e.posY + e.height, e.posZ, 12, 0.3, 0.3, 0.3, 0.0);
     }
 
-    static int whisper(TileAnchor a, Mods m, double wh) {
+    public static int whisper(TileAnchor a, Mods m, double wh) {
         int n = 0;
         for (EntityLivingBase e : enemies(a, m)) {
             if (!mad(e) && a.getWorld().rand.nextDouble() < 0.25 * m.power * wh) {
@@ -315,7 +315,7 @@ public final class AnchorSigns {
     }
 
     /** Сдвиг: обезумевших перебрасывает на несколько блоков. */
-    static void shift(TileAnchor a, Mods m, double s) {
+    public static void shift(TileAnchor a, Mods m, double s) {
         java.util.Random r = a.getWorld().rand;
         for (EntityLivingBase e : enemies(a, m)) {
             if (!mad(e) || r.nextDouble() > s) {

@@ -114,7 +114,7 @@ public class DarkCorruption {
         if (seals <= 0) {
             return;
         }
-        a.feed(3 * seals);
+        a.feed((int) Math.round(3 * seals));
         ((WorldServer) dead.world).spawnParticle(EnumParticleTypes.REDSTONE, dead.posX, dead.posY + 0.5, dead.posZ,
                 20, 0.3, 0.4, 0.3, 0.0);
     }

@@ -785,6 +785,148 @@ public final class AutoTest {
             check(ru.death.chaosshard.anchor.AnchorData.get(ow).rec(specA[0]) == null, "сводки нет");
         });
 
+        section("Альфа, знаки, заимствование");
+        final BlockPos[] alA = new BlockPos[1];
+        final java.util.List<BlockPos> fakes = new java.util.ArrayList<>();
+        final net.minecraft.entity.EntityLiving[] sMob = new net.minecraft.entity.EntityLiving[2];
+        step("Альфа: нужна сеть из 10, площадка 3×3", () -> {
+            BlockPos at = ow.getHeight(anchorPos.add(-40, 0, -60));
+            for (int dx = -1; dx <= 1; dx++) for (int dz = -1; dz <= 1; dz++) {
+                ow.setBlockState(at.add(dx, -1, dz), net.minecraft.init.Blocks.STONE.getDefaultState(), 3);
+                for (int dy = 0; dy < 14; dy++) ow.setBlockToAir(at.add(dx, dy, dz));
+            }
+            ow.setBlockState(at, ModBlocks.CHAOS_ANCHOR.getDefaultState(), 3);
+            TileAnchor t = (TileAnchor) ow.getTileEntity(at);
+            if (t == null) { check(false, "Якорь не встал"); return; }
+            t.setOwner(me);
+            ru.death.chaosshard.anchor.AnchorData ad = ru.death.chaosshard.anchor.AnchorData.get(ow);
+            ad.anchors.add(at);
+            t.setCorrupted(TileAnchor.maxXp());
+            t.syncRec();
+            alA[0] = at;
+            check("chaosshard.anchor.alpha.count".equals(t.evolve()), "без 10 Якорей Альфа не встаёт");
+            int need = 10 - ru.death.chaosshard.anchor.AnchorNet.size(ow, me.getUniqueID());
+            for (int i = 0; i < need; i++) {
+                BlockPos f = new BlockPos(100000 + i * 200, 64, 100000);
+                ad.anchors.add(f);
+                ru.death.chaosshard.anchor.AnchorData.Rec r = ad.recOrNew(f);
+                r.owner = me.getUniqueID();
+                r.level = 3;
+                fakes.add(f);
+            }
+            ad.markDirty();
+            String err = t.evolve();
+            check(err == null && t.isAlpha(), "Альфа встала: " + err);
+            check(ow.getBlockState(at.add(1, 0, 1)).getBlock() == ModBlocks.ANCHOR_RIM, "основание 3×3");
+            check(t.alphaLevel() == 1 && t.getSpec() == null, "1-й уровень Альфы, пути нет");
+        });
+        step("Альфа: свой опыт на четверть, кровь и перелив — полностью", () -> {
+            TileAnchor t = (TileAnchor) ow.getTileEntity(alA[0]);
+            if (t == null) { check(false, "нет Альфы"); return; }
+            t.addXp(400, false);
+            check(t.getAlphaXp() == 100, "свой опыт 400 → " + t.getAlphaXp());
+            t.addXp(1000, false, true);
+            check(t.getAlphaXp() == 1100 && t.alphaLevel() == 2, "кровь 1000 → " + t.getAlphaXp() + ", ур. " + t.alphaLevel());
+            check(t.level() == 5 && t.radiusCap() >= 60, "уровень Якоря и радиус остались");
+            t.refreshNet();
+            check(t.sealSlots() == 6, "мест печатей: " + t.sealSlots());
+            check(t.columnHeight() >= 5, "колонна выше: " + t.columnHeight());
+            TileAnchor main = (TileAnchor) ow.getTileEntity(anchorPos);
+            ru.death.chaosshard.anchor.AnchorData ad = ru.death.chaosshard.anchor.AnchorData.get(ow);
+            int before = ad.rec(alA[0]).inbox;
+            int xp = main.getCorrupted();
+            main.setCorrupted(TileAnchor.maxXp());
+            main.addXp(1200, false);
+            main.setCorrupted(xp);
+            check(ad.rec(alA[0]).inbox - before > 1200 * 0.5 / 12, "Альфе — двойная доля перелива: +" + (ad.rec(alA[0]).inbox - before));
+        });
+        step("заимствование: место по числу Альф, предел по донорам", () -> {
+            TileAnchor main = (TileAnchor) ow.getTileEntity(anchorPos);
+            ru.death.chaosshard.anchor.AnchorData ad = ru.death.chaosshard.anchor.AnchorData.get(ow);
+            ad.rec(fakes.get(0)).spec = ru.death.chaosshard.anchor.AnchorSpec.CITADEL.ordinal();
+            main.refreshNet();
+            check(main.borrowSlots() == 1, "мест заимствования: " + main.borrowSlots());
+            check(main.setBorrow(0, ru.death.chaosshard.anchor.AnchorFx.CITADEL_STRIKE), "взята молния Цитадели");
+            check(main.hasFx(ru.death.chaosshard.anchor.AnchorFx.CITADEL_STRIKE), "эффект работает");
+            check(!main.setBorrow(0, ru.death.chaosshard.anchor.AnchorFx.VEIN_LOOT), "без донора Жилы не взять");
+            ad.rec(fakes.get(0)).spec = -1;
+            main.refreshNet();
+            check(!main.hasFx(ru.death.chaosshard.anchor.AnchorFx.CITADEL_STRIKE), "донор пропал — место пусто");
+        });
+        step("печати: силовые по убывающей, знак — один на Якорь", () -> {
+            TileAnchor t = (TileAnchor) ow.getTileEntity(alA[0]);
+            if (t == null) return;
+            t.addSeal(ru.death.chaosshard.anchor.ItemAnchorSeal.Type.FURY);
+            t.addSeal(ru.death.chaosshard.anchor.ItemAnchorSeal.Type.FURY);
+            check(Math.abs(t.power(ru.death.chaosshard.anchor.ItemAnchorSeal.Type.FURY) - 1.5) < 1e-6, "две Ярости = 1,5");
+            check(t.addSeal(ru.death.chaosshard.anchor.ItemAnchorSeal.Type.THORNS), "Шипы встали");
+            check(!t.addSeal(ru.death.chaosshard.anchor.ItemAnchorSeal.Type.THORNS), "вторые Шипы не встают");
+            t.addSeal(ru.death.chaosshard.anchor.ItemAnchorSeal.Type.RAIN);
+            t.addSeal(ru.death.chaosshard.anchor.ItemAnchorSeal.Type.WHISPER);
+            t.syncRec();
+            TileAnchor main = (TileAnchor) ow.getTileEntity(anchorPos);
+            main.refreshNet();
+            double p = main.power(ru.death.chaosshard.anchor.ItemAnchorSeal.Type.THORNS);
+            check(p > 0 && p < 1, "Шипы Альфы на чужом Якоре сети: " + p);
+        });
+        step("знаки бьют: Шипы, Кровавый дождь, Шёпот", () -> {
+            TileAnchor t = (TileAnchor) ow.getTileEntity(alA[0]);
+            if (t == null) return;
+            net.minecraft.entity.monster.EntityZombie z = new net.minecraft.entity.monster.EntityZombie(ow);
+            BlockPos zp = ow.getHeight(alA[0].add(6, 0, 0));
+            z.setLocationAndAngles(zp.getX() + 0.5, zp.getY(), zp.getZ() + 0.5, 0, 0);
+            z.enablePersistence();
+            ow.spawnEntity(z);
+            net.minecraft.entity.monster.EntitySkeleton sk = new net.minecraft.entity.monster.EntitySkeleton(ow);
+            sk.setLocationAndAngles(zp.getX() + 2.5, zp.getY(), zp.getZ() + 0.5, 0, 0);
+            sk.enablePersistence();
+            ow.spawnEntity(sk);
+            sMob[0] = z;
+            sMob[1] = sk;
+            ru.death.chaosshard.anchor.AnchorSigns.Mods m = ru.death.chaosshard.anchor.AnchorSigns.Mods.of(t);
+            int hit = ru.death.chaosshard.anchor.AnchorSigns.thorns(t, m, 1, false, 0);
+            check(hit >= 1 && z.getHealth() < z.getMaxHealth() && z.isPotionActive(net.minecraft.init.MobEffects.SLOWNESS), "Шипы: урон и замедление");
+            check(z.isPotionActive(net.minecraft.init.MobEffects.WITHER), "Шипы + Кровавый дождь: кровотечение");
+            float hp = z.getHealth();
+            me.setPosition(alA[0].getX() + 3.5, alA[0].getY(), alA[0].getZ() + 0.5);
+            me.setHealth(10);
+            int blood = t.blood.getFluidAmount();
+            ru.death.chaosshard.anchor.AnchorSigns.rain(t, m, 1, false);
+            check(z.getHealth() < hp, "дождь ранит чужих");
+            check(me.getHealth() > 10, "дождь лечит своих: " + me.getHealth());
+            check(!net.minecraftforge.fluids.FluidRegistry.isFluidRegistered("evilcraftblood") || t.blood.getFluidAmount() > blood, "в баке прибыло крови");
+            ru.death.chaosshard.anchor.AnchorSigns.madden(z, m);
+            check(ru.death.chaosshard.anchor.AnchorSigns.mad(z) && z.getAttackTarget() == sk, "Шёпот: зомби обезумел и бросился на скелета");
+            me.setHealth(me.getMaxHealth());
+        });
+        step("Искажение: свои не разбиваются, снаряд летит назад", () -> {
+            TileAnchor t = (TileAnchor) ow.getTileEntity(alA[0]);
+            if (t == null) return;
+            t.addSeal(ru.death.chaosshard.anchor.ItemAnchorSeal.Type.DISTORT);
+            net.minecraftforge.event.entity.living.LivingFallEvent fe = new net.minecraftforge.event.entity.living.LivingFallEvent(me, 10, 1);
+            MinecraftForge.EVENT_BUS.post(fe);
+            check(fe.getDamageMultiplier() == 0, "урона от падения нет");
+            net.minecraft.entity.projectile.EntityTippedArrow ar = new net.minecraft.entity.projectile.EntityTippedArrow(ow, sMob[1]);
+            ar.setPosition(alA[0].getX() + 4.5, alA[0].getY() + 2, alA[0].getZ() + 0.5);
+            ar.motionX = 1.0;
+            ar.motionY = 0;
+            ar.motionZ = 0;
+            ow.spawnEntity(ar);
+            ru.death.chaosshard.anchor.AnchorSigns.projectiles(t, ru.death.chaosshard.anchor.AnchorSigns.Mods.of(t), 1, true, false);
+            check(ar.motionX < 0, "Рикошет: стрела летит обратно (" + ar.motionX + ")");
+            ar.setDead();
+        });
+        step("Альфа и подставные Якоря убраны", () -> {
+            for (net.minecraft.entity.EntityLiving e : sMob) if (e != null) e.setDead();
+            ru.death.chaosshard.anchor.AnchorData ad = ru.death.chaosshard.anchor.AnchorData.get(ow);
+            for (BlockPos f : fakes) { ad.anchors.remove(f); ad.recs.remove(f.toLong()); }
+            ad.markDirty();
+            if (alA[0] != null) ow.setBlockToAir(alA[0]);
+            check(ow.isAirBlock(alA[0].add(1, 0, 1)), "основание снято");
+            TileAnchor main = (TileAnchor) ow.getTileEntity(anchorPos);
+            if (main != null) { main.setBorrow(0, null); main.refreshNet(); }
+        });
+
         section("Рудокоп");
         step("рудокоп у сундука на настоящей земле", () -> {
             BlockPos ground = ow.getTopSolidOrLiquidBlock(ow.getSpawnPoint().add(-40, 0, -40));

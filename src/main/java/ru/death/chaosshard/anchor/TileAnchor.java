@@ -393,7 +393,7 @@ public class TileAnchor extends TileEntity implements ITickable {
     }
 
     /** Обновить кэш сетевых сил. */
-    void refreshNet() {
+    public void refreshNet() {
         boolean net = AnchorNet.isNetWorld(world) && owner != null;
         netAlpha = net ? AnchorNet.alphaLevel(world, owner) : 0;
         java.util.List<BlockPos> awake = net ? AnchorNet.awakeAlphas(world, owner) : java.util.Collections.emptyList();
@@ -879,9 +879,10 @@ public class TileAnchor extends TileEntity implements ITickable {
     /** Навесить печать в первое свободное открытое место; false — места нет. */
     public boolean addSeal(ItemAnchorSeal.Type type) {
         int open = sealSlots();
+        net.minecraft.item.ItemStack st = new net.minecraft.item.ItemStack(ru.death.chaosshard.init.ModItems.SEALS.get(type));
         for (int i = 0; i < open; i++) {
-            if (sealInv.getStackInSlot(i).isEmpty()) {
-                sealInv.setStackInSlot(i, new net.minecraft.item.ItemStack(ru.death.chaosshard.init.ModItems.SEALS.get(type)));
+            if (sealInv.getStackInSlot(i).isEmpty() && sealInv.isItemValid(i, st)) {
+                sealInv.setStackInSlot(i, st);
                 return true;
             }
         }
