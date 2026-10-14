@@ -19,7 +19,7 @@ chaosshard.hud.thread=Нить %s · %s/%s
 chaosshard.hud.thread.max=Нить %s · предел
 
 # Команды
-chaosshard.command.usage=/oh <nit|tp|sky|grimoire|breach|heart|anchor|village|shrine|quests|selftest|debug> ...
+chaosshard.command.usage=/oh <nit|tp|sky|grimoire|breach|heart|anchor|village|shrine|quests|selftest|debug|boss|astral|pillar|garrot|act5|trial|beast|servant|structure|surge|autotest> ...
 chaosshard.command.nit.usage=/chaosshard nit <get [игрок]|set <игрок> <очки>|add <игрок> <очки>|resync [игрок]>
 chaosshard.command.nit.get=Нить %s: уровень %s, очков %s
 chaosshard.command.nit.changed=Нить %s: уровень %s, очков %s

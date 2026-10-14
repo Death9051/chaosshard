@@ -129,6 +129,15 @@ public class CommandChaosShard extends CommandBase {
                 }
                 break;
             }
+            case "boss":
+                BossCommand.run(server, sender, args);
+                break;
+            case "astral":
+                if (!ChaosShard.astralLoaded) {
+                    throw new CommandException("Astral Sorcery не установлен");
+                }
+                AstralCommand.run(server, sender, args);
+                break;
             case "autotest": {
                 // /oh autotest confirm — сценарии без игрока, отчёт в chaosshard-autotest.txt.
                 // Ставит постройки, роняет Опоры, сносит деревни — в игровом мире только с явным «confirm»
@@ -688,7 +697,19 @@ public class CommandChaosShard extends CommandBase {
     @Override
     public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos targetPos) {
         if (args.length == 1) {
-            return getListOfStringsMatchingLastWord(args, "nit", "tp", "sky", "grimoire", "debug", "breach", "heart", "quests", "selftest", "anchor", "shrine", "surge", "village", "trial", "beast", "servant", "autotest", "structure", "pillar", "garrot", "act5");
+            return getListOfStringsMatchingLastWord(args, "nit", "tp", "sky", "grimoire", "debug", "breach", "heart", "quests", "selftest", "anchor", "shrine", "surge", "village", "trial", "beast", "servant", "autotest", "structure", "pillar", "garrot", "act5", "boss", "astral");
+        }
+        if (args.length == 2 && "boss".equals(args[0])) {
+            return getListOfStringsMatchingLastWord(args, BossCommand.NAMES);
+        }
+        if (args.length == 2 && "astral".equals(args[0])) {
+            return getListOfStringsMatchingLastWord(args, "info", "ready", "link", "exp");
+        }
+        if (args.length == 3 && "astral".equals(args[0]) && "ready".equals(args[1])) {
+            return getListOfStringsMatchingLastWord(args, "aevitas", "armara", "discidia", "evorsio", "vicio");
+        }
+        if (args.length == 2 && "autotest".equals(args[0])) {
+            return getListOfStringsMatchingLastWord(args, "confirm");
         }
         if (args.length == 2 && "act5".equals(args[0])) {
             return getListOfStringsMatchingLastWord(args, "start", "raid", "capital", "open", "rift", "reset");

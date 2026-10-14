@@ -53,6 +53,11 @@ public class Pillars {
 
     /** Применить сферу Знамения в точке at. false — не вышло (сообщение отправлено), сфера не тратится. */
     public static boolean omen(EntityPlayerMP p, World world, BlockPos at, Lightbearer h) {
+        return omen(p, world, at, h, false);
+    }
+
+    /** force — для проверки (/oh boss): не ждать падения предыдущих Опор. */
+    public static boolean omen(EntityPlayerMP p, World world, BlockPos at, Lightbearer h, boolean force) {
         if (world.provider.getDimension() != Breach.luchezariyaDim()) {
             p.sendStatusMessage(Breach.grimoire("chaosshard.omen.wrong_world"), true);
             return false;
@@ -63,7 +68,7 @@ public class Pillars {
         }
         HeroData data = HeroData.get(world);
         Lightbearer prev = h.previous();
-        if (prev != null && !data.fallen(prev)) {
+        if (!force && prev != null && !data.fallen(prev)) {
             p.sendMessage(Breach.grimoire("chaosshard.omen.order", name(prev)));
             return false;
         }

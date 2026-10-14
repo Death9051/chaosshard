@@ -15,7 +15,7 @@ chaosshard.thread.overflow=The Thread is full: +%s overflowed. Beasts +%s XP, st
 chaosshard.hud.thread=Thread %s · %s/%s
 chaosshard.hud.thread.max=Thread %s · max
 
-chaosshard.command.usage=/oh <nit|tp|sky|grimoire|breach|heart|anchor|shrine|quests|selftest|debug> ...
+chaosshard.command.usage=/oh <nit|tp|sky|grimoire|breach|heart|anchor|village|shrine|quests|selftest|debug|boss|astral|pillar|garrot|act5|trial|beast|servant|structure|surge|autotest> ...
 chaosshard.command.nit.usage=/chaosshard nit <get [player]|set <player> <points>|add <player> <points>|resync [player]>
 chaosshard.command.nit.get=Thread of %s: level %s, %s points
 chaosshard.command.nit.changed=Thread of %s: level %s, %s points

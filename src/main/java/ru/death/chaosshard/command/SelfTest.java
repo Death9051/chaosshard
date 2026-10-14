@@ -441,6 +441,23 @@ public final class SelfTest {
                 }
             }
             check(entMissing.isEmpty(), "все существа охоты есть в игре" + (entMissing.isEmpty() ? "" : ": нет " + entMissing));
+            // имя существа в квесте: ключ entity.<имя>.name и что выдаёт само существо
+            for (String en : new TreeSet<>(ents)) {
+                if (!en.contains(":") || !ForgeRegistries.ENTITIES.containsKey(new ResourceLocation(en))) {
+                    continue;
+                }
+                String tn = net.minecraft.entity.EntityList.getTranslationName(new ResourceLocation(en));
+                String key = "entity." + tn + ".name";
+                String shown = "?";
+                try {
+                    net.minecraft.entity.Entity e = net.minecraft.entity.EntityList.createEntityByIDFromName(new ResourceLocation(en), net.minecraftforge.fml.common.FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(0));
+                    shown = e == null ? "—" : e.getName();
+                } catch (Throwable t) {
+                    shown = t.toString();
+                }
+                line("  охота " + en + ": ключ " + key + (net.minecraft.util.text.translation.I18n.canTranslate(key) ? " есть" : " НЕТ")
+                        + ", имя существа «" + shown + "»");
+            }
         }
         line("Ссылок на предметы в квестах: " + ids.size());
         check(missing.isEmpty(), "все предметы квестов существуют" + (missing.isEmpty() ? "" : ": нет " + missing));
