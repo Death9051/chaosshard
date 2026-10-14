@@ -101,6 +101,10 @@ jobs:
           cp server/logs/latest.log /tmp/t/latest.log 2>/dev/null || true
           cp server/crash-reports/*.txt /tmp/t/ 2>/dev/null || true
           ls server/mods > /tmp/t/mods.txt 2>/dev/null || true
+          # настройки всех модов (созданные при запуске) и их переводы — для поиска по сборке
+          tar czf /tmp/t/config.tgz -C server config 2>/dev/null || true
+          mkdir -p /tmp/lang && for j in server/mods/*.jar; do n=$(basename "$j" .jar); mkdir -p "/tmp/lang/$n"; unzip -qo "$j" 'assets/*/lang/ru_ru.lang' 'assets/*/lang/en_us.lang' 'assets/*/lang/ru_RU.lang' 'assets/*/lang/en_US.lang' -d "/tmp/lang/$n" 2>/dev/null || true; done
+          tar czf /tmp/t/lang.tgz -C /tmp lang 2>/dev/null || true
           echo "${{ job.status }} ${{ github.sha }}" > /tmp/t/status.txt
           git config user.name "ci-bot"
           git config user.email "ci-bot@users.noreply.github.com"

@@ -63,7 +63,8 @@
        "function": "set_data",
        "data": 1
       }
-     ]
+     ],
+     "entryName": "golden_apple_enchanted"
     },
     {
      "type": "item",

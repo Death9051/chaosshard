@@ -75,6 +75,8 @@ public class AntechamberEvents {
         }
         EntityPlayerMP player = (EntityPlayerMP) event.player;
         ru.death.chaosshard.heart.HeartPlacer.ensure(player.getServer().getWorld(AntechamberDimension.id()));
+        // Корень вкладки вех мода: без него вкладка выглядит незавершённой даже после финала
+        ru.death.chaosshard.quest.Milestones.grant(player, "root");
         NBTTagCompound persisted = persisted(player);
         // Гримуар выдаётся один раз, в том числе в мирах, созданных до его появления
         if (!persisted.getBoolean(TAG_GRIMOIRE)) {
