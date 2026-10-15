@@ -1,0 +1,32 @@
+=== Осколок Хаоса — клиентский прогон ===
+  [OK]   главное меню открылось
+  [OK]   модели предметов: 100
+  [OK]   названия предметов
+  [OK]   модели блоков: 118 состояний
+  [OK]   строки с % форматируются (ru_ru)
+  [OK]   отрисовщики существ
+  [OK]   названия существ
+  снимок: ct_01_menu.png
+  [OK]   мир загружен
+  [OK]   блоки мода поставлены: 34
+  существа на снимке: [servant_hare, servant_tiger, servant_cat, servant_husk, servant_bone, servant_executioner, servant_reaper, servant_lumberjack, servant_miner, order_knight, hero, garrot, king, archon]
+  снимок: ct_02_blocks.png
+  снимок: ct_03_entities.png
+  снимок: ct_04_grimoire_spells.png
+  снимок: ct_05_grimoire_rituals.png
+  снимок: ct_06_grimoire_rituals_end.png
+  снимок: ct_07_grimoire_servants.png
+  снимок: ct_08_spell_wheel.png
+  [OK]   окно Сердца открылось: GuiHeart
+  снимок: ct_09_heart.png
+  [OK]   окно Якоря открылось: GuiAnchor
+  снимок: ct_10_anchor_tab0.png
+  снимок: ct_11_anchor_tab1.png
+  снимок: ct_12_anchor_tab2.png
+  снимок: ct_13_anchor_tab3.png
+  снимок: ct_20_creative.png
+  снимок: ct_21_creative_end.png
+  снимок: ct_30_trophies.png
+  снимок: ct_31_trophies_turned.png
+
+Итого: пройдено 11, провалено 0
