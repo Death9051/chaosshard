@@ -332,28 +332,26 @@ public class ClientTest {
             case 47:
                 // гибель Светоча: колено, свет уходит к вершине Опоры, тело тает (и сцена падения)
                 onServer(this::heroDeath);
-                wait = 22;
                 step++;
                 return;
             case 48:
-                for (Entity e : mc.world.loadedEntityList) {
-                    if (e instanceof ru.death.chaosshard.hero.EntityHero) {
-                        ru.death.chaosshard.hero.EntityHero h = (ru.death.chaosshard.hero.EntityHero) e;
-                        line("  Светоч у клиента: " + (int) e.posX + " " + (int) e.posY + " " + (int) e.posZ + ", здоровье " + h.getHealth()
-                                + ", гаснет " + h.dyingTicks() + ", мёртв " + e.isDead + ", поза " + h.pose() + ", вид " + mc.getRenderViewEntity());
-                    }
+                if (clientDying() < 18) {
+                    return;   // снимки — по тикам гибели, которые прислал сервер, а не по часам клиента
                 }
-                line("  место гибели: " + heroSpot);
                 shot = "32_hero_kneel";
-                wait = 22;
                 step++;
                 return;
             case 49:
+                if (clientDying() >= 0 && clientDying() < 40) {
+                    return;   // -1: уже растаял — снять что есть
+                }
                 shot = "33_hero_light";
-                wait = 18;
                 step++;
                 return;
             case 50:
+                if (clientDying() >= 0 && clientDying() < 66) {
+                    return;   // -1: уже растаял — снять что есть
+                }
                 shot = "34_hero_dissolve";
                 wait = 50;
                 step++;
@@ -508,6 +506,17 @@ public class ClientTest {
     }
 
     private BlockPos heroSpot;
+
+    /** Сколько тиков гаснет Светоч в мире клиента (-1 — его нет). */
+    private int clientDying() {
+        int d = -1;
+        for (Entity e : mc.world.loadedEntityList) {
+            if (e instanceof ru.death.chaosshard.hero.EntityHero && !e.isDead) {
+                d = Math.max(d, ((ru.death.chaosshard.hero.EntityHero) e).dyingTicks());
+            }
+        }
+        return d;
+    }
 
     private void heroDeath(IntegratedServer s, WorldServer w, EntityPlayerMP p) {
         heroSpot = origin.add(24, 0, -40);
