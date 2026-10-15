@@ -338,6 +338,7 @@ public final class AutoTest {
     private ru.death.chaosshard.hero.EntityHero velmor;
     private BlockPos sealHere;
     private ru.death.chaosshard.hero.EntityHero lian;
+    private AxisAlignedBB elisBox;
     private UUID lostHero;
     private int challengeNit, challengeCorrupt;
 
@@ -1764,18 +1765,21 @@ public final class AutoTest {
             kill(hs.get(0));
             ru.death.chaosshard.hero.HeroData.Pillar p = ru.death.chaosshard.hero.HeroData.get(ow).of(ru.death.chaosshard.hero.Lightbearer.KAEL);
             check(p.state == ru.death.chaosshard.hero.HeroData.FALLEN, "Опора пала");
+            check(hs.get(0).dying(), "Каэль гаснет на коленях, а не исчезает сразу");
             BlockPos o = planned.origin();
             check(!ow.isAirBlock(o.up(ru.death.chaosshard.structure.bp.VeilPillar.FLOOR + ru.death.chaosshard.structure.bp.VeilPillar.COLUMN_H)),
                     "колонна ещё стоит — рухнет под камерой");
-            boolean blade = !ow.getEntitiesWithinAABB(net.minecraft.entity.item.EntityItem.class, new AxisAlignedBB(o).grow(24, 40, 24),
-                    x -> x.getItem().getItem() == ru.death.chaosshard.init.ModItems.KAEL_BLADE).isEmpty();
-            check(blade, "Клинок Каэля лежит у Опоры");
+            check(ow.getEntitiesWithinAABB(net.minecraft.entity.item.EntityItem.class, new AxisAlignedBB(o).grow(24, 40, 24),
+                    x -> x.getItem().getItem() == ru.death.chaosshard.init.ModItems.KAEL_BLADE).isEmpty(), "клинок выпадет, когда Каэль растает, — не раньше");
             check(nitGrew(nit), "Нить окрепла (или перелилась): " + nit + " → " + ru.death.chaosshard.thread.ThreadManager.getPoints(me));
             Advancement a = server.getAdvancementManager().getAdvancement(new ResourceLocation("chaosshard", "m/pillar_kael"));
             check(a != null, "веха «Опора Каэля пала» загружена");
             // подставному игроку Forge вехи не засчитывает — только для сведения
             line("    веха у подставного игрока: " + (a != null && me.getAdvancements().getProgress(a).isDone() ? "засчитана" : "не засчитана (FakePlayer)"));
         });
+        until("Каэль растаял — Клинок Каэля лежит у Опоры", () -> !ow.getEntitiesWithinAABB(net.minecraft.entity.item.EntityItem.class,
+                new AxisAlignedBB(planned.origin()).grow(24, 40, 24), x -> x.getItem().getItem() == ru.death.chaosshard.init.ModItems.KAEL_BLADE).isEmpty(),
+                ru.death.chaosshard.hero.EntityHero.DYING + 40);
         until("колонна рухнула", () -> ow.isAirBlock(planned.origin().up(ru.death.chaosshard.structure.bp.VeilPillar.FLOOR
                 + ru.death.chaosshard.structure.bp.VeilPillar.COLUMN_H)), ru.death.chaosshard.hero.Pillars.COLLAPSE_DELAY + 40);
         step("после обрушения: луч погас, святыня погасла", () -> {
@@ -1867,10 +1871,10 @@ public final class AutoTest {
             kill(irena);
             ru.death.chaosshard.hero.HeroData.Pillar p = ru.death.chaosshard.hero.HeroData.get(ow).of(ru.death.chaosshard.hero.Lightbearer.IRENA);
             check(p.state == ru.death.chaosshard.hero.HeroData.FALLEN, "Опора Ирены пала");
-            boolean rosary = !ow.getEntitiesWithinAABB(net.minecraft.entity.item.EntityItem.class, new AxisAlignedBB(p.pos()).grow(24, 40, 24),
-                    x -> x.getItem().getItem() == ru.death.chaosshard.init.ModItems.IRENA_ROSARY).isEmpty();
-            check(rosary, "Чётки Ирены лежат у Опоры");
         });
+        until("Ирена растаяла — Чётки Ирены лежат у Опоры", () -> !ow.getEntitiesWithinAABB(net.minecraft.entity.item.EntityItem.class,
+                new AxisAlignedBB(ru.death.chaosshard.hero.HeroData.get(ow).of(ru.death.chaosshard.hero.Lightbearer.IRENA).pos()).grow(24, 40, 24),
+                x -> x.getItem().getItem() == ru.death.chaosshard.init.ModItems.IRENA_ROSARY).isEmpty(), ru.death.chaosshard.hero.EntityHero.DYING + 40);
         until("Опора Ирены рухнула, святая земля погасла", () -> {
             ru.death.chaosshard.hero.HeroData.Pillar p = ru.death.chaosshard.hero.HeroData.get(ow).of(ru.death.chaosshard.hero.Lightbearer.IRENA);
             return p.collapseAt == 0 && ru.death.chaosshard.order.Shrines.nearest(ow, p.pos(), 32) == null;
@@ -1945,11 +1949,10 @@ public final class AutoTest {
             kill(velmor);
             ru.death.chaosshard.hero.HeroData.Pillar p = ru.death.chaosshard.hero.HeroData.get(ow).of(ru.death.chaosshard.hero.Lightbearer.VELMOR);
             check(p.state == ru.death.chaosshard.hero.HeroData.FALLEN, "Опора Вельмора пала");
-            boolean staff = !ow.getEntitiesWithinAABB(net.minecraft.entity.item.EntityItem.class, velmor.getEntityBoundingBox().grow(8),
-                    x -> x.getItem().getItem() == ru.death.chaosshard.init.ModItems.VELMOR_STAFF).isEmpty();
-            check(staff, "Посох Вельмора лежит у тела");
             check(ru.death.chaosshard.hero.HeroData.get(ow).fallenCount() == 3, "пало Опор: " + ru.death.chaosshard.hero.HeroData.get(ow).fallenCount());
         });
+        until("Вельмор растаял — Посох Вельмора лежит на его месте", () -> velmor == null || !ow.getEntitiesWithinAABB(net.minecraft.entity.item.EntityItem.class,
+                velmor.getEntityBoundingBox().grow(8), x -> x.getItem().getItem() == ru.death.chaosshard.init.ModItems.VELMOR_STAFF).isEmpty(), ru.death.chaosshard.hero.EntityHero.DYING + 40);
         until("Опора Вельмора рухнула", () -> ru.death.chaosshard.hero.HeroData.get(ow).of(ru.death.chaosshard.hero.Lightbearer.VELMOR).collapseAt == 0,
                 ru.death.chaosshard.hero.Pillars.COLLAPSE_DELAY + 40);
         step("назад на площадку", () -> me.setPosition(base.getX() + 0.5, base.getY() + 1, base.getZ() + 0.5));
@@ -2006,13 +2009,13 @@ public final class AutoTest {
             check(guards == 2, "хор привёл стражей: " + guards);
             kill(lian);
             check(p.state == ru.death.chaosshard.hero.HeroData.FALLEN, "Опора Лиана пала");
-            check(!ow.getEntitiesWithinAABB(net.minecraft.entity.item.EntityItem.class, lian.getEntityBoundingBox().grow(8),
-                    x -> x.getItem().getItem() == ru.death.chaosshard.init.ModItems.LIAN_LUTE).isEmpty(), "Лютня Лиана у тела");
             for (ru.death.chaosshard.structure.EntityOrderKnight k : ow.getEntitiesWithinAABB(ru.death.chaosshard.structure.EntityOrderKnight.class,
                     new AxisAlignedBB(p.pos()).grow(24, 40, 24))) {
                 k.setDead();
             }
         });
+        until("Лиан растаял — Лютня Лиана на его месте", () -> lian == null || !ow.getEntitiesWithinAABB(net.minecraft.entity.item.EntityItem.class,
+                lian.getEntityBoundingBox().grow(8), x -> x.getItem().getItem() == ru.death.chaosshard.init.ModItems.LIAN_LUTE).isEmpty(), ru.death.chaosshard.hero.EntityHero.DYING + 40);
         step("Знамение Элис", () -> {
             me.setPosition(base.getX() + 0.5, base.getY() + 1, base.getZ() + 0.5);
             me.rotationYaw = 45;
@@ -2066,12 +2069,13 @@ public final class AutoTest {
             e.attackEntityFrom(DamageSource.causePlayerDamage(me), 40F);
             float openLoss = h - e.getHealth();
             check(guardedLoss > 0 && guardedLoss < openLoss * 0.6F, "урон под стражей " + guardedLoss + ", без стражи " + openLoss);
+            elisBox = e.getEntityBoundingBox().grow(8);
             kill(e);
             check(p.state == ru.death.chaosshard.hero.HeroData.FALLEN, "Опора Элис пала");
             check(ru.death.chaosshard.hero.HeroData.get(ow).fallenCount() == 5, "пали все пять Опор");
-            check(!ow.getEntitiesWithinAABB(net.minecraft.entity.item.EntityItem.class, e.getEntityBoundingBox().grow(8),
-                    x -> x.getItem().getItem() == ru.death.chaosshard.init.ModItems.ELIS_SIGNET).isEmpty(), "Перстень Элис у тела");
         });
+        until("Элис растаяла — Перстень Элис на её месте", () -> elisBox == null || !ow.getEntitiesWithinAABB(net.minecraft.entity.item.EntityItem.class,
+                elisBox, x -> x.getItem().getItem() == ru.death.chaosshard.init.ModItems.ELIS_SIGNET).isEmpty(), ru.death.chaosshard.hero.EntityHero.DYING + 40);
         step("трофеи Светочей в Логове: пассивки", () -> {
             BlockPos lp = base.add(-40, 1, 40);
             ow.getChunk(lp);

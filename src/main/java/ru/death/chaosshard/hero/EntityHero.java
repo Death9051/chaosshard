@@ -60,6 +60,8 @@ public class EntityHero extends EntityMob implements ru.death.chaosshard.hero.Po
     private static final DataParameter<Byte> POSE = EntityDataManager.createKey(EntityHero.class, DataSerializers.BYTE);
     private int poseTicks;
     private static final DataParameter<Integer> HERO = EntityDataManager.createKey(EntityHero.class, DataSerializers.VARINT);
+    /** Сколько тиков Светоч уже гаснет (0 — жив). */
+    private static final DataParameter<Integer> DYING_T = EntityDataManager.createKey(EntityHero.class, DataSerializers.VARINT);
     private static final UUID STAGGER_ID = UUID.fromString("6f1c7e8a-0b9d-4f3a-9c21-7a3e5d2b1c40");
 
     /** Каэль: как часто вспышка и сколько её заряжать, как часто рывок. */
@@ -102,6 +104,7 @@ public class EntityHero extends EntityMob implements ru.death.chaosshard.hero.Po
         super.entityInit();
         dataManager.register(POSE, (byte) 0);
         dataManager.register(HERO, 0);
+        dataManager.register(DYING_T, 0);
     }
 
     public Lightbearer hero() {
@@ -198,7 +201,7 @@ public class EntityHero extends EntityMob implements ru.death.chaosshard.hero.Po
 
     @Override
     public boolean attackEntityFrom(DamageSource src, float amount) {
-        if (scripted && !src.canHarmInCreative()) {
+        if (scripted && !src.canHarmInCreative() || getHealth() <= 0) {
             return false;
         }
         if (!world.isRemote && hero() == Lightbearer.VELMOR && away != null && stun <= 0 && !src.canHarmInCreative()) {
@@ -316,6 +319,11 @@ public class EntityHero extends EntityMob implements ru.death.chaosshard.hero.Po
             dataManager.set(POSE, (byte) 0);
         }
         if (world.isRemote) {
+            return;
+        }
+        if (getHealth() <= 0) {
+            // гаснет: ни приёмов, ни лечения, ни проверки «лишнего» Светоча
+            bossInfo.setPercent(0);
             return;
         }
         bossInfo.setPercent(getHealth() / getMaxHealth());
@@ -971,8 +979,97 @@ public class EntityHero extends EntityMob implements ru.death.chaosshard.hero.Po
             if (killer == null && k != null && ru.death.chaosshard.servant.Servants.owner(k) instanceof EntityPlayerMP) {
                 killer = (EntityPlayerMP) ru.death.chaosshard.servant.Servants.owner(k);
             }
-            say("death");
-            Pillars.fall((WorldServer) world, hero(), getPosition(), killer);
+            getNavigator().clearPath();
+            owesDrops = Pillars.fall((WorldServer) world, hero(), getPosition(), killer);
+        }
+    }
+
+    // ------------------------------------------------------------------ гибель
+
+    /** Сколько тиков Светоч гаснет: падает на колено, свет уходит из него к вершине Опоры, он тает. Потом рушится Опора. */
+    public static final int DYING = 80;
+    /** С какого тика гибели тело тает (поднимается и сжимается в точку света). */
+    public static final int DISSOLVE_FROM = 52;
+    /** Трофей и отголосок ещё не выпали (выпадут, когда Светоч растает). */
+    private boolean owesDrops, released;
+    private Vec3d lightTo;
+
+    public int dyingTicks() {
+        return dataManager.get(DYING_T);
+    }
+
+    /** Убит и ещё гаснет. */
+    public boolean dying() {
+        return getHealth() <= 0 && !isDead;
+    }
+
+    @Override
+    protected void onDeathUpdate() {
+        if (world.isRemote) {
+            return;   // клиент не опрокидывает тело: тело уберёт сервер, когда Светоч растает
+        }
+        int t = dyingTicks() + 1;
+        dataManager.set(DYING_T, t);
+        dyingFx((WorldServer) world, t);
+        if (t >= DYING) {
+            release();
+            deathTime = 19;
+            super.onDeathUpdate();   // опыт и уход из мира
+        }
+    }
+
+    private void dyingFx(WorldServer w, int t) {
+        double x = posX, y = posY, z = posZ;
+        if (t == 1) {
+            setPose(Pose.KNEEL, 0);
+            w.playSound(null, getPosition(), SoundEvents.BLOCK_NOTE_BELL, SoundCategory.HOSTILE, 2.5F, 0.5F);
+        }
+        if (lightTo == null) {
+            lightTo = HeroScenes.origin(w, this).add(0, ru.death.chaosshard.structure.bp.VeilPillar.FLOOR
+                    + ru.death.chaosshard.structure.bp.VeilPillar.COLUMN_H, 0);
+        }
+        // свет сочится из тела — всё сильнее
+        if (t < DYING - 6 && t % 2 == 0) {
+            w.spawnParticle(EnumParticleTypes.END_ROD, x, y + 1.0, z, 1 + t / 16, 0.3, 0.5, 0.3, 0.015);
+        }
+        // и уходит дугой к вершине Опоры
+        Vec3d from = new Vec3d(x, y + 1.3, z);
+        Vec3d d = lightTo.subtract(from);
+        if (t > 24 && t < DYING && d.lengthSquared() < 96 * 96) {
+            double lift = 2 + d.length() * 0.15;
+            for (int k = 0; k < 5; k++) {
+                double f = w.rand.nextDouble();
+                Vec3d q = from.add(d.scale(f)).add(0, Math.sin(f * Math.PI) * lift, 0);
+                w.spawnParticle(EnumParticleTypes.END_ROD, q.x, q.y, q.z, 1, 0.06, 0.06, 0.06, 0.0);
+            }
+        }
+        if (t == 26 || t == 50) {
+            w.playSound(null, getPosition(), SoundEvents.BLOCK_NOTE_BELL, SoundCategory.HOSTILE, 2.5F, t == 26 ? 0.42F : 0.35F);
+        }
+        if (t == DISSOLVE_FROM) {
+            w.playSound(null, getPosition(), SoundEvents.BLOCK_BEACON_DEACTIVATE, SoundCategory.HOSTILE, 3.0F, 0.8F);
+        }
+        if (t > DISSOLVE_FROM && t < DYING) {
+            w.spawnParticle(EnumParticleTypes.FIREWORKS_SPARK, x, y + 1.0, z, 3, 0.25, 0.4, 0.25, 0.02);
+        }
+        if (t >= DYING) {
+            // вспышка: от Светоча остаётся только то, что он нёс
+            w.spawnParticle(EnumParticleTypes.FIREWORKS_SPARK, x, y + 1.6, z, 140, 0.3, 0.3, 0.3, 0.28);
+            w.spawnParticle(EnumParticleTypes.END_ROD, x, y + 1.6, z, 60, 0.2, 0.2, 0.2, 0.12);
+            w.playSound(null, getPosition(), SoundEvents.ENTITY_FIREWORK_LARGE_BLAST, SoundCategory.HOSTILE, 3.0F, 0.7F);
+            w.playSound(null, getPosition(), SoundEvents.ENTITY_FIREWORK_TWINKLE, SoundCategory.HOSTILE, 2.5F, 0.8F);
+        }
+    }
+
+    /** Светоч растаял: к его месту падают трофей, отголосок и реликвии. */
+    private void release() {
+        if (released || world.isRemote) {
+            return;
+        }
+        released = true;
+        if (owesDrops) {
+            owesDrops = false;
+            Pillars.release((WorldServer) world, hero(), getPosition());
         }
     }
 
@@ -1017,6 +1114,8 @@ public class EntityHero extends EntityMob implements ru.death.chaosshard.hero.Po
         tag.setBoolean("Greeted", greeted);
         tag.setBoolean("Phase2", phase2);
         tag.setInteger("Escapes", escapes);
+        tag.setInteger("DyingT", dyingTicks());
+        tag.setBoolean("OwesDrops", owesDrops);
         if (away != null) {
             tag.setLong("Away", away.toLong());
         }
@@ -1038,6 +1137,8 @@ public class EntityHero extends EntityMob implements ru.death.chaosshard.hero.Po
         greeted = tag.getBoolean("Greeted");
         phase2 = tag.getBoolean("Phase2");
         escapes = tag.getInteger("Escapes");
+        dataManager.set(DYING_T, tag.getInteger("DyingT"));
+        owesDrops = tag.getBoolean("OwesDrops");
         away = tag.hasKey("Away") ? BlockPos.fromLong(tag.getLong("Away")) : null;
         if (tag.hasKey("PillarHome")) {
             pillarHome = BlockPos.fromLong(tag.getLong("PillarHome"));
@@ -1082,6 +1183,9 @@ public class EntityHero extends EntityMob implements ru.death.chaosshard.hero.Po
     public void setDead() {
         if (holdPeace && getHealth() > 0 && posY >= -64) {
             return;
+        }
+        if (getHealth() <= 0) {
+            release();   // убрали раньше, чем растаял (мирный режим, команда) — трофей всё равно выпадет
         }
         super.setDead();
     }

@@ -15,11 +15,12 @@ import ru.death.chaosshard.structure.bp.VeilPillar;
 /**
  * Катсцены Светочей: появление (первый раз, когда подходишь к Опоре) и падение Опоры.
  * Появление: облёт Опоры с лучом → герой крупно и его слова → Гримуар отвечает → камера в глаза.
- * Падение: камера отъезжает, колонна рушится, Гримуар читает проступившую строку памяти.
+ * Падение: Светоч гаснет и тает, свет уходит к вершине Опоры; камера отъезжает, колонна рушится,
+ * Гримуар читает проступившую строку памяти.
  */
 public final class HeroScenes {
 
-    public static final int INTRO = 220, FALL = 120;
+    public static final int INTRO = 220, FALL = EntityHero.DYING + 120;
     static final Vec3d UP = new Vec3d(0, 1, 0);
     static final int GOLD = 0xFFD060, PURPLE = 0xC080FF;
 
@@ -182,19 +183,38 @@ public final class HeroScenes {
         }
     }
 
-    /** Падение Опоры: камера отъезжает от колонны, пока она рушится. */
+    /** Падение Опоры, если неизвестно, где пал Светоч: считаем, что на своём месте у Опоры. */
     public static Cutscene fall(WorldServer w, BlockPos origin, EntityPlayerMP p, Lightbearer h) {
+        HeroData.Pillar pl = HeroData.get(w).of(h);
+        return fall(w, origin, p, h, pl.state != HeroData.NONE ? Pillars.heroSpot(w, pl) : origin);
+    }
+
+    /**
+     * Гибель Светоча и падение Опоры. Сначала — Светоч: падает на колено, говорит последние слова, свет уходит
+     * из него к вершине Опоры (камера поднимается следом), он тает. Потом камера отъезжает от колонны, пока она рушится,
+     * и Гримуар читает проступившую строку памяти.
+     */
+    public static Cutscene fall(WorldServer w, BlockPos origin, EntityPlayerMP p, Lightbearer h, BlockPos heroAt) {
         Vec3d o = new Vec3d(origin.getX() + 0.5, origin.getY(), origin.getZ() + 0.5);
         Vec3d eye = new Vec3d(p.posX, p.posY + p.getEyeHeight(), p.posZ);
         Vec3d look = p.getLookVec();
         Vec3d dOP = flat(eye.subtract(o));
         Vec3d mid = o.add(UP.scale(VeilPillar.FLOOR + 18));
+        Vec3d top = o.add(UP.scale(VeilPillar.FLOOR + VeilPillar.COLUMN_H));
+        Vec3d hp = new Vec3d(heroAt.getX() + 0.5, heroAt.getY(), heroAt.getZ() + 0.5);
+        Vec3d chest = hp.add(UP.scale(1.3));
+        Vec3d dHP = flat(eye.subtract(hp)), side = new Vec3d(-dHP.z, 0, dHP.x);
+        int d = EntityHero.DYING;
         Cutscene s = new Cutscene("fall_" + h.id(), FALL);
-        s.cut(0, o.add(rot(dOP, 35).scale(24)).add(UP.scale(8)), mid)
-                .key(90, o.add(rot(dOP, 55).scale(34)).add(UP.scale(14)), o.add(UP.scale(VeilPillar.FLOOR + 8)))
-                .cut(92, eye.subtract(look.scale(1.5)).add(UP.scale(0.3)), eye.add(look.scale(5)))
+        s.cut(0, hp.add(dHP.scale(4.6)).add(side.scale(1.4)).add(UP.scale(2.3)), chest)
+                .key(EntityHero.DISSOLVE_FROM - 6, hp.add(dHP.scale(3.0)).add(side.scale(0.8)).add(UP.scale(1.9)), chest)
+                .key(d, hp.add(dHP.scale(5.5)).add(side.scale(1.8)).add(UP.scale(2.6)), top)
+                .cut(d + 2, o.add(rot(dOP, 35).scale(24)).add(UP.scale(8)), mid)
+                .key(d + 90, o.add(rot(dOP, 55).scale(34)).add(UP.scale(14)), o.add(UP.scale(VeilPillar.FLOOR + 8)))
+                .cut(d + 92, eye.subtract(look.scale(1.5)).add(UP.scale(0.3)), eye.add(look.scale(5)))
                 .key(FALL, eye, eye.add(look.scale(5)));
-        s.line(34, 116, "chaosshard.cutscene.grimoire", "chaosshard.hero." + h.id() + ".memory", PURPLE);
+        s.line(6, EntityHero.DISSOLVE_FROM - 4, h.nameKey(), "chaosshard.hero." + h.id() + ".death", GOLD)
+                .line(d + 34, d + 116, "chaosshard.cutscene.grimoire", "chaosshard.hero." + h.id() + ".memory", PURPLE);
         return s;
     }
 

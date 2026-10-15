@@ -434,12 +434,15 @@ public class Pillars {
 
     // ------------------------------------------------------------------ падение
 
-    /** Светоч пал: Опора рушится. killer — кто добил (может быть null). */
-    public static void fall(WorldServer ws, Lightbearer h, BlockPos heroAt, EntityPlayerMP killer) {
+    /**
+     * Светоч пал: Опора рушится, когда он догаснет (COLLAPSE_DELAY). killer — кто добил (может быть null).
+     * true — это его гибель уронила Опору (тогда трофей выпадет, когда Светоч растает: release).
+     */
+    public static boolean fall(WorldServer ws, Lightbearer h, BlockPos heroAt, EntityPlayerMP killer) {
         HeroData data = HeroData.get(ws);
         HeroData.Pillar pl = data.of(h);
         if (pl.state == HeroData.FALLEN) {
-            return;
+            return false;
         }
         OrderStructureData sd = OrderStructureData.get(ws);
         OrderStructureData.Entry e = pl.entry >= 0 ? sd.byId(pl.entry) : null;
@@ -454,7 +457,26 @@ public class Pillars {
             e.keeperDead = true;
             sd.markDirty();
         }
-        // трофей — к ногам павшего
+        int reward = ChaosConfig.order.pillarReward * (2 + h.ordinal()) / 2;
+        for (EntityPlayerMP p : witnesses(ws, o, killer)) {
+            ThreadManager.addPoints(p, reward);
+            p.sendMessage(Breach.grimoire("chaosshard.pillar.fallen", name(h), reward));
+            Milestones.grant(p, h.fallenMilestone());
+            if (data.fallenCount() == Lightbearer.values().length) {
+                Milestones.grant(p, "act4_done");
+                p.sendMessage(Breach.grimoire("chaosshard.act4.done"));
+                ru.death.chaosshard.act5.OrderRaids.herald(p, "chaosshard.order.rise");
+            }
+            if (!(p instanceof net.minecraftforge.common.util.FakePlayer)) {
+                ru.death.chaosshard.cutscene.CutsceneManager.play(p, HeroScenes.fall(ws, o, p, h, heroAt), HeroScenes.NONE);
+            }
+        }
+        ChaosShard.LOG.info("Опора {} пала у {}", h.id(), o);
+        return true;
+    }
+
+    /** Светоч растаял: трофей и отголосок приёма — к месту, где он стоял на коленях. */
+    public static void release(WorldServer ws, Lightbearer h, BlockPos heroAt) {
         ItemStack trophy = Trophies.of(h);
         if (!trophy.isEmpty()) {
             EntityItem ei = new EntityItem(ws, heroAt.getX() + 0.5, heroAt.getY() + 1, heroAt.getZ() + 0.5, trophy);
@@ -468,24 +490,10 @@ public class Pillars {
         echo.setNoDespawn();
         ws.spawnEntity(echo);
         ru.death.chaosshard.compat.loot.OrderLoot.heroRelics(ws, h, heroAt);
-        int reward = ChaosConfig.order.pillarReward * (2 + h.ordinal()) / 2;
-        for (EntityPlayerMP p : witnesses(ws, o, killer)) {
-            ThreadManager.addPoints(p, reward);
-            p.sendMessage(Breach.grimoire("chaosshard.pillar.fallen", name(h), reward));
-            Milestones.grant(p, h.fallenMilestone());
-            if (data.fallenCount() == Lightbearer.values().length) {
-                Milestones.grant(p, "act4_done");
-                p.sendMessage(Breach.grimoire("chaosshard.act4.done"));
-                ru.death.chaosshard.act5.OrderRaids.herald(p, "chaosshard.order.rise");
-            }
-            if (!(p instanceof net.minecraftforge.common.util.FakePlayer)) {
-                ru.death.chaosshard.cutscene.CutsceneManager.play(p, HeroScenes.fall(ws, o, p, h), HeroScenes.NONE);
-            }
-        }
-        ChaosShard.LOG.info("Опора {} пала у {}", h.id(), o);
     }
 
-    public static final int COLLAPSE_DELAY = 25;
+    /** Колонна рушится, когда Светоч догаснет, и ещё чуть погодя — камера успевает отъехать. */
+    public static final int COLLAPSE_DELAY = EntityHero.DYING + 25;
 
     static List<EntityPlayerMP> witnesses(WorldServer ws, BlockPos o, EntityPlayerMP killer) {
         List<EntityPlayerMP> out = new ArrayList<>();

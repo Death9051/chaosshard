@@ -330,6 +330,32 @@ public class ClientTest {
                 step++;
                 return;
             case 47:
+                // гибель Светоча: колено, свет уходит к вершине Опоры, тело тает (и сцена падения)
+                onServer(this::heroDeath);
+                wait = 22;
+                step++;
+                return;
+            case 48:
+                shot = "32_hero_kneel";
+                wait = 22;
+                step++;
+                return;
+            case 49:
+                shot = "33_hero_light";
+                wait = 18;
+                step++;
+                return;
+            case 50:
+                shot = "34_hero_dissolve";
+                wait = 50;
+                step++;
+                return;
+            case 51:
+                onServer(this::heroGone);
+                wait = 10;
+                step++;
+                return;
+            case 52:
                 finish();
                 step++;
                 return;
@@ -471,6 +497,50 @@ public class ClientTest {
         // пустая рука, чтобы Гримуар не заслонял крайний трофей
         p.inventory.currentItem = 8;
         p.connection.sendPacket(new net.minecraft.network.play.server.SPacketHeldItemChange(8));
+    }
+
+    private BlockPos heroSpot;
+
+    private void heroDeath(IntegratedServer s, WorldServer w, EntityPlayerMP p) {
+        heroSpot = origin.add(24, 0, -40);
+        for (BlockPos q : BlockPos.getAllInBox(heroSpot.add(-6, 0, -10), heroSpot.add(6, 4, 6))) {
+            w.setBlockToAir(q);
+        }
+        ru.death.chaosshard.hero.HeroData.Pillar pl = ru.death.chaosshard.hero.HeroData.get(w).of(ru.death.chaosshard.hero.Lightbearer.KAEL);
+        pl.state = ru.death.chaosshard.hero.HeroData.STANDING;
+        pl.entry = -1;
+        pl.x = heroSpot.getX() + 9;
+        pl.y = heroSpot.getY() - ru.death.chaosshard.structure.bp.VeilPillar.FLOOR - 1;
+        pl.z = heroSpot.getZ() + 14;
+        pl.heroAt = heroSpot;
+        ru.death.chaosshard.hero.HeroData.get(w).markDirty();
+        ru.death.chaosshard.hero.EntityHero h = new ru.death.chaosshard.hero.EntityHero(w);
+        h.setup(ru.death.chaosshard.hero.Lightbearer.KAEL);
+        h.setLocationAndAngles(heroSpot.getX() + 0.5, heroSpot.getY(), heroSpot.getZ() + 0.5, 180F, 0F);
+        h.rotationYawHead = 180F;
+        w.spawnEntity(h);
+        pl.heroId = h.getUniqueID();
+        p.connection.setPlayerLocation(heroSpot.getX() + 0.5, heroSpot.getY() + 0.1, heroSpot.getZ() - 5.5, 0F, 10F);
+        h.setHealth(0.5F);
+        h.hurtResistantTime = 0;
+        h.attackEntityFrom(net.minecraft.util.DamageSource.causePlayerDamage(p).setDamageBypassesArmor(), 1.0E6F);
+        if (h.getHealth() > 0) {
+            h.setHealth(0);
+            h.onDeath(net.minecraft.util.DamageSource.causePlayerDamage(p));
+        }
+        boolean dying = h.dying() && !h.isDead;
+        mc.addScheduledTask(() -> check(dying, "Светоч гаснет, а не исчезает сразу"));
+    }
+
+    private void heroGone(IntegratedServer s, WorldServer w, EntityPlayerMP p) {
+        net.minecraft.util.math.AxisAlignedBB box = new net.minecraft.util.math.AxisAlignedBB(heroSpot).grow(8);
+        boolean gone = w.getEntitiesWithinAABB(ru.death.chaosshard.hero.EntityHero.class, box, e -> !e.isDead).isEmpty();
+        boolean blade = !w.getEntitiesWithinAABB(net.minecraft.entity.item.EntityItem.class, box,
+                e -> e.getItem().getItem() == ModItems.KAEL_BLADE).isEmpty();
+        mc.addScheduledTask(() -> {
+            check(gone, "Светоч растаял");
+            check(blade, "клинок Каэля выпал, когда он растаял");
+        });
     }
 
     private void turnBack(IntegratedServer s, WorldServer w, EntityPlayerMP p) {
