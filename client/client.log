@@ -1,0 +1,2204 @@
+WARNING: A restricted method in java.lang.System has been called
+WARNING: java.lang.System::load has been called by net.rubygrapefruit.platform.internal.NativeLibraryLoader in an unnamed module (file:/home/runner/.gradle/wrapper/dists/gradle-9.7.0-bin/d4tj7w02tcgubx9zk9hbippn6/gradle-9.7.0/lib/native-platform-0.22-milestone-29.jar)
+WARNING: Use --enable-native-access=ALL-UNNAMED to avoid a warning for callers in this module
+WARNING: Restricted methods will be blocked in a future release unless native access is enabled
+
+
+Welcome to Gradle 9.7.0!
+
+Here are the highlights of this release:
+ - Isolated Projects graduates to incubating
+ - Broader Configuration Cache compatibility
+ - More source locations in problem reports
+
+For more details see https://docs.gradle.org/9.7.0/release-notes.html
+
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/9.7.0/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build 
+> Task :extractNatives2
+> Task :compileInjectedInterfacesJava NO-SOURCE
+> Task :extractDependencyATs
+> Task :generateForgeSrgMappings SKIPPED
+> Task :downloadVanillaJars SKIPPED
+
+> Task :downloadAssetManifest
+Download https://piston-meta.mojang.com/v1/packages/a21e1ded1a24ea1548dd8db0cf30b6acb02655a9/1.12.json
+Server response does not include an entity tag (ETag).
+
+> Task :mergeVanillaSidedJars
+
+> Task :deobfuscateMergedJarToSrg
+Applying SpecialSource
+Loading 1 AccessTransformers
+Renamed 0 AT entries
+Applying Exceptor
+Cleaning up generated debuginfo
+
+> Task :downloadFernflower SKIPPED
+
+> Task :decompileSrgJar
+Using cached decompiled jar from /home/runner/.gradle/caches/retro_futura_gradle/fernflower-cache/1.0.342-3bcc7ff2caa3c44ef8a4ae34bd7503f35aae66fe83874c4549de26a264180930.jar
+
+> Task :cleanupDecompSrgJar
+Fixup stage 1 - applying FF patches
+  Stage 1 took 437 ms
+Fixup stage 2 - applying MCP patches
+  Stage 2 took 155 ms
+Fixup stage 3 - applying MCP cleanup
+  Stage 3 took 6597 ms
+Fixup stage 4 - injecting package-info
+  Injected 119 package-infos
+  Stage 4 took 4 ms
+Saving the fixed-up jar
+
+> Task :patchDecompiledJar
+Patching sources: 1 patch archives, 2 injection directories
+Applied 525 patches
+
+> Task :applyJST
+Applying access transformers: [/home/runner/work/chaosshard/chaosshard/build/rfg/dependency_at.cfg]
+
+> Task :downloadVanillaAssets
+Downloaded asset (  1/1305) 5ff04807c356f1beed0b86ccf659b44b9983e3fa
+Downloaded asset (  2/1305) f00657542252858a721e715a2e888a9226404e35
+Downloaded asset (  4/1305) af96f55a90eaf11b327f1b5f8834a051027dc506
+Downloaded asset (  6/1305) af96f55a90eaf11b327f1b5f8834a051027dc506
+Downloaded asset (  7/1305) b450229af6ad5062ba318620ac5f047dccf0bf9e
+Downloaded asset (  8/1305) 9e0d4e96d478589bdfa21302ecbcb58bc2069e7a
+Downloaded asset (  9/1305) c15a80610a1a266608648ce873be157473f4ba62
+Downloaded asset ( 10/1305) 68d2948f6e670d4bb01c9656f57110eca438023f
+Downloaded asset ( 11/1305) c9c6488be2b779e80f8ca920045c03f06090d040
+Downloaded asset ( 12/1305) d684beeba787c7a41a341cc6b954c33c35bf6a48
+Downloaded asset ( 13/1305) 91dbc64b72b3628375b51b750196ce9946f14212
+Downloaded asset ( 14/1305) cceb7e24c41ae9d722745d8270b7d5f711134be1
+Downloaded asset ( 15/1305) f8a9e8c2a9aa412047d490636dcae8ea365a04fc
+Downloaded asset ( 16/1305) e7f993230f30a20a5ab00a8c1dd6a334473b72e8
+Downloaded asset ( 17/1305) dba53b74da375c0b3e1e7cffaf164f9dc95cba4a
+Downloaded asset ( 18/1305) 49d6f33eac4f584218b36ca8c29e209495f962ae
+Downloaded asset ( 19/1305) aa99b3877546144e05e699bd958803cbdeef7fee
+Downloaded asset ( 20/1305) db494319aa4ce79c529efb7ac5bfe41e7e71861a
+Downloaded asset ( 21/1305) 5ba3ac691cb18ce29b53c3284bb9cbcce3ee59e1
+Downloaded asset ( 22/1305) 781e8cb7ce4c9c28bbd350a503f40d37fe64677e
+Downloaded asset ( 23/1305) 4f2462743d4c460d28ae72b6dbdb4f5ca639e844
+Downloaded asset ( 24/1305) 4be6782893dfe1e94e0fe17cf69505bacf32c41d
+Downloaded asset ( 25/1305) 6178c811d97a93c4900c503994a1ad5bf2a94d51
+Downloaded asset ( 26/1305) d307da5afb8b62956ae11358ddefb014bd4df71f
+Downloaded asset ( 27/1305) 847db7b482553352123614e0aeecbccf1c5e72b5
+Downloaded asset ( 28/1305) 39401df4f1e88037868cd44dbf6e540446baf8b4
+Downloaded asset ( 29/1305) 30fcb7e37b33af69fbb03299ba16aaf426fef884
+Downloaded asset ( 30/1305) 93ad1fee9cf0cdc12c80f5840d7cce2355f36823
+Downloaded asset ( 31/1305) 5013c3d83da47f468f1e78a7896403258ea15ed9
+Downloaded asset ( 32/1305) 6972309728c22ee1e8f67013c1d4ca29cb26240e
+Downloaded asset ( 33/1305) 5cfbc47f1fc90524fbfd66b05ace7778a97d15d7
+Downloaded asset ( 34/1305) 504d4e4b5572743945091b683eba597d8e6b5f4d
+Downloaded asset ( 35/1305) 97b93f972dc2f293894d9d832cefbe6a7be0bbf1
+Downloaded asset ( 36/1305) d677fe981d19c8e6b7048f35478522e15c6bc238
+Downloaded asset ( 37/1305) b65f269b62916bb2ccd289cc7a9842585af2fb28
+Downloaded asset ( 38/1305) dac5b4bed730fac5085e95fd026638fd9df3e85d
+Downloaded asset ( 39/1305) 423fc80f52c2fb0828062346547d0ea09c114c8d
+Downloaded asset ( 40/1305) 143c6c9062b04d8fb4cf63f6a35e9ef8ce6d8d2c
+Downloaded asset ( 41/1305) 7e7aee38ce9704e73fa2c11169d2d47a12d816f5
+Downloaded asset ( 42/1305) 23b4ddcc59bf23c4992e30123a4539a276c79593
+Downloaded asset ( 43/1305) 7f73a457df9744924976419c4a5506ad8c80c556
+Downloaded asset ( 44/1305) e159ab69256c9237103e963c6483e80792019c92
+Downloaded asset ( 45/1305) 2b43aa57b09d03f1b0554518dcd4f723dd17421f
+Downloaded asset ( 46/1305) 4c9b1077c38f5d53bcec80ecb72ec7fa73d72d17
+Downloaded asset ( 47/1305) 15af6fa7deacfa6057472706e0f42e4d5771e506
+Downloaded asset ( 48/1305) 16e21941cf51fb5ec5ece1c33065f884b06f90d6
+Downloaded asset ( 49/1305) 1c569d4ce95faf4349f6abaaaca93ee729974652
+Downloaded asset ( 50/1305) 7193eb9fcc92cd71ff149ad771271366c6cba935
+Downloaded asset ( 51/1305) d403abb86b7a4b0194949c427fb18e244be204ab
+Downloaded asset ( 52/1305) a736d304040eb3fe4c5800319af1ae86e5b8d305
+Downloaded asset ( 53/1305) c952feaf142c7c362d0c68a4a27c8402315f6135
+Downloaded asset ( 55/1305) afe190f69346f7b80379fc58ee3c5db38a26c1e4
+Downloaded asset ( 54/1305) 7b4ace6f57504baf2dbcdd5ec9837b793c458298
+Downloaded asset ( 56/1305) 49c18bbd1353b7f68056b53e0ca6e2c2f51acd3f
+Downloaded asset ( 57/1305) b5711f16298da6d3fdc1e7d79bc9cbf7a629d194
+Downloaded asset ( 58/1305) 1db25cf8a01686fc93f21ab30b55490435b2f0a7
+Downloaded asset ( 59/1305) 67bd1c14d71f119b89a915fd30e2dfafb17f2c26
+Downloaded asset ( 60/1305) 666bd703b6739d96922767d7073d4a618008b901
+Downloaded asset ( 61/1305) 864a87efc88e3ba42dcca648b27e84cea78d5a44
+Downloaded asset ( 62/1305) 9c5fa31f5eec13fdf1a51b4085875d3596df911f
+Downloaded asset ( 63/1305) 8eedb38dbb5220be3d5aafc2135beb105548f5e1
+Downloaded asset ( 64/1305) 12e3eded2c142a44d6657ed70d7b14f7d7acfa30
+Downloaded asset ( 65/1305) c2ce34c3f0f3b600b58f61b4a3641a4808a74b02
+Downloaded asset ( 66/1305) 23fbe0fd1884f45271ed69ad88049497efb35d6c
+Downloaded asset ( 67/1305) 502813d62264297168b2fb6cf732fc3ee337d42f
+Downloaded asset ( 68/1305) dd6cb1cfd80e94c7383d775dcf40be246730f258
+Downloaded asset ( 69/1305) e30b26c2c6b0831d4ab27c1c9a3cbb101480059f
+Downloaded asset ( 70/1305) f7c1e2aeaf4c2206b3358a05ed965f90d64d30c5
+Downloaded asset ( 71/1305) cb4ff2f90514c03df1785ed9f2e2d7dfaf72ab19
+Downloaded asset ( 72/1305) 4fc6d871740918708b2d691ac61ed9ad54fb4594
+Downloaded asset ( 73/1305) c70e1d2ceb4d5df200df4d316057bb02ce3f2e69
+Downloaded asset ( 74/1305) 1835472180d3631899d2f48870f6ff2e10debd72
+Downloaded asset ( 75/1305) 50fc15219b14bddb21e57afcb3e7ea718ed1f274
+Downloaded asset ( 76/1305) 9e5788c3cc56c9958fbfd5fc31ef753635126b5f
+Downloaded asset ( 77/1305) 48961b764db1758df0c02d5f7bd89f9442de8658
+Downloaded asset ( 78/1305) 9ec684ed23c1a9bcceed3c147a5887d21a7f0b39
+Downloaded asset ( 79/1305) 6ce35b73496ada1b92ff4ca3f569ca0d211ec22d
+Downloaded asset ( 80/1305) a3149cbd9a6b5315d626feaf24ffb067c220a793
+Downloaded asset ( 81/1305) bd74bad2f8bfeee6cf3181aa932971fd8b1ed41c
+Downloaded asset ( 82/1305) 29792b46398e0fa156aa9dd9cf4d9d023a634233
+Downloaded asset ( 83/1305) 80864963a74b45910df93929c50d4fff20eb6156
+Downloaded asset ( 84/1305) 525dd3d8e62a0b15b2d13608b50ec2836bb39387
+Downloaded asset ( 85/1305) c15631f92ee99a2174f8f7d51c1d8af1284865c5
+Downloaded asset ( 86/1305) 740d38e83383612abb2299a2c79ccd1e16e4031b
+Downloaded asset ( 87/1305) 64f8e0a0fc3c61cd68bd807bf55d186176b118f8
+Downloaded asset ( 88/1305) 8755b5cc249fbbd994727480aa3a81b8720a48f3
+Downloaded asset ( 89/1305) f6a0fbe5b37579dc35d072c0894b019e9a2c9042
+Downloaded asset ( 90/1305) 337b01af232d7cb3a8fdf252701d2e8dbceba5c9
+Downloaded asset ( 91/1305) 347af31327b9bb96b5a1791764c759440ebba6f5
+Downloaded asset ( 92/1305) 387b82a7f27b51815e70e286ab50cc0741c46909
+Downloaded asset ( 93/1305) a75ecf998f3dc6f1dcc2363d868ca0b237d2092e
+Downloaded asset ( 94/1305) 15b0d6167fcebfd396fd271d63d11a0c1ba0e4f4
+Downloaded asset ( 95/1305) 0ae54484f38142b78eccf0e1a7e4a6b8bee0b2ef
+Downloaded asset ( 96/1305) 185cc80fad663ae69d040f6721ae7194daeedb48
+Downloaded asset ( 97/1305) 66584bc753c25634c103cfb33284623ae0241a14
+Downloaded asset ( 98/1305) 176f346bc1fb3edc34376771dde6c08d58e63dae
+Downloaded asset ( 99/1305) ff342edd71e6df54403e420e51e1a8780792c11f
+Downloaded asset (100/1305) ad10588e8b3e22b650082426aa6816b04ab08557
+Downloaded asset (101/1305) e5e13355b60f19059d7f40e1a705c60bf80f3ef7
+Downloaded asset (102/1305) d29cb3de03939719ba530e2479fc3a625b249a3b
+Downloaded asset (103/1305) 7114934458a1967d678d355a60e044cbedca3eeb
+Downloaded asset (104/1305) b2405e251858c4481ee6bea99a3f9f81b861e957
+Downloaded asset (105/1305) 08aac81e2412ded5f64b0072e857b29be308fe49
+Downloaded asset (106/1305) c4a22cf9b03f726fa9bf6899811a4428698255a2
+Downloaded asset (107/1305) 2474f1bf97fe85666a6a0ece1ba8ecc6bfd31ae4
+Downloaded asset (108/1305) e4a696845bdca48be3fd80d47bc20d00238edcfc
+Downloaded asset (109/1305) b3a5308b23e0c5a2bd26a15e24f5eca486d611a9
+Downloaded asset (110/1305) 8233292cac0b9207f899515e4700de4dee891a74
+Downloaded asset (111/1305) 3622414e677312c3ccd9c02cefd8e9d1d973a991
+Downloaded asset (112/1305) a6e69713f2a08161dba05d5787998e99e08305fa
+Downloaded asset (113/1305) 29d4dccf3353334c7aa2a49cb6fed3780a51a1ba
+Downloaded asset (114/1305) 79a5b53bf22cca182ddff2a670942c49867663ec
+Downloaded asset (115/1305) e367d1dfa1ce07374e0aeaecbfb1526142a0dcc1
+Downloaded asset (116/1305) a720e85e35be0dc3186d01cc599121b87e7ee9f7
+Downloaded asset (117/1305) 63bbe3921abd75b9f6cd1e20330360d164da169b
+Downloaded asset (118/1305) 975a99ed9870f51bbae348533d775d730e3fee18
+Downloaded asset (119/1305) 2a36ba7e9f4ffc0d22433933bb8ce98de9912432
+Downloaded asset (120/1305) bdbaad5ee2fede656f074621625a4c25287f28ff
+Downloaded asset (121/1305) 2ee3d3db9717b7f689e5b3ab389838e4f85af3a5
+Downloaded asset (122/1305) 1d37185f9790e93c2998cc4deea8968506a51d4a
+Downloaded asset (123/1305) 5680749048457f5772ec95a73d856ad792fa1717
+Downloaded asset (124/1305) d4b06ccb8e331ece734f51d84a0a5fbc7164d8be
+Downloaded asset (125/1305) 813118504a96fe9d349fe06f97cd629526eaedda
+Downloaded asset (126/1305) 48540d7788ce3d9e780cb448ce5676c53dbcfd23
+Downloaded asset (127/1305) 18a992d93128bb2e2861930cff3140c6940c0127
+Downloaded asset (128/1305) cf23204a9cca2ac7f9674168cc063cfb4dbe001f
+Downloaded asset (129/1305) c8dd60f7e7087da52a431c1dbc0f397317b374fb
+Downloaded asset (130/1305) 9024de3f1dd4bc1e8f445c7c5b812f25c7e31bf6
+Downloaded asset (131/1305) 941611aed1eb6888f6ad998af22d2d2ef2efc4aa
+Downloaded asset (132/1305) b463fa47816fe9a5dfe508093150e647403e4db6
+Downloaded asset (133/1305) 6cf5c9f78a221f9a9576753fa5ca6cf3563c352a
+Downloaded asset (134/1305) 61dba25ce75a25e7920bcb210408fc6b6a2c92f0
+Downloaded asset (135/1305) 0b0d9e03b93a8c5823eb4f925114aef0cb9ac6b2
+Downloaded asset (136/1305) 072089b5c336cf62fc003f4b4a63c4740f4931df
+Downloaded asset (137/1305) b94f782f9762a5497f51b8065bdc7e495424bcbd
+Downloaded asset (138/1305) 45bf909bc5def60f055a57ac776ac277364d76a6
+Downloaded asset (139/1305) 671ef0ae7b59014a2f637d7af6d781324ab6309f
+Downloaded asset (140/1305) 15925d0a3a0de4b483f4d90ac2fc9a2043e499ee
+Downloaded asset (141/1305) 9ead5c928f9122e3c2f5fc4f6ce7fb4054a2b578
+Downloaded asset (142/1305) a20cbf2ddce541eaed520d7ec55665fe97428be6
+Downloaded asset (143/1305) b91c8cf157979540e517895beefe0390acac6454
+Downloaded asset (144/1305) 030a3d36cccac21197db2ec078f96cbc2caa1311
+Downloaded asset (145/1305) a7d0d6f761c9a647cc0273bc016f2772b85f6d88
+Downloaded asset (146/1305) eaa2cfc2ca71f219930cc496d5316853364d3623
+Downloaded asset (147/1305) f993dbcc8cdde669020b9f988f091d997006ce8b
+Downloaded asset (148/1305) fad694e6c37b2b2369046ce88cddcad4b86a1c55
+Downloaded asset (149/1305) fda6f8d1f1daabad0fd78903cd3c4b366f77a8e5
+Downloaded asset (150/1305) aa10d6c0b4941f35b7129ee0b9905536826f2422
+Downloaded asset (151/1305) 07373cce0250d335443998231c8a9e3ef7531e9f
+Downloaded asset (152/1305) 64ea3da2bfe8f994308140c734ca81a6fed4d4a7
+Downloaded asset (153/1305) f23941bd42028d6fac79a142cb913522f05998c2
+Downloaded asset (154/1305) 7e163e93b0799fc8373baa3fdbf44bffcbe540b4
+Downloaded asset (155/1305) a2c1116d40b879a0abccc2f02c0471be91bb6b30
+Downloaded asset (156/1305) f05f55328f2b98b3c7d881fcdef7e7964d8082fa
+Downloaded asset (157/1305) 2568ad69e8c6b393bc64745ee825c4026a0cc06d
+Downloaded asset (158/1305) ca7a734d03d0deaa89a9d7f786e5c827f62f442d
+Downloaded asset (159/1305) bebfd40c216a3ad53a6d5b1b90b8ce1335b53310
+Downloaded asset (160/1305) d9b6703a5dcaaa4c62358d4d7372f8314941e891
+Downloaded asset (161/1305) c92f79879a1a8c2a5487bc29b87896297f4dccc4
+Downloaded asset (162/1305) 1b256a2a6b360fd2f2858cf1a42c4ca4917a1de1
+Downloaded asset (163/1305) 5f3412ca2fe0141a412dfd66567aa13a26e89ec1
+Downloaded asset (164/1305) 822b19d5b722fd689e60cfaa7c3ae39a3bdf701c
+Downloaded asset (165/1305) aaebcc83934fb7919c7af934eefc5a586678e1b2
+Downloaded asset (166/1305) fa68bbdcbb68db8dea8604f3ae5caadb9ded0cbe
+Downloaded asset (167/1305) 58d63232621aaa03e4d09598700561214e7c2477
+Downloaded asset (168/1305) 836ae33bdfadbe5dcbe0696fe64c671beb4938fb
+Downloaded asset (169/1305) c27a5dfd1f85834d0238273dfc7227b85776afc8
+Downloaded asset (170/1305) 8e00fe4a121211c668eed96c0c45bef4e1ae2978
+Downloaded asset (171/1305) 83221aea5f4c54dc13907d85a8330c02da933a10
+Downloaded asset (172/1305) 739dc564cf6d0ff909542293cd5754d4aa52bf2c
+Downloaded asset (173/1305) 42a25a79668f99c697be57c0353c9e82fc7a5842
+Downloaded asset (174/1305) 108c61bfecd4f969778173578984503e08dd7898
+Downloaded asset (175/1305) aec962400204953cc7eefef2c0cc1942bbeaff38
+Downloaded asset (176/1305) 278ae35982e186ab9f4a9ef5728b18793c939e98
+Downloaded asset (177/1305) 4710afcb488c6ee3881e3b896dfcd5cc2069049a
+Downloaded asset (178/1305) a8756192499be8204a5e195b9873b6b48c0d1d25
+Downloaded asset (179/1305) e700e2c9abdfc27a32ac3b7f759d6c48a0846992
+Downloaded asset (180/1305) 0208597870daf05e8bde08d4aac04989c9ebedf2
+Downloaded asset (181/1305) 2eed61a9d62487569fe54986856238e1c364f7cd
+Downloaded asset (182/1305) ae6914ce7180755e98ee2d169e1757bc624bbade
+Downloaded asset (183/1305) 003409183ca2b8a8a140bfeb6390d1a9edc8c88b
+Downloaded asset (184/1305) d76adcd771f45c83ded14aaad4645dd068918d52
+Downloaded asset (185/1305) f1f532ab1d59998dcdb4e1838fa62d224cdcfd1e
+Downloaded asset (186/1305) 45f65be973d1929c2bd26d4fbc7912ad6bfc4834
+Downloaded asset (187/1305) fdce7a33bf8e7605d40a10dbe0edc5556b1d43c4
+Downloaded asset (188/1305) edb8625e330ee1ee8ceeb2540cd083360e9daf65
+Downloaded asset (189/1305) e73b083393fa29357e85f8b535751e14853cf7b5
+Downloaded asset (190/1305) d673dd1dae8c1dc80b53917cf454a52386256132
+Downloaded asset (191/1305) 0fadce9827b247d2da715d8e5a8213db83fbe44f
+Downloaded asset (192/1305) a8d5525b3304a47c138579e46c5dc525bba193dd
+Downloaded asset (193/1305) ceade9b1b4c759e442d6903ddd9102c22401168d
+Downloaded asset (194/1305) ba72e7707b095d24af0cb9c267b9c5b92efa3e70
+Downloaded asset (195/1305) 5488a01c534a16c2138c2f7072343d4179695477
+Downloaded asset (196/1305) 871634413de37a092d0e5fe7844a37917c27bbf2
+Downloaded asset (197/1305) 6e0d43b064fb69f7b63e0704d99a38bb2ebc19e0
+Downloaded asset (198/1305) d11ce21cc8a280448e9c12a28406583127809b79
+Downloaded asset (199/1305) 011cf0d5b4015b52129caa98c7c4a35ea7a795ed
+Downloaded asset (200/1305) 4ed1f29f3e1378811f7fcc49db743400b8e3284f
+Downloaded asset (201/1305) d2ba0797ca24fcf15d105c88899089e4af5cb9f4
+Downloaded asset (202/1305) 21464f4cfb0163f9071d2a84d818bd5ac5b6eee6
+Downloaded asset (203/1305) 5c44e7a8da8afddd9220121ba76ec1badebb56c3
+Downloaded asset (204/1305) 159697af99ef2640f870bee2aaeda9170a918523
+Downloaded asset (205/1305) 5e49444266bf88c2006233a811561272ad8f157f
+Downloaded asset (206/1305) c9a5510420292be670d0020b7123ca0fef1f6087
+Downloaded asset (207/1305) 9eb0c3c8c34bcf83db451c12f24edd756908d265
+Downloaded asset (208/1305) a410f82debee252f1399a8c391bef261ab42d07c
+Downloaded asset (209/1305) 37c0ff8ac56889125bb0d11be7225f453e1e4098
+Downloaded asset (210/1305) f756c39f4ca9565c359a66d33b5a4f9d886e5479
+Downloaded asset (211/1305) 3a05ef3ce1827538f54ba4b3262eaee438da4217
+Downloaded asset (212/1305) 1d183c36f596e85c4fb564ff2667332211e49659
+Downloaded asset (213/1305) 09236e1a725cec0229b8c564f5b3e4fe05cd7a5f
+Downloaded asset (214/1305) 8760ebb9d4b1fe9457ef272324ecd6b4329a593e
+Downloaded asset (215/1305) 144867e8792415e2873293f06ecce85cd32bb4e8
+Downloaded asset (216/1305) c73dcedde5031fcf242b08b3405f63098cd70641
+Downloaded asset (217/1305) 5fd568d724ba7d53911b6cccf5636f859d2662e8
+Downloaded asset (218/1305) 56c1d0ac0de2265018b2c41cb571cc6631101484
+Downloaded asset (219/1305) 9c63f2a3681832dc32d206f6830360bfe94b5bfc
+Downloaded asset (220/1305) 55da1856e77cfd31a7e8c3d358e1f856c5583198
+Downloaded asset (222/1305) 41cbf5dd08e951ad65883854e74d2e034929f572
+Downloaded asset (221/1305) 86cb1bb0c45625b18e00a64098cd425a38f6d3f2
+Downloaded asset (223/1305) f7d7e5c7089c9b45fa5d1b31542eb455fad995db
+Downloaded asset (224/1305) c7b1005d4926f6a2e2387a41ab1fb48a72f18e98
+Downloaded asset (225/1305) c3b3797d04cb9640e1d3a72d5e96edb410388fa3
+Downloaded asset (226/1305) e8b89f316f3e9989a87f6e6ff12db9abe0f8b09f
+Downloaded asset (227/1305) 7bf3553a4fe41a0078f4988a13d6e1ed8663ef4c
+Downloaded asset (228/1305) 48f7e1bb098abd36b9760cca27b9d4391a23de26
+Downloaded asset (229/1305) 0fa4234797f336ada4e3735e013e44d1099afe57
+Downloaded asset (230/1305) c75589cc0087069f387de127dd1499580498738e
+Downloaded asset (231/1305) 9e59c3650c6c3fc0a475f1b753b2fcfef430bf81
+Downloaded asset (232/1305) 37afa06f97d58767a1cd1382386db878be1532dd
+Downloaded asset (233/1305) e9bab7d3d15541f0aaa93fad31ad37fd07e03a6c
+Downloaded asset (234/1305) 5887d10234c4f244ec5468080412f3e6ef9522f3
+Downloaded asset (235/1305) e26fa3036cdab4c2264ceb19e1cd197a2a510227
+Downloaded asset (236/1305) a4bc069321a96236fde04a3820664cc23b2ea619
+Downloaded asset (237/1305) 4e094ed8dfa98656d8fec52a7d20c5ee6098b6ad
+Downloaded asset (238/1305) 9c92f697142ae320584bf64c0d54381d59703528
+Downloaded asset (239/1305) 8f23c02475d388b23e5faa680eafe6b991d7a9d4
+Downloaded asset (240/1305) 363545a76277e5e47538b2dd3a0d6aa4f7a87d34
+Downloaded asset (241/1305) 9bc2a84d0aa98113fc52609976fae8fc88ea6333
+Downloaded asset (242/1305) 45b2aef7b5049e81b39b58f8d631563fadcc778b
+Downloaded asset (243/1305) 98102533e6085617a2962157b4f3658f59aea018
+Downloaded asset (244/1305) dc66978374a46ab2b87db6472804185824868095
+Downloaded asset (245/1305) 539fe34036caba1b247df3360c688960e4defd81
+Downloaded asset (246/1305) cce17e7a814eb77c9cc14d6f97ba6a941bbe9c74
+Downloaded asset (247/1305) cc8d5578d3d8728955ab0d54b0278ffcf99d858b
+Downloaded asset (248/1305) 8797fc7cc14c4ffeae1b131631fa025154f98c86
+Downloaded asset (249/1305) d39e91b93f8e7eb31776e65e9788a0ab2c9b32c3
+Downloaded asset (250/1305) 4d270722140425e172a192d4393676b1f65e15d5
+Downloaded asset (251/1305) 0fed68b1071ec4f3c5ce24639c746b7e975c1c91
+Downloaded asset (252/1305) 695ebb888cda6e98ce2cda9a69b2c29dddbb7b2b
+Downloaded asset (253/1305) 504362657a72f3ecb1d694989c23c497310cc471
+Downloaded asset (254/1305) 155de9993fbc036f371d9fee50c8b2012dc5adce
+Downloaded asset (255/1305) 136cc386976d1901f9b3b374a71d987efb50dce6
+Downloaded asset (256/1305) 6c83307ca1f6d7484d2899f381801713cdf06bbe
+Downloaded asset (257/1305) 57596c7d8cf8d99cc06ed333fad846be58ec2fe3
+Downloaded asset (258/1305) 1bdceb2916bca9c71bc4e0316dfcbc171f655a06
+Downloaded asset (259/1305) a8c6c8a1ba202048c38374bc9682ac6cbd408c8d
+Downloaded asset (260/1305) f6ca9c290418ad3a4dba1681be1b3a7ec7d13e74
+Downloaded asset (261/1305) 55b476eb77d7aed2758913e1540680b48d373828
+Downloaded asset (262/1305) e79b42932aeb0fa4f50878816d371b95ff90b9bc
+Downloaded asset (263/1305) 7c7d7bf29ea726cd547bff1e168e6417d62a0bbe
+Downloaded asset (264/1305) 1f10aaff008cddb25dada8d8caa796624307c8f9
+Downloaded asset (265/1305) 289c721e6cc8f20a6fefff411af7f5a2b0c49ec4
+Downloaded asset (266/1305) 8550b5025cfd04a18402c3bbcd145f701d1a4e17
+Downloaded asset (267/1305) 032893949d88ab82fc1f69f9c4ea14d83d05387e
+Downloaded asset (268/1305) e77d2f25077b7db70639744279c6019777c5c9af
+Downloaded asset (269/1305) 559e74952ee4642bf5619670ee0f9eeceb503bfa
+Downloaded asset (270/1305) 7181418daf6f2afa35460ddbe0702cf12d9d63ce
+Downloaded asset (271/1305) 420e3450203d8b9257db46c53135691e36072a5d
+Downloaded asset (272/1305) 76416d1c4fc50356e17a1aef8a80358d85174f5c
+Downloaded asset (273/1305) bcc3d222a1eac38ad85b03c33e513a751629a8fd
+Downloaded asset (274/1305) 462cbc14581ba05f4a5f1e5aa23cb48eb823bf2d
+Downloaded asset (275/1305) 629db7d90d2a8555adafa8fc057303eb92f7081b
+Downloaded asset (277/1305) e7133a7d4822e40f0abd716faa3a8f340362b8d7
+Downloaded asset (276/1305) 47d640178306584d10213dbf05290150ff60a46b
+Downloaded asset (278/1305) b7f9b0788a618459df5d54332a816c331232ebd9
+Downloaded asset (279/1305) d989452a30c91a62809fbfb429c73c7034ba0baf
+Downloaded asset (280/1305) 666efbebfe86709813900de26215e8db48acc1c6
+Downloaded asset (281/1305) 73fa34c4065e2f9966189653983248eaa3f5b009
+Downloaded asset (282/1305) 6c5c988701199ca65fcd2caf88a0e456d3421977
+Downloaded asset (283/1305) 98e6c933794f74d15b1e87eea64ca6f766e557c2
+Downloaded asset (284/1305) 43ba9e9339435f351b4578723910556354e16d43
+Downloaded asset (285/1305) 4ebf0ae943f5881bb81af674e8596341e52015eb
+Downloaded asset (286/1305) 65727e3d0b1e51e537b0e476f119bee8be45edab
+Downloaded asset (287/1305) 1f13e157e2ff169eef53bab24e65cb40d41b93b6
+Downloaded asset (288/1305) c5cd11a147cf6a37bd0f33f951f74464fb0d128a
+Downloaded asset (289/1305) 6ac381cb9b69baf96b909e59d8c9886579746e4f
+Downloaded asset (290/1305) 1826c6986572fe2f7ab9111dc6da9b67df1f7f20
+Downloaded asset (291/1305) cf44e74d49ef2793fb01143a37fd27ee50d0e727
+Downloaded asset (292/1305) 281f889e8eadcb21e2bb664d4f337192fab3a139
+Downloaded asset (293/1305) e2b2464a1507c129e4fd8aa2447f92cfe1bd61bb
+Downloaded asset (294/1305) 285196110d802aed2f6797eb436d70e36716edaa
+Downloaded asset (295/1305) 36adcbb0553274272777667992b363d857b80af9
+Downloaded asset (296/1305) c756f26f5a702fca021795d9ae15b5dadba1cf07
+Downloaded asset (297/1305) 1d15957378b747a2daad165dd14acc5689310e9a
+Downloaded asset (298/1305) fae49d67f7901e74e75c1343082096fd7f524ee7
+Downloaded asset (299/1305) 06dafda29984d98c81df8cd5edeca2e96599f1f4
+Downloaded asset (300/1305) dcddcc8d9845734c85e39afecb34cc2b1586905c
+Downloaded asset (301/1305) 83c8daabf4016b4a69a0aff792629776e646477a
+Downloaded asset (302/1305) d6a7e9b6882630bc21a0efad67dcccd12ccb2eb5
+Downloaded asset (303/1305) 35a5c6a402a0f0091c1221a245ea9cc180975cc8
+Downloaded asset (304/1305) 54ae8bae3da40ea9a80739d7b36106bffaf8854c
+Downloaded asset (305/1305) c6ac8614f870ba8a7898a2544738d03dc141c92c
+Downloaded asset (306/1305) 7c58d79a33c20c776c6f592b80e96305034c6dbe
+Downloaded asset (307/1305) 5ebe9a655de4ff8510a2c58e74d25a65ce6c8ad1
+Downloaded asset (308/1305) 5cd1caeb2b7c35e58c57a90eed97be8cd893e499
+Downloaded asset (309/1305) def695c50fa800dc639e91bea0148c7626ca5e87
+Downloaded asset (310/1305) 63c22eb984e3406f33bd3fc474b1d76f2c395f1a
+Downloaded asset (311/1305) 48f9931bef7d3a07c7ea40126eb2bd9c71c4a0e7
+Downloaded asset (312/1305) 1f411b36057067939b1aa1b0354ebb8eaa1e980d
+Downloaded asset (313/1305) 45d81989f156d74bd07939be66cb89aecd6f8609
+Downloaded asset (314/1305) ee39bc3030b4465309f67d897b9df23093acba06
+Downloaded asset (315/1305) 2b048cb32391a275b07e5648ec6d474fb52f9f91
+Downloaded asset (316/1305) a1aaacc760df41853a7c02e741b81bfc51c5e93c
+Downloaded asset (317/1305) 330a29f4ac0f178bb2d5855b29ad1b262ef14604
+Downloaded asset (318/1305) 7a4f2566e6d1ff536a9c6d7f9a0d804d15a3ce62
+Downloaded asset (319/1305) a3ab149628aa2f10acda1e1e3c097b04fcb46328
+Downloaded asset (320/1305) 2211e494688ba04b0c4658ed74d7e48c2d391c33
+Downloaded asset (321/1305) f82bb1724f94ef3e2cd80a0e41ed0ca54c8f7502
+Downloaded asset (322/1305) 08d3912d571693d82692458132d4de59928f16d6
+Downloaded asset (323/1305) 509656b6d02a4491f46c686e66b615950c6c1408
+Downloaded asset (324/1305) 1b172129daf7cd9a36d2b0f7820baf2e479e381a
+Downloaded asset (325/1305) 15bbaf7901d7abff12bb872ff88a6ad541f5227a
+Downloaded asset (326/1305) 08626fc2a337c28b5dfdafb6daa9ea31f9a70571
+Downloaded asset (327/1305) 0556f8b2dc424e7368b4ab9f8a315aa26982e3fc
+Downloaded asset (328/1305) 085a6cd2e023877254d1118c403f39e556c003cb
+Downloaded asset (329/1305) 1c722dfd43b06c28273bc8c56d1d02c1a6ea5e48
+Downloaded asset (330/1305) d7067e204913cf9631bfbb7340102f6de75c2dfc
+Downloaded asset (331/1305) 56afe99ff911f7c56fb923cd85427a719c2a1424
+Downloaded asset (332/1305) a272af870850e4d5905f476ac23bcb28543a543a
+Downloaded asset (333/1305) c3dcdf6dff63fcf4d35b2742b62018591de0e156
+Downloaded asset (334/1305) 780917a341ca4e6a5a8f4e744142a94069189fb0
+Downloaded asset (335/1305) ed76364b90ade21c5d25bf09a4a67475801bce66
+Downloaded asset (336/1305) fd20e1cd8c69bc2f037de950b078a729a4b7d6a6
+Downloaded asset (337/1305) c9534f4d840470b3c6efbcb84cff23c57baa3393
+Downloaded asset (338/1305) 4c26fd4c2774e7afcbda1e293a27595e04e87c47
+Downloaded asset (339/1305) ae9bb7a332e3e3d3665f282b60b296ec01be97df
+Downloaded asset (340/1305) 50a317f837b0604c3ebe8224951c1a0d7a94516a
+Downloaded asset (341/1305) 39077d824a27e8040b0e1f2b4707d81149830d11
+Downloaded asset (342/1305) e8d0df494880f2067bb64d08a7428a78239c9a29
+Downloaded asset (343/1305) f26ab58dc70ce7a3f4d16b5bb31620894b0b8812
+Downloaded asset (344/1305) 8d56863e83e0e114937522d3a4a7e124528c65b4
+Downloaded asset (345/1305) 5fa52f2e49e446e466b721937cc168bba734ef33
+Downloaded asset (346/1305) 5d78e883f8bf8123261a5b05cf90cb5cc020fa6e
+Downloaded asset (347/1305) ca9e12d7b01c10932a3d16e33b9e317396c3d2ea
+Downloaded asset (348/1305) 8011c7d566d5a6958832855d7328edba54702076
+Downloaded asset (349/1305) 66057f99ba11a223e1824ce006b4e2b288b6f895
+Downloaded asset (350/1305) d7637457a9290d5e10d965f3bea4a4e19937f87b
+Downloaded asset (351/1305) 6c5e816813bc17b1d7b65676e1ee29496d88015b
+Downloaded asset (352/1305) ee8edac9e045dbc0417c4f8bec83d291df40da61
+Downloaded asset (353/1305) d5a6435947ff3b0b2a161cc37d419cd7c49cf8b4
+Downloaded asset (354/1305) 5041867a91a67cec2fa1ab572c351d2796a6f050
+Downloaded asset (355/1305) 4b90ff3a9b1486642bc0f15da0045d83a91df82e
+Downloaded asset (356/1305) c31af622a2ee7beffb9daf72363a77a607be64a3
+Downloaded asset (357/1305) 8301a44446b04249e6896bc230f6d8c9d8e56273
+Downloaded asset (358/1305) dd67ac8cf15d54eff38ef9a790be4692bcba2900
+Downloaded asset (359/1305) f0d58706321168c2907cf13ae6f8ae9108244fc3
+Downloaded asset (360/1305) d4f6c468ad9536049023a9680483c4d44088e084
+Downloaded asset (361/1305) 5c4cbba7fe4bc8214708f93f4db54102660a281d
+Downloaded asset (362/1305) dbebdab8835d86493975dde6fd05db76de5a0605
+Downloaded asset (363/1305) 5cc7da22ff9cdea9175c8496c3e683d0ce97c9e2
+Downloaded asset (364/1305) c0caa238bb45a074c117869eef193290fc27fb59
+Downloaded asset (365/1305) 7b99a069d855e1089c025e75c0b4ea6699220804
+Downloaded asset (366/1305) 7d90eb9e088738c9ae7ad8b2951c7432a0d7cc44
+Downloaded asset (367/1305) ec247f38f3f60f9e185b31e787c1ad43caa0c73c
+Downloaded asset (368/1305) fef5251190146ab8e0abe80183cd78c243d7c6fe
+Downloaded asset (369/1305) e555fcece121879fe0becbada9d01dea27ab153d
+Downloaded asset (370/1305) ce3bbcf44fd72e3d0b3fbcbb7334d100619ca71e
+Downloaded asset (371/1305) db685fafb774a31072c6577a04a5693dba725155
+Downloaded asset (372/1305) 9bae8d2e28f81e1a5571a9ca6a6bf21595796658
+Downloaded asset (373/1305) 668ebaccbc4572fc4a7a79b166f467823ffa8c50
+Downloaded asset (374/1305) b049ab95eb3a6f7fba35259cda3df9437259f590
+Downloaded asset (375/1305) 0714e023bd5b42e409b1aa12aee17376810282fe
+Downloaded asset (376/1305) 394253f2575216683fc1926a0a387a3e5e90bc16
+Downloaded asset (377/1305) ba03ef98d9acdfc6696f41ddec0d0c95cb289d16
+Downloaded asset (378/1305) 5491bbc4482b2e8d8382fc7623828b7764693f4d
+Downloaded asset (379/1305) ac6609153f895d292de440566eb23438aa9f846e
+Downloaded asset (380/1305) da1a3e592fc80324109b930d5282f2766fc3701d
+Downloaded asset (381/1305) eceb70cb374cc410ac23e00fc95ca0404f8a20f4
+Downloaded asset (382/1305) 78244ba4bba775f92e51148fab026d7c399e9055
+Downloaded asset (383/1305) accc7a55d92bf4a8509daeb8415b1a36a3646deb
+Downloaded asset (384/1305) 0331eec018c422631e6cb00960eea3e2c5c6e559
+Downloaded asset (385/1305) 25fc442f8a0abf99be8e7f507e63c5866a055c70
+Downloaded asset (386/1305) 02e77c97360b82170ee58723ac2519fcd79b821e
+Downloaded asset (387/1305) 77e87c6b92d268d8dc5a25780340461cda53b99c
+Downloaded asset (388/1305) 95805aac201b6852d0ab35bd2c75cfa64a926447
+Downloaded asset (389/1305) 3f8b9415f67443206f6af52c1471d0de0354d046
+Downloaded asset (390/1305) f5873a8f416388c2ded80b4ffab6d65b7f18b305
+Downloaded asset (391/1305) 3cffe887c0882fa146d5671898a4d6c23ec72920
+Downloaded asset (392/1305) e72ee78cbc57a43a37ba6db660d9e1eeb0d75f88
+Downloaded asset (393/1305) 4ee5fde6bf85cd6a777aa2fcc56ed33e1c574f04
+Downloaded asset (394/1305) b0720899be6f974ad8385ac159bfb165cd732fb2
+Downloaded asset (395/1305) 888fb12c5fb536268747df857ad439e17a4a2f44
+Downloaded asset (396/1305) 715f8e684d4353f45eaa4e6f0ca82de0b7db71ff
+Downloaded asset (397/1305) 36409234aed55db1d006a65b92f1c64be4e4bbe0
+Downloaded asset (398/1305) 9f910c27c8cf336f211a75830821b0ec6abf6fa9
+Downloaded asset (399/1305) da71b9f569cffbd8b4c88dbd30767315aba8067b
+Downloaded asset (400/1305) 50bf881d5a1a484f15f009bf0b86703111834516
+Downloaded asset (401/1305) 9a9d88fc2ba4c56b0089df4441f3a3ac1fcb8b0e
+Downloaded asset (402/1305) 8ea4cfd31d4f286b039a63d52020aa6b5408a763
+Downloaded asset (403/1305) 4ed7023a970b7f6a6d03558c3125fe85fea4ecd8
+Downloaded asset (404/1305) d997d6bd0a18be2b62c27363878f99540d845825
+Downloaded asset (405/1305) 4a0ce0713583399108fad4698cbe63714fe5898f
+Downloaded asset (406/1305) b212815d8728730de16ff65a3f54a7fd06b98fbc
+Downloaded asset (407/1305) 68beeda338fdb43c3b7cbbb718e82839e6d07ef3
+Downloaded asset (408/1305) a91e1f2cba408d784538d21424e52253864534b6
+Downloaded asset (409/1305) 3efb22bf9a4ca184f037c309e4f7ece0a9ca53bc
+Downloaded asset (410/1305) eb93722c9adcccba57bc6e9b19039599e94934c8
+Downloaded asset (411/1305) 3c05729b7cfdef0e5782080155004d4d0766ab41
+Downloaded asset (412/1305) 96a92abe786f7f1fd5ee56a364c2fbee7f23a165
+Downloaded asset (413/1305) df97decf9d824c4b47c642bbcc3ac6c230e91bc2
+Downloaded asset (414/1305) 166af5d48f1f67a4608be9d23fd27f8c16269893
+Downloaded asset (415/1305) e65b9794e249ffe93ba2ec75cd0c994697773073
+Downloaded asset (416/1305) b8e9d0b643fd331dcbeea8114d3ad59d96f4bc59
+Downloaded asset (417/1305) 108529f98cbc67491b119ac6bec3f4af1ca3f1b0
+Downloaded asset (418/1305) c9b2193339b42279d874cebb4afe3761c1425bfa
+Downloaded asset (419/1305) 627c939e2aa48a5e3f516848e66a76acb992c2a8
+Downloaded asset (420/1305) b5e67bcc0f5af24fa6d01f377215143ee7a1cf67
+Downloaded asset (421/1305) 4c02a13757318403e7837260c1b30069dcb7be69
+Downloaded asset (422/1305) 894f26447ad5cff2afff1d66917a3f7760f1c3b7
+Downloaded asset (423/1305) 79ac9cc6fbb67cd1eeea2fcbf29804088b140f15
+Downloaded asset (424/1305) c38f3e0ea505f0333996e6eaa0f2c0d5bfc8d4d7
+Downloaded asset (425/1305) feedd2d726dedb8742519ac0c404d26bc3b5d735
+Downloaded asset (426/1305) d4f9f7adb9789781a3a0ca1a94262a474cbee1db
+Downloaded asset (427/1305) 608ce4dc409ef39df6b0409647b89f2f1a2d9ded
+Downloaded asset (428/1305) 591bb8451ac56723d2b689d9bc95c8020bb4809b
+Downloaded asset (429/1305) 455016d86e1ace53fc732190416dccca8cad40fa
+Downloaded asset (430/1305) b81ffdb8b4932bdc9f0692423d426b8f2334da6c
+Downloaded asset (431/1305) c07715ed9a7c41e554f30c86ab2e6818b4d4a6c8
+Downloaded asset (432/1305) 8b260108a73470c16cd244325242d4780cfb7d78
+Downloaded asset (433/1305) a0d1fbff7e938e92c10c1576339dda668f40e111
+Downloaded asset (434/1305) d9d7511e8944da0c7ab4ed2d3e3d964f98dd6997
+Downloaded asset (435/1305) cd9062e9e81f7cd35164a99669e5db32891a5cb5
+Downloaded asset (436/1305) ef59205829f09ac4855c614a0e7046db820df18b
+Downloaded asset (437/1305) bfb0e14bf130de4ecda75d8e793260e8bbaca35b
+Downloaded asset (438/1305) b1715242916d56140486c612056ea4d6dd5a4404
+Downloaded asset (439/1305) c8053e3b083b08840276de9a728202551302f416
+Downloaded asset (440/1305) fd29d5ae9309aafaf40e5ec308cabd45c4a1e152
+Downloaded asset (441/1305) 41b9c631e9c1c40800b3b02a0ac5855d6ad4846d
+Downloaded asset (442/1305) df30fe9e52ade521d4019ce118f95c1d39390d97
+Downloaded asset (443/1305) fb17cc91ec691e54590ba0fd1dbd69e6b567a530
+Downloaded asset (444/1305) 2aa3a86b0673a6e586ffdb4466b45c43eb2ba8f7
+Downloaded asset (445/1305) 66c6203abeca2f718f7bb09ded67d91fba0196cd
+Downloaded asset (446/1305) 6977300f83c4230f4d24d89df3892a755ba5b08d
+Downloaded asset (447/1305) 548b24e7e67c0f0fd9d995a9539559e13ab18930
+Downloaded asset (448/1305) 82185e25fb404f4d04cec2666ee698a76ecd2c44
+Downloaded asset (449/1305) e75b56b5b84644be68db4c92c0b086a9e4110fe6
+Downloaded asset (450/1305) be62533d5e2d6306901e07dff0ca862e6a6738d5
+Downloaded asset (451/1305) 8a1c9994a6f35371b8e776b262f363692f222513
+Downloaded asset (452/1305) 76ed99c31216d33b7c2d3a5eb385132f0a07f5dc
+Downloaded asset (453/1305) 19e3ddd127884efbbece9806ef8fce3498e03da3
+Downloaded asset (454/1305) f64d194a003a43dd37c0fa02dd1ef39c4e22c00a
+Downloaded asset (455/1305) d9ea46f172ccb92314c86054b2865a9f78cac07f
+Downloaded asset (456/1305) 1e9470b35545a17586f1305a20233acc4e104b04
+Downloaded asset (457/1305) b7aa52172a204716ff6ac2711b2d0b6e74b47d02
+Downloaded asset (458/1305) b16e70f12f123efd71d652717a473593e9e9d8e0
+Downloaded asset (459/1305) 7a122f23df31c32c5c2d14e06548a56546b5ea6c
+Downloaded asset (460/1305) 185fdb055113e3c1aafc7cc7c9141f2960b17ed3
+Downloaded asset (461/1305) 292b4dc4bb3d310585634e0b216db85ff9c642d0
+Downloaded asset (462/1305) b6499b211b9dd3ea0c8da61b2f1478b0be096434
+Downloaded asset (463/1305) 91c6aab1954a292166d3c39c58179b8e2872ee60
+Downloaded asset (464/1305) 4abdbf22b4552d6575d801e4f87077de35ee5f01
+Downloaded asset (465/1305) fcb8cef95d170fa97e14a35c625976511d53b1fd
+Downloaded asset (466/1305) 201fc02e913f277c2a599fee21d0cefd24abe977
+Downloaded asset (467/1305) 2951b5c0dd8c80b618affbea09fb5fe81435eccc
+Downloaded asset (468/1305) 2b73dd8c1b27b629c841fe26b2c633edf3aa64c8
+Downloaded asset (469/1305) 12ee841f09570ffd7ca155f8acde6588d3945168
+Downloaded asset (470/1305) fb9ee08207b57f93cab9392ccbc5a94c27727a0f
+Downloaded asset (471/1305) ebe259bc9b07c4ae6a08471e86dc0e6d8d4d04c2
+Downloaded asset (472/1305) 0811423a3fb1a8e53010b1d9a4994aa8a9fe714f
+Downloaded asset (473/1305) 10e3ea2313752eab2cd14fc9125001756da121dc
+Downloaded asset (475/1305) 64a8e6a57b4ff89d6d8c90916c412389166e3ea1
+Downloaded asset (474/1305) 8ccd1c57f2982182699073f47d8ec4875c45249c
+Downloaded asset (476/1305) 74c2c4cd3ccc69adae111b684d8620ce59c305ba
+Downloaded asset (477/1305) d6b740955d317b31644397ff1b2049f6343c862d
+Downloaded asset (478/1305) 09e8b2079bc363d287fe85d5687af142d5fa0f82
+Downloaded asset (479/1305) 4dbe4df94e8c2433b4e046b0493b47db1272b995
+Downloaded asset (480/1305) 8ade85479752442bc6f00db4d924e88f9f8591e9
+Downloaded asset (481/1305) 66a1c766a70f18978ddbcb3d1861e10e6b2722fa
+Downloaded asset (482/1305) 8f9e605a2e7895b480b5691cc460e41eedacbd58
+Downloaded asset (483/1305) cc6d28540b6033f5d420f7cd81a77f17619c0a2a
+Downloaded asset (484/1305) e56f9472bd8b2894115337b211857366e916966d
+Downloaded asset (485/1305) 27987b7065ef4a27106246f9d32382a0514f87b2
+Downloaded asset (486/1305) a796e8907874e6ae174c30da28ff000f1cf566c3
+Downloaded asset (487/1305) 8dec8307dff359b0279e3e49798692309204d55e
+Downloaded asset (488/1305) 3612c93dfebcedbeb22bc8283e0b85de033d081a
+Downloaded asset (489/1305) b98e76594736052ac7ab8851d95a96b5ad7d2ce2
+Downloaded asset (490/1305) d62e50329337eee968b1e93cce04a65aeecad27d
+Downloaded asset (491/1305) e28ff6368461f0a0308ced79016ea98d5feb645f
+Downloaded asset (492/1305) 1d69d04c669d82a75da8ea2f8a1a63ebf5fefd0f
+Downloaded asset (493/1305) 556a88f3a8e8f407a94ad37b131dc8d5c3f236c0
+Downloaded asset (494/1305) 840d3f489b866d6ec63e8d885469105ff65c591e
+Downloaded asset (495/1305) 54290ce87fb0ebac606f497ac8a12c107b74a586
+Downloaded asset (496/1305) 99125d80da85a6055d5757fe9194bee680ac9a63
+Downloaded asset (497/1305) 90d599a1760137a7c4d7a52c77f5c65c02f137d4
+Downloaded asset (498/1305) 0e6696ec35c5f4982cad6a6731edcffb11728aa9
+Downloaded asset (499/1305) 46dd1e5e0f90bb72261e2986d530e80e8fc50560
+Downloaded asset (500/1305) d75f19c657e1f22b47d2060fd3495c444f35a477
+Downloaded asset (501/1305) cb95637a9d5e9b0cb36a2516f0dfac30fed9d720
+Downloaded asset (502/1305) d9a379040a1b2f288664f303e99147dabb1afdf6
+Downloaded asset (503/1305) fe54cc09b73e7910090edfbb93854746f816e0fa
+Downloaded asset (504/1305) e0b2b3e082199d91b1e1ee93c714d5aad124e28a
+Downloaded asset (505/1305) a33fba87abfde6b5bb2acc4f116c2cbe7c8c3eb6
+Downloaded asset (506/1305) 0161e1249adc4244fe3a83675d2b9533209948f7
+Downloaded asset (507/1305) 659b0fb0ef28429e3b779d833d6eedd8305cbbbc
+Downloaded asset (508/1305) ab51a39c66800bd6fd98c450131aac20790c535a
+Downloaded asset (509/1305) 188e05f8f12787ea22dd1836fe2c9c7e4efd03af
+Downloaded asset (510/1305) 2bf88ed6015273fa5b757531597cf156176b35f8
+Downloaded asset (511/1305) e7f0337931cdb05c4234d2a9bc1f38ead675db26
+Downloaded asset (512/1305) 9272aef9f27dfcc10b6e3879b7a2a67f8faa1a83
+Downloaded asset (513/1305) 19a5aae31c3e0018a960b709a9f0240d8d47dda7
+Downloaded asset (514/1305) 4c14c40542e249c902d0cac710ab4c6d6debba28
+Downloaded asset (515/1305) 6ea4e448fbc2a079acb0cf3564273083dadae165
+Downloaded asset (517/1305) 827d71834e69954e0a7fd7748998332e0b619d29
+Downloaded asset (516/1305) 857abbbfb58186c2f1b5510a4072630950e518f6
+Downloaded asset (518/1305) b5f9075a8bf6977e7dfd3d316a673eaaa5834a99
+Downloaded asset (519/1305) 6a908e7c7d61e01bc4223b4991820bfc56f84c5e
+Downloaded asset (520/1305) 3483650440deb3934255e044ddabff5b01a65356
+Downloaded asset (521/1305) 28f9973fcd8366ac9837dbe190b129a8fce15857
+Downloaded asset (522/1305) 6a83b514027c328b74f8428448dc6589d4b16388
+Downloaded asset (523/1305) fddba78b2426f8056be081c98fe82e8411a0a5cf
+Downloaded asset (524/1305) 6df3b2c2b951863fc5200edf3ff3396b105ed897
+Downloaded asset (525/1305) 573e565b7fda2c34fc972edd21a82fd2e09200f8
+Downloaded asset (526/1305) 1599551814c141acd0c4a3c4a0ff83f4c4e3026d
+Downloaded asset (527/1305) 0ba4a7830ea8852bf7844872d7e2d2a408fb77e4
+Downloaded asset (528/1305) c3c175d70372d8448c070d0716a8d88beec8b8b7
+Downloaded asset (529/1305) e9d023a54a6b514af496c8f253f5f3fa948fd4b6
+Downloaded asset (530/1305) e641dd3d6607db86b7574fe82781a34ad74f6c77
+Downloaded asset (531/1305) a323a968296882e15c743ccdc8cb8057557ae712
+Downloaded asset (532/1305) e260582909112ec3c255d1ec0375c7913df5f9f8
+Downloaded asset (533/1305) ee6079d3826ac2994f3f58e62370f3c8ff9328e9
+Downloaded asset (534/1305) 4e398c518ae706ad4d90afd6914f748faf18a7b5
+Downloaded asset (535/1305) c74368d2b978f570b4e7ce9645fd84b07f8f145c
+Downloaded asset (536/1305) 24d643885f9b83d8f034f49e2c5e00e70d4f175a
+Downloaded asset (537/1305) 17491c8dd9511e9d848c92b4b7ae047aed164072
+Downloaded asset (538/1305) 78d544a240d627005aaef6033fd646eafc66fe7a
+Downloaded asset (539/1305) cb1cf4b405d930ad27f09ea39d6a64f35fc13308
+Downloaded asset (540/1305) 00b38fae5d28d99514a3e73a913af16359b12b7a
+Downloaded asset (541/1305) 97e09d51c82b78ab82fb3a4dbbb8cd701b2d0aeb
+Downloaded asset (542/1305) 3f447f3e331b59ad014d9bd4a6536f98cf3a08c3
+Downloaded asset (543/1305) 9d2202fce7908dcc5b5c8758c5cd517d863d4dd3
+Downloaded asset (544/1305) 063bf0fce35c547eb59f086dbb56c5fe329cbcf4
+Downloaded asset (545/1305) c7e424eb00712614a183adf5d17b949175ff00df
+Downloaded asset (546/1305) 28409652d939d2489d8b5317d51abb873821f0f4
+Downloaded asset (547/1305) ce499da6ec5dd226d50843890ca09f16018aff9a
+Downloaded asset (548/1305) 5fdf1bd80b204245af760042d2e546d87666e288
+Downloaded asset (549/1305) 3d98b4b7c37a09101da00d8a3078e0acba6558f4
+Downloaded asset (550/1305) 9853be18df1a5b2642e33ba05e71bfd5099f9f04
+Downloaded asset (551/1305) 381f9e97a8a986ecab3e86431d6be6df5ff79c31
+Downloaded asset (552/1305) 4bf7c7a08c1217de7b1f0faf82429665fbf18458
+Downloaded asset (553/1305) 847ec719ee91e28d7bf58ab39a5d8d6bd5728314
+Downloaded asset (554/1305) 315512d6027033c2a279841badb40a26d74efc81
+Downloaded asset (555/1305) eed7a9305f5879448bb94355f25279b4aac403b6
+Downloaded asset (556/1305) d00791807e913e57d58fd891cb4dd10186cfdf38
+Downloaded asset (557/1305) 31b52151bf2a6fa35d2d2aa72f832285d9e7d70d
+Downloaded asset (558/1305) 08573a1f11058b09c5855122dff47ceb209f771e
+Downloaded asset (559/1305) 18752157f5d8718e2752805a657c74a73d2b88db
+Downloaded asset (560/1305) ab5a32b70ef1e7aafc550b20afdb7dc8c0d5d901
+Downloaded asset (561/1305) 74e5422bd83bb2041a6f0d09644bc095c0e9e21a
+Downloaded asset (562/1305) 3660e743db2bbbcff0866d3f1e606882f1aeb6ac
+Downloaded asset (563/1305) 49874e07369c3bb0bc8a2fba4f2096d2e9a36c9a
+Downloaded asset (564/1305) e0f0ba416a5744036e11bb6a5fc5ac4b8c461873
+Downloaded asset (565/1305) bf7fadaf64945f6b31c803d086ac6a652aabef9b
+Downloaded asset (566/1305) 758d2a1c36abc84d2744d697b76d5414ea96d9f3
+Downloaded asset (567/1305) 989c3b614f736aa77bb2800821ea56936e98ca68
+Downloaded asset (568/1305) e07a2da49011ef4cf9d6b1c80a91a06f808c1243
+Downloaded asset (569/1305) 228bab6d9b09994dc407b9d022bebca791d81c16
+Downloaded asset (570/1305) 2a031f10c7dc24e75d5dc3a374ebe7f36fc3e143
+Downloaded asset (571/1305) 05f429069e65d78f7e6609d070a3f294cc3128ab
+Downloaded asset (572/1305) fec7c7997f8eb6faaebd37f0eaed417118d3a498
+Downloaded asset (573/1305) 80ce8d4b8d361b69e42d8d147e42a09d3c85a115
+Downloaded asset (574/1305) 482919bc631b317422ab44af3938259bea73fe83
+Downloaded asset (575/1305) 555d33de143e6dcef2aa80ebf9a8f8b1481d42d0
+Downloaded asset (576/1305) fbc1b2c89c5c781e30d702b2885be3f485105869
+Downloaded asset (577/1305) 03063be15a77cc3f6815ec98090e351178190b33
+Downloaded asset (578/1305) 74771428c2aa2acbd30638c6706867053bad64d3
+Downloaded asset (579/1305) c46c7d2a84749bfcbcf576aea0d66fd3deccba31
+Downloaded asset (580/1305) 0979bf115d081d70a985f1cfcab1b9274d6be74e
+Downloaded asset (581/1305) 85c860ea8c55984bf6cabb75354c78f3a603f98d
+Downloaded asset (582/1305) 53cc1890ebea833d3964c7dd1c90676650e34404
+Downloaded asset (583/1305) d859c9c5be04ffc41479b306814a933983eaa235
+Downloaded asset (584/1305) 049a3049a5ac8631a6c5f367b7d824fc0d8de39b
+Downloaded asset (585/1305) ba35053358ede7c3bf33a4c344d66680f09008c9
+Downloaded asset (586/1305) c84b0cf222e7dcbedde8eb9deb98835032f4d402
+Downloaded asset (587/1305) aedeb53dd3315f964ff4d10d0003e4c5f41d1bb0
+Downloaded asset (588/1305) 46e5db05b1e91ce33c9c4c63260227fa629230f4
+Downloaded asset (589/1305) e96237fdf5e5e1aca09496b9192243651525d0ac
+Downloaded asset (590/1305) 5a368ed32b3357e31629451ace57eb30d90e8874
+Downloaded asset (591/1305) d2c44730f6c93676d4e4316add92e424d0a71a33
+Downloaded asset (592/1305) 7d5b3b403a11b6dd4c3801c4f4c8bf7ce9a8c771
+Downloaded asset (593/1305) eb58ef697b2cbaed218edc758e00412302c75962
+Downloaded asset (594/1305) 92488929c42221fb3f1dee397a32d2e4de615f3c
+Downloaded asset (595/1305) fa6d89b586c5ca29efe85c8d373ff9ee19488d40
+Downloaded asset (596/1305) e7e8d393fc03a476227890e9ec9319dcc4b400ea
+Downloaded asset (597/1305) d04dd6d1f050353ef9e3ba9c45f407f831903c69
+Downloaded asset (598/1305) 753a88c1d9b3b46210c18ff07974955463edd18b
+Downloaded asset (599/1305) cf60aefd0b742c3fa15e808c1a0c33aebd534cc5
+Downloaded asset (600/1305) aaa8f1705c873ebc05da460657c8b83fa01ffd57
+Downloaded asset (601/1305) 6e0f9074e049a6c30402d70cc75a5da99042e00c
+Downloaded asset (602/1305) 281b87984ddf8e94324bc86911a36c971cb3d831
+Downloaded asset (603/1305) 9c7aaf49b3096a69a2d6ca62c1067400a2b70814
+Downloaded asset (604/1305) bc4c2e76d3b5a0e6f9d5837fe82ed26e808aa918
+Downloaded asset (605/1305) 405e2f82caef7f79eb9e26886520711e446366ce
+Downloaded asset (606/1305) 7b4b5323ef066caa1ae43cbe66fffd9dfce4ed32
+Downloaded asset (607/1305) e746ec4574aaa047be3076729753c2c75fd34630
+Downloaded asset (608/1305) 35461b6a4253db40973549e82d91f267c686be85
+Downloaded asset (609/1305) c4b5265bbafbe058347058a257abe33a0afb5ab7
+Downloaded asset (610/1305) dbab0094299eacbce86ad427edcb34b8342861af
+Downloaded asset (611/1305) c8cd465468a0fd41a1d5cc24cb499862b5ade2cb
+Downloaded asset (612/1305) bcc73584d83225383aaa6affce905392c96afe86
+Downloaded asset (613/1305) 5738d7f49ef30adcfc4f2ab13e0b1d74f09a1289
+Downloaded asset (614/1305) 54d3edb3a90389d75f69987bfc678cabc4c87e26
+Downloaded asset (615/1305) b273df5c1e0271b2d8b0c65720490f26cc2a7215
+Downloaded asset (616/1305) 1f7d377e9b4eae36f14a789c617a002672f12d4a
+Downloaded asset (617/1305) 60f96185109232213115f5d872bb255e8c7a0c81
+Downloaded asset (618/1305) af4b651a46f231b85a168250139279bc40f61d21
+Downloaded asset (619/1305) 80a6c6c1d60532793787e8a66ca2d129ac3fbac3
+Downloaded asset (620/1305) f4f7b2865ccaadccca94e83e38018e702457c3d4
+Downloaded asset (621/1305) 2e07d453eb202ad118188afab747735ee30c4fee
+Downloaded asset (622/1305) 658ff4745a987397d73d88433beacdd10ed77060
+Downloaded asset (623/1305) 29a8dc6ba0be69c30a30554d4df2897e7080e4c6
+Downloaded asset (624/1305) 38c7a291e6f92671edfc93ed417190007360ccc8
+Downloaded asset (625/1305) fc1a00ef9a40024a4b1ded698c4b772fe970cbef
+Downloaded asset (626/1305) fd879aaac2253fbc2a8995a8bab4b48ec11d0d41
+Downloaded asset (627/1305) f85e4f86826405a97d929e16f60a8a2fddc7abc0
+Downloaded asset (628/1305) bad476e071c0e0d9cd6417bc636385e171578aae
+Downloaded asset (629/1305) 6f1d403f47725af0f4c42a74cfec00ff59153160
+Downloaded asset (630/1305) 99cd73dda425ee03836c2274a0fcf331139773dc
+Downloaded asset (631/1305) 725e5179c72444c6d885e39c27e6b31ed83d58bc
+Downloaded asset (632/1305) 882d092b05faef1cfa6af43d642b9e8843f22756
+Downloaded asset (633/1305) eafa60d7ec34f86e8f07a001ddcdf5c4600bb174
+Downloaded asset (634/1305) 02073c284f025653e55f9cde25a4a62723d395fa
+Downloaded asset (635/1305) dcec2d45fbc25f74a399ec9f8001e0ecd2d5d85e
+Downloaded asset (636/1305) 935f1a575322bd0ec53a919fd061321216889104
+Downloaded asset (637/1305) 48fc6c25d0f1c1f0edd4eaca2b6f934d4117f440
+Downloaded asset (638/1305) b3f91f243eceaa25cff7488ec2dac732e22cfec3
+Downloaded asset (639/1305) cfb956ba9d26cbdacd16ef77d58764df783b2c7f
+Downloaded asset (640/1305) a0e62d86e5899405df4e796fe648e091d828691d
+Downloaded asset (641/1305) 8f23820fa28830dd031188c20acb35af044aedb5
+Downloaded asset (642/1305) 57008a7f564443d563968fd040fc13ab226fc8d1
+Downloaded asset (643/1305) edbc9e9cb9dfeabef93207fc0bdee6ceee5df7bc
+Downloaded asset (644/1305) 77a7b79d4f2ada27640866ece1020b631f5bdc54
+Downloaded asset (645/1305) 49c71e06621ad56f69e99e0bbb9e82c37b8d8580
+Downloaded asset (646/1305) 3f2e554955be100d7f28c074586b764710330b8c
+Downloaded asset (647/1305) 04933f2f39e339e7ba0db0c21812cb9ff9bdce8c
+Downloaded asset (648/1305) 71462d1281c3f2e6ecbd0a2cf55b31b8d7f2798d
+Downloaded asset (649/1305) 1c3e5d6ccda1ebf90bd3cbdbfb385fb43601d464
+Downloaded asset (650/1305) c8fe82b865263c952ba1730d63320783a66d35ae
+Downloaded asset (651/1305) 186362097c9552903943d8d37a1e3b974e4aa618
+Downloaded asset (652/1305) f18e291d84d108d02fa1170e1ccaedafdfb922f5
+Downloaded asset (653/1305) 7663355cd3c9734cde0fbfecd7bd44ffc5a5d507
+Downloaded asset (654/1305) ac95dc01a3ce7dffb0d55283a1236196b07cf6ee
+Downloaded asset (655/1305) 09b6bbe5a03eed221630ea36b21d14e2de043b78
+Downloaded asset (656/1305) f5cffe472a3f7cd5beb131936026e4c194972d99
+Downloaded asset (658/1305) 3fb1db01cf63dc87d73ea459ff35237b22a1b490
+Downloaded asset (657/1305) 24859b29b627b20251e47f38a1a4cab44bff9b11
+Downloaded asset (659/1305) f9cdbb65d2ea10df9721c242215b9c1284d96f94
+Downloaded asset (660/1305) ba44dc4f2af22798b017d548acca7296a7a3d87c
+Downloaded asset (661/1305) a302ec024f3b7fa7949b37291374ee0261533d4b
+Downloaded asset (662/1305) 3008b71834c7815f70507c044da8defbcb585a80
+Downloaded asset (663/1305) ac851d1258b5b1096f40a38e3f250645682d5390
+Downloaded asset (664/1305) 416f51c27392dba6cf130674ac4c59c9b822aac1
+Downloaded asset (665/1305) b15fa016ddb59bcdbc23d3496628f3765ad698b1
+Downloaded asset (666/1305) 5c5c046607c1694ef1af630729921e3551e4b5e8
+Downloaded asset (667/1305) e9ccf74cb5b561e4839482863d1466f731903500
+Downloaded asset (668/1305) 900b2d58c722329bc1fe73d1dc037a074c1d8085
+Downloaded asset (669/1305) 2e07364ccade2277d8a89d58291522d2f25a2ee2
+Downloaded asset (670/1305) a72656de9bd5e4faffd65adbda4cd699180e3787
+Downloaded asset (671/1305) 6054a4933743bbec4fbd6a9980e344dcd62ea374
+Downloaded asset (672/1305) 10cb938779ff8c411d8db8399c26a1bd5fdbf826
+Downloaded asset (673/1305) cabf5d0beb7d1b1dc50707b728c16143b8edf83d
+Downloaded asset (674/1305) c80439669ee4c5ab6e236787f57fc6aa980dc6f9
+Downloaded asset (675/1305) 2ccb16055e7974aba40987a46c4b6370b9296106
+Downloaded asset (676/1305) 7bbbd6126bd37b4f2ec059d2784f95310bd55b75
+Downloaded asset (677/1305) a02c38569979cd6f4305f9e43a7a9fe26477d161
+Downloaded asset (678/1305) 120def25aa3d41ceeae166c7572561b4fb345900
+Downloaded asset (679/1305) a36f9c11ced9aa4364de7f26bb033e32adf9ad6f
+Downloaded asset (680/1305) b6f6330f1a5c1a3a975e852c02b0543135295d86
+Downloaded asset (681/1305) 44380f86e13a06b1f0c6feec2d6644b67e6c4d9c
+Downloaded asset (682/1305) ece3a1417e0eca0a748aafaf6cd9f5e99c314991
+Downloaded asset (683/1305) 9580708c276c3ad24703ea7843e317b2845d272f
+Downloaded asset (684/1305) dd1846c866f5ef87e056a3f14ac156959b637726
+Downloaded asset (685/1305) d2cd73933fb1f6dbcb0dd170fde6fc8a49d709b9
+Downloaded asset (686/1305) 4081b6ba7b4e345a0c48d791c54b6f59c1e2e1dc
+Downloaded asset (687/1305) 6d7eeba0ba69cd68acf1e2ed5ae488c5aabbc9bf
+Downloaded asset (688/1305) b489c51eb82814562b6e288a889e36ccd018928c
+Downloaded asset (689/1305) be565339d494ce6ff788480a462bce0ec69c8ded
+Downloaded asset (690/1305) 2433e0f1cfd53dab77422aca9f60f3d9a86d9991
+Downloaded asset (691/1305) cf601e6c603b4186919f49462594da6e66edb7a2
+Downloaded asset (692/1305) 11b2b7b9cac527ce8cfb1cee41285c163ad75869
+Downloaded asset (693/1305) dc6b3831d315eedb3e97823c9ab1ae5092dcecbd
+Downloaded asset (694/1305) d6ceab79e5cb41ab8181188361bdb553b2f645a3
+Downloaded asset (695/1305) 73909900231d6f994e92cea983eb34d20cdd6461
+Downloaded asset (696/1305) 559a1c7dbf17f8357b6d505f2a072f22efe0f43c
+Downloaded asset (697/1305) fccee35ec3b76cf6cfbff0f269ed1a3b88459f22
+Downloaded asset (698/1305) ece0b410c81e9ba3e29440cc48005fc544aa5104
+Downloaded asset (699/1305) 65bd63eb0e8056707f7f16f1a272187d3d32de15
+Downloaded asset (700/1305) 9e49d50a15b74ec6ac4745b0de3e1848178ea437
+Downloaded asset (701/1305) 20abaa7d3b0baa105bc6023d5308f1e5d76acc41
+Downloaded asset (702/1305) 4632633263997de468f35d0227b5d56c22c911bd
+Downloaded asset (703/1305) 3b11e7b50263049d7b7c384c622c8fdf28cf12d8
+Downloaded asset (704/1305) f111af513ba90b246a872e995f4b1722368899a9
+Downloaded asset (705/1305) 721dffeec54cec90bb07986342532f327185886f
+Downloaded asset (706/1305) df488adcf98b65d30473865945cb5ea1ee30108c
+Downloaded asset (707/1305) 68f186d1e9890fd4ede56106bfca198e904b57e4
+Downloaded asset (708/1305) cd683396ccd955bfd218020dbb1892808def402e
+Downloaded asset (709/1305) 083256ad8eede9ca7191b7667971070429d824cc
+Downloaded asset (710/1305) 195a4b987b0b97c238de9522eb74dd1bfeab202d
+Downloaded asset (711/1305) a9a83e3f186b3af56a9844b8d4976c6251ba17eb
+Downloaded asset (712/1305) 2bdd1bc318559543fe0f2a8e7338ef44c0290900
+Downloaded asset (713/1305) f85131ddb8e80f13d8917fcf9bd99256f8a7695a
+Downloaded asset (714/1305) 76aa158461bacbcd138f88c0338f56525bfd55b9
+Downloaded asset (715/1305) 352118247b942b2c0df66f2a9a60cb1fb4792446
+Downloaded asset (716/1305) 6efbe479d74614c5f824fa5aafa295ae936b3f9f
+Downloaded asset (717/1305) 711c8d8e7a1a67ace08c33a544aa3a1157ab97e2
+Downloaded asset (718/1305) 61112837c4cd7174fc0cf1ebc569275c45b089ca
+Downloaded asset (719/1305) 50733b9cb1042acc3bc38182d7ccaa65e538bb57
+Downloaded asset (720/1305) 69ca9738d02cd8476943060a66652496c6669742
+Downloaded asset (721/1305) 52f58da2e750cf03137c968261b7af5cef599a00
+Downloaded asset (722/1305) f4ed4c71699d853437c14fb9b3d236b78108bb53
+Downloaded asset (723/1305) aa914f7916d6f90042841cce5972b73043eb2101
+Downloaded asset (724/1305) 75feac0fe57873c7f2e93d4cccf24014ab8dc905
+Downloaded asset (725/1305) db6d67850ac177a7407748d7efa52fa1b7b57982
+Downloaded asset (726/1305) ad126e435cca94054bf0d616301799a105526cde
+Downloaded asset (727/1305) c093e925b560d3da4c9b1ef5679d1da2a5a8473b
+Downloaded asset (728/1305) ef1fea92382e98356a8c39e3c99b91d72d55f342
+Downloaded asset (729/1305) 9d034bf3ba36b297487b2380b908713982a83a3a
+Downloaded asset (730/1305) fef8520e0d345fdc7c270687c8e4fca62be36c76
+Downloaded asset (731/1305) a3e09e3bd63fe64ad3f5bc80d41c713b142c625b
+Downloaded asset (732/1305) 658c4988a4ae5414a7d8818397b37c870d2805c4
+Downloaded asset (733/1305) df807aa06d67adafc96907b437dd5f3b82d04bb5
+Downloaded asset (734/1305) 603f17073b0ed21701163b2aad1afb02111a8ed3
+Downloaded asset (735/1305) 26d8fc6a71a7d911a8fd88edebc460030dc48e67
+Downloaded asset (737/1305) 1424a1b86f3c1711676025e795809b24e9d789f9
+Downloaded asset (736/1305) 159ff39d89331996c7221f42c72db25e78523fd8
+Downloaded asset (738/1305) 6ead5bdd4a06d466959de48dea4e4835f3568942
+Downloaded asset (739/1305) 0b521d8200bfda7bb11c8fb6d6a03d52f6b740e7
+Downloaded asset (740/1305) efef714310e913c1580ccfc1739a12aff0d6ca26
+Downloaded asset (741/1305) 70a1c99c314a134027988106a3b61b15389d5f2f
+Downloaded asset (742/1305) b6858c3516e3516fd68d3e697ae673f2d2cf2896
+Downloaded asset (743/1305) 5428d773dc84f7ffe1eecfd4882e6f7dc614fe91
+Downloaded asset (744/1305) 8a3385c74ecc365585696c41558a04e5ae3ad9fe
+Downloaded asset (745/1305) 26fa8b1ef22ddf5df9208ad60a1fafa07e3ae79e
+Downloaded asset (746/1305) 96c8349db8002a60a3d496943a1ba044988987c9
+Downloaded asset (747/1305) f888868a21a578ae4555f306def36cdb6912b331
+Downloaded asset (748/1305) 1129d5a7e5217528ee729b69731883961e0e2cdc
+Downloaded asset (749/1305) 6a2e2114bac7a548fe93c64b271359a544982790
+Downloaded asset (750/1305) 10cd356e9bffb033e0b92aa9a30da5e6226e4f33
+Downloaded asset (751/1305) 9aece538dc171535f71a00507384ffddedc14092
+Downloaded asset (752/1305) 63baa63d5cbf7fff5421b1dc67973101b3c2b5ba
+Downloaded asset (753/1305) e28b515af2d53d9a3213eab5da9e2e776ff5e1fe
+Downloaded asset (754/1305) ccd7a059aeb60357337dfcc69b9434a977e5e9a8
+Downloaded asset (755/1305) 9cca4f946a25ded1724c2c79bc3653618e95d761
+Downloaded asset (756/1305) 770b3f1feb05b9b941d858eb72b9d04ffc5d52c9
+Downloaded asset (757/1305) 942937fcad0fefd61e019678e3710f3f077757d4
+Downloaded asset (758/1305) bb92fd6971430a515f508a6734392511385826e1
+Downloaded asset (759/1305) 27c78cd09f7fd1770a41d78247ccf57c77dbc773
+Downloaded asset (760/1305) a2dbb90f23b0babe7c569ceca28db49d0c112714
+Downloaded asset (761/1305) 607d51883e137d5d423dde865232ab1ee78f2694
+Downloaded asset (762/1305) 4e3e9f37c1e0c12c2993d25c28b89e2f0797ba5a
+Downloaded asset (763/1305) 356fdb6192cf96aa5d5d9c76413f412f6a4d66a4
+Downloaded asset (764/1305) e0672d288b09996f7c7e1a0ca696de82b7a02d18
+Downloaded asset (765/1305) 88ae6c906f8f94add2fe904b59c94e844bbcef9a
+Downloaded asset (766/1305) 3c7d131bea20c3ecf4944ea348f0b7f1ffd589b8
+Downloaded asset (767/1305) 52b923b1b552936f2ac5fbd510bfbdd4cf7b14e7
+Downloaded asset (768/1305) 7496b0e5fe51d486a1c18a10f354802b64c72df5
+Downloaded asset (769/1305) 26a12b0f58bbc075d791a88a4c40ea483f5f68aa
+Downloaded asset (770/1305) b920529bff1cd036e2bd1030b5fdb1618e869d79
+Downloaded asset (771/1305) fb8ef675c17637bf7b16e97ab33701b9db274557
+Downloaded asset (772/1305) ec88e60f461446217590da0ca3f5b9723aea440a
+Downloaded asset (773/1305) 0eb97ddb69796a7f0cfa8c582da49b0ea3f078a1
+Downloaded asset (774/1305) 4be797a654ef7d62adbba23f531324f97b8f0da2
+Downloaded asset (775/1305) c10fd6127207673fa43ef93038121f0d5aebc456
+Downloaded asset (776/1305) add752f78fbd0398f0e9e0755e4e12dc196b821c
+Downloaded asset (777/1305) 1584417fc341cc7a34f2de0a5f6e8249684cf1f1
+Downloaded asset (778/1305) a9e0a8b4237387f40008b6f0227915c5dd8281fd
+Downloaded asset (779/1305) af1519b9429688e8cebc6d7edd8ac5cfc8d1a6af
+Downloaded asset (780/1305) a783e772d25d52b7e3d4d9a58458bdc23e94efdc
+Downloaded asset (781/1305) 7584883d3969a771716a29f55a695acad068c9c8
+Downloaded asset (782/1305) 361c8d76dce6157713e24e77c7feb20868ae0e38
+Downloaded asset (783/1305) 20ddc6a5fec1f7be2d92c73ffed513855fe7a906
+Downloaded asset (784/1305) d380b144db2faf356520919d646ab95863cbf51e
+Downloaded asset (785/1305) 7c8f2ffac9470cbd75cb668797714c3602bc3ebe
+Downloaded asset (786/1305) 6aef9bad980e39643edb9154457da314357ed1f1
+Downloaded asset (787/1305) 14802b4346986369a7bbf616ebc4023e34e4f517
+Downloaded asset (788/1305) 430c65ac81151d873a27d611a9dff6c562e38c4f
+Downloaded asset (789/1305) 4c4bcc6905430286f32a862ce69665c51bd9938f
+Downloaded asset (790/1305) d5c4316d30feef5213077e3ee24a7f52c5bf6735
+Downloaded asset (791/1305) a63fd7965328425a0a8111640de19428d841933e
+Downloaded asset (792/1305) 3285a993220dcea1fc37e98b9aa9219422c2c095
+Downloaded asset (793/1305) 86a2a7206c769aaa9435aabba70be201cb3e3a6b
+Downloaded asset (794/1305) 5a2449cc3d4a6ad36598847e501f956e5a3528bd
+Downloaded asset (795/1305) 500e2543034b4c026fb175d48c47196c5d013fe8
+Downloaded asset (796/1305) 18237686efcaa1bf9084173c99d11ce0d37d4fc5
+Downloaded asset (797/1305) 65a1a69845133187d6b8689e6ce9707da10f21a6
+Downloaded asset (798/1305) a485082ed0820eeeb9df13f84f26b14744ceeb2a
+Downloaded asset (799/1305) 560dd97e6da8badbc8ac00b28c45312e60a525f2
+Downloaded asset (800/1305) 5c633c345fe4cb87c36ada2fe2b5da1b80601cf3
+Downloaded asset (801/1305) 26c66e23e467bd088fc3341d49620a9ea992af7e
+Downloaded asset (802/1305) 11532f8464972c2e461e10b62837acb9fcdf7a84
+Downloaded asset (803/1305) 24da11ed54374340a74a506b868fcaf28c97da3b
+Downloaded asset (804/1305) c5b91d68724ad185d9d6e91898b7afdb37b10509
+Downloaded asset (805/1305) bb043ea13fdb26ad2ac9bc2cf70ca7e4bec06d59
+Downloaded asset (806/1305) 087d6af9866942cb656d183aedbfca17e102eb48
+Downloaded asset (807/1305) a6b1e2f30a20a0cdf6bdacd86e837b56e1259e77
+Downloaded asset (808/1305) 036b84d1cb5abfe2bfea879522a7612e1e383027
+Downloaded asset (809/1305) f95eb6ccc28d569affc5f4d41030d35cf5b26ac1
+Downloaded asset (810/1305) 015b9554db0e167ba36154c5a1f7d4f9e8f95e29
+Downloaded asset (811/1305) 10952c90ce14843ec5c707ca2b13e554134a325b
+Downloaded asset (812/1305) 70920699757095700d9c1d3961d65e3eed46422f
+Downloaded asset (813/1305) 8a6162a998ade3ddcb584f34ed0151c40c725a99
+Downloaded asset (814/1305) a19654fe6606d0d21f4f7c14aa6935276daa1418
+Downloaded asset (815/1305) 3dd451731a3ccbb2c64e17fd71ed265c606bd595
+Downloaded asset (816/1305) 514185914aceffef29a78d7c4aabacd12e1a6cd1
+Downloaded asset (817/1305) 6c4bb1815b11b7b239a9c414f940ce1a73a082e6
+Downloaded asset (818/1305) 7517eb6d9b3b309b0667586aa015bcbc11272971
+Downloaded asset (819/1305) 0cd209ea16b052a2f445a275380046615d20775e
+Downloaded asset (820/1305) 683ad5f3ed2ad596eb5b876870d9caa1f8f5c825
+Downloaded asset (821/1305) 2488018ea5ecf96867a32fb4277e0da286905514
+Downloaded asset (822/1305) e63b300edb3c049c547d8f41b0c13f28f69c65b3
+Downloaded asset (823/1305) 0fb24c3ff0ae33ec77018b68490f7e84de47bd37
+Downloaded asset (824/1305) 404cc7f5169ec5d2947ffb1cad8b51d71c91d65d
+Downloaded asset (825/1305) c3dac3e98f56a72c0a0d6ad3b1e39bd2ef4aecaa
+Downloaded asset (826/1305) 8335ff3f03e4c27c673780f1c63d59acc1e52409
+Downloaded asset (827/1305) cb2012f3dd27160fe5c10d9c30a6794a26f4ee11
+Downloaded asset (828/1305) 194dde617e841c3555fdc86420650916bbc81251
+Downloaded asset (829/1305) 4bc87ab869e17732a20c7518a327136baf5b2c26
+Downloaded asset (830/1305) a99bf88163bcb576e31e6e2275145afba6d1b4c7
+Downloaded asset (831/1305) ab615a912fb8ea06648836e0ec1cbeeefe117da6
+Downloaded asset (832/1305) 58efedf302e0203a6ff9e59a6535d300286c5594
+Downloaded asset (833/1305) 05baaf5ed0cbdab08292b3962e1b1385e13b9dba
+Downloaded asset (834/1305) a69a66bfda52a42ea8cf712eb1caa8830046c14f
+Downloaded asset (835/1305) 6226903c5dfd8ac388f9d64a5fa9968680ed3507
+Downloaded asset (836/1305) f5e1ba4ac271b4c2feee86a4d04e32279ea99c10
+Downloaded asset (837/1305) 56d6fd65958fb25bf9b4033a87655b591e222005
+Downloaded asset (838/1305) 2b65351eb74b019efe40a451a1f3f2fcf5c2bf4d
+Downloaded asset (839/1305) 9f8d13d0b8420cc664241765a841253d02272798
+Downloaded asset (840/1305) 7778df9b63d09e89859058afdf31e3f426e5bebf
+Downloaded asset (841/1305) d030d4c98ec70fd0d84c43a944de0980f6bb5355
+Downloaded asset (842/1305) a11dc3ff01778f57819af7f42f18d136d9b3bf01
+Downloaded asset (843/1305) 4a5af65300334c4991a057990e9f8c23a2a1416b
+Downloaded asset (844/1305) 1d58859744fcc7c09ffecbe16f84752b057d8d77
+Downloaded asset (845/1305) 8e3b07adf3b09ea60e82062277fe301205d03421
+Downloaded asset (846/1305) 954f82c6da9670f1383b4d0002061ebc1536c35a
+Downloaded asset (847/1305) dcd7ec12919c1b6b5932dd46390a3cfe9b5384c9
+Downloaded asset (848/1305) db682892da4e2e4214ff3233bf719c7609d95477
+Downloaded asset (849/1305) 007f04ca456cfc7c0e877352f01a7aa77dff636c
+Downloaded asset (850/1305) a9d52deab40b2ecb45aa0778e166983c1df7c5cc
+Downloaded asset (851/1305) 837d1badadc01317eaf2a0c6c5a475e120a75262
+Downloaded asset (852/1305) 973f284bffdc6cbb6379d0d641f4c14a36adee39
+Downloaded asset (853/1305) 3ab5202db5786cdc438cd8fbc554f3fc1a929939
+Downloaded asset (854/1305) 580a2de441d8caa949758dfb193ba3e6ab4ee61d
+Downloaded asset (857/1305) 58f044e833493dcc6d8963b56cae23c8e0d2eee3
+Downloaded asset (859/1305) 4a1cd5bb70f5177dd5b0aeb03fe0a2c6e37fca4a
+Downloaded asset (860/1305) d456eb344ee6dd6e89e9bd58ed35d6cb216f449d
+Downloaded asset (861/1305) e62d75641464ead6ff27101010b54573eb1c1d4c
+Downloaded asset (862/1305) 18dc3ef276a8769bd88202520943bb174c0aad8c
+Downloaded asset (863/1305) 461436665544dc44e12f79cad893de2ad02ddffc
+Downloaded asset (864/1305) c4456c473ff44786c6f9d7e6c91f652ca0a7f7d4
+Downloaded asset (865/1305) 9b6a19ab1865d88b1adb2acafa9080ba9fa1b8e0
+Downloaded asset (866/1305) 4da9f12f979eba012c6f62e0820ca58cc49d8834
+Downloaded asset (867/1305) acbf6f286ce5b0250573656c7570669db42f86c5
+Downloaded asset (868/1305) b8e867c43f0a7f3f3f96c238d99c619aa237bc15
+Downloaded asset (869/1305) 9f61bdb718755ad41f71202c8fef5e993769c028
+Downloaded asset (870/1305) bde8c9c94b1a27db0c4b49cbe88251e220b5ee29
+Downloaded asset (871/1305) f226beeaf9c566c377e7dac03c8e748ac34b5f99
+Downloaded asset (872/1305) 8906199918a85564590c7a01e854c3820853533e
+Downloaded asset (873/1305) a3ffeaa0a75b8d2bdc949c181a6f8db78f8976ca
+Downloaded asset (874/1305) 1cfd864cbda555477ed9523e640de0d234c18858
+Downloaded asset (876/1305) 5d9055cf25f126c47e18637aeef917fa1ef61a42
+Downloaded asset (875/1305) c9ac72409cbe6093e84d72a2a5c719d9e4a0e6b2
+Downloaded asset (877/1305) 5288cab96e26207edd31307c9c01b6902306e4f6
+Downloaded asset (878/1305) 59034eb696e186d973dcea0b162f01e38f1b4f31
+Downloaded asset (879/1305) 101164ea1b442a8e1e8ca181d9cef833c57d7be3
+Downloaded asset (880/1305) 6ff26a1439fb6f9f353c2bd623edeb936e760855
+Downloaded asset (881/1305) c289aa46fcbcfaf21c8080d57953fd45a4939294
+Downloaded asset (883/1305) 84c3b008dc1d5e0dd5e8ad85a06eca29f0591e48
+Downloaded asset (882/1305) 38d4d36bbe40a48c3a8ef97735b59b37f013fd6e
+Downloaded asset (884/1305) 24cdac5a80fdad7ab31dc0695b57ece55aecb21a
+Downloaded asset (885/1305) 5b1675279bbc245fc6bbb705de8ea09fb3f32b53
+Downloaded asset (886/1305) 396b8b46e593cf55d843853b704dc054ef614e55
+Downloaded asset (887/1305) 515dffc5d6dd216550d69e61b2eb9c3593b19a20
+Downloaded asset (888/1305) 4fce41a2d0890418ae1efb03d1142ca74d00aa61
+Downloaded asset (889/1305) 763cc79934a572b84c371cb49afad5912f29d2f1
+Downloaded asset (890/1305) f1665747da14569c4de55e07884deeef18a40f62
+Downloaded asset (891/1305) 47ad81223bcec870206484cd4d1a6202871df331
+Downloaded asset (892/1305) a342f566600caf73464323b20b7770b5b9b7893a
+Downloaded asset (893/1305) 641e601132b4adb67951e0d49c1004cf1b86eff2
+Downloaded asset (894/1305) 4d03069c0e14794b463f563044da46433776da60
+Downloaded asset (895/1305) d1ad2cbe6584d9cd9483483f8655966d25a251a0
+Downloaded asset (896/1305) acffab0bafe2c82ffc8723880aab5ec1682d4329
+Downloaded asset (897/1305) a88e0436e38512171a3ef819249c3d1a2650540f
+Downloaded asset (898/1305) 199c9f150822950385b9bc1d840605a6a795bd27
+Downloaded asset (899/1305) 529abcb09220f0ebeb595f32bb663d026a7e0ae5
+Downloaded asset (900/1305) a11ac56ec61c17e99f4ee33d8712404edf442720
+Downloaded asset (901/1305) 68e0a58848bbdad12ad2b216d7244754459c9516
+Downloaded asset (902/1305) 4609ec723b4e724f44c653b82de40ec159d2eea1
+Downloaded asset (903/1305) 000c82756fd54e40cb236199f2b479629d0aca2f
+Downloaded asset (904/1305) a89bdd809baa83cacd329f0219bca1f612ccda5a
+Downloaded asset (905/1305) 075e1ea92d5564d7bdf267ae975044315a41a686
+Downloaded asset (906/1305) f6e2067571631aae206000a501c9adebe862e32a
+Downloaded asset (907/1305) b5eca1979e69271b2065ac67ba2c37b5afac0f98
+Downloaded asset (908/1305) 00e06362a31ad7094e452c5bcea837b061825cb0
+Downloaded asset (909/1305) 2c20816632caecf75f00bb968f51847e3a982e75
+Downloaded asset (910/1305) c906c18d26550ae15c75e23f2c5066e4fc678c89
+Downloaded asset (911/1305) 5cde2500773323f7997d75062f8a26afcdf62b2e
+Downloaded asset (912/1305) 5e2ef521293719bbe22bbb515bbcacf4c233a075
+Downloaded asset (913/1305) 3bc8225914b1be20db68fcdae202d5acee3234c2
+Downloaded asset (914/1305) 4dfe0b607c5de2e47f3b7950c56bbebbf3115957
+Downloaded asset (915/1305) 35f0b3c9c462a6c21ec213fbda2437a0e6427883
+Downloaded asset (916/1305) 4c69a6edc25d973999aa0db2bb46b583a31da278
+Downloaded asset (917/1305) 65b49739d48ebc47879ca5528c8283329980b304
+Downloaded asset (918/1305) 501b40b97ee55cb7a97943ee620aa05131089fc2
+Downloaded asset (919/1305) f9f79162efa6667b753c1fbb46ff9888e8ce5f32
+Downloaded asset (920/1305) 3cf3e8d3aab0a3092f6c6bf681ff156bc9653859
+Downloaded asset (921/1305) 8f7ff84e460ca507f654168f1d24e82637517940
+Downloaded asset (922/1305) a8eb0b1ce4abb53334ab75be82dc465135c4a27a
+Downloaded asset (923/1305) efa5acfa08b210ba3087b535c40549c0ed8916f0
+Downloaded asset (924/1305) 7d801582e08be973d1a41469d1b92916278d1e88
+Downloaded asset (925/1305) db71dc06bdc5d40f20f3b896572b2b6ef7bccd7a
+Downloaded asset (926/1305) d48940aeab2d4068bd157e6810406c882503a813
+Downloaded asset (927/1305) a92ffafc8fdf95a553ce0bbf1bc106a3394daca2
+Downloaded asset (928/1305) b0bdac0097af7d17b88f86f4f19767f0a05c12ae
+Downloaded asset (929/1305) 5e64ed082336f118a07fbaa08616c94815546f8a
+Downloaded asset (930/1305) b88bbb3d20be99db054e38b3025c6a730a03a6a7
+Downloaded asset (931/1305) 5ae2932c72fe01bb7de76feea2a5c98cc4f01677
+Downloaded asset (932/1305) a7ec4468b3713051ad2db49da57213fb0ac71c6a
+Downloaded asset (933/1305) 1e3649a7ed0f8dd3e45f07dc3257240c83333877
+Downloaded asset (934/1305) 941add0940fff023b3fcf70437939a0f6d384e70
+Downloaded asset (935/1305) 824c98d1073f33118669e34136d353fdcd662ef9
+Downloaded asset (936/1305) d1cd2abdf431e76ef50d8bef1d937ed071583a85
+Downloaded asset (937/1305) 9004d9238ef7effdcc7c9e94249d489248257874
+Downloaded asset (938/1305) 2169e0302e1d7ce1e32dc8d41648c8059da5eaa7
+Downloaded asset (939/1305) 478e408dfbdf80fbef0c01c00e13db9d30c6fdef
+Downloaded asset (940/1305) e967f24f61a222b616dd9cda511f0295aad99bbd
+Downloaded asset (941/1305) 342790fb463baafaa7b8d61102567b48505cbdf2
+Downloaded asset (942/1305) 6bfff2a958db431970b1cb8d9dbb9c219cc61022
+Downloaded asset (943/1305) fe0aa753f52ff42f65b0ce142cd91c7851eae3ba
+Downloaded asset (944/1305) 705958413c53d3be211df142ac4373a4471427da
+Downloaded asset (945/1305) 4f380fccd5258b882bb7d5a471a7906ef0a5a0e5
+Downloaded asset (946/1305) 412fbf472c29b9eef3a08cafcf665c0c9bd93ab8
+Downloaded asset (947/1305) 23360665fe34480dae0056e9f11ef6c47cc8e3df
+Downloaded asset (948/1305) 756529ea99c4e259d66b1dd0b945e7d62904e2c8
+Downloaded asset (949/1305) e1473161a5f6e52bee97c38b1c05c8342503bbf2
+Downloaded asset (950/1305) 97c65b93b9bff839786e23d8cb7c98ef3be4fe2d
+Downloaded asset (951/1305) 57aead4d024109b4ed37dcf4c73ae44ed06f04a8
+Downloaded asset (952/1305) d14112bd7351ef48f193aa27b4517d4b0960f7b1
+Downloaded asset (953/1305) 4e477f55b9c4875f69cb44a2aabab4b14aefd129
+Downloaded asset (954/1305) 101e3535d3f482acb6d1d0259d53d12b25979788
+Downloaded asset (955/1305) 1d20194a6b2f883be478830f129e017257374629
+Downloaded asset (956/1305) 242114e81d0f4858d91fe06b7e78b86eec3127cd
+Downloaded asset (957/1305) 1882f71dee4f377dde08a517adc5f3c585d2d526
+Downloaded asset (958/1305) a772db3c8ac37dfeb3a761854fb96297257930ab
+Downloaded asset (959/1305) 5df4a02b1ebc550514841fddb7d64b9c497d40b4
+Downloaded asset (960/1305) 9a7fe638bb8b3b1060b3830c63c3ce3d03cdbe1f
+Downloaded asset (961/1305) 255f7e21123c3647bd80c973e6a73d7854b2a1be
+Downloaded asset (962/1305) f224168e178eca861af133c78209b662c4d1e452
+Downloaded asset (963/1305) 9b8737d639df9e7ef99ceef49ce11df42eea9f12
+Downloaded asset (964/1305) be73a79fb1ab966887a8b88bed9aa6b3d9173d71
+Downloaded asset (965/1305) 32317250b0c0ee18ed1e0c4ae3364fa796433b0a
+Downloaded asset (966/1305) 893e37d8d608cccd9c2404e785597c6a7c5f3593
+Downloaded asset (967/1305) 925654a26dd71aca3ab1bbf4373815a9bf128b47
+Downloaded asset (968/1305) 2df2e501b08129614ebf5e42dcca20b8fc809192
+Downloaded asset (969/1305) b28d52e4ac00b71576a78bdbad0f773ec8756b66
+Downloaded asset (970/1305) 04d181f5f4d61d2215175a1e63e7caaf9b624ab2
+Downloaded asset (971/1305) 4d279a6cc6dd3161ed273cc6796ae99d1a3a2175
+Downloaded asset (972/1305) 9de75e25e57b327074f50fefd60bff0589702f19
+Downloaded asset (973/1305) 7f2c9a3515287335cdd5429c0cfbf12f8827cbfb
+Downloaded asset (974/1305) 59b72a547ac80457463715a7cc24b03197653f60
+Downloaded asset (975/1305) 71f7bc8ea9940bdb8e2b1124b44b8a886426bd1f
+Downloaded asset (976/1305) 29c3ea6ab1866dd60d5c13d5bdfdadc85a000b75
+Downloaded asset (977/1305) ae27c6817985a9acb0a0fdefab89ff5d82dbe009
+Downloaded asset (978/1305) 550da80d936e05a7bfda43ca5d8af5b3779320f1
+Downloaded asset (979/1305) 8072827813f0bffb9847e636245edebb5ddab198
+Downloaded asset (980/1305) a4cf4ebe4c475cd6a4852d6b4228a4b64cf5cb00
+Downloaded asset (981/1305) e7f0f24c2c9f4bf83286b17109580d3e845d19e3
+Downloaded asset (982/1305) 22ed26394cb6f6b5eeb2ceb54fb50608798d19e8
+Downloaded asset (983/1305) 72a006be3bd693aa23cc2f8e9c9d13ea6f829aa1
+Downloaded asset (984/1305) 6b2f86a35a3cd88320b55c029d77659915f83239
+Downloaded asset (985/1305) 79afbeabcdbb063cfa00d544dc00beac8543a581
+Downloaded asset (986/1305) e3f90fb5afaf84475dd31dca6f65378a455d17f7
+Downloaded asset (987/1305) d8caaead680c20a4f51361587aeddd57a3357a72
+Downloaded asset (988/1305) 78ee5b46b6615191b7a16d259fcbda273762297e
+Downloaded asset (989/1305) 917736d555d124702429e05485e9921ba2420c18
+Downloaded asset (990/1305) b2078a1f1641bcb429b82d9d15f378362b770dc8
+Downloaded asset (991/1305) 9570e1d01565f8bbcbee22145aec80cabb0027eb
+Downloaded asset (992/1305) c6da4885630fe8f76f42b6930b938b3fbd080757
+Downloaded asset (993/1305) 0f1b391091236dadf8ab0108185d450639e54879
+Downloaded asset (994/1305) 623296e4e8fc1fa00b769ca5b8bba7e711fc01cb
+Downloaded asset (995/1305) 0e6d00d4c3f24a4e86eace20e63283a7d409854f
+Downloaded asset (996/1305) 8c5427b9b55d9cdc3910e5c608be4c70f83f90ea
+Downloaded asset (997/1305) 12ad9b74b454e7156d42154eabb8228820f485e7
+Downloaded asset (998/1305) f646271fcab59f35d80ce4834d853b35c56789a6
+Downloaded asset (999/1305) 32eb62df4ca42c3cbcc76fea1f8009a8da3628de
+Downloaded asset (1000/1305) 5ed98b8375fd787baf19d7d434f0333a189ccb51
+Downloaded asset (1001/1305) a7ed72c3701d6174196d1d259d35cc2be301140d
+Downloaded asset (1002/1305) 2452c64a55eaef86bf1b668bb4d5f3b641cd8f25
+Downloaded asset (1003/1305) 1ddae4e8dfa605e27ec8278b3e312597b674437e
+Downloaded asset (1004/1305) 77a5d445ed9ee588846947ac3df63f84be6d569d
+Downloaded asset (1005/1305) 9f1708a6409d04370ec12d0add015b11abbd5371
+Downloaded asset (1006/1305) 0b29f5ce8c4c10fa4184e5d29244f3bc121468a0
+Downloaded asset (1007/1305) 69ef2fe8d6a744689953fd692d0106b0b2d2a9ce
+Downloaded asset (1008/1305) f57577fe6915175f9e4576e8d73ad4077a381433
+Downloaded asset (1009/1305) 84556bac99c01ad006552cf5d96494817e9b1700
+Downloaded asset (1010/1305) cdb0293c5e2bdbda21798af4e61a4c171c8b1ec0
+Downloaded asset (1011/1305) 71b5fc7aa050892f8c9a9ed2713cc1ad8874742a
+Downloaded asset (1012/1305) bc2f6a5a1b6646eac1681b7414b098089aedf3c6
+Downloaded asset (1013/1305) a5b3f3cdda4d6e13629ccd0e2a38e1f06baa491a
+Downloaded asset (1014/1305) c2e4001d9ae8fc1f066a914170faad4c45a84e1e
+Downloaded asset (1015/1305) 3d95ea49e91b4295859b193bb41b009b92250a44
+Downloaded asset (1016/1305) b6a62224be809aa0c0747bee94499f0ee51ca2b6
+Downloaded asset (1017/1305) 4ba55627b6b9ce64b4a48a00c990d5855b6064cf
+Downloaded asset (1018/1305) 30e920526eb5855065b873e30d17b4d85bfbe570
+Downloaded asset (1019/1305) d7d5be6092d00c2f7f68bdcbf10ea3ac3cfea30c
+Downloaded asset (1020/1305) 3610feb2a1a575026cfa3ab44965d114e74ea583
+Downloaded asset (1021/1305) 6e0488ab07b9539fbaebc093f194bb6a95b2caec
+Downloaded asset (1022/1305) fcf4f90c452b7b511d50e3959ae05036d13a7cf8
+Downloaded asset (1023/1305) f35e14af35d1d12244dac9e655f4e31d4ef84e1b
+Downloaded asset (1024/1305) bc85d96a99e84a234cbe23841f87e84e71198be3
+Downloaded asset (1025/1305) c18fb5eacf0fdb33c05eb806bc41332cccee43d8
+Downloaded asset (1026/1305) d5b2d34e0c07a6c09c1adb17a15e50a626a88bc1
+Downloaded asset (1027/1305) 6c5a03460012d7b76c16d0dbaa01c443a6ba094e
+Downloaded asset (1028/1305) 322374d89ed809e75005cdc4f6479c959e15aee2
+Downloaded asset (1029/1305) 8ed3945df8b9264c6451c153357475482d9f2066
+Downloaded asset (1030/1305) b5bc9775243437d87317ab3a66ec8a4d5b96c83d
+Downloaded asset (1031/1305) bf5086623d5c6735271074b263116fb914ed79b5
+Downloaded asset (1032/1305) 7eb3affa45f47f919e74523a55185e65c2081d12
+Downloaded asset (1033/1305) 9680c9dcd637ddea8e10a0d73705aa155d04a132
+Downloaded asset (1034/1305) e8dcca0e494a3f479f58f581c9a8e297cc92f4e7
+Downloaded asset (1035/1305) 33acf13c25f65a432348e9476eda67d6a34831e3
+Downloaded asset (1036/1305) 69b6e589ec3d2c9063972545e83ed1f07e665094
+Downloaded asset (1037/1305) b88bd8618c05232a7287799ea9246ae12f5da9d5
+Downloaded asset (1038/1305) 403c56cd190fb7587a26bcd1b7d2abac598c3ec0
+Downloaded asset (1039/1305) fa73977dd28020544f7fe2553e5604a6865ec1a6
+Downloaded asset (1040/1305) dc86fbd59cf0e87cd35b22df2a2df899ab8c1f7f
+Downloaded asset (1041/1305) 8184e851170619de93aa56244fb12c472a2ddd7d
+Downloaded asset (1042/1305) 1028d0a373790e14c34786a925c4656bdaeb4c4d
+Downloaded asset (1043/1305) 4e94ed53b6059d150c3bb2322b4af9ca9514bae1
+Downloaded asset (1044/1305) 323880d656a3ca6b42ac9890857dcfc9b354cdbf
+Downloaded asset (1045/1305) ebce815ea3ee1bf06e0817453d1c9988cfb99a92
+Downloaded asset (1046/1305) 713be8d0f6b8373cc2294f76cb80bb84abad05f6
+Downloaded asset (1047/1305) db4dee87d8e7506586c0b8e4fa665dab30afc280
+Downloaded asset (1048/1305) 1664efefbd7bc74eaaf000800f5427bfcf2fb6f4
+Downloaded asset (1049/1305) 08a63afa82b424db5ad217b0a861bcba419ab597
+Downloaded asset (1050/1305) ec4b0396dd2fc2da8fab91ddc35218d3426349b3
+Downloaded asset (1051/1305) 2cbbcdfb97939c469cd4ccaaac74504497c56695
+Downloaded asset (1052/1305) c9f7fa36ae48eca0a1f6ce024fde5d3472d30b4d
+Downloaded asset (1053/1305) e1187646b6256b92a1384f26ef2a7e56efcbe00d
+Downloaded asset (1054/1305) 0349ce87fe856ddf8fdd94a559bb29061b002b6c
+Downloaded asset (1055/1305) cadbc5c34979baab1a93f5cf68a50f9bd44ef5a8
+Downloaded asset (1056/1305) e0c88ca054666aae58b89abdcf377eae525aa13e
+Downloaded asset (1057/1305) c76dea473821e2ae9a1f006a4eddfdd0703eecdf
+Downloaded asset (1058/1305) 40b8e244d03ae17483edd4571bd851e10a97050f
+Downloaded asset (1059/1305) a2cfbea288280419ec0c8fb75d8ee5395536ac02
+Downloaded asset (1060/1305) d1917b9be91d60a40dd0bf804580c1f494e9ae6d
+Downloaded asset (1061/1305) 74da65c99aa578486efa7b69983d3533e14c0d6e
+Downloaded asset (1062/1305) 50a59a4f56e4046701b758ddbb1c1587efa4cadf
+Downloaded asset (1063/1305) 14ae57a6bce3d4254daa8be2b098c2d99743cc3f
+Downloaded asset (1064/1305) 3fe4c878450d4dc2bf3ac304e547f20d4efabad8
+Downloaded asset (1065/1305) 591f41a2c5f53bcc60d7ded982fe29e76223a8ca
+Downloaded asset (1066/1305) 4f8c3f9b4f290f63c78bf3bbaad16906a3ccff29
+Downloaded asset (1067/1305) 4664de25eb2bfc88ebbd638cfae6934dd968ceaa
+Downloaded asset (1068/1305) 45cb6cbbff2d7fc1daefbd85b031fd9dcfc70e7b
+Downloaded asset (1069/1305) 6254527d626a2c7d80901cc2e62dce3ba4bd81f6
+Downloaded asset (1070/1305) b9eef13c2337a6335c4523858619ca560dff4496
+Downloaded asset (1071/1305) 27fcacc68bb77f01b23ea9c9d36d9018f8509cdf
+Downloaded asset (1072/1305) 47800737d078e751698df291054adc596ba8195a
+Downloaded asset (1073/1305) df1ff11b79757432c5c3f279e5ecde7b63ceda64
+Downloaded asset (1074/1305) ceaaaa1d57dfdfbb0bd4da5ea39628b42897a687
+Downloaded asset (1075/1305) dd85fb564e96ee2dbd4754f711ae9deb08a169f9
+Downloaded asset (1076/1305) 5e7d63e75c6e042f452bc5e151276911ef92fed8
+Downloaded asset (1077/1305) 5a7ce2181203dd558cbd55d02081b9e95a07f16f
+Downloaded asset (1078/1305) 71cc853556f7ca5784c9e9fc8e0bd6778d13027b
+Downloaded asset (1079/1305) e2ee9a161e2d6ea2452e5320edf8b4b01b63e350
+Downloaded asset (1080/1305) b0b12118a97ddd733a50e9382e91a21652568641
+Downloaded asset (1081/1305) cc1a80b6becfc6d6489c069f053d0a8adc71c339
+Downloaded asset (1082/1305) 78152dc42b036e0de7616e6e669ce5a81d17f82a
+Downloaded asset (1083/1305) 0f374764aafba398f4ba90dba05a53a9e6166138
+Downloaded asset (1084/1305) 98a918eb2694defd19726436d4b9dca9e7dd6a65
+Downloaded asset (1085/1305) 9528b6a76e7bac64ca1145cc682e8a8448cc04e5
+Downloaded asset (1086/1305) c157c56846f0e50620f808fecd9d069423dd6c41
+Downloaded asset (1087/1305) 87722a59c8d488370f3d430cd4c97a3161081785
+Downloaded asset (1088/1305) 783ddccf4681a0c50d3e651f4e6ac27a0f4ea76f
+Downloaded asset (1089/1305) e28d844995368de1d45c724a5d371c9952ae5ed4
+Downloaded asset (1090/1305) 037b9fb7f74381f354739d015193dc4a6897f620
+Downloaded asset (1091/1305) 15f38314274e759c44f50ac641d11bde12474a25
+Downloaded asset (1092/1305) 1afefaa39a53606d2737bab9cb3409350cb2dc9f
+Downloaded asset (1093/1305) dffb5d6066ba89a4d3a609eb0c607606d4a524e2
+Downloaded asset (1094/1305) a7f05f19c3e553c61deb61e5e8123a82cdbec758
+Downloaded asset (1095/1305) 3ea516355b5ec2bef08d9e6aa3ebc6626acb583b
+Downloaded asset (1096/1305) 46244605b8663a29cdce7bccc5b2d038241e32ee
+Downloaded asset (1097/1305) 6b6bae253b1032ce3f3b4fb5816a9a819cac7b59
+Downloaded asset (1098/1305) fd2b6f745b05a2cf44a4e010f72631de2e5099f6
+Downloaded asset (1099/1305) 562f63e81572019a66cf795cea914ed6910edb53
+Downloaded asset (1100/1305) 20d06589bd5ab81a73989bdac8ca59ecd4d66932
+Downloaded asset (1101/1305) b7cf6b6ff19146fae41a39025ab709ea90bcc439
+Downloaded asset (1102/1305) 9a20be18fed05330f745a54eb8aeba11aac5403b
+Downloaded asset (1103/1305) 43388701fac432a567fe9fec421521e6348ad780
+Downloaded asset (1104/1305) 301f32642b654addbd06a430768fead464fd24c4
+Downloaded asset (1105/1305) 705a155201cc388a0c0c6f7435ddbc0fcc56b5f2
+Downloaded asset (1106/1305) 934b16e82b94d5790175615303594f0ec28da4a0
+Downloaded asset (1107/1305) 88a792430dfff97582ab49b8dc9477cd9d4e5ebb
+Downloaded asset (1108/1305) 87edc11141fb5a045f2ed830b545aaa73f96ee99
+Downloaded asset (1109/1305) 78f034d58779fb4d22b00ea249015a0dbf4e7b3f
+Downloaded asset (1110/1305) c3cd0db760c980287b26ef9c0894f66c4250724e
+Downloaded asset (1111/1305) 0369a1236a4b9ca219fd3ad7d19d0b5237510b1e
+Downloaded asset (1112/1305) 9e5e2369fc354a082c861494cfe8767d327813d4
+Downloaded asset (1113/1305) 8bf3ecb0fe9a6a615f5995e3dd21b6c39adc21d5
+Downloaded asset (1114/1305) dd2f7209c2a58b0886beb34d49b0512b49adbb7e
+Downloaded asset (1115/1305) bdc648e04933df8ddcccc84b375d6556776d4331
+Downloaded asset (1116/1305) 056393a33a9633685c3dc3be2887f5cbd7dbc63f
+Downloaded asset (1117/1305) 186d5d9481d59cc99bc4be1b5fbb98d0ef877b8e
+Downloaded asset (1118/1305) 9d485556b89bf776042080774679c37300bc744b
+Downloaded asset (1119/1305) 2fe092579d9637e2d160319820ee08e60a237bb7
+Downloaded asset (1120/1305) 9ea8a9e105321891bda18b9007b383b40aa7c076
+Downloaded asset (1121/1305) 5bb5a04e776d69ca12b1d7bc369975f9bf62e741
+Downloaded asset (1122/1305) 857b75738992d25e338dee640ab191323bcbf798
+Downloaded asset (1123/1305) dfee39084c771182f6b9e7cfb8c8bc4e255747bc
+Downloaded asset (1124/1305) d26bde554d88f0ca156baf471c44ce2c0e68176c
+Downloaded asset (1125/1305) 9f2c4bab5ed55f1714fffa223985c81babc8f6c0
+Downloaded asset (1126/1305) cd46e41023887558b134547e28327de6e7df189a
+Downloaded asset (1127/1305) a116e396d95a0ee245000dd4cdcc333d38ea9e3b
+Downloaded asset (1128/1305) a94a69e56568f5789cab05382cfd81f601189fd1
+Downloaded asset (1129/1305) f259be40364341edcaf88e339bc24ab01e49845a
+Downloaded asset (1130/1305) c649e60ea9a99c97501a50d2dc4e579343e91ea8
+Downloaded asset (1131/1305) a92ba2b8f6abc41aa8d679ad808a81d0aafa04b2
+Downloaded asset (1132/1305) 7274a2231ed4544a37e599b7b014e589e5377094
+Downloaded asset (1133/1305) 87c47bda3645c68f18a49e83cbf06e5302d087ff
+Downloaded asset (1134/1305) ad7d770b7fff3b64121f75bd60cecfc4866d1cd6
+Downloaded asset (1135/1305) b9c60e807ba770e8c4a2b1bae81d51813dc64b6c
+Downloaded asset (1136/1305) e9833a1512b57bcf88ac4fdcc8df4e5a7e9d701d
+Downloaded asset (1137/1305) 8f45b5faf6dfae2065846d26612f7552b73640dd
+Downloaded asset (1138/1305) 22a491f266f5c3cdd6e669a9493daaf40c9c8575
+Downloaded asset (1140/1305) b210a3c371441b77fe873133b2cb7b63e367b2f3
+Downloaded asset (1141/1305) f86c466225dad2f32c90981485c1965671b3e8e6
+Downloaded asset (1142/1305) 9cbed0e40296f68c61090c9b81816061e068a0ec
+Downloaded asset (1143/1305) 9b2a01e0d0456b8fbe33557fbc19d4fe342f94d6
+Downloaded asset (1144/1305) d1eb3d2e39bf1f6289cfcbca44e1c9bb508b20f0
+Downloaded asset (1145/1305) ec8a2cbdf68b4e2136098ec33695e1c53625ddb8
+Downloaded asset (1146/1305) f46c38e7d6d7b19d5d68aa18b557215738deb36a
+Downloaded asset (1147/1305) 83233451430516d839eaee855a2f789b8985d457
+Downloaded asset (1148/1305) 6b44d0539073353b7a05330ccddc5735ba5efca4
+Downloaded asset (1149/1305) 2c4f3f8f259dc782867727311fea30875ecc3917
+Downloaded asset (1150/1305) f34afa3ba5f756e90a1f61023bbe069ee8442608
+Downloaded asset (1151/1305) 876655d1691803f4cef17a6288d971285be79c6a
+Downloaded asset (1152/1305) 6967f0af60f480e81d32f1f8e5f88ccafec3a40c
+Downloaded asset (1157/1305) 227ab99bf7c6cf0b2002e0f7957d0ff7e5cb0c96
+Downloaded asset (1158/1305) 5c971029d9284676dce1dda2c9d202f8c47163b2
+Downloaded asset (1159/1305) 76de0a736928eac5003691d73bdc2eda92116198
+Downloaded asset (1160/1305) bc28801224a0aa77fdc93bb7c6c94beacdf77331
+Downloaded asset (1161/1305) f685021d4f26d6b590bffb341908e25e92e18cef
+Downloaded asset (1162/1305) 813ebd91b9c3fe1ac8f89f13c85d0755678f2165
+Downloaded asset (1163/1305) 1d761cb3bcb45498719e4fba0751e1630e134f1a
+Downloaded asset (1164/1305) ac7a7c8d106e26abc775b1b46150c083825d8ddc
+Downloaded asset (1165/1305) b88cafe403394cdcd4de0e3aeb7b76f24170c6fe
+Downloaded asset (1166/1305) c109b985a7e6d5d3828c92e00aefa49deca0eb8c
+Downloaded asset (1167/1305) a47adece748059294c5f563c0fcac02fa0e4bab4
+Downloaded asset (1168/1305) d6212a1d5feb88d76b9a83ce5a27ab4e6d4c20bb
+Downloaded asset (1169/1305) 3fee58d7b2c99ddbce962618176637574ae8d67b
+Downloaded asset (1170/1305) fd446ad40d24edfe4fb789a6065276e164ea4b61
+Downloaded asset (1171/1305) e9a1caaddcde79cdac7aa8eabde50d4cfd1bc578
+Downloaded asset (1172/1305) f78ede81160002fc0561218c7ecd97e91cccab7c
+Downloaded asset (1173/1305) 9813c8185197f4a4296649f27a9d738c4a6dfc78
+Downloaded asset (1174/1305) bd1750c016f6bab40934eff0b0fb64c41c86e44b
+Downloaded asset (1175/1305) ab07279288fa49215bada5c17627e6a54ad0437c
+Downloaded asset (1176/1305) a474236fb0c75bd65a6010e87dbc000d345fc185
+Downloaded asset (1181/1305) 9fd6d2c633d276b952f2ff2aaa1fa7e5fb5efd2a
+Downloaded asset (1182/1305) 4a2e3795ffd4d3aab0834b7e41903af3a8f7d197
+Downloaded asset (1183/1305) 22a383d9c22342305a4f16fec0bb479a885f8da2
+Downloaded asset (1184/1305) a533e7ae975e62592de868e0d0572778614bd587
+Downloaded asset (1185/1305) d5218034051a13322d7b5efc0b5a9af739615f04
+Downloaded asset (1186/1305) 48dd05ab2e4626d74206c2b09a628a3d59ce15e9
+Downloaded asset (1187/1305) c4810a3de80cb57f9cdf8deaacfd36cb619cdf0b
+Downloaded asset (1188/1305) 1e82a43c30cf8fcbe05d0bc2760ecba5d2320314
+Downloaded asset (1189/1305) afb01196e2179e3b15b48f3373cea4c155d56b84
+Downloaded asset (1190/1305) 27722125968ac60c0f191a961b17e406f1351c6e
+Downloaded asset (1191/1305) 85ff970401cb1ef2e812f943077ab96549315d0a
+Downloaded asset (1192/1305) 29586f60bfe6f521dbc748919d4f0dc5b28beefd
+Downloaded asset (1193/1305) 594be3eaea9a2b92095eeeb3b1e01e755dcb8ce2
+Downloaded asset (1194/1305) cb017131516de9359cb81fb991f5b3694044f8db
+Downloaded asset (1195/1305) 944bc8b8e1e135340dc4afc6d3416a01222674a1
+Downloaded asset (1196/1305) 210c839d6fab655373b3a5e4c278f59dff4936d8
+Downloaded asset (1197/1305) 1bdb9e214a7833b794b1b4b97796d9f9af12bca5
+Downloaded asset (1198/1305) 167a4f93c12d2d03d9ce266b8cb67065281bd218
+Downloaded asset (1199/1305) b8d539c17bdc9fa680ebb80e95e93ee9d8a5781f
+Downloaded asset (1200/1305) e5feeef31d7e3f83208c2c565fcf096ec9a91219
+Downloaded asset (1201/1305) e99d07163cd7380dbc126745ab514c1c741cf910
+Downloaded asset (1202/1305) 0396fe4eefde7ade320685bab938f2b55278f666
+Downloaded asset (1203/1305) d3ddac7455313ebcef3b8745787d8265a5395e5c
+Downloaded asset (1204/1305) 61dc00d18e1167f66b117fdc297b13a698c8aa38
+Downloaded asset (1205/1305) 30219ef2746b41b3045a35683099c75f9c2e39aa
+Downloaded asset (1206/1305) d2fec6669f5e913256f43ace40f177a5b9d82293
+Downloaded asset (1207/1305) 59dbad0851792bc9d7cbfa41b9afd8dcda598e17
+Downloaded asset (1208/1305) c90d32c47a980a07f35a5795c5d7c21cd7c0d898
+Downloaded asset (1209/1305) 422b62e05cc176b33e56f799524812ace0bccf62
+Downloaded asset (1210/1305) 655761b92ee967cdca7a3d47af861932fad47622
+Downloaded asset (1211/1305) 7f4e55c2ee721d665154a5545ad6ddad77790fca
+Downloaded asset (1212/1305) 932f67b1ea7444af1efbeabfaa635f0522b28fd9
+Downloaded asset (1213/1305) e532286e24767a9b7e3e2237c04d1d1aef12c7b0
+Downloaded asset (1214/1305) cef9cce6806338b5fae7e7ca498e52a74111329f
+Downloaded asset (1215/1305) 50841154549c866a0b5140ab292393e7a937cf5c
+Downloaded asset (1216/1305) fceb48f4ee2b1f2cbb5bace7a07440f2862e9bf2
+Downloaded asset (1217/1305) e4a90653ff6762a1ecc4a9f2453048233380385d
+Downloaded asset (1218/1305) 8866084333b5a2adec7c04d8fdc81da910f68bd7
+Downloaded asset (1219/1305) 4a6b91766caa5f6cc105a9646982a7276a2df239
+Downloaded asset (1220/1305) 2e751cc0a77200d75afd6b3bb3f1d402adf5e639
+Downloaded asset (1221/1305) f1a3eb2e105637d751d7ffc828976130fe1a0cdd
+Downloaded asset (1222/1305) df9e1a91eef2fd69f2f646352e105f934b3c7a35
+Downloaded asset (1223/1305) 6c3ebe3deee4b2da023593510b42062c74353180
+Downloaded asset (1224/1305) 94ad838eab42aa9d72c53a3cd3b2d25a873c8d56
+Downloaded asset (1225/1305) 9baa09683cb1081258e76e70de0fd4e9b1df3548
+Downloaded asset (1226/1305) b6d3403323b934f400427764cd62732f79088be0
+Downloaded asset (1227/1305) f2347f7b2f01052215ea21e45ba1613f4780f699
+Downloaded asset (1228/1305) 3ba8ca1b30c0dbd9ef8ee0803afdde38b722cf44
+Downloaded asset (1229/1305) 27e3a26ba9cdd563cdf4468136036c3a37ce3d07
+Downloaded asset (1230/1305) 97fa432cbffcef1c9bb40237fe64847d4b037076
+Downloaded asset (1231/1305) 07012dbc0eabe570a64454e3da2d6af47d285646
+Downloaded asset (1232/1305) 430c1994c77799f32b8633e933c1f6bd308eea77
+Downloaded asset (1233/1305) a95de13fbae28cc0569f02dafaea1c8c9c2df9b4
+Downloaded asset (1234/1305) bb985a1172f3b0c064192a7e3b198cb13b3b9c51
+Downloaded asset (1235/1305) 23417f2dfce065c980e20abba1b68c3052adcce8
+Downloaded asset (1236/1305) 19c10b0d0fa6544ca5e70512a6992910ee025f59
+Downloaded asset (1237/1305) 58d4aef590d98cdeea191112e423181eab3c7320
+Downloaded asset (1238/1305) dca17e1d866598f75531cb44e2c6fe61df19c9c4
+Downloaded asset (1239/1305) c894679bec7a492ed61f2064db714c8c163a7830
+Downloaded asset (1240/1305) a40448d3993a6e51d62a409aeff0f1012a007704
+Downloaded asset (1241/1305) 59f279faa5b94ba75b274d95ac572d03c945c07b
+Downloaded asset (1242/1305) 12cb76dad64df7035bfb7de578a7e74a98bb0546
+Downloaded asset (1243/1305) 9caef51a6f7c1510621b5b47e27f08e4f200a9c7
+Downloaded asset (1244/1305) 617a84a9a905f311aa22a44a9c30a5957006c51e
+Downloaded asset (1245/1305) 99740618ea6989e1c5d1b95500373b4ab9993e7a
+Downloaded asset (1246/1305) 27a487dd4edaa685b3b9f650dbc6296ddaac14c3
+Downloaded asset (1247/1305) 6e06947042727bdcf4fd1dee9412670d7823f915
+Downloaded asset (1248/1305) 36071c7f77da850fb6cfd77b147d5437a4937ca9
+Downloaded asset (1249/1305) f2e50d04d6a9cc785d94f964df7065f36618a49a
+Downloaded asset (1250/1305) 12851fe59c05666fcc587ed5739f67ee5ed33cb7
+Downloaded asset (1251/1305) 134918f804b44a6ed6906abe4c9d34290e5a0e41
+Downloaded asset (1252/1305) 858197c61c82610418b1a50185b8bb15e056380f
+Downloaded asset (1253/1305) 39cf608712df50beeedf425888cf2c86a54fc203
+Downloaded asset (1254/1305) e02d9eba02b50e8fa71fe6ade3851869ff8ff93a
+Downloaded asset (1255/1305) 09343f7f982e402362bc7fb3bf7eb837430c60de
+Downloaded asset (1256/1305) 9c287185363606f057c97b238d960272957a21d6
+Downloaded asset (1257/1305) c4d5c68f34b9a796fa90679f526352a4c8a9a13c
+Downloaded asset (1258/1305) 62ffbae55a2d1068caef3dae4f4b23069419cfc4
+Downloaded asset (1259/1305) b7e70ebfcdb6e8fa657150f898fc5be5bb06240b
+Downloaded asset (1260/1305) 648e2313507da617103010fb72a00ebf2c80fd39
+Downloaded asset (1261/1305) 90cabdc71ae0b4c20f4e701c4a7fcbdf343b2ded
+Downloaded asset (1262/1305) 14d55459c22c63204fd42347367420db658ee454
+Downloaded asset (1263/1305) 3bf20c9de4e62ad8c06014e946d48ae00d69e5c5
+Downloaded asset (1264/1305) d33772c6acf42d036b12529dda501e7d9da56ef5
+Downloaded asset (1265/1305) c70eff9afc32fabef96b5d936605e5096e6d0830
+Downloaded asset (1266/1305) 84b4088bb8bec894289f1ee896c1faca8a5bb358
+Downloaded asset (1267/1305) bfa4c307bde94e38854888974f3eba6f7a369060
+Downloaded asset (1268/1305) f50acf389059b3bde57f327fff81fa6b96e501e0
+Downloaded asset (1269/1305) cf98b9cc7ccc4e208f67efe302c6baa97a80c252
+Downloaded asset (1270/1305) ef4440c9059fa9c55aad34844425ee3b29a720b9
+Downloaded asset (1271/1305) bbb4dbfef8d1f38321b002e3e4e28d26e0177f9d
+Downloaded asset (1272/1305) a5eeab701bd4781612409f2f6ea8f90b7a5b4b67
+Downloaded asset (1273/1305) 055655818e8d6fa48cf28ea46a5d16f740d468fd
+Downloaded asset (1274/1305) ae1707394f7fddcd8fd44b3503838504bfcedf39
+Downloaded asset (1275/1305) 99f77c6f20cba728a0d736681d1e264e49e6433f
+Downloaded asset (1276/1305) cc9768b105f7dedb4ca9c2c2caa61cbb1f77b644
+Downloaded asset (1277/1305) a61df6bb492ff19aeea147cf701cae61b042d830
+Downloaded asset (1278/1305) f1db1cdc8a8292683e52ebbc4a5d4ac411389903
+Downloaded asset (1279/1305) 2308c3371ae4594a3349cb1ec8c285788570df73
+Downloaded asset (1280/1305) b9064ad17bf4a5a39b9431d2c74eb7caa033f0a7
+Downloaded asset (1281/1305) 8f1ebe374148267ca84de16b3258d1bd1f6661ae
+Downloaded asset (1282/1305) 763e9a22b8cddf83b34b2bf4c657569a99dde6c0
+Downloaded asset (1283/1305) 1f19434a517b24d000bb0ae8b1abe5fd2fb6ebbc
+Downloaded asset (1284/1305) 5dc336285c94559161bfbb68b193aacece512730
+Downloaded asset (1285/1305) 2662f84592cf06be297555a79fa267ce908cd7b5
+Downloaded asset (1286/1305) c7c9cc97e619b324fe3edf9c7a95470f7169f0df
+Downloaded asset (1287/1305) 851714ae5f718b5922abfff5a58c560cc7faf4a6
+Downloaded asset (1288/1305) 5ac445460cd93099e1ff32fed3de1b628b97adf3
+Downloaded asset (1289/1305) c287a19f5fed47344a0f1de7e5cffca9978bc890
+Downloaded asset (1290/1305) 9c0fcbf5a2c2897f23e4fe5d89a7e6cec9ed4813
+Downloaded asset (1291/1305) e4dff061487a3468c2e1a2e9d384c65864a910c0
+Downloaded asset (1292/1305) 27bd650f2f8f7a3d7db046a9d2c0f443793947fb
+Downloaded asset (1293/1305) dc0d32834ce77bfb03be6c9cfec2b2c1ce418ce4
+Downloaded asset (1294/1305) 75dd1cd7c0a08208a3a71ee885b25a6f4c9169f2
+Downloaded asset (1295/1305) 2863897926d38a69cda757d825e362db1457bbf3
+Downloaded asset (1296/1305) 34a59908cb97b37805e3c33abf4b4492467a2888
+Downloaded asset (1297/1305) eef162022b82ec9458882a37f747552afb17aa23
+Downloaded asset (1298/1305) c0c729f6fd4e164f4c3d7a504040b5d3d641e876
+Downloaded asset (1299/1305) 8f81627af3836988935abc58a29362b2bcb13598
+Downloaded asset (1300/1305) dee5091897b8f8f4ae48652228a0f2fe72e6cf32
+Downloaded asset (1301/1305) 076b65584ee81fba265f65f1cad2a811c45fade5
+Downloaded asset (1302/1305) d732ec8af41798e55cbc8c3645b679d844992c0b
+Downloaded asset (1303/1305) 71c86a1d2324e5337c2326518a26937294491352
+Downloaded asset (1304/1305) 9c36bdd1dbfcefedce66b238b91d8a3fd99d6bc5
+Downloaded asset (1305/1305) 18e42d1640b500be08fba4e28529beb9d19a9fa6
+
+> Task :remapDecompiledJar
+Applied 0 missing generics
+
+> Task :decompressDecompiledSources
+> Task :processInjectedInterfacesResources NO-SOURCE
+> Task :injectedInterfacesClasses UP-TO-DATE
+
+> Task :compilePatchedMcJava
+Note: Some input files use or override a deprecated API.
+Note: Recompile with -Xlint:deprecation for details.
+Note: Some input files use unchecked or unsafe operations.
+Note: Recompile with -Xlint:unchecked for details.
+
+> Task :processPatchedMcResources
+> Task :patchedMcClasses
+> Task :compileApiJava NO-SOURCE
+> Task :processApiResources NO-SOURCE
+> Task :apiClasses UP-TO-DATE
+> Task :injectTags
+> Task :compileInjectedTagsJava
+> Task :createMcLauncherFiles
+> Task :compileMcLauncherJava
+> Task :processInjectedTagsResources NO-SOURCE
+> Task :injectedTagsClasses
+> Task :processMcLauncherResources NO-SOURCE
+> Task :mcLauncherClasses
+
+> Task :compileJava
+Note: SpongePowered MIXIN Annotation Processor Version=0.8.7
+Note: Supported obfuscation types: ObfuscationServiceMCP supports [searge,notch]
+Note: Writing refmap to /home/runner/work/chaosshard/chaosshard/build/tmp/mixins/mixins.chaosshard.refmap.json
+Note: Writing refmap to /home/runner/work/chaosshard/chaosshard/build/tmp/mixins/mixins.chaosshard.refmap.json
+Note: Writing searge output SRGs to /home/runner/work/chaosshard/chaosshard/build/tmp/mixins/mixins.srg
+Note: Writing refmap to /home/runner/work/chaosshard/chaosshard/build/tmp/mixins/mixins.chaosshard.refmap.json
+Note: Writing refmap to /home/runner/work/chaosshard/chaosshard/build/tmp/mixins/mixins.chaosshard.refmap.json
+Note: Writing searge output SRGs to /home/runner/work/chaosshard/chaosshard/build/tmp/mixins/mixins.srg
+Note: Some input files use or override a deprecated API.
+Note: Recompile with -Xlint:deprecation for details.
+
+> Task :processResources
+> Task :classes
+> Task :jar
+> Task :packageMcLauncher
+> Task :packagePatchedMc
+
+> Task :runClient
+[10:53:00] [main/INFO] [GradleStart]: userProperties: {}
+[10:53:00] [main/INFO] [GradleStart]: assetsDir: /home/runner/.gradle/caches/retro_futura_gradle/assets
+[10:53:00] [main/INFO] [GradleStart]: assetIndex: 1.12.2
+[10:53:00] [main/INFO] [GradleStart]: version: FML_DEV
+[10:53:00] [main/INFO] [GradleStart]: username: Developer
+[10:53:00] [main/INFO] [GradleStart]: Extra: [--gameDir, /home/runner/work/chaosshard/chaosshard/run, --uuid, 31c4910d-9b69-4725-8969-9ed53ac8a7dc]
+[10:53:00] [main/INFO] [GradleStart]: Found and added coremod: com.cleanroommc.osxnarratorblocker.OSXNarratorBlocker
+[10:53:00] [main/INFO] [GradleStart]: Found and added coremod: com.cleanroommc.stripforgereq.StripLatestForgeRequirements
+[10:53:00] [main/INFO] [GradleStart]: Found and added coremod: zone.rong.mixinbooter.MixinBooterPlugin
+[10:53:00] [main/INFO] [GradleStart]: Found and added coremod: hellfirepvp.astralsorcery.core.AstralCore
+[10:53:00] [main/INFO] [GradleStart]: Running with arguments: [--userProperties, {}, --assetsDir, /home/runner/.gradle/caches/retro_futura_gradle/assets, --assetIndex, 1.12.2, --accessToken{REDACTED}, --version, FML_DEV, --username, Developer, --tweakClass, net.minecraftforge.fml.common.launcher.FMLTweaker, --gameDir, /home/runner/work/chaosshard/chaosshard/run, --uuid, 31c4910d-9b69-4725-8969-9ed53ac8a7dc, --tweakClass, net.minecraftforge.gradle.tweakers.CoremodTweaker]
+[10:53:00] [main/INFO] [LaunchWrapper]: Loading tweak class name net.minecraftforge.fml.common.launcher.FMLTweaker
+[10:53:00] [main/INFO] [LaunchWrapper]: Using primary tweak class name net.minecraftforge.fml.common.launcher.FMLTweaker
+[10:53:00] [main/INFO] [LaunchWrapper]: Loading tweak class name net.minecraftforge.gradle.tweakers.CoremodTweaker
+[10:53:00] [main/INFO] [LaunchWrapper]: Calling tweak class net.minecraftforge.fml.common.launcher.FMLTweaker
+[10:53:00] [main/INFO] [FML]: Forge Mod Loader version 14.23.5.2847 for Minecraft 1.12.2 loading
+[10:53:00] [main/INFO] [FML]: Java is OpenJDK 64-Bit Server VM, version 1.8.0_504, running on Linux:amd64:6.17.0-1022-azure, installed at /home/runner/.gradle/jdks/azul_systems__inc_-8-amd64-linux.2/jre
+[10:53:00] [main/ERROR] [FML]: Apache Maven library folder was not in the format expected. Using default libraries directory.
+[10:53:00] [main/ERROR] [FML]: Full: /home/runner/.gradle/caches/modules-2/files-2.1/org.apache.maven/maven-artifact/3.5.3/7dc72b6d6d8a6dced3d294ed54c2cc3515ade9f4/maven-artifact-3.5.3.jar
+[10:53:00] [main/ERROR] [FML]: Trimmed: /home/runner/.gradle/caches/modules-2/files-2.1/org.apache.maven/maven-artifact/3.5.3/
+[10:53:00] [main/INFO] [FML]: Managed to load a deobfuscated Minecraft name- we are in a deobfuscated environment. Skipping runtime deobfuscation
+[10:53:00] [main/INFO] [FML]: Detected deobfuscated environment, loading log configs for colored console logs.
+2026-10-15 10:53:01,050 main WARN Disabling terminal, you're running in an unsupported environment.
+[10:53:01] [main/INFO] [FML]: Ignoring missing certificate for coremod FMLCorePlugin (net.minecraftforge.fml.relauncher.FMLCorePlugin), we are in deobf and it's a forge core plugin
+[10:53:01] [main/INFO] [FML]: Ignoring missing certificate for coremod FMLForgePlugin (net.minecraftforge.classloading.FMLForgePlugin), we are in deobf and it's a forge core plugin
+[10:53:01] [main/INFO] [FML]: Found a command line coremod : hellfirepvp.astralsorcery.core.AstralCore
+[10:53:01] [main/WARN] [FML]: The coremod hellfirepvp.astralsorcery.core.AstralCore does not have a MCVersion annotation, it may cause issues with this version of Minecraft
+[10:53:01] [main/INFO] [FML]: Ignoring missing certificate for coremod AstralCore (hellfirepvp.astralsorcery.core.AstralCore), as this is probably a dev workspace
+[10:53:01] [main/INFO] [Astral Core]: [AstralCore] Initialized.
+[10:53:01] [main/INFO] [FML]: Found a command line coremod : com.cleanroommc.stripforgereq.StripLatestForgeRequirements
+[10:53:01] [main/WARN] [FML]: The coremod com.cleanroommc.stripforgereq.StripLatestForgeRequirements does not have a MCVersion annotation, it may cause issues with this version of Minecraft
+[10:53:01] [main/INFO] [FML]: Ignoring missing certificate for coremod StripLatestForgeRequirements (com.cleanroommc.stripforgereq.StripLatestForgeRequirements), as this is probably a dev workspace
+[10:53:01] [main/INFO] [FML]: Found a command line coremod : com.cleanroommc.osxnarratorblocker.OSXNarratorBlocker
+[10:53:01] [main/WARN] [FML]: The coremod com.cleanroommc.osxnarratorblocker.OSXNarratorBlocker does not have a MCVersion annotation, it may cause issues with this version of Minecraft
+[10:53:01] [main/INFO] [FML]: Ignoring missing certificate for coremod OSXNarratorBlocker (com.cleanroommc.osxnarratorblocker.OSXNarratorBlocker), as this is probably a dev workspace
+[10:53:01] [main/INFO] [FML]: Found a command line coremod : zone.rong.mixinbooter.MixinBooterPlugin
+[10:53:01] [main/WARN] [FML]: The coremod zone.rong.mixinbooter.MixinBooterPlugin does not have a MCVersion annotation, it may cause issues with this version of Minecraft
+[10:53:01] [main/INFO] [FML]: Ignoring missing certificate for coremod MixinBooter (zone.rong.mixinbooter.MixinBooterPlugin), as this is probably a dev workspace
+[10:53:01] [main/INFO] [CleanMix]: SpongePowered MIXIN Subsystem Version=0.8.7 Source=file:/home/runner/.gradle/caches/modules-2/files-2.1/zone.rong/mixinbooter/11.13/60b7cd79ce98c5578006aab3220a3dbd82e544c0/mixinbooter-11.13.jar Service=MixinBooter Env=CLIENT
+/*********************************************************************************************************************************************************************************************************/
+/*                                                                                          SpongePowered MIXIN                                                                                          */
+/*********************************************************************************************************************************************************************************************************/
+/*                                         Code source : file:/home/runner/.gradle/caches/modules-2/files-2.1/zone.rong/mixinbooter/11.13/60b7cd79ce98c5578006aab3220a3dbd82e544c0/mixinbooter-11.13.jar */
+/*                                    Internal Version : 0.8.7                                                                                                                                           */
+/*                                        Java Version : 1.8 (supports compatibility 6-8)                                                                                                                */
+/*                         Default Compatibility Level : JAVA_6                                                                                                                                          */
+/*                   Max Effective Compatibility Level : JAVA_8                                                                                                                                          */
+/*                                Detected ASM Version : ASM 5.2 (ASM5)                                                                                                                                  */
+/*                          Detected ASM Supports Java : Up to Java 1.8 (class file version 52.0)                                                                                                        */
+/*********************************************************************************************************************************************************************************************************/
+/*                                        Service Name : MixinBooter                                                                                                                                     */
+/*                                 Mixin Service Class : zone.rong.mixinbooter.service.MixinBooterService                                                                                                */
+/*                       Global Property Service Class : org.spongepowered.asm.service.mojang.Blackboard                                                                                                 */
+/*                                 Logger Adapter Type : Log4j2 (via LaunchWrapper)                                                                                                                      */
+/*********************************************************************************************************************************************************************************************************/
+/*                                         mixin.debug : <false>                                                                                                                                         */
+/*                                  mixin.debug.export : - <true>                                                                                                                                        */
+/*                           mixin.debug.export.filter : - - <null>                                                                                                                                      */
+/*                        mixin.debug.export.decompile : - - <true>                                                                                                                                      */
+/*                  mixin.debug.export.decompile.async : - - - <true>                                                                                                                                    */
+/* mixin.debug.export.decompile.mergeGenericSignatures : - - - <true>                                                                                                                                    */
+/*                                  mixin.debug.verify : - <false>                                                                                                                                       */
+/*                                 mixin.debug.verbose : - <false>                                                                                                                                       */
+/*                         mixin.debug.countInjections : - <false>                                                                                                                                       */
+/*                                  mixin.debug.strict : - <false>                                                                                                                                       */
+/*                           mixin.debug.strict.unique : - - <false>                                                                                                                                     */
+/*                          mixin.debug.strict.targets : - - <false>                                                                                                                                     */
+/*                                mixin.debug.profiler : - <false>                                                                                                                                       */
+/*                           mixin.dumpTargetOnFailure : <false>                                                                                                                                         */
+/*                                        mixin.checks : <false>                                                                                                                                         */
+/*                             mixin.checks.interfaces : - <true>                                                                                                                                        */
+/*                      mixin.checks.interfaces.strict : - - <true>                                                                                                                                      */
+/*                             mixin.ignoreConstraints : <false>                                                                                                                                         */
+/*                                       mixin.hotSwap : <false>                                                                                                                                         */
+/*                                       mixin.env.obf : - <false>                                                                                                                                       */
+/*                             mixin.env.disableRefMap : - <false>                                                                                                                                       */
+/*                               mixin.env.remapRefMap : - <true>                                                                                                                                        */
+/*                       mixin.env.refMapRemappingFile : - <>                                                                                                                                            */
+/*                        mixin.env.refMapRemappingEnv : - <searge>                                                                                                                                      */
+/*                      mixin.env.allowPermissiveMatch : - <true>                                                                                                                                        */
+/*                            mixin.env.ignoreRequired : - <false>                                                                                                                                       */
+/*                               mixin.env.compatLevel : - <false>                                                                                                                                       */
+/*                          mixin.env.shiftByViolation : - <warn>                                                                                                                                        */
+/*                      mixin.initialiserInjectionMode : <default>                                                                                                                                       */
+/*               mixin.tunable.classReaderExpandFrames : - <false>                                                                                                                                       */
+/*                             mixin.conformVisibility : <true>                                                                                                                                          */
+/*                        mixin.autoMutateFinalSetters : <true>                                                                                                                                          */
+/*********************************************************************************************************************************************************************************************************/
+/*                                    UNSAFE_INJECTION : available=<true> enabled=<true>                                                                                                                 */
+/*                       INJECTORS_IN_INTERFACE_MIXINS : available=<true> enabled=<false>                                                                                                                */
+/*********************************************************************************************************************************************************************************************************/
+/*                                       Detected Side : CLIENT                                                                                                                                          */
+/*********************************************************************************************************************************************************************************************************/
+[10:53:01] [main/INFO] [CleanMix]: Attempting to load Fernflower decompiler (Threaded mode)
+[10:53:01] [main/INFO] [CleanMix]: Fernflower decompiler was successfully initialised from mixinbooter-11.13.jar, exported classes will be decompiled in a separate thread
+[10:53:01] [main/INFO] [Srg2McpRemapper]: Initialized. Loaded 21622 mappings from /home/runner/.gradle/caches/minecraft/de/oceanlabs/mcp/mcp_stable/39/rfg_srgs/srg-mcp.srg
+[10:53:03] [main/INFO] [MixinBooter]: Finished gathering 4 mods, took 1706 ms.
+[10:53:03] [main/INFO] [FML]: Searching /home/runner/work/chaosshard/chaosshard/run/mods for mods
+[10:53:03] [main/INFO] [LaunchWrapper]: Calling tweak class net.minecraftforge.gradle.tweakers.CoremodTweaker
+[10:53:03] [main/INFO] [GradleStart]: Injecting location in coremod net.minecraftforge.fml.relauncher.FMLCorePlugin
+[10:53:03] [main/INFO] [GradleStart]: Injecting location in coremod net.minecraftforge.classloading.FMLForgePlugin
+[10:53:03] [main/INFO] [GradleStart]: Injecting location in coremod hellfirepvp.astralsorcery.core.AstralCore
+[10:53:03] [main/INFO] [GradleStart]: Injecting location in coremod com.cleanroommc.stripforgereq.StripLatestForgeRequirements
+[10:53:03] [main/INFO] [GradleStart]: Injecting location in coremod com.cleanroommc.osxnarratorblocker.OSXNarratorBlocker
+[10:53:03] [main/INFO] [GradleStart]: Injecting location in coremod zone.rong.mixinbooter.MixinBooterPlugin
+[10:53:03] [main/INFO] [LaunchWrapper]: Loading tweak class name zone.rong.mixinbooter.service.CoremodsRescuer
+[10:53:03] [main/INFO] [LaunchWrapper]: Loading tweak class name net.minecraftforge.fml.common.launcher.FMLInjectionAndSortingTweaker
+[10:53:03] [main/INFO] [LaunchWrapper]: Loading tweak class name org.spongepowered.asm.mixin.EnvironmentStateTweaker
+[10:53:03] [main/INFO] [LaunchWrapper]: Loading tweak class name net.minecraftforge.fml.common.launcher.FMLDeobfTweaker
+[10:53:03] [main/INFO] [LaunchWrapper]: Loading tweak class name net.minecraftforge.gradle.tweakers.AccessTransformerTweaker
+[10:53:03] [main/INFO] [LaunchWrapper]: Calling tweak class net.minecraftforge.fml.common.launcher.FMLInjectionAndSortingTweaker
+[10:53:03] [main/INFO] [LaunchWrapper]: Calling tweak class net.minecraftforge.fml.common.launcher.FMLInjectionAndSortingTweaker
+[10:53:03] [main/INFO] [LaunchWrapper]: Calling tweak class net.minecraftforge.fml.relauncher.CoreModManager$FMLPluginWrapper
+[10:53:03] [main/INFO] [MixinBooter]: Initializing MixinExtras...
+[10:53:03] [main/INFO] [MixinBooter]: Loading early loader com.cleanroommc.stripforgereq.StripLatestForgeRequirements for its mixins.
+[10:53:03] [main/INFO] [MixinBooter]: Adding [mixins.striplatestforgerequirements.json] mixin configuration.
+[10:53:03] [main/INFO] [MixinBooter]: Loading early loader com.cleanroommc.osxnarratorblocker.OSXNarratorBlocker for its mixins.
+[10:53:03] [main/INFO] [MixinBooter]: Adding [mixins.osxnarratorblocker.json] mixin configuration.
+[10:53:03] [main/INFO] [MixinBooter]: Added mixinbooter-11.13.jar to the classloader to process its mixin manifest attributes.
+[10:53:03] [main/INFO] [LaunchWrapper]: Calling tweak class zone.rong.mixinbooter.service.CoremodsRescuer
+[10:53:03] [main/INFO] [LaunchWrapper]: Calling tweak class net.minecraftforge.fml.relauncher.CoreModManager$FMLPluginWrapper
+[10:53:03] [main/ERROR] [FML]: FML appears to be missing any signature data. This is not a good thing
+[10:53:03] [main/INFO] [LaunchWrapper]: Calling tweak class net.minecraftforge.fml.relauncher.CoreModManager$FMLPluginWrapper
+[10:53:03] [main/INFO] [LaunchWrapper]: Calling tweak class net.minecraftforge.fml.relauncher.CoreModManager$FMLPluginWrapper
+[10:53:03] [main/INFO] [LaunchWrapper]: Calling tweak class net.minecraftforge.fml.relauncher.CoreModManager$FMLPluginWrapper
+[10:53:03] [main/INFO] [LaunchWrapper]: Calling tweak class org.spongepowered.asm.mixin.EnvironmentStateTweaker
+[10:53:03] [main/INFO] [LaunchWrapper]: Calling tweak class net.minecraftforge.fml.common.launcher.FMLDeobfTweaker
+[10:53:03] [main/INFO] [Astral Core]: [AstralTransformer] Loading patches...
+[10:53:04] [main/INFO] [Astral Core]: [AstralTransformer] Initialized! Loaded 14 class patches!
+[10:53:04] [main/INFO] [LaunchWrapper]: Calling tweak class net.minecraftforge.gradle.tweakers.AccessTransformerTweaker
+[10:53:04] [main/INFO] [GradleStart]: Remapping AccessTransformer rules...
+[10:53:04] [main/INFO] [LaunchWrapper]: Calling tweak class net.minecraftforge.fml.relauncher.CoreModManager$FMLPluginWrapper
+[10:53:04] [main/INFO] [LaunchWrapper]: Loading tweak class name net.minecraftforge.fml.common.launcher.TerminalTweaker
+[10:53:04] [main/INFO] [LaunchWrapper]: Calling tweak class net.minecraftforge.fml.common.launcher.TerminalTweaker
+[10:53:04] [main/INFO] [LaunchWrapper]: Launching wrapped minecraft {net.minecraft.client.main.Main}
+[10:53:04] [main/INFO] [Astral Core]: [AstralTransformer] Transforming net.minecraft.world.World : net.minecraft.world.World with 2 patches!
+[10:53:04] [main/INFO] [Astral Core]: [AstralTransformer] Applied patch PATCHSUNBRIGHTNESSWORLDCLIENT
+[10:53:04] [main/INFO] [Astral Core]: [AstralTransformer] Applied patch PATCHSUNBRIGHTNESSWORLDCOMMON
+[10:53:04] [main/INFO] [Astral Core]: [AstralTransformer] Transforming net.minecraft.entity.EntityLivingBase : net.minecraft.entity.EntityLivingBase with 4 patches!
+[10:53:04] [main/INFO] [Astral Core]: [AstralTransformer] Applied patch PATCHAPPLYPOTIONEFFECTEVENT
+[10:53:04] [main/INFO] [Astral Core]: [AstralTransformer] Applied patch PATCHENTITYLIVINGBASEWATERSLOWDOWN
+[10:53:04] [main/INFO] [Astral Core]: [AstralTransformer] Applied patch PATCHSETPLAYERATTRIBUTE
+[10:53:04] [main/INFO] [Astral Core]: [AstralTransformer] Applied patch PATCHUPDATEELYTRA
+[10:53:05] [Client thread/INFO] [minecraft/Minecraft]: Setting user: Developer
+[10:53:05] [Client thread/INFO] [Astral Core]: [AstralTransformer] Transforming net.minecraft.item.ItemStack : net.minecraft.item.ItemStack with 2 patches!
+[10:53:05] [Client thread/INFO] [Astral Core]: [AstralTransformer] Applied patch PATCHMODIFYENCHANTMENTLEVELSTOOLTIP
+[10:53:05] [Client thread/INFO] [Astral Core]: [AstralTransformer] Applied patch PATCHMODIFYENCHANTMENTLEVELSTOOLTIPEVENT
+[10:53:06] [Client thread/INFO] [Astral Core]: [AstralTransformer] Transforming net.minecraft.entity.ai.attributes.AbstractAttributeMap : net.minecraft.entity.ai.attributes.AbstractAttributeMap with 1 patches!
+[10:53:06] [Client thread/INFO] [Astral Core]: [AstralTransformer] Applied patch PATCHADDPLAYERATTRIBUTE
+[10:53:07] [Client thread/INFO] [minecraft/Minecraft]: LWJGL Version: 2.9.4
+[10:53:09] [Client thread/INFO] [FML]: Could not load splash.properties, will create a default one
+[10:53:09] [Client thread/INFO] [MixinExtras|Service]: Initializing MixinExtras via com.llamalad7.mixinextras.service.MixinExtrasServiceImpl(version=0.5.5).
+[10:53:09] [Client thread/INFO] [FML]: -- System Details --
+Details:
+	Minecraft Version: 1.12.2
+	Operating System: Linux (amd64) version 6.17.0-1022-azure
+	Java Version: 1.8.0_504, Azul Systems, Inc.
+	Java VM Version: OpenJDK 64-Bit Server VM (mixed mode), Azul Systems, Inc.
+	Memory: 1680822224 bytes (1602 MB) / 1594359808 bytes (1520 MB) up to 5726797824 bytes (5461 MB)
+	JVM Flags: 2 total; -Xms1G -Xmx6G
+	IntCache: cache: 0, tcache: 0, allocated: 0, tallocated: 0
+	FML: 
+	Loaded coremods (and transformers): 
+MixinBooter (mixinbooter-11.13.jar)
+  
+StripLatestForgeRequirements (strip-latest-forge-requirements-1.0-dev.jar)
+  
+AstralCore (astral-sorcery-241721-3044416-deobf.jar)
+  
+OSXNarratorBlocker (osxnarratorblocker-1.0-dev.jar)
+  
+	GL info: ' Vendor: 'Mesa' Version: '4.5 (Compatibility Profile) Mesa 25.2.8-0ubuntu0.24.04.4' Renderer: 'llvmpipe (LLVM 20.1.2, 256 bits)'
+[10:53:10] [Decompiler Thread/INFO] [fernflower]: Decompiling net/minecraft/crash/CrashReport
+[10:53:10] [Client thread/INFO] [FML]: MinecraftForge v14.23.5.2847 Initialized
+[10:53:10] [Client thread/INFO] [FML]: Starts to replace vanilla recipe ingredients with ore ingredients.
+[10:53:10] [Client thread/INFO] [FML]: Invalid recipe found with multiple oredict ingredients in the same ingredient...
+[10:53:10] [Client thread/INFO] [FML]: Replaced 1227 ore ingredients
+[10:53:10] [Client thread/INFO] [FML]: Searching /home/runner/work/chaosshard/chaosshard/run/mods for mods
+[10:53:10] [Decompiler Thread/INFO] [fernflower]: Writing /home/runner/work/chaosshard/chaosshard/run/.mixin.out/java/net/minecraft/crash/CrashReport.java
+[10:53:10] [Decompiler Thread/INFO] [fernflower]: Decompiling net/minecraftforge/fml/common/LoadController
+[10:53:11] [Decompiler Thread/INFO] [fernflower]: Writing /home/runner/work/chaosshard/chaosshard/run/.mixin.out/java/net/minecraftforge/fml/common/LoadController.java
+[10:53:11] [Decompiler Thread/INFO] [fernflower]: Decompiling net/minecraftforge/fml/common/discovery/asm/ASMModParser
+[10:53:11] [Decompiler Thread/INFO] [fernflower]: Writing /home/runner/work/chaosshard/chaosshard/run/.mixin.out/java/net/minecraftforge/fml/common/discovery/asm/ASMModParser.java
+[10:53:11] [Decompiler Thread/INFO] [fernflower]: Decompiling net/minecraftforge/fml/common/FMLModContainer
+[10:53:11] [Decompiler Thread/INFO] [fernflower]: Writing /home/runner/work/chaosshard/chaosshard/run/.mixin.out/java/net/minecraftforge/fml/common/FMLModContainer.java
+[10:53:12] [Client thread/INFO] [FML]: Forge Mod Loader has identified 8 mods to load
+[10:53:12] [Client thread/INFO] [MixinBooter]: Loading late loader [ru.death.chaosshard.mixin.ChaosMixinLoader] for its mixins.
+[10:53:12] [Client thread/INFO] [MixinBooter]: Adding [mixins.chaosshard.astral.json] mixin configuration.
+[10:53:13] [Client thread/INFO] [FML]: Attempting connection with missing mods [minecraft, mcp, mixinbooter, FML, forge, chaosshard, astralsorcery, baubles] at CLIENT
+[10:53:13] [Client thread/INFO] [FML]: Attempting connection with missing mods [minecraft, mcp, mixinbooter, FML, forge, chaosshard, astralsorcery, baubles] at SERVER
+[10:53:13] [Thread-3/INFO] [FML]: Using alternative sync timing : 200 frames of Display.update took 1267288294 nanos
+[10:53:13] [Client thread/ERROR] [FML]: The mod astralsorcery is expecting signature a0f0b759d895c15ceb3e3bcb5f3c2db7c582edf0 for source astral-sorcery-241721-3044416-deobf.jar, however there is no signature matching that description
+[10:53:13] [Decompiler Thread/INFO] [fernflower]: Decompiling hellfirepvp/astralsorcery/common/constellation/perk/PerkLevelManager
+[10:53:13] [Decompiler Thread/INFO] [fernflower]: Writing /home/runner/work/chaosshard/chaosshard/run/.mixin.out/java/hellfirepvp/astralsorcery/common/constellation/perk/PerkLevelManager.java
+[10:53:14] [Client thread/INFO] [minecraft/SimpleReloadableResourceManager]: Reloading ResourceManager: Default, FMLFileResourcePack:Forge Mod Loader, FMLFileResourcePack:Minecraft Forge, FMLFileResourcePack:Chaos Shard, FMLFileResourcePack:Astral Sorcery, FMLFileResourcePack:Baubles
+[10:53:14] [Client thread/INFO] [Astral Core]: [AstralTransformer] Transforming net.minecraft.client.renderer.EntityRenderer : net.minecraft.client.renderer.EntityRenderer with 1 patches!
+[10:53:14] [Client thread/INFO] [Astral Core]: [AstralTransformer] Applied patch PATCHENTITYRENDEREREXTENDEDENTITYREACH
+[10:53:14] [Client thread/INFO] [FML]: Processing ObjectHolder annotations
+[10:53:14] [Client thread/INFO] [FML]: Found 1169 ObjectHolder annotations
+[10:53:14] [Client thread/INFO] [FML]: Identifying ItemStackHolder annotations
+[10:53:14] [Client thread/INFO] [FML]: Found 0 ItemStackHolder annotations
+[10:53:14] [Client thread/INFO] [FML]: Configured a dormant chunk cache size of 0
+[10:53:14] [Forge Version Check/INFO] [forge.VersionCheck]: [forge] Starting version check at http://files.minecraftforge.net/maven/net/minecraftforge/forge/promotions_slim.json
+[10:53:15] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Refreshing and Invalidating Resources
+[10:53:15] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Finished reloading, rebinding textures...
+[10:53:15] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Preload mandatory textures
+[10:53:15] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/gui/guijblankbook.png to 6
+[10:53:15] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/gui/guijspacebook.png to 7
+[10:53:15] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/gui/guijspaceconstellation.png to 8
+[10:53:15] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/gui/guicontippaper.png to 9
+[10:53:15] [Forge Version Check/INFO] [forge.VersionCheck]: [forge] Found status: OUTDATED Target: 14.23.5.2859
+[10:53:15] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/gui/guicontippaper_blank.png to 10
+[10:53:15] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/gui/guijbookmark.png to 11
+[10:53:15] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/gui/guijbookmarkstretched.png to 12
+[10:53:15] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/gui/guiknowledgebookmark.png to 13
+[10:53:15] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/gui/guiknowledgebookmarkstretched.png to 14
+[10:53:15] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/gui/guijarrow.png to 15
+[10:53:15] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/misc/underline.png to 16
+[10:53:15] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/gui/guiresbg.png to 17
+[10:53:15] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/gui/guiresbg2.png to 18
+[10:53:16] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/gui/guiresbgcst.png to 19
+[10:53:16] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/gui/guijresoverlay.png to 20
+[10:53:16] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/gui/hud_charge_frame.png to 21
+[10:53:16] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/gui/hud_charge_charge.png to 22
+[10:53:16] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/gui/hud_item_frame.png to 23
+[10:53:16] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/gui/hud_item_frame_extender.png to 24
+[10:53:16] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/gui/observatoryframe.png to 25
+[10:53:16] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/gui/gridsextant.png to 26
+[10:53:16] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/gui/guiscructpreviewicons.png to 27
+[10:53:16] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/gui/slotgemcontext.png to 28
+[10:53:16] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/effect/connectionperks.png to 29
+[10:53:16] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/environment/star1.png to 30
+[10:53:16] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/environment/star2.png to 31
+[10:53:16] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/environment/connection.png to 32
+[10:53:16] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/environment/solareclipse.png to 33
+[10:53:16] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Preload textures
+[10:53:16] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/gui/cloud1.png to 34
+[10:53:16] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/gui/cloud2.png to 35
+[10:53:16] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/gui/cloud3.png to 36
+[10:53:16] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/gui/cloud4.png to 37
+[10:53:16] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/gui/cloud5.png to 38
+[10:53:16] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/gui/cloud6.png to 39
+[10:53:16] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/gui/cloud7.png to 40
+[10:53:16] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/gui/cloud8.png to 41
+[10:53:16] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/gui/guiconpaper.png to 42
+[10:53:16] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/gui/guialtar1.png to 43
+[10:53:16] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/gui/guialtar2.png to 44
+[10:53:16] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/gui/guialtar3.png to 45
+[10:53:16] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/gui/griddisc.png to 46
+[10:53:16] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/gui/gridatt.png to 47
+[10:53:16] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/gui/gridcst.png to 48
+[10:53:16] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/gui/guijstoragebook.png to 49
+[10:53:16] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/gui/guidrawing.png to 50
+[10:53:16] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/gui/guidrawing_empty.png to 51
+[10:53:16] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/effect/lightbeam.png to 52
+[10:53:16] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/effect/burst1.png to 53
+[10:53:16] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/effect/burst2.png to 54
+[10:53:16] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/effect/burst3.png to 55
+[10:53:16] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/effect/ceffect1.png to 56
+[10:53:16] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/effect/ceffect2.png to 57
+[10:53:16] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/effect/ceffect3.png to 58
+[10:53:16] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/effect/lightningpart.png to 59
+[10:53:16] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/effect/starlight_store.png to 60
+[10:53:16] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/effect/halo1.png to 61
+[10:53:17] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/effect/halo2.png to 62
+[10:53:17] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/effect/halo7.png to 63
+[10:53:17] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/effect/star1.png to 64
+[10:53:17] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/effect/star2.png to 65
+[10:53:17] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/effect/flarestar.png to 66
+[10:53:17] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/effect/flarestatic.png to 67
+[10:53:17] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/effect/flaresmall.png to 68
+[10:53:17] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/effect/flareperkinactive.png to 69
+[10:53:17] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/effect/flareperkactive.png to 70
+[10:53:17] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/effect/flareperkactivateable.png to 71
+[10:53:17] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/effect/unlock_perk.png to 72
+[10:53:17] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/effect/flare1.png to 73
+[10:53:17] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/effect/flare2.png to 74
+[10:53:17] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/effect/charge.png to 75
+[10:53:17] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/effect/vortex1.png to 76
+[10:53:17] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/effect/g_explode_blue.png to 77
+[10:53:17] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/effect/g_explode_gray.png to 78
+[10:53:17] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/effect/g_explode_red.png to 79
+[10:53:17] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/effect/g_explode_white.png to 80
+[10:53:17] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/misc/potion_cheatdeath.png to 81
+[10:53:17] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/misc/potion_bleed.png to 82
+[10:53:17] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/misc/moon_full.png to 83
+[10:53:17] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/misc/moon_waning1.png to 84
+[10:53:17] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/misc/moon_waning2.png to 85
+[10:53:17] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/misc/moon_waning3.png to 86
+[10:53:17] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/misc/moon_new.png to 87
+[10:53:17] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/misc/moon_waxing1.png to 88
+[10:53:17] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/misc/moon_waxing2.png to 89
+[10:53:17] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/misc/moon_waxing3.png to 90
+[10:53:17] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/misc/smoke.png to 91
+[10:53:17] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/effect/halo3.png to 92
+[10:53:17] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/effect/halo4.png to 93
+[10:53:17] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/effect/halo5.png to 94
+[10:53:18] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/effect/halo6.png to 95
+[10:53:18] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/effect/patreonflares/gray_mono.png to 96
+[10:53:18] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/effect/hook.png to 97
+[10:53:18] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/blocks/fluid/starlight_still.png to 98
+[10:53:18] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Initializing sprite library
+[10:53:18] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Texture Preloading took 2042ms!
+[10:53:18] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Successfully reloaded and rebound library.
+[10:53:18] [Client thread/INFO] [FML]: OBJLoader: Domain astralsorcery has been added.
+[10:53:18] [Client thread/INFO] [ChaosShard]: Созвездие Хаоса зарегистрировано: astralsorcery.constellation.chaos
+[10:53:19] [Client thread/INFO] [Astral Sorcery]: Crafttweaker not found!
+[10:53:20] [Client thread/INFO] [ChaosShard]: Осколок собран. Модуль Звёзд: активен
+[10:53:20] [Client thread/INFO] [FML]: Applying holder lookups
+[10:53:20] [Client thread/INFO] [FML]: Holder lookups applied
+[10:53:20] [Client thread/INFO] [FML]: Applying holder lookups
+[10:53:20] [Client thread/INFO] [FML]: Holder lookups applied
+[10:53:20] [Client thread/INFO] [FML]: Applying holder lookups
+[10:53:20] [Client thread/INFO] [FML]: Holder lookups applied
+[10:53:20] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/models/crystal_big_white.png to 99
+[10:53:20] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/models/crystal_big_blue.png to 100
+[10:53:20] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/models/crystal_big_red.png to 101
+[10:53:20] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/models/base/grindstone.png to 102
+[10:53:20] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/models/base/telescope.png to 103
+[10:53:20] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/models/base/altarattunement.png to 104
+[10:53:20] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/models/base/lens.png to 105
+[10:53:20] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/models/lens/lens_color.png to 106
+[10:53:20] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/models/prism/prism_color.png to 107
+[10:53:20] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/models/starmapper/astralsorcery_starmapper.png to 108
+[10:53:20] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/models/base/observatory.png to 109
+[10:53:20] [Client thread/INFO] [FML]: Applying holder lookups
+[10:53:20] [Client thread/INFO] [FML]: Holder lookups applied
+[10:53:20] [Client thread/INFO] [FML]: Injecting itemstacks
+[10:53:20] [Client thread/INFO] [FML]: Itemstack injection complete
+[10:53:21] [Sound Library Loader/INFO] [minecraft/SoundManager]: Starting up SoundSystem...
+[10:53:21] [Thread-4/INFO] [minecraft/SoundManager]: Initializing LWJGL OpenAL
+[10:53:21] [Thread-4/INFO] [minecraft/SoundManager]: (The LWJGL binding of OpenAL.  For more information, see http://www.lwjgl.org)
+ALSA lib confmisc.c:855:(parse_card) cannot find card '0'
+ALSA lib conf.c:5208:(_snd_config_evaluate) function snd_func_card_inum returned error: No such file or directory
+ALSA lib confmisc.c:422:(snd_func_concat) error evaluating strings
+ALSA lib conf.c:5208:(_snd_config_evaluate) function snd_func_concat returned error: No such file or directory
+ALSA lib confmisc.c:1342:(snd_func_refer) error evaluating name
+ALSA lib conf.c:5208:(_snd_config_evaluate) function snd_func_refer returned error: No such file or directory
+ALSA lib conf.c:5731:(snd_config_expand) Evaluate error: No such file or directory
+ALSA lib pcm.c:2721:(snd_pcm_open_noupdate) Unknown PCM default
+AL lib: (EE) alsa_open_playback: Could not open playback device 'default': No such file or directory
+[10:53:21] [Thread-4/ERROR] [minecraft/SoundManager]: Error in class 'LibraryLWJGLOpenAL'
+[10:53:21] [Thread-4/ERROR] [minecraft/SoundManager]: Unable to initialize OpenAL.  Probable cause: OpenAL not supported.
+[10:53:21] [Thread-4/WARN] [minecraft/SoundManager]: ERROR MESSAGE:
+[10:53:21] [Thread-4/INFO] [minecraft/SoundManager]: Could not locate OpenAL library.
+[10:53:21] [Thread-4/WARN] [minecraft/SoundManager]: STACK TRACE:
+[10:53:21] [Thread-4/INFO] [minecraft/SoundManager]: org.lwjgl.openal.AL.create(AL.java:156)
+[10:53:21] [Thread-4/INFO] [minecraft/SoundManager]: org.lwjgl.openal.AL.create(AL.java:102)
+[10:53:21] [Thread-4/INFO] [minecraft/SoundManager]: org.lwjgl.openal.AL.create(AL.java:206)
+[10:53:21] [Thread-4/INFO] [minecraft/SoundManager]: paulscode.sound.libraries.LibraryLWJGLOpenAL.init(LibraryLWJGLOpenAL.java:164)
+[10:53:21] [Thread-4/INFO] [minecraft/SoundManager]: paulscode.sound.SoundSystem.CommandNewLibrary(SoundSystem.java:1576)
+[10:53:21] [Thread-4/INFO] [minecraft/SoundManager]: paulscode.sound.SoundSystem.CommandQueue(SoundSystem.java:2572)
+[10:53:21] [Thread-4/INFO] [minecraft/SoundManager]: paulscode.sound.CommandThread.run(CommandThread.java:121)
+[10:53:21] [Sound Library Loader/WARN] [minecraft/SoundManager]: ERROR MESSAGE:
+[10:53:21] [Sound Library Loader/INFO] [minecraft/SoundManager]: Could not locate OpenAL library.
+[10:53:21] [Sound Library Loader/INFO] [minecraft/SoundManager]: Starting up SoundSystem...
+[10:53:22] [Thread-6/INFO] [minecraft/SoundManager]: Switching to No Sound
+[10:53:22] [Thread-6/INFO] [minecraft/SoundManager]: (Silent Mode)
+[10:53:22] [Sound Library Loader/INFO] [minecraft/SoundManager]: Sound engine started
+[10:53:22] [Client thread/INFO] [FML]: Max texture size: 16384
+[10:53:24] [Client thread/INFO] [minecraft/TextureMap]: Created: 1024x512 textures-atlas
+[10:53:24] [Client thread/ERROR] [FML]: Exception loading model for variant chaosshard:hero_echo#inventory for item "chaosshard:hero_echo", normal location exception: 
+net.minecraftforge.client.model.ModelLoaderRegistry$LoaderException: Exception loading model chaosshard:item/hero_echo with loader VanillaLoader.INSTANCE, skipping
+	at net.minecraftforge.client.model.ModelLoaderRegistry.getModel(ModelLoaderRegistry.java:161) ~[ModelLoaderRegistry.class:?]
+	at net.minecraftforge.client.model.ModelLoader.loadItemModels(ModelLoader.java:302) ~[ModelLoader.class:?]
+	at net.minecraft.client.renderer.block.model.ModelBakery.loadVariantItemModels(ModelBakery.java:175) ~[ModelBakery.class:?]
+	at net.minecraftforge.client.model.ModelLoader.setupModelRegistry(ModelLoader.java:151) ~[ModelLoader.class:?]
+	at net.minecraft.client.renderer.block.model.ModelManager.onResourceManagerReload(ModelManager.java:28) [ModelManager.class:?]
+	at net.minecraft.client.resources.SimpleReloadableResourceManager.registerReloadListener(SimpleReloadableResourceManager.java:128) [SimpleReloadableResourceManager.class:?]
+	at net.minecraft.client.Minecraft.init(Minecraft.java:560) [Minecraft.class:?]
+	at net.minecraft.client.Minecraft.run(Minecraft.java:422) [Minecraft.class:?]
+	at net.minecraft.client.main.Main.main(Main.java:118) [Main.class:?]
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[?:1.8.0_504]
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) ~[?:1.8.0_504]
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[?:1.8.0_504]
+	at java.lang.reflect.Method.invoke(Method.java:498) ~[?:1.8.0_504]
+	at net.minecraft.launchwrapper.Launch.launch(Launch.java:135) [launchwrapper-1.12.jar:?]
+	at net.minecraft.launchwrapper.Launch.main(Launch.java:28) [launchwrapper-1.12.jar:?]
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[?:1.8.0_504]
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) ~[?:1.8.0_504]
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[?:1.8.0_504]
+	at java.lang.reflect.Method.invoke(Method.java:498) ~[?:1.8.0_504]
+	at net.minecraftforge.gradle.GradleStartCommon.launch(GradleStartCommon.java:87) [mclauncher-1.12.2.jar:?]
+	at GradleStart.main(GradleStart.java:19) [mclauncher-1.12.2.jar:?]
+Caused by: java.io.FileNotFoundException: chaosshard:models/item/hero_echo.json
+	at net.minecraft.client.resources.FallbackResourceManager.getResource(FallbackResourceManager.java:69) ~[FallbackResourceManager.class:?]
+	at net.minecraft.client.resources.SimpleReloadableResourceManager.getResource(SimpleReloadableResourceManager.java:65) ~[SimpleReloadableResourceManager.class:?]
+	at net.minecraft.client.renderer.block.model.ModelBakery.loadModel(ModelBakery.java:334) ~[ModelBakery.class:?]
+	at net.minecraftforge.client.model.ModelLoader.access$1400(ModelLoader.java:115) ~[ModelLoader.class:?]
+	at net.minecraftforge.client.model.ModelLoader$VanillaLoader.loadModel(ModelLoader.java:861) ~[ModelLoader$VanillaLoader.class:?]
+	at net.minecraftforge.client.model.ModelLoaderRegistry.getModel(ModelLoaderRegistry.java:157) ~[ModelLoaderRegistry.class:?]
+	... 20 more
+[10:53:24] [Client thread/ERROR] [FML]: Exception loading model for variant chaosshard:hero_echo#inventory for item "chaosshard:hero_echo", blockstate location exception: 
+net.minecraftforge.client.model.ModelLoaderRegistry$LoaderException: Exception loading model chaosshard:hero_echo#inventory with loader VariantLoader.INSTANCE, skipping
+	at net.minecraftforge.client.model.ModelLoaderRegistry.getModel(ModelLoaderRegistry.java:161) ~[ModelLoaderRegistry.class:?]
+	at net.minecraftforge.client.model.ModelLoader.loadItemModels(ModelLoader.java:296) ~[ModelLoader.class:?]
+	at net.minecraft.client.renderer.block.model.ModelBakery.loadVariantItemModels(ModelBakery.java:175) ~[ModelBakery.class:?]
+	at net.minecraftforge.client.model.ModelLoader.setupModelRegistry(ModelLoader.java:151) ~[ModelLoader.class:?]
+	at net.minecraft.client.renderer.block.model.ModelManager.onResourceManagerReload(ModelManager.java:28) [ModelManager.class:?]
+	at net.minecraft.client.resources.SimpleReloadableResourceManager.registerReloadListener(SimpleReloadableResourceManager.java:128) [SimpleReloadableResourceManager.class:?]
+	at net.minecraft.client.Minecraft.init(Minecraft.java:560) [Minecraft.class:?]
+	at net.minecraft.client.Minecraft.run(Minecraft.java:422) [Minecraft.class:?]
+	at net.minecraft.client.main.Main.main(Main.java:118) [Main.class:?]
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[?:1.8.0_504]
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) ~[?:1.8.0_504]
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[?:1.8.0_504]
+	at java.lang.reflect.Method.invoke(Method.java:498) ~[?:1.8.0_504]
+	at net.minecraft.launchwrapper.Launch.launch(Launch.java:135) [launchwrapper-1.12.jar:?]
+	at net.minecraft.launchwrapper.Launch.main(Launch.java:28) [launchwrapper-1.12.jar:?]
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[?:1.8.0_504]
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) ~[?:1.8.0_504]
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[?:1.8.0_504]
+	at java.lang.reflect.Method.invoke(Method.java:498) ~[?:1.8.0_504]
+	at net.minecraftforge.gradle.GradleStartCommon.launch(GradleStartCommon.java:87) [mclauncher-1.12.2.jar:?]
+	at GradleStart.main(GradleStart.java:19) [mclauncher-1.12.2.jar:?]
+Caused by: net.minecraft.client.renderer.block.model.ModelBlockDefinition$MissingVariantException
+	at net.minecraft.client.renderer.block.model.ModelBlockDefinition.getVariant(ModelBlockDefinition.java:83) ~[ModelBlockDefinition.class:?]
+	at net.minecraftforge.client.model.ModelLoader$VariantLoader.loadModel(ModelLoader.java:1175) ~[ModelLoader$VariantLoader.class:?]
+	at net.minecraftforge.client.model.ModelLoaderRegistry.getModel(ModelLoaderRegistry.java:157) ~[ModelLoaderRegistry.class:?]
+	... 20 more
+[10:53:25] [Client thread/INFO] [FML]: Applying holder lookups
+[10:53:25] [Client thread/INFO] [FML]: Holder lookups applied
+[10:53:25] [Client thread/INFO] [Astral Sorcery]: Ignoring fluid crystaloil for rarity registry - it doesn't exist in the current environment
+[10:53:25] [Client thread/INFO] [Astral Sorcery]: Ignoring fluid empoweredoil for rarity registry - it doesn't exist in the current environment
+[10:53:25] [Client thread/INFO] [Astral Sorcery]: Ignoring fluid redstone for rarity registry - it doesn't exist in the current environment
+[10:53:25] [Client thread/INFO] [Astral Sorcery]: Ignoring fluid glowstone for rarity registry - it doesn't exist in the current environment
+[10:53:25] [Client thread/INFO] [Astral Sorcery]: Ignoring fluid ender for rarity registry - it doesn't exist in the current environment
+[10:53:25] [Client thread/INFO] [Astral Sorcery]: Ignoring fluid pyrotheum for rarity registry - it doesn't exist in the current environment
+[10:53:25] [Client thread/INFO] [Astral Sorcery]: Ignoring fluid cryotheum for rarity registry - it doesn't exist in the current environment
+[10:53:25] [Client thread/INFO] [Astral Sorcery]: Ignoring fluid refined_oil for rarity registry - it doesn't exist in the current environment
+[10:53:25] [Client thread/INFO] [Astral Sorcery]: Ignoring fluid refined_fuel for rarity registry - it doesn't exist in the current environment
+[10:53:25] [Client thread/INFO] [Astral Sorcery]: Ignoring fluid iron for rarity registry - it doesn't exist in the current environment
+[10:53:25] [Client thread/INFO] [Astral Sorcery]: Ignoring fluid gold for rarity registry - it doesn't exist in the current environment
+[10:53:25] [Client thread/INFO] [Astral Sorcery]: Ignoring fluid cobalt for rarity registry - it doesn't exist in the current environment
+[10:53:25] [Client thread/INFO] [Astral Sorcery]: Ignoring fluid ardite for rarity registry - it doesn't exist in the current environment
+[10:53:25] [Client thread/INFO] [Astral Sorcery]: Ignoring fluid emerald for rarity registry - it doesn't exist in the current environment
+[10:53:25] [Client thread/INFO] [Astral Sorcery]: Ignoring fluid fluidoil for rarity registry - it doesn't exist in the current environment
+[10:53:25] [Client thread/INFO] [Astral Sorcery]: Ignoring fluid fluidnitrodiesel for rarity registry - it doesn't exist in the current environment
+[10:53:25] [Client thread/INFO] [Astral Sorcery]: Ignoring fluid ic2uu_matter for rarity registry - it doesn't exist in the current environment
+[10:53:25] [Client thread/INFO] [Astral Sorcery]: Ignoring fluid ic2biomass for rarity registry - it doesn't exist in the current environment
+[10:53:25] [Client thread/INFO] [Astral Sorcery]: Ignoring fluid ic2biogas for rarity registry - it doesn't exist in the current environment
+[10:53:25] [Client thread/INFO] [Astral Sorcery]: Ignoring fluid mana for rarity registry - it doesn't exist in the current environment
+[10:53:25] [Client thread/INFO] [Astral Sorcery]: Ignoring fluid nacre for rarity registry - it doesn't exist in the current environment
+[10:53:26] [Decompiler Thread/INFO] [fernflower]: Decompiling hellfirepvp/astralsorcery/common/constellation/perk/PlayerAttributeMap
+[10:53:26] [Client thread/INFO] [Astral Core]: [AstralTransformer] Transforming net.minecraft.entity.ai.attributes.ModifiableAttributeInstance : net.minecraft.entity.ai.attributes.ModifiableAttributeInstance with 1 patches!
+[10:53:26] [Client thread/INFO] [Astral Core]: [AstralTransformer] Applied patch PATCHPOSTPROCESSATTRIBUTES
+[10:53:26] [Client thread/INFO] [Astral Sorcery]: Loaded OAK of minecraft into tree registry.
+[10:53:26] [Client thread/INFO] [Astral Sorcery]: Loaded SPRUCE of minecraft into tree registry.
+[10:53:26] [Client thread/INFO] [Astral Sorcery]: Loaded BIRCH of minecraft into tree registry.
+[10:53:26] [Client thread/INFO] [Astral Sorcery]: Loaded JUNGLE of minecraft into tree registry.
+[10:53:26] [Client thread/INFO] [Astral Sorcery]: Loaded ACACIA of minecraft into tree registry.
+[10:53:26] [Client thread/INFO] [Astral Sorcery]: Loaded DARK_OAK of minecraft into tree registry.
+[10:53:26] [Client thread/INFO] [Astral Sorcery]: Not loading tree type SLIME as the mod tconstruct is not loaded.
+[10:53:26] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/gui/guijtextarea.png to 117
+[10:53:26] [Decompiler Thread/INFO] [fernflower]: Writing /home/runner/work/chaosshard/chaosshard/run/.mixin.out/java/hellfirepvp/astralsorcery/common/constellation/perk/PlayerAttributeMap.java
+[10:53:26] [Decompiler Thread/INFO] [fernflower]: Decompiling hellfirepvp/astralsorcery/common/constellation/distribution/ConstellationSkyHandler
+Exception in thread "AstralSorcery Patreon Effect Loader" [10:53:26] [AstralSorcery Patreon Effect Loader/INFO] [STDERR]: [java.lang.ThreadGroup:uncaughtException:1052]: com.google.gson.JsonSyntaxException: java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING at line 1 column 1 path $
+[10:53:26] [AstralSorcery Patreon Effect Loader/INFO] [STDERR]: [java.lang.ThreadGroup:uncaughtException:1052]: 	at com.google.gson.internal.bind.ReflectiveTypeAdapterFactory$Adapter.read(ReflectiveTypeAdapterFactory.java:224)
+[10:53:26] [AstralSorcery Patreon Effect Loader/INFO] [STDERR]: [java.lang.ThreadGroup:uncaughtException:1052]: 	at com.google.gson.Gson.fromJson(Gson.java:887)
+[10:53:26] [AstralSorcery Patreon Effect Loader/INFO] [STDERR]: [java.lang.ThreadGroup:uncaughtException:1052]: 	at com.google.gson.Gson.fromJson(Gson.java:825)
+[10:53:26] [AstralSorcery Patreon Effect Loader/INFO] [STDERR]: [java.lang.ThreadGroup:uncaughtException:1052]: 	at hellfirepvp.astralsorcery.common.base.patreon.PatreonDataManager.lambda$loadPatreonEffects$1(PatreonDataManager.java:52)
+[10:53:26] [AstralSorcery Patreon Effect Loader/INFO] [STDERR]: [java.lang.ThreadGroup:uncaughtException:1052]: 	at java.lang.Thread.run(Thread.java:750)
+[10:53:26] [AstralSorcery Patreon Effect Loader/INFO] [STDERR]: [java.lang.ThreadGroup:uncaughtException:1061]: Caused by: java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING at line 1 column 1 path $
+[10:53:26] [AstralSorcery Patreon Effect Loader/INFO] [STDERR]: [java.lang.ThreadGroup:uncaughtException:1061]: 	at com.google.gson.stream.JsonReader.beginObject(JsonReader.java:385)
+[10:53:26] [AstralSorcery Patreon Effect Loader/INFO] [STDERR]: [java.lang.ThreadGroup:uncaughtException:1061]: 	at com.google.gson.internal.bind.ReflectiveTypeAdapterFactory$Adapter.read(ReflectiveTypeAdapterFactory.java:213)
+[10:53:26] [AstralSorcery Patreon Effect Loader/INFO] [STDERR]: [java.lang.ThreadGroup:uncaughtException:1061]: 	... 4 more
+[10:53:26] [Decompiler Thread/INFO] [fernflower]: Writing /home/runner/work/chaosshard/chaosshard/run/.mixin.out/java/hellfirepvp/astralsorcery/common/constellation/distribution/ConstellationSkyHandler.java
+[10:53:26] [Client thread/INFO] [ChaosShard]: [clienttest] включён
+[10:53:26] [Client thread/INFO] [FML]: Injecting itemstacks
+[10:53:26] [Client thread/INFO] [FML]: Itemstack injection complete
+[10:53:26] [Client thread/INFO] [Astral Sorcery]: Post compile recipes
+[10:53:26] [Client thread/INFO] [Astral Sorcery]: Item Colorization Helper: Rebuilding colorization cache! This might take longer for higher-res texture packs...
+[10:53:26] [Client thread/INFO] [Astral Sorcery]: Item Colorization Helper: Cache rebuilt! Time required: 145ms - Entries cached: 41
+[10:53:26] [Client thread/INFO] [ChaosShard]: Добавлены места на небе: теперь их 19
+[10:53:26] [Client thread/INFO] [Astral Core]: [AstralTransformer] Transforming net.minecraft.enchantment.EnchantmentHelper : net.minecraft.enchantment.EnchantmentHelper with 1 patches!
+[10:53:26] [Client thread/INFO] [Astral Core]: [AstralTransformer] Applied patch PATCHMODIFYENCHANTMENTLEVELS
+[10:53:27] [Client thread/INFO] [FML]: Forge Mod Loader has successfully loaded 8 mods
+[10:53:27] [Decompiler Thread/INFO] [fernflower]: Decompiling com/mojang/text2speech/Narrator
+[10:53:27] [Decompiler Thread/INFO] [fernflower]: Writing /home/runner/work/chaosshard/chaosshard/run/.mixin.out/java/com/mojang/text2speech/Narrator.java
+[10:53:27] [Client thread/WARN] [mojang/NarratorLinux]: ERROR : Couldn't load Narrator library : Unable to load library 'fliteWrapper': Can't obtain InputStream for linux-x86-64/libfliteWrapper.so
+[10:53:27] [Realms Notification Availability checker #1/INFO] [mojang/RealmsClient]: Could not authorize you against Realms server: java.lang.RuntimeException: Failed to parse into SignedJWT: 0
+[10:53:27] [Client thread/INFO] [ChaosShard]: [clienttest] === Осколок Хаоса — клиентский прогон ===
+[10:53:27] [Client thread/INFO] [ChaosShard]: [clienttest]   [OK]   главное меню открылось
+[10:53:27] [Client thread/INFO] [ChaosShard]: [clienttest]   [OK]   модели предметов: 100
+[10:53:27] [Client thread/INFO] [ChaosShard]: [clienttest]   [OK]   названия предметов
+[10:53:27] [Client thread/INFO] [ChaosShard]: [clienttest]   [OK]   модели блоков: 118 состояний
+[10:53:27] [Client thread/INFO] [ChaosShard]: [clienttest]   [OK]   строки с % форматируются (ru_ru)
+[10:53:27] [Client thread/INFO] [ChaosShard]: [clienttest]   [OK]   отрисовщики существ
+[10:53:27] [Client thread/INFO] [ChaosShard]: [clienttest]   [OK]   названия существ
+[10:53:29] [Client thread/INFO] [ChaosShard]: [clienttest]   снимок: ct_01_menu.png
+[10:53:30] [Server thread/INFO] [minecraft/IntegratedServer]: Starting integrated minecraft server version 1.12.2
+[10:53:30] [Server thread/INFO] [minecraft/IntegratedServer]: Generating keypair
+[10:53:30] [Server thread/INFO] [FML]: Injecting existing registry data into this server instance
+[10:53:31] [Server thread/INFO] [FML]: Applying holder lookups
+[10:53:31] [Server thread/INFO] [FML]: Holder lookups applied
+[10:53:31] [Server thread/INFO] [FML]: Loading dimension 0 (chaosshard_clienttest) (net.minecraft.server.integrated.IntegratedServer@549e54d5)
+[10:53:31] [Server thread/ERROR] [FML]: Parsing error loading built-in advancement chaosshard:m/starlight_dynamo
+com.google.gson.JsonSyntaxException: Expected item to be an item, was unknown string 'thermalexpansion:dynamo'
+	at net.minecraft.util.JsonUtils.getItem(JsonUtils.java:133) ~[JsonUtils.class:?]
+	at net.minecraft.util.JsonUtils.getItem(JsonUtils.java:150) ~[JsonUtils.class:?]
+	at net.minecraft.advancements.DisplayInfo.deserializeIcon(DisplayInfo.java:133) ~[DisplayInfo.class:?]
+	at net.minecraft.advancements.DisplayInfo.deserialize(DisplayInfo.java:111) ~[DisplayInfo.class:?]
+	at net.minecraft.advancements.Advancement$Builder.deserialize(Advancement.java:281) ~[Advancement$Builder.class:?]
+	at net.minecraft.advancements.AdvancementManager$1.deserialize(AdvancementManager.java:50) ~[AdvancementManager$1.class:?]
+	at net.minecraft.advancements.AdvancementManager$1.deserialize(AdvancementManager.java:46) ~[AdvancementManager$1.class:?]
+	at com.google.gson.internal.bind.TreeTypeAdapter.read(TreeTypeAdapter.java:69) ~[TreeTypeAdapter.class:?]
+	at net.minecraft.util.JsonUtils.gsonDeserialize(JsonUtils.java:435) ~[JsonUtils.class:?]
+	at net.minecraft.util.JsonUtils.gsonDeserialize(JsonUtils.java:467) ~[JsonUtils.class:?]
+	at net.minecraft.util.JsonUtils.gsonDeserialize(JsonUtils.java:491) ~[JsonUtils.class:?]
+	at net.minecraftforge.common.ForgeHooks.lambda$loadAdvancements$0(ForgeHooks.java:1381) ~[ForgeHooks.class:?]
+	at net.minecraftforge.common.crafting.CraftingHelper.findFiles(CraftingHelper.java:833) [CraftingHelper.class:?]
+	at net.minecraftforge.common.ForgeHooks.loadAdvancements(ForgeHooks.java:1359) [ForgeHooks.class:?]
+	at net.minecraftforge.common.ForgeHooks.loadAdvancements(ForgeHooks.java:1326) [ForgeHooks.class:?]
+	at net.minecraft.advancements.AdvancementManager.reload(AdvancementManager.java:70) [AdvancementManager.class:?]
+	at net.minecraft.advancements.AdvancementManager.<init>(AdvancementManager.java:61) [AdvancementManager.class:?]
+	at net.minecraft.world.WorldServer.init(WorldServer.java:161) [WorldServer.class:?]
+	at net.minecraft.server.integrated.IntegratedServer.loadAllWorlds(IntegratedServer.java:123) [IntegratedServer.class:?]
+	at net.minecraft.server.integrated.IntegratedServer.init(IntegratedServer.java:160) [IntegratedServer.class:?]
+	at net.minecraft.server.MinecraftServer.run(MinecraftServer.java:551) [MinecraftServer.class:?]
+	at java.lang.Thread.run(Thread.java:750) [?:1.8.0_504]
+[10:53:31] [Server thread/ERROR] [FML]: Parsing error loading built-in advancement chaosshard:m/pocket_personal
+com.google.gson.JsonSyntaxException: Expected item to be an item, was unknown string 'dimdoors:quartz_dimensional_door'
+	at net.minecraft.util.JsonUtils.getItem(JsonUtils.java:133) ~[JsonUtils.class:?]
+	at net.minecraft.util.JsonUtils.getItem(JsonUtils.java:150) ~[JsonUtils.class:?]
+	at net.minecraft.advancements.DisplayInfo.deserializeIcon(DisplayInfo.java:133) ~[DisplayInfo.class:?]
+	at net.minecraft.advancements.DisplayInfo.deserialize(DisplayInfo.java:111) ~[DisplayInfo.class:?]
+	at net.minecraft.advancements.Advancement$Builder.deserialize(Advancement.java:281) ~[Advancement$Builder.class:?]
+	at net.minecraft.advancements.AdvancementManager$1.deserialize(AdvancementManager.java:50) ~[AdvancementManager$1.class:?]
+	at net.minecraft.advancements.AdvancementManager$1.deserialize(AdvancementManager.java:46) ~[AdvancementManager$1.class:?]
+	at com.google.gson.internal.bind.TreeTypeAdapter.read(TreeTypeAdapter.java:69) ~[TreeTypeAdapter.class:?]
+	at net.minecraft.util.JsonUtils.gsonDeserialize(JsonUtils.java:435) ~[JsonUtils.class:?]
+	at net.minecraft.util.JsonUtils.gsonDeserialize(JsonUtils.java:467) ~[JsonUtils.class:?]
+	at net.minecraft.util.JsonUtils.gsonDeserialize(JsonUtils.java:491) ~[JsonUtils.class:?]
+	at net.minecraftforge.common.ForgeHooks.lambda$loadAdvancements$0(ForgeHooks.java:1381) ~[ForgeHooks.class:?]
+	at net.minecraftforge.common.crafting.CraftingHelper.findFiles(CraftingHelper.java:833) [CraftingHelper.class:?]
+	at net.minecraftforge.common.ForgeHooks.loadAdvancements(ForgeHooks.java:1359) [ForgeHooks.class:?]
+	at net.minecraftforge.common.ForgeHooks.loadAdvancements(ForgeHooks.java:1326) [ForgeHooks.class:?]
+	at net.minecraft.advancements.AdvancementManager.reload(AdvancementManager.java:70) [AdvancementManager.class:?]
+	at net.minecraft.advancements.AdvancementManager.<init>(AdvancementManager.java:61) [AdvancementManager.class:?]
+	at net.minecraft.world.WorldServer.init(WorldServer.java:161) [WorldServer.class:?]
+	at net.minecraft.server.integrated.IntegratedServer.loadAllWorlds(IntegratedServer.java:123) [IntegratedServer.class:?]
+	at net.minecraft.server.integrated.IntegratedServer.init(IntegratedServer.java:160) [IntegratedServer.class:?]
+	at net.minecraft.server.MinecraftServer.run(MinecraftServer.java:551) [MinecraftServer.class:?]
+	at java.lang.Thread.run(Thread.java:750) [?:1.8.0_504]
+[10:53:31] [Server thread/ERROR] [FML]: Parsing error loading built-in advancement chaosshard:m/pocket_dungeon
+com.google.gson.JsonSyntaxException: Expected item to be an item, was unknown string 'dimdoors:iron_dimensional_door'
+	at net.minecraft.util.JsonUtils.getItem(JsonUtils.java:133) ~[JsonUtils.class:?]
+	at net.minecraft.util.JsonUtils.getItem(JsonUtils.java:150) ~[JsonUtils.class:?]
+	at net.minecraft.advancements.DisplayInfo.deserializeIcon(DisplayInfo.java:133) ~[DisplayInfo.class:?]
+	at net.minecraft.advancements.DisplayInfo.deserialize(DisplayInfo.java:111) ~[DisplayInfo.class:?]
+	at net.minecraft.advancements.Advancement$Builder.deserialize(Advancement.java:281) ~[Advancement$Builder.class:?]
+	at net.minecraft.advancements.AdvancementManager$1.deserialize(AdvancementManager.java:50) ~[AdvancementManager$1.class:?]
+	at net.minecraft.advancements.AdvancementManager$1.deserialize(AdvancementManager.java:46) ~[AdvancementManager$1.class:?]
+	at com.google.gson.internal.bind.TreeTypeAdapter.read(TreeTypeAdapter.java:69) ~[TreeTypeAdapter.class:?]
+	at net.minecraft.util.JsonUtils.gsonDeserialize(JsonUtils.java:435) ~[JsonUtils.class:?]
+	at net.minecraft.util.JsonUtils.gsonDeserialize(JsonUtils.java:467) ~[JsonUtils.class:?]
+	at net.minecraft.util.JsonUtils.gsonDeserialize(JsonUtils.java:491) ~[JsonUtils.class:?]
+	at net.minecraftforge.common.ForgeHooks.lambda$loadAdvancements$0(ForgeHooks.java:1381) ~[ForgeHooks.class:?]
+	at net.minecraftforge.common.crafting.CraftingHelper.findFiles(CraftingHelper.java:833) [CraftingHelper.class:?]
+	at net.minecraftforge.common.ForgeHooks.loadAdvancements(ForgeHooks.java:1359) [ForgeHooks.class:?]
+	at net.minecraftforge.common.ForgeHooks.loadAdvancements(ForgeHooks.java:1326) [ForgeHooks.class:?]
+	at net.minecraft.advancements.AdvancementManager.reload(AdvancementManager.java:70) [AdvancementManager.class:?]
+	at net.minecraft.advancements.AdvancementManager.<init>(AdvancementManager.java:61) [AdvancementManager.class:?]
+	at net.minecraft.world.WorldServer.init(WorldServer.java:161) [WorldServer.class:?]
+	at net.minecraft.server.integrated.IntegratedServer.loadAllWorlds(IntegratedServer.java:123) [IntegratedServer.class:?]
+	at net.minecraft.server.integrated.IntegratedServer.init(IntegratedServer.java:160) [IntegratedServer.class:?]
+	at net.minecraft.server.MinecraftServer.run(MinecraftServer.java:551) [MinecraftServer.class:?]
+	at java.lang.Thread.run(Thread.java:750) [?:1.8.0_504]
+[10:53:31] [Server thread/ERROR] [FML]: Parsing error loading built-in advancement chaosshard:m/limbo
+com.google.gson.JsonSyntaxException: Expected item to be an item, was unknown string 'dimdoors:unravelled_fabric'
+	at net.minecraft.util.JsonUtils.getItem(JsonUtils.java:133) ~[JsonUtils.class:?]
+	at net.minecraft.util.JsonUtils.getItem(JsonUtils.java:150) ~[JsonUtils.class:?]
+	at net.minecraft.advancements.DisplayInfo.deserializeIcon(DisplayInfo.java:133) ~[DisplayInfo.class:?]
+	at net.minecraft.advancements.DisplayInfo.deserialize(DisplayInfo.java:111) ~[DisplayInfo.class:?]
+	at net.minecraft.advancements.Advancement$Builder.deserialize(Advancement.java:281) ~[Advancement$Builder.class:?]
+	at net.minecraft.advancements.AdvancementManager$1.deserialize(AdvancementManager.java:50) ~[AdvancementManager$1.class:?]
+	at net.minecraft.advancements.AdvancementManager$1.deserialize(AdvancementManager.java:46) ~[AdvancementManager$1.class:?]
+	at com.google.gson.internal.bind.TreeTypeAdapter.read(TreeTypeAdapter.java:69) ~[TreeTypeAdapter.class:?]
+	at net.minecraft.util.JsonUtils.gsonDeserialize(JsonUtils.java:435) ~[JsonUtils.class:?]
+	at net.minecraft.util.JsonUtils.gsonDeserialize(JsonUtils.java:467) ~[JsonUtils.class:?]
+	at net.minecraft.util.JsonUtils.gsonDeserialize(JsonUtils.java:491) ~[JsonUtils.class:?]
+	at net.minecraftforge.common.ForgeHooks.lambda$loadAdvancements$0(ForgeHooks.java:1381) ~[ForgeHooks.class:?]
+	at net.minecraftforge.common.crafting.CraftingHelper.findFiles(CraftingHelper.java:833) [CraftingHelper.class:?]
+	at net.minecraftforge.common.ForgeHooks.loadAdvancements(ForgeHooks.java:1359) [ForgeHooks.class:?]
+	at net.minecraftforge.common.ForgeHooks.loadAdvancements(ForgeHooks.java:1326) [ForgeHooks.class:?]
+	at net.minecraft.advancements.AdvancementManager.reload(AdvancementManager.java:70) [AdvancementManager.class:?]
+	at net.minecraft.advancements.AdvancementManager.<init>(AdvancementManager.java:61) [AdvancementManager.class:?]
+	at net.minecraft.world.WorldServer.init(WorldServer.java:161) [WorldServer.class:?]
+	at net.minecraft.server.integrated.IntegratedServer.loadAllWorlds(IntegratedServer.java:123) [IntegratedServer.class:?]
+	at net.minecraft.server.integrated.IntegratedServer.init(IntegratedServer.java:160) [IntegratedServer.class:?]
+	at net.minecraft.server.MinecraftServer.run(MinecraftServer.java:551) [MinecraftServer.class:?]
+	at java.lang.Thread.run(Thread.java:750) [?:1.8.0_504]
+[10:53:31] [Server thread/ERROR] [FML]: Parsing error loading built-in advancement chaosshard:m/implant_installed
+com.google.gson.JsonSyntaxException: Expected item to be an item, was unknown string 'cyberware:cybereyes'
+	at net.minecraft.util.JsonUtils.getItem(JsonUtils.java:133) ~[JsonUtils.class:?]
+	at net.minecraft.util.JsonUtils.getItem(JsonUtils.java:150) ~[JsonUtils.class:?]
+	at net.minecraft.advancements.DisplayInfo.deserializeIcon(DisplayInfo.java:133) ~[DisplayInfo.class:?]
+	at net.minecraft.advancements.DisplayInfo.deserialize(DisplayInfo.java:111) ~[DisplayInfo.class:?]
+	at net.minecraft.advancements.Advancement$Builder.deserialize(Advancement.java:281) ~[Advancement$Builder.class:?]
+	at net.minecraft.advancements.AdvancementManager$1.deserialize(AdvancementManager.java:50) ~[AdvancementManager$1.class:?]
+	at net.minecraft.advancements.AdvancementManager$1.deserialize(AdvancementManager.java:46) ~[AdvancementManager$1.class:?]
+	at com.google.gson.internal.bind.TreeTypeAdapter.read(TreeTypeAdapter.java:69) ~[TreeTypeAdapter.class:?]
+	at net.minecraft.util.JsonUtils.gsonDeserialize(JsonUtils.java:435) ~[JsonUtils.class:?]
+	at net.minecraft.util.JsonUtils.gsonDeserialize(JsonUtils.java:467) ~[JsonUtils.class:?]
+	at net.minecraft.util.JsonUtils.gsonDeserialize(JsonUtils.java:491) ~[JsonUtils.class:?]
+	at net.minecraftforge.common.ForgeHooks.lambda$loadAdvancements$0(ForgeHooks.java:1381) ~[ForgeHooks.class:?]
+	at net.minecraftforge.common.crafting.CraftingHelper.findFiles(CraftingHelper.java:833) [CraftingHelper.class:?]
+	at net.minecraftforge.common.ForgeHooks.loadAdvancements(ForgeHooks.java:1359) [ForgeHooks.class:?]
+	at net.minecraftforge.common.ForgeHooks.loadAdvancements(ForgeHooks.java:1326) [ForgeHooks.class:?]
+	at net.minecraft.advancements.AdvancementManager.reload(AdvancementManager.java:70) [AdvancementManager.class:?]
+	at net.minecraft.advancements.AdvancementManager.<init>(AdvancementManager.java:61) [AdvancementManager.class:?]
+	at net.minecraft.world.WorldServer.init(WorldServer.java:161) [WorldServer.class:?]
+	at net.minecraft.server.integrated.IntegratedServer.loadAllWorlds(IntegratedServer.java:123) [IntegratedServer.class:?]
+	at net.minecraft.server.integrated.IntegratedServer.init(IntegratedServer.java:160) [IntegratedServer.class:?]
+	at net.minecraft.server.MinecraftServer.run(MinecraftServer.java:551) [MinecraftServer.class:?]
+	at java.lang.Thread.run(Thread.java:750) [?:1.8.0_504]
+[10:53:31] [Server thread/ERROR] [FML]: Parsing error loading built-in advancement chaosshard:m/enter_age
+com.google.gson.JsonSyntaxException: Expected item to be an item, was unknown string 'mystcraft:agebook'
+	at net.minecraft.util.JsonUtils.getItem(JsonUtils.java:133) ~[JsonUtils.class:?]
+	at net.minecraft.util.JsonUtils.getItem(JsonUtils.java:150) ~[JsonUtils.class:?]
+	at net.minecraft.advancements.DisplayInfo.deserializeIcon(DisplayInfo.java:133) ~[DisplayInfo.class:?]
+	at net.minecraft.advancements.DisplayInfo.deserialize(DisplayInfo.java:111) ~[DisplayInfo.class:?]
+	at net.minecraft.advancements.Advancement$Builder.deserialize(Advancement.java:281) ~[Advancement$Builder.class:?]
+	at net.minecraft.advancements.AdvancementManager$1.deserialize(AdvancementManager.java:50) ~[AdvancementManager$1.class:?]
+	at net.minecraft.advancements.AdvancementManager$1.deserialize(AdvancementManager.java:46) ~[AdvancementManager$1.class:?]
+	at com.google.gson.internal.bind.TreeTypeAdapter.read(TreeTypeAdapter.java:69) ~[TreeTypeAdapter.class:?]
+	at net.minecraft.util.JsonUtils.gsonDeserialize(JsonUtils.java:435) ~[JsonUtils.class:?]
+	at net.minecraft.util.JsonUtils.gsonDeserialize(JsonUtils.java:467) ~[JsonUtils.class:?]
+	at net.minecraft.util.JsonUtils.gsonDeserialize(JsonUtils.java:491) ~[JsonUtils.class:?]
+	at net.minecraftforge.common.ForgeHooks.lambda$loadAdvancements$0(ForgeHooks.java:1381) ~[ForgeHooks.class:?]
+	at net.minecraftforge.common.crafting.CraftingHelper.findFiles(CraftingHelper.java:833) [CraftingHelper.class:?]
+	at net.minecraftforge.common.ForgeHooks.loadAdvancements(ForgeHooks.java:1359) [ForgeHooks.class:?]
+	at net.minecraftforge.common.ForgeHooks.loadAdvancements(ForgeHooks.java:1326) [ForgeHooks.class:?]
+	at net.minecraft.advancements.AdvancementManager.reload(AdvancementManager.java:70) [AdvancementManager.class:?]
+	at net.minecraft.advancements.AdvancementManager.<init>(AdvancementManager.java:61) [AdvancementManager.class:?]
+	at net.minecraft.world.WorldServer.init(WorldServer.java:161) [WorldServer.class:?]
+	at net.minecraft.server.integrated.IntegratedServer.loadAllWorlds(IntegratedServer.java:123) [IntegratedServer.class:?]
+	at net.minecraft.server.integrated.IntegratedServer.init(IntegratedServer.java:160) [IntegratedServer.class:?]
+	at net.minecraft.server.MinecraftServer.run(MinecraftServer.java:551) [MinecraftServer.class:?]
+	at java.lang.Thread.run(Thread.java:750) [?:1.8.0_504]
+[10:53:31] [Server thread/ERROR] [FML]: Parsing error loading built-in advancement chaosshard:m/chaos_core
+com.google.gson.JsonSyntaxException: Expected item to be an item, was unknown string 'chaosshard:chaos_implant'
+	at net.minecraft.util.JsonUtils.getItem(JsonUtils.java:133) ~[JsonUtils.class:?]
+	at net.minecraft.util.JsonUtils.getItem(JsonUtils.java:150) ~[JsonUtils.class:?]
+	at net.minecraft.advancements.DisplayInfo.deserializeIcon(DisplayInfo.java:133) ~[DisplayInfo.class:?]
+	at net.minecraft.advancements.DisplayInfo.deserialize(DisplayInfo.java:111) ~[DisplayInfo.class:?]
+	at net.minecraft.advancements.Advancement$Builder.deserialize(Advancement.java:281) ~[Advancement$Builder.class:?]
+	at net.minecraft.advancements.AdvancementManager$1.deserialize(AdvancementManager.java:50) ~[AdvancementManager$1.class:?]
+	at net.minecraft.advancements.AdvancementManager$1.deserialize(AdvancementManager.java:46) ~[AdvancementManager$1.class:?]
+	at com.google.gson.internal.bind.TreeTypeAdapter.read(TreeTypeAdapter.java:69) ~[TreeTypeAdapter.class:?]
+	at net.minecraft.util.JsonUtils.gsonDeserialize(JsonUtils.java:435) ~[JsonUtils.class:?]
+	at net.minecraft.util.JsonUtils.gsonDeserialize(JsonUtils.java:467) ~[JsonUtils.class:?]
+	at net.minecraft.util.JsonUtils.gsonDeserialize(JsonUtils.java:491) ~[JsonUtils.class:?]
+	at net.minecraftforge.common.ForgeHooks.lambda$loadAdvancements$0(ForgeHooks.java:1381) ~[ForgeHooks.class:?]
+	at net.minecraftforge.common.crafting.CraftingHelper.findFiles(CraftingHelper.java:833) [CraftingHelper.class:?]
+	at net.minecraftforge.common.ForgeHooks.loadAdvancements(ForgeHooks.java:1359) [ForgeHooks.class:?]
+	at net.minecraftforge.common.ForgeHooks.loadAdvancements(ForgeHooks.java:1326) [ForgeHooks.class:?]
+	at net.minecraft.advancements.AdvancementManager.reload(AdvancementManager.java:70) [AdvancementManager.class:?]
+	at net.minecraft.advancements.AdvancementManager.<init>(AdvancementManager.java:61) [AdvancementManager.class:?]
+	at net.minecraft.world.WorldServer.init(WorldServer.java:161) [WorldServer.class:?]
+	at net.minecraft.server.integrated.IntegratedServer.loadAllWorlds(IntegratedServer.java:123) [IntegratedServer.class:?]
+	at net.minecraft.server.integrated.IntegratedServer.init(IntegratedServer.java:160) [IntegratedServer.class:?]
+	at net.minecraft.server.MinecraftServer.run(MinecraftServer.java:551) [MinecraftServer.class:?]
+	at java.lang.Thread.run(Thread.java:750) [?:1.8.0_504]
+[10:53:31] [Server thread/ERROR] [FML]: Parsing error loading built-in advancement chaosshard:m/capture_1
+com.google.gson.JsonSyntaxException: Expected item to be an item, was unknown string 'defiledlands:grass_defiled'
+	at net.minecraft.util.JsonUtils.getItem(JsonUtils.java:133) ~[JsonUtils.class:?]
+	at net.minecraft.util.JsonUtils.getItem(JsonUtils.java:150) ~[JsonUtils.class:?]
+	at net.minecraft.advancements.DisplayInfo.deserializeIcon(DisplayInfo.java:133) ~[DisplayInfo.class:?]
+	at net.minecraft.advancements.DisplayInfo.deserialize(DisplayInfo.java:111) ~[DisplayInfo.class:?]
+	at net.minecraft.advancements.Advancement$Builder.deserialize(Advancement.java:281) ~[Advancement$Builder.class:?]
+	at net.minecraft.advancements.AdvancementManager$1.deserialize(AdvancementManager.java:50) ~[AdvancementManager$1.class:?]
+	at net.minecraft.advancements.AdvancementManager$1.deserialize(AdvancementManager.java:46) ~[AdvancementManager$1.class:?]
+	at com.google.gson.internal.bind.TreeTypeAdapter.read(TreeTypeAdapter.java:69) ~[TreeTypeAdapter.class:?]
+	at net.minecraft.util.JsonUtils.gsonDeserialize(JsonUtils.java:435) ~[JsonUtils.class:?]
+	at net.minecraft.util.JsonUtils.gsonDeserialize(JsonUtils.java:467) ~[JsonUtils.class:?]
+	at net.minecraft.util.JsonUtils.gsonDeserialize(JsonUtils.java:491) ~[JsonUtils.class:?]
+	at net.minecraftforge.common.ForgeHooks.lambda$loadAdvancements$0(ForgeHooks.java:1381) ~[ForgeHooks.class:?]
+	at net.minecraftforge.common.crafting.CraftingHelper.findFiles(CraftingHelper.java:833) [CraftingHelper.class:?]
+	at net.minecraftforge.common.ForgeHooks.loadAdvancements(ForgeHooks.java:1359) [ForgeHooks.class:?]
+	at net.minecraftforge.common.ForgeHooks.loadAdvancements(ForgeHooks.java:1326) [ForgeHooks.class:?]
+	at net.minecraft.advancements.AdvancementManager.reload(AdvancementManager.java:70) [AdvancementManager.class:?]
+	at net.minecraft.advancements.AdvancementManager.<init>(AdvancementManager.java:61) [AdvancementManager.class:?]
+	at net.minecraft.world.WorldServer.init(WorldServer.java:161) [WorldServer.class:?]
+	at net.minecraft.server.integrated.IntegratedServer.loadAllWorlds(IntegratedServer.java:123) [IntegratedServer.class:?]
+	at net.minecraft.server.integrated.IntegratedServer.init(IntegratedServer.java:160) [IntegratedServer.class:?]
+	at net.minecraft.server.MinecraftServer.run(MinecraftServer.java:551) [MinecraftServer.class:?]
+	at java.lang.Thread.run(Thread.java:750) [?:1.8.0_504]
+[10:53:31] [Server thread/INFO] [minecraft/AdvancementList]: Loaded 617 advancements
+[10:53:32] [Server thread/INFO] [Astral Sorcery]: Checking GatewayCache integrity for dimension 0
+[10:53:32] [Server thread/INFO] [Astral Sorcery]: GatewayCache checked and fully loaded in 0ms! Collected and checked 0 gateway nodes!
+[10:53:32] [Server thread/INFO] [Astral Core]: [AstralTransformer] Transforming net.minecraft.network.NetHandlerPlayServer : net.minecraft.network.NetHandlerPlayServer with 1 patches!
+[10:53:32] [Server thread/INFO] [Astral Core]: [AstralTransformer] Applied patch PATCHSERVEREXTENDENTITYINTERACTREACH
+[10:53:32] [Server thread/INFO] [FML]: Loading dimension -1 (chaosshard_clienttest) (net.minecraft.server.integrated.IntegratedServer@549e54d5)
+[10:53:32] [Server thread/INFO] [Astral Sorcery]: Checking GatewayCache integrity for dimension -1
+[10:53:32] [Server thread/INFO] [Astral Sorcery]: GatewayCache checked and fully loaded in 0ms! Collected and checked 0 gateway nodes!
+[10:53:32] [Server thread/INFO] [FML]: Loading dimension 1 (chaosshard_clienttest) (net.minecraft.server.integrated.IntegratedServer@549e54d5)
+[10:53:32] [Server thread/INFO] [Astral Sorcery]: Checking GatewayCache integrity for dimension 1
+[10:53:32] [Server thread/INFO] [Astral Sorcery]: GatewayCache checked and fully loaded in 0ms! Collected and checked 0 gateway nodes!
+[10:53:32] [Server thread/INFO] [FML]: Loading dimension 66 (chaosshard_clienttest) (net.minecraft.server.integrated.IntegratedServer@549e54d5)
+[10:53:32] [Server thread/INFO] [Astral Sorcery]: Checking GatewayCache integrity for dimension 66
+[10:53:32] [Server thread/INFO] [Astral Sorcery]: GatewayCache checked and fully loaded in 0ms! Collected and checked 0 gateway nodes!
+[10:53:32] [Server thread/INFO] [FML]: Loading dimension 67 (chaosshard_clienttest) (net.minecraft.server.integrated.IntegratedServer@549e54d5)
+[10:53:32] [Server thread/INFO] [Astral Sorcery]: Checking GatewayCache integrity for dimension 67
+[10:53:32] [Server thread/INFO] [Astral Sorcery]: GatewayCache checked and fully loaded in 0ms! Collected and checked 0 gateway nodes!
+[10:53:32] [Server thread/INFO] [FML]: Loading dimension 68 (chaosshard_clienttest) (net.minecraft.server.integrated.IntegratedServer@549e54d5)
+[10:53:32] [Server thread/INFO] [Astral Sorcery]: Checking GatewayCache integrity for dimension 68
+[10:53:32] [Server thread/INFO] [Astral Sorcery]: GatewayCache checked and fully loaded in 0ms! Collected and checked 0 gateway nodes!
+[10:53:32] [Server thread/INFO] [minecraft/MinecraftServer]: Preparing start region for level 0
+[10:53:33] [Decompiler Thread/INFO] [fernflower]: Decompiling hellfirepvp/astralsorcery/common/constellation/distribution/WorldSkyHandler
+[10:53:33] [Server thread/INFO] [FML]: Unloading dimension -1
+[10:53:33] [Server thread/INFO] [FML]: Unloading dimension 1
+[10:53:33] [Server thread/INFO] [FML]: Unloading dimension 66
+[10:53:33] [Server thread/INFO] [FML]: Unloading dimension 67
+[10:53:33] [Server thread/INFO] [FML]: Unloading dimension 68
+[10:53:33] [Server thread/INFO] [minecraft/IntegratedServer]: Changing view distance to 12, from 10
+[10:53:33] [Decompiler Thread/INFO] [fernflower]: Writing /home/runner/work/chaosshard/chaosshard/run/.mixin.out/java/hellfirepvp/astralsorcery/common/constellation/distribution/WorldSkyHandler.java
+[10:53:33] [Server thread/INFO] [ChaosShard]: Постройка Ордена crystal_spires встала: -1016 4 -8
+[10:53:33] [Netty Local Client IO #0/INFO] [FML]: Server protocol version 2
+[10:53:34] [Netty Server IO #1/INFO] [FML]: Client protocol version 2
+[10:53:34] [Netty Server IO #1/INFO] [FML]: Client attempting to join with 8 mods : minecraft@1.12.2,chaosshard@0.45.4,FML@8.0.99.99,astralsorcery@1.10.27,forge@14.23.5.2847,mixinbooter@11.13,baubles@1.5.2,mcp@9.42
+[10:53:34] [Netty Local Client IO #0/INFO] [FML]: [Netty Local Client IO #0] Client side modded connection established
+[10:53:34] [Server thread/INFO] [FML]: [Server thread] Server side modded connection established
+[10:53:34] [Server thread/INFO] [minecraft/PlayerList]: Developer[local:E:9dee7346] logged in with entity id 0 at (-827.5, 4.0, -39.5)
+[10:53:34] [Server thread/INFO] [minecraft/MinecraftServer]: Developer присоединился к игре
+[10:53:34] [Server thread/INFO] [minecraft/MinecraftServer]: Неизвестная команда. Введите /help для просмотра списка команд.
+[10:53:34] [Server thread/INFO] [FML]: Loading dimension 66 (chaosshard_clienttest) (net.minecraft.server.integrated.IntegratedServer@549e54d5)
+[10:53:34] [Server thread/INFO] [ChaosShard]: Сердце Острова поставлено в BlockPos{x=0, y=131, z=5}
+[10:53:34] [Server thread/INFO] [Astral Sorcery]: [Astral Sorcery] Waiting for server synchronization on login for Developer...
+[10:53:34] [Server thread/INFO] [Astral Sorcery]: [Astral Sorcery] Synchronizing baseline information to Developer
+[10:53:34] [Server thread/INFO] [minecraft/IntegratedServer]: Saving and pausing game...
+[10:53:34] [Client thread/INFO] [Astral Sorcery]: Using gateway screenshots for folder 'chaosshard_clienttest'
+[10:53:34] [Server thread/INFO] [minecraft/MinecraftServer]: Saving chunks for level 'chaosshard_clienttest'/overworld
+[10:53:35] [Server thread/INFO] [minecraft/MinecraftServer]: Saving chunks for level 'chaosshard_clienttest'/chaosshard_antechamber
+[10:53:36] [Client thread/INFO] [minecraft/GuiNewChat]: [CHAT] Преддверие. Малый план, который Хаос создал для этого мира. Осмотреться. К краю не подходить: за ним пустота.
+[10:53:36] [Client thread/INFO] [minecraft/AdvancementList]: Loaded 8 advancements
+[10:53:36] [Client thread/INFO] [ChaosShard]: [clienttest]   [OK]   мир загружен
+[10:53:42] [Server thread/INFO] [minecraft/MinecraftServer]: Неизвестная команда. Введите /help для просмотра списка команд.
+[10:53:42] [Server thread/INFO] [minecraft/MinecraftServer]: Неизвестная команда. Введите /help для просмотра списка команд.
+[10:53:42] [Server thread/INFO] [minecraft/MinecraftServer]: Неизвестная команда. Введите /help для просмотра списка команд.
+[10:53:42] [Server thread/INFO] [minecraft/MinecraftServer]: Неизвестная команда. Введите /help для просмотра списка команд.
+[10:53:42] [Server thread/INFO] [minecraft/MinecraftServer]: Неизвестная команда. Введите /help для просмотра списка команд.
+[10:53:42] [Client thread/INFO] [ChaosShard]: [clienttest]   [OK]   блоки мода поставлены: 34
+[10:53:42] [Client thread/INFO] [ChaosShard]: [clienttest]   существа на снимке: [servant_hare, servant_tiger, servant_cat, servant_husk, servant_bone, servant_executioner, servant_reaper, servant_lumberjack, servant_miner, order_knight, hero, garrot, king, archon]
+[10:53:43] [Server thread/WARN] [minecraft/MinecraftServer]: Can't keep up! Did the system time change, or is the server overloaded? Running 6548ms behind, skipping 130 tick(s)
+[10:53:43] [Client thread/INFO] [minecraft/AdvancementList]: Loaded 9 advancements
+[10:53:46] [Client thread/INFO] [ChaosShard]: [clienttest]   снимок: ct_02_blocks.png
+[10:53:49] [Client thread/INFO] [ChaosShard]: [clienttest]   снимок: ct_03_entities.png
+[10:53:50] [Client thread/INFO] [ChaosShard]: [clienttest]   снимок: ct_04_grimoire_spells.png
+[10:53:51] [Client thread/INFO] [ChaosShard]: [clienttest]   снимок: ct_05_grimoire_rituals.png
+[10:53:52] [Client thread/INFO] [ChaosShard]: [clienttest]   снимок: ct_06_grimoire_rituals_end.png
+[10:53:53] [Client thread/INFO] [ChaosShard]: [clienttest]   снимок: ct_07_grimoire_servants.png
+[10:53:55] [Client thread/INFO] [ChaosShard]: [clienttest]   снимок: ct_08_spell_wheel.png
+[10:53:56] [Client thread/INFO] [ChaosShard]: [clienttest]   [OK]   окно Сердца открылось: GuiHeart
+[10:53:56] [Client thread/INFO] [ChaosShard]: [clienttest]   снимок: ct_09_heart.png
+[10:53:57] [Client thread/INFO] [ChaosShard]: [clienttest]   [OK]   окно Якоря открылось: GuiAnchor
+[10:53:58] [Client thread/INFO] [ChaosShard]: [clienttest]   снимок: ct_10_anchor_tab0.png
+[10:53:59] [Client thread/INFO] [ChaosShard]: [clienttest]   снимок: ct_11_anchor_tab1.png
+[10:54:00] [Client thread/INFO] [ChaosShard]: [clienttest]   снимок: ct_12_anchor_tab2.png
+[10:54:00] [Client thread/INFO] [ChaosShard]: [clienttest]   снимок: ct_13_anchor_tab3.png
+[10:54:02] [Client thread/INFO] [ChaosShard]: [clienttest]   снимок: ct_20_creative.png
+[10:54:03] [Client thread/INFO] [ChaosShard]: [clienttest]   снимок: ct_21_creative_end.png
+[10:54:06] [Client thread/INFO] [ChaosShard]: [clienttest]   снимок: ct_30_trophies.png
+[10:54:07] [Client thread/INFO] [ChaosShard]: [clienttest]   снимок: ct_31_trophies_turned.png
+[10:54:08] [Server thread/INFO] [ChaosShard]: Опора kael пала у BlockPos{x=33, y=128, z=-26}
+[10:54:08] [Client thread/INFO] [ChaosShard]: [clienttest]   [OK]   Светоч гаснет, а не исчезает сразу
+[10:54:08] [Client thread/INFO] [minecraft/AdvancementList]: Loaded 19 advancements
+[10:54:09] [Client thread/INFO] [ChaosShard]: [clienttest]   снимок: ct_32_hero_kneel.png
+[10:54:10] [Client thread/INFO] [ChaosShard]: [clienttest]   снимок: ct_33_hero_light.png
+[10:54:11] [Client thread/INFO] [ChaosShard]: [clienttest]   снимок: ct_34_hero_dissolve.png
+[10:54:13] [Client thread/INFO] [ChaosShard]: [clienttest]   [OK]   Светоч растаял
+[10:54:13] [Client thread/INFO] [ChaosShard]: [clienttest]   [FAIL] клинок Каэля выпал, когда он растаял
+[10:54:14] [Client thread/INFO] [ChaosShard]: [clienttest] 
+[10:54:14] [Client thread/INFO] [ChaosShard]: [clienttest] Итого: пройдено 13, провалено 1
+[10:54:14] [Client thread/INFO] [ChaosShard]: CLIENTTEST DONE pass=13 fail=1
+[10:54:14] [Netty Local Client IO #0/INFO] [Astral Sorcery]: Cleaning client cache...
+[10:54:14] [Netty Local Client IO #0/INFO] [Astral Sorcery]: Cleared cached client data! Disconnected from server.
+[10:54:14] [Server thread/INFO] [minecraft/NetHandlerPlayServer]: Developer lost connection: Отключение
+[10:54:14] [Server thread/INFO] [minecraft/MinecraftServer]: Developer покинул игру
+[10:54:14] [Server thread/INFO] [minecraft/NetHandlerPlayServer]: Stopping singleplayer server as player logged out
+[10:54:14] [Server thread/INFO] [minecraft/MinecraftServer]: Stopping server
+[10:54:14] [Server thread/INFO] [minecraft/MinecraftServer]: Saving players
+[10:54:14] [Server thread/INFO] [minecraft/MinecraftServer]: Saving worlds
+[10:54:14] [Server thread/INFO] [minecraft/MinecraftServer]: Saving chunks for level 'chaosshard_clienttest'/overworld
+[10:54:14] [Server thread/INFO] [minecraft/MinecraftServer]: Saving chunks for level 'chaosshard_clienttest'/chaosshard_antechamber
+[10:54:14] [Server thread/INFO] [FML]: Unloading dimension 0
+[10:54:14] [Server thread/INFO] [FML]: Unloading dimension 66
+[10:54:14] [Server thread/INFO] [FML]: Applying holder lookups
+[10:54:14] [Server thread/INFO] [FML]: Holder lookups applied
+[10:54:15] [Client thread/INFO] [minecraft/Minecraft]: Stopping!
+[10:54:15] [Client thread/INFO] [minecraft/SoundManager]: SoundSystem shutting down...
+[10:54:15] [Client thread/WARN] [minecraft/SoundManager]: Author: Paul Lamb, www.paulscode.com
+
+[Incubating] Problems report is available at: file:///home/runner/work/chaosshard/chaosshard/build/reports/problems/problems-report.html
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 10.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+For more on this, please refer to https://docs.gradle.org/9.7.0/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+
+BUILD SUCCESSFUL in 3m 6s
+24 actionable tasks: 24 executed
+Consider enabling configuration cache to speed up this build: https://docs.gradle.org/9.7.0/userguide/configuration_cache_enabling.html
+код выхода: 0
