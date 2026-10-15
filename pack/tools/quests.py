@@ -73,6 +73,8 @@ def CHOICE(*its):
 # ---------------------------------------------------------------- данные
 
 CHAPTERS = []   # (key, name, desc, icon)
+DISPLAY_ORDER = ["act0", "act1", "act2", "act3", "act4", "act5",
+                 "servants", "storage", "dungeons", "stars", "plans", "tech", "body", "evil"]
 QUESTS = []     # dicts
 
 
@@ -734,7 +736,7 @@ q("bd_parts", "body", 2, 4, "Детали", "", I(CW + "component", 1), got(I(CW
 q("bd_surgery", "body", 4, 3, "§5Операционная", "", I(CW + "surgery_chamber"),
   got(I(CW + "surgery_chamber"), I(CW + "surgery")), [NIT(15), XP(3)], ["bd_zombie", "bd_parts"], main=True)
 q("bd_table", "body", 4, 5, "Кибер-верстак", "", I(CW + "engineering_table"), got(I(CW + "engineering_table")), [NIT(10)], ["bd_parts"])
-q("bd_blueprint", "body", 6, 5, "Чертежи", "", I(CW + "blueprint"), got(I(CW + "blueprint", 32767)), [NIT(10)], ["bd_table"])
+q("bd_blueprint", "body", 6, 5, "Чертежи", "", I(CW + "blueprint", 1), got(I(CW + "blueprint", 32767)), [NIT(10)], ["bd_table"])
 q("bd_first", "body", 6, 3, "§5Первый имплант", "", I(CW + "cybereyes"), adv("implant_installed"), [NIT(25), XP(5)], ["bd_surgery"], main=True)
 q("bd_neuro", "body", 6, 1, "Отторжение", "", I(CW + "neuropozyne"), got(I(CW + "neuropozyne")), [NIT(5)], ["bd_first"])
 q("bd_rewired", "body", 8, 1, "Плоть мертвецов", "", I("rewired:necrolimb"), got(I("rewired:necrolimb", 32767)), [NIT(15)], ["bd_first"])
@@ -1139,7 +1141,11 @@ def build():
             "tasks:9": tasks, "rewards:9": rewards,
         }
     lines = {}
-    for li, (key, name, desc, icon) in enumerate(CHAPTERS):
+    # Порядок в книге: сначала сюжет (акты 0–5), потом побочные главы — в том порядке, в каком они открываются.
+    # lineID — по CHAPTERS (не меняется, на него ничего не завязано), order — по DISPLAY_ORDER.
+    order = {k: n for n, k in enumerate(DISPLAY_ORDER)}
+    chapters = sorted(enumerate(CHAPTERS), key=lambda c: order.get(c[1][0], 100 + c[0]))
+    for slot, (li, (key, name, desc, icon)) in enumerate(chapters):
         members = {}
         n = 0
         for i, qq in enumerate(QUESTS):
@@ -1150,8 +1156,8 @@ def build():
             members[f"{n}:10"] = {"id:3": i, "x:3": BG_PAD + qq["col"] * 48 + off, "y:3": BG_PAD + qq["row"] * 44 + off,
                                   "sizeX:3": size, "sizeY:3": size}
             n += 1
-        lines[f"{li}:10"] = {
-            "lineID:3": li, "order:3": li,
+        lines[f"{slot}:10"] = {
+            "lineID:3": li, "order:3": slot,
             "properties:10": {"betterquesting:10": {
                 "name:8": name, "desc:8": desc, "icon:10": icon,
                 "visibility:8": "NORMAL", "bg_image:8": f"chaosshard:textures/gui/quest_bg_{key}.png",
