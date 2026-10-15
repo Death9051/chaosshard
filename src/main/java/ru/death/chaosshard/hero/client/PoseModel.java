@@ -39,6 +39,9 @@ public class PoseModel extends ModelPlayer {
      * Удары резкие; телеграфы атак быстрые, чтобы не съедать окно; долгие позы и колени неспешные.
      */
     static float duration(int from, int to) {
+        if (Pose.kneeling(to)) {
+            return Pose.kneeling(from) ? 12F : 20F;
+        }
         switch (to) {
             case Pose.CHOP: return 3F;
             case Pose.DASH: return 4F;
@@ -47,9 +50,7 @@ public class PoseModel extends ModelPlayer {
             case Pose.CAST_DOWN:
             case Pose.RAISE:
             case Pose.STAGGER: return 6F;
-            case Pose.KNEEL:
-            case Pose.KNEEL_PRAY: return 20F;
-            case Pose.NONE: return from == Pose.KNEEL || from == Pose.KNEEL_PRAY ? 20F : 10F;
+            case Pose.NONE: return Pose.kneeling(from) ? 20F : 10F;
             default: return 10F;
         }
     }
@@ -267,6 +268,31 @@ public class PoseModel extends ModelPlayer {
                 bipedHead.rotateAngleX = 0.7F;
                 bipedBody.rotateAngleX = 0.15F;
                 break;
+            case Pose.KNEEL_SWORD:
+                kneel();
+                bipedRightArm.rotateAngleX = -0.55F;
+                bipedRightArm.rotateAngleY = 0.15F;
+                bipedLeftArm.rotateAngleX = -0.45F;
+                bipedLeftArm.rotateAngleY = 0.45F;
+                bipedHead.rotateAngleX = 0.8F;
+                bipedBody.rotateAngleX = 0.25F;
+                break;
+            case Pose.KNEEL_LUTE:
+                kneel();
+                bipedLeftArm.rotateAngleX = -0.9F;
+                bipedLeftArm.rotateAngleY = 0.6F;
+                bipedRightArm.rotateAngleX = -0.7F + MathHelper.sin(t * 1.4F) * 0.1F;
+                bipedRightArm.rotateAngleY = -0.7F;
+                bipedHead.rotateAngleX = 0.35F;
+                bipedHead.rotateAngleZ = MathHelper.sin(t * 0.5F) * 0.1F;
+                break;
+            case Pose.KNEEL_SALUTE:
+                kneel();
+                bipedRightArm.rotateAngleX = -2.7F;
+                bipedRightArm.rotateAngleZ = 0.1F;
+                bipedLeftArm.rotateAngleX = -0.3F;
+                bipedHead.rotateAngleX = -0.3F;
+                break;
             case Pose.CAST_DOWN:
                 bipedRightArm.rotateAngleX = -0.9F;
                 bipedLeftArm.rotateAngleX = -0.9F;
@@ -289,6 +315,6 @@ public class PoseModel extends ModelPlayer {
 
     /** На сколько опустить модель в позе на коленях (в блоках модели). */
     public static float kneelDrop(int pose) {
-        return pose == Pose.KNEEL_PRAY || pose == Pose.KNEEL ? 0.47F : 0F;
+        return Pose.kneeling(pose) ? 0.47F : 0F;
     }
 }

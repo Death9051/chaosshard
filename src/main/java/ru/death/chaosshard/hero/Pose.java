@@ -33,6 +33,17 @@ public final class Pose {
     public static final int KNEEL = 12;
     /** Обе руки вперёд и вниз — руны под ноги. */
     public static final int CAST_DOWN = 13;
+    /** Гибель Каэля: на колене, опирается на вонзённый перед собой клинок, голова опущена. */
+    public static final int KNEEL_SWORD = 14;
+    /** Гибель Лиана: на коленях, доигрывает на лютне. */
+    public static final int KNEEL_LUTE = 15;
+    /** Гибель Элис: на колене, клинок вскинут в последнем салюте. */
+    public static final int KNEEL_SALUTE = 16;
+
+    /** Позы на коленях: модель опускается. */
+    public static boolean kneeling(int pose) {
+        return pose == KNEEL || pose == KNEEL_PRAY || pose == KNEEL_SWORD || pose == KNEEL_LUTE || pose == KNEEL_SALUTE;
+    }
 
     /** Сущность, у которой есть поза. */
     public interface Posed {

@@ -1020,10 +1020,16 @@ public class EntityHero extends EntityMob implements ru.death.chaosshard.hero.Po
 
     private void dyingFx(WorldServer w, int t) {
         double x = posX, y = posY, z = posZ;
+        Lightbearer h = hero();
+        // общие колокола — кроме Лиана (у него своя музыка) и Ирены (свои колокола)
+        boolean bells = h != Lightbearer.LIAN && h != Lightbearer.IRENA;
         if (t == 1) {
-            setPose(Pose.KNEEL, 0);
-            w.playSound(null, getPosition(), SoundEvents.BLOCK_NOTE_BELL, SoundCategory.HOSTILE, 2.5F, 0.5F);
+            setPose(firstDyingPose(h), 0);
+            if (bells) {
+                w.playSound(null, getPosition(), SoundEvents.BLOCK_NOTE_BELL, SoundCategory.HOSTILE, 2.5F, 0.5F);
+            }
         }
+        dyingDetail(w, h, t);
         if (lightTo == null) {
             lightTo = HeroScenes.origin(w, this).add(0, ru.death.chaosshard.structure.bp.VeilPillar.FLOOR
                     + ru.death.chaosshard.structure.bp.VeilPillar.COLUMN_H, 0);
@@ -1043,7 +1049,7 @@ public class EntityHero extends EntityMob implements ru.death.chaosshard.hero.Po
                 w.spawnParticle(EnumParticleTypes.END_ROD, q.x, q.y, q.z, 1, 0.06, 0.06, 0.06, 0.0);
             }
         }
-        if (t == 26 || t == 50) {
+        if (bells && (t == 26 || t == 50)) {
             w.playSound(null, getPosition(), SoundEvents.BLOCK_NOTE_BELL, SoundCategory.HOSTILE, 2.5F, t == 26 ? 0.42F : 0.35F);
         }
         if (t == DISSOLVE_FROM) {
@@ -1058,6 +1064,113 @@ public class EntityHero extends EntityMob implements ru.death.chaosshard.hero.Po
             w.spawnParticle(EnumParticleTypes.END_ROD, x, y + 1.6, z, 60, 0.2, 0.2, 0.2, 0.12);
             w.playSound(null, getPosition(), SoundEvents.ENTITY_FIREWORK_LARGE_BLAST, SoundCategory.HOSTILE, 3.0F, 0.7F);
             w.playSound(null, getPosition(), SoundEvents.ENTITY_FIREWORK_TWINKLE, SoundCategory.HOSTILE, 2.5F, 0.8F);
+        }
+    }
+
+    private static int firstDyingPose(Lightbearer h) {
+        switch (h) {
+            case KAEL: return Pose.KNEEL_SWORD;
+            case IRENA: return Pose.KNEEL_PRAY;
+            case VELMOR: return Pose.STAGGER;
+            case LIAN: return Pose.KNEEL_LUTE;
+            case ELIS: return Pose.KNEEL_SALUTE;
+            default: return Pose.KNEEL;
+        }
+    }
+
+    /** Своя деталь гибели у каждого Светоча. */
+    private void dyingDetail(WorldServer w, Lightbearer h, int t) {
+        double x = posX, y = posY, z = posZ;
+        switch (h) {
+            case KAEL:
+                // клинок вонзён в землю перед ним, щит раскалывается — «щит… не виноват…»
+                if (t == 4) {
+                    w.playSound(null, getPosition(), SoundEvents.BLOCK_ANVIL_PLACE, SoundCategory.HOSTILE, 0.9F, 1.5F);
+                    Vec3d f = getLookVec();
+                    BlockPos under = new BlockPos(x + f.x * 0.9, y - 0.5, z + f.z * 0.9);
+                    w.spawnParticle(EnumParticleTypes.BLOCK_CRACK, x + f.x * 0.9, y + 0.1, z + f.z * 0.9, 24, 0.15, 0.05, 0.15, 0.1,
+                            net.minecraft.block.Block.getStateId(w.getBlockState(under)));
+                }
+                if (t == 14) {
+                    setItemStackToSlot(EntityEquipmentSlot.OFFHAND, ItemStack.EMPTY);
+                    w.playSound(null, getPosition(), SoundEvents.ITEM_SHIELD_BREAK, SoundCategory.HOSTILE, 2.0F, 0.8F);
+                    w.spawnParticle(EnumParticleTypes.ITEM_CRACK, x, y + 1.0, z, 40, 0.35, 0.4, 0.35, 0.1,
+                            net.minecraft.item.Item.getIdFromItem(Items.SHIELD));
+                }
+                break;
+            case IRENA:
+                // молится; святая земля вокруг стягивается к ней и гаснет, колокола всё ниже
+                if (t < 56 && t % 2 == 0) {
+                    double r = 0.5 + 3.5 * (1 - t / 56.0);
+                    for (int k = 0; k < 8; k++) {
+                        double a = k * Math.PI / 4 + t * 0.08;
+                        w.spawnParticle(EnumParticleTypes.END_ROD, x + Math.cos(a) * r, y + 0.15, z + Math.sin(a) * r, 1, 0.02, 0.02, 0.02, 0.0);
+                    }
+                }
+                if (t == 2 || t == 18 || t == 34 || t == 50) {
+                    w.playSound(null, getPosition(), SoundEvents.BLOCK_NOTE_BELL, SoundCategory.HOSTILE, 2.5F, 1.0F - (t / 16) * 0.15F);
+                }
+                break;
+            case VELMOR:
+                // шатается, его порталы рвутся: искры Края кругом, посох трескается, печати вспыхивают; на коленях — с 22-го тика
+                if (t == 22) {
+                    setPose(Pose.KNEEL, 0);
+                }
+                if (t < DYING) {
+                    double a = t * 0.4;
+                    double r = 1.2 + Math.sin(t * 0.3) * 0.4;
+                    w.spawnParticle(EnumParticleTypes.PORTAL, x + Math.cos(a) * r, y + 1.0, z + Math.sin(a) * r, 2 + t / 12, 0.1, 0.4, 0.1, 0.6);
+                }
+                if (t == 10 || t == 30) {
+                    w.playSound(null, getPosition(), SoundEvents.ENTITY_ENDERMEN_TELEPORT, SoundCategory.HOSTILE, 1.8F, t == 10 ? 0.6F : 0.45F);
+                }
+                if (t == 30) {
+                    w.playSound(null, getPosition(), SoundEvents.BLOCK_GLASS_BREAK, SoundCategory.HOSTILE, 1.6F, 0.6F);
+                    w.spawnParticle(EnumParticleTypes.ITEM_CRACK, x, y + 1.6, z, 30, 0.2, 0.5, 0.2, 0.08,
+                            net.minecraft.item.Item.getIdFromItem(ru.death.chaosshard.init.ModItems.VELMOR_STAFF));
+                    for (BlockPos seal : Pillars.intactSeals(w, Lightbearer.VELMOR)) {
+                        w.spawnParticle(EnumParticleTypes.PORTAL, seal.getX() + 0.5, seal.getY() + 1, seal.getZ() + 0.5, 100, 0.5, 1.5, 0.5, 1.0);
+                    }
+                }
+                if (t >= DYING) {
+                    // уходит не вспышкой, а в последний портал
+                    w.spawnParticle(EnumParticleTypes.PORTAL, x, y + 1.2, z, 220, 0.4, 0.8, 0.4, 1.4);
+                    w.playSound(null, getPosition(), SoundEvents.ENTITY_ENDERMEN_TELEPORT, SoundCategory.HOSTILE, 2.5F, 0.4F);
+                }
+                break;
+            case LIAN:
+                // доигрывает песнь, всё тише и ниже — и на последней ноте рвётся струна: «не успел… допеть…»
+                if (t >= 4 && t <= 40 && (t - 4) % 6 == 0) {
+                    float[] tune = {1.2F, 1.05F, 0.9F, 1.05F, 0.8F, 0.9F, 0.7F};
+                    int n = (t - 4) / 6;
+                    w.playSound(null, getPosition(), SoundEvents.BLOCK_NOTE_HARP, SoundCategory.HOSTILE, 2.0F - n * 0.2F, tune[n]);
+                    w.spawnParticle(EnumParticleTypes.NOTE, x + (w.rand.nextDouble() - 0.5) * 1.5, y + 2.2, z + (w.rand.nextDouble() - 0.5) * 1.5,
+                            0, tune[n] - 0.6, 0, 0, 1.0);
+                }
+                if (t == 46) {
+                    setPose(Pose.KNEEL, 0);
+                    w.playSound(null, getPosition(), SoundEvents.ENTITY_ITEM_BREAK, SoundCategory.HOSTILE, 1.6F, 1.7F);
+                    w.playSound(null, getPosition(), SoundEvents.BLOCK_NOTE_HARP, SoundCategory.HOSTILE, 0.8F, 0.5F);
+                }
+                break;
+            case ELIS:
+                // последний салют клинком, слабый зов рога — и клинок опускается: «столица… твоя…»
+                if (t == 8 || t == 24) {
+                    w.playSound(null, getPosition(), SoundEvents.BLOCK_NOTE_BASS, SoundCategory.HOSTILE, t == 8 ? 2.5F : 1.6F, t == 8 ? 0.5F : 0.42F);
+                }
+                if (t > 6 && t < 40 && t % 2 == 0) {
+                    float yaw = renderYawOffset * 0.017453292F;
+                    // кончик вскинутого клинка: правая рука над головой
+                    double tx = x - Math.cos(yaw) * 0.4, tz = z - Math.sin(yaw) * 0.4;
+                    w.spawnParticle(EnumParticleTypes.FIREWORKS_SPARK, tx, y + 2.6, tz, 2, 0.08, 0.1, 0.08, 0.02);
+                }
+                if (t == 40) {
+                    setPose(Pose.KNEEL, 0);
+                    w.playSound(null, getPosition(), SoundEvents.ENTITY_ITEM_BREAK, SoundCategory.HOSTILE, 0.8F, 0.6F);
+                }
+                break;
+            default:
+                break;
         }
     }
 

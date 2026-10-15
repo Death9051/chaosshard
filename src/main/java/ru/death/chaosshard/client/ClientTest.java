@@ -361,7 +361,33 @@ public class ClientTest {
                 wait = 10;
                 step++;
                 return;
-            case 52:
+            case 52: {
+                // остальные четверо: у каждого своя деталь гибели — снимок на середине
+                if (extra >= OTHERS.length) {
+                    step = 55;
+                    return;
+                }
+                testHero = OTHERS[extra];
+                onServer(this::heroDeath);
+                step++;
+                return;
+            }
+            case 53:
+                if (clientDying() < 34) {
+                    return;
+                }
+                shot = (35 + extra) + "_hero_" + testHero.id();
+                step++;
+                return;
+            case 54:
+                if (clientDying() >= 0) {
+                    return;
+                }
+                extra++;
+                wait = 10;
+                step = 52;
+                return;
+            case 55:
                 finish();
                 step++;
                 return;
@@ -506,6 +532,10 @@ public class ClientTest {
     }
 
     private BlockPos heroSpot;
+    private ru.death.chaosshard.hero.Lightbearer testHero = ru.death.chaosshard.hero.Lightbearer.KAEL;
+    private int extra;
+    private static final ru.death.chaosshard.hero.Lightbearer[] OTHERS = {ru.death.chaosshard.hero.Lightbearer.IRENA,
+            ru.death.chaosshard.hero.Lightbearer.VELMOR, ru.death.chaosshard.hero.Lightbearer.LIAN, ru.death.chaosshard.hero.Lightbearer.ELIS};
 
     /** Сколько тиков гаснет Светоч в мире клиента (-1 — его нет). */
     private int clientDying() {
@@ -527,7 +557,7 @@ public class ClientTest {
         for (BlockPos q : BlockPos.getAllInBox(heroSpot.add(-6, 0, -10), heroSpot.add(6, 4, 6))) {
             w.setBlockToAir(q);
         }
-        ru.death.chaosshard.hero.HeroData.Pillar pl = ru.death.chaosshard.hero.HeroData.get(w).of(ru.death.chaosshard.hero.Lightbearer.KAEL);
+        ru.death.chaosshard.hero.HeroData.Pillar pl = ru.death.chaosshard.hero.HeroData.get(w).of(testHero);
         pl.state = ru.death.chaosshard.hero.HeroData.STANDING;
         pl.entry = -1;
         pl.x = heroSpot.getX() + 9;
@@ -536,7 +566,7 @@ public class ClientTest {
         pl.heroAt = heroSpot;
         ru.death.chaosshard.hero.HeroData.get(w).markDirty();
         ru.death.chaosshard.hero.EntityHero h = new ru.death.chaosshard.hero.EntityHero(w);
-        h.setup(ru.death.chaosshard.hero.Lightbearer.KAEL);
+        h.setup(testHero);
         h.setLocationAndAngles(heroSpot.getX() + 0.5, heroSpot.getY(), heroSpot.getZ() + 0.5, 180F, 0F);
         h.rotationYawHead = 180F;
         w.spawnEntity(h);
@@ -550,7 +580,8 @@ public class ClientTest {
             h.onDeath(net.minecraft.util.DamageSource.causePlayerDamage(p));
         }
         boolean dying = h.dying() && !h.isDead;
-        mc.addScheduledTask(() -> check(dying, "Светоч гаснет, а не исчезает сразу"));
+        String who = testHero.id();
+        mc.addScheduledTask(() -> check(dying, "Светоч гаснет, а не исчезает сразу: " + who));
     }
 
     private void heroGone(IntegratedServer s, WorldServer w, EntityPlayerMP p) {
