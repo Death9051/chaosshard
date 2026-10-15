@@ -349,7 +349,7 @@ public class ClientTest {
                 step++;
                 return;
             case 50:
-                if (clientDying() >= 0 && clientDying() < 66) {
+                if (clientDying() >= 0 && clientDying() < 72) {
                     return;   // -1: уже растаял — снять что есть
                 }
                 shot = "34_hero_dissolve";
