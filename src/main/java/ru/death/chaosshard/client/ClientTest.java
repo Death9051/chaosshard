@@ -511,6 +511,10 @@ public class ClientTest {
 
     private void heroDeath(IntegratedServer s, WorldServer w, EntityPlayerMP p) {
         heroSpot = origin.add(24, 0, -40);
+        // своя площадка: здесь край острова, без пола Светоч упал бы вниз
+        for (BlockPos q : BlockPos.getAllInBox(heroSpot.add(-6, -1, -10), heroSpot.add(6, -1, 6))) {
+            w.setBlockState(q, net.minecraft.init.Blocks.STONEBRICK.getDefaultState(), 2);
+        }
         for (BlockPos q : BlockPos.getAllInBox(heroSpot.add(-6, 0, -10), heroSpot.add(6, 4, 6))) {
             w.setBlockToAir(q);
         }
