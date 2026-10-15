@@ -336,6 +336,14 @@ public class ClientTest {
                 step++;
                 return;
             case 48:
+                for (Entity e : mc.world.loadedEntityList) {
+                    if (e instanceof ru.death.chaosshard.hero.EntityHero) {
+                        ru.death.chaosshard.hero.EntityHero h = (ru.death.chaosshard.hero.EntityHero) e;
+                        line("  Светоч у клиента: " + (int) e.posX + " " + (int) e.posY + " " + (int) e.posZ + ", здоровье " + h.getHealth()
+                                + ", гаснет " + h.dyingTicks() + ", мёртв " + e.isDead + ", поза " + h.pose() + ", вид " + mc.getRenderViewEntity());
+                    }
+                }
+                line("  место гибели: " + heroSpot);
                 shot = "32_hero_kneel";
                 wait = 22;
                 step++;
@@ -537,6 +545,10 @@ public class ClientTest {
         boolean gone = w.getEntitiesWithinAABB(ru.death.chaosshard.hero.EntityHero.class, box, e -> !e.isDead).isEmpty();
         boolean blade = !w.getEntitiesWithinAABB(net.minecraft.entity.item.EntityItem.class, box,
                 e -> e.getItem().getItem() == ModItems.KAEL_BLADE).isEmpty();
+        for (net.minecraft.entity.item.EntityItem e : w.getEntitiesWithinAABB(net.minecraft.entity.item.EntityItem.class, box.grow(16))) {
+            String it = e.getItem().getItem().getRegistryName() + " " + (int) e.posX + " " + (int) e.posY + " " + (int) e.posZ;
+            mc.addScheduledTask(() -> line("  рядом лежит: " + it));
+        }
         mc.addScheduledTask(() -> {
             check(gone, "Светоч растаял");
             check(blade, "клинок Каэля выпал, когда он растаял");
