@@ -315,6 +315,21 @@ public class ClientTest {
                 return;
             case 44:
                 mc.displayGuiScreen(null);
+                onServer(this::trophies);
+                wait = 60;
+                step++;
+                return;
+            case 45:
+                shot = "30_trophies";
+                wait = 30;
+                step++;
+                return;
+            case 46:
+                shot = "31_trophies_turned";
+                wait = 5;
+                step++;
+                return;
+            case 47:
                 finish();
                 step++;
                 return;
@@ -442,6 +457,17 @@ public class ClientTest {
             }
         }
         mc.addScheduledTask(() -> line("  существа на снимке: " + ents));
+    }
+
+    /** Пять трофеев Светочей на подставках в ряд, камера вплотную. */
+    private void trophies(IntegratedServer s, WorldServer w, EntityPlayerMP p) {
+        BlockPos row = origin.add(0, 0, -40);
+        for (int i = 0; i < 5; i++) {
+            BlockPos at = row.add(-4 + i * 2, 0, 0);
+            w.setBlockState(at.down(), net.minecraft.init.Blocks.STONE.getDefaultState(), 2);
+            w.setBlockState(at, ModBlocks.TROPHY.getDefaultState().withProperty(ru.death.chaosshard.hero.BlockTrophy.HERO, i), 2);
+        }
+        p.connection.setPlayerLocation(row.getX() + 0.5, row.getY() + 0.6, row.getZ() - 4.2, 0F, 8F);
     }
 
     private void turnBack(IntegratedServer s, WorldServer w, EntityPlayerMP p) {

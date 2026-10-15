@@ -35,6 +35,14 @@ public final class ModelRegistration {
             ModelLoader.setCustomModelResourceLocation(ru.death.chaosshard.init.ModItems.HERO_ECHO, h.ordinal(),
                     new ModelResourceLocation(Tags.MOD_ID + ":hero_echo_" + h.id(), "inventory"));
         }
+        // объёмные модели трофеев на подставке (models/item/trophy/<герой>.json); в руке и в инвентаре — прежние
+        for (ru.death.chaosshard.hero.Lightbearer h : ru.death.chaosshard.hero.Lightbearer.values()) {
+            net.minecraft.item.ItemStack s = ru.death.chaosshard.hero.Trophies.of(h);
+            if (!s.isEmpty()) {
+                ModelLoader.registerItemVariants(s.getItem(), s.getItem().getRegistryName(),
+                        new net.minecraft.util.ResourceLocation(Tags.MOD_ID, "trophy/" + h.id()));
+            }
+        }
         // BodyModels тянет класс импланта (он наследует интерфейс Cyberware) — трогать только при Cyberware
         if (ru.death.chaosshard.compat.body.Body.cyber()) {
             ru.death.chaosshard.compat.body.BodyModels.register();
