@@ -1354,6 +1354,9 @@ public final class AutoTest {
             ru.death.chaosshard.death.DeathItems.onRespawn(new net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerRespawnEvent(me, false));
             check(me.inventory.hasItemStack(new net.minecraft.item.ItemStack(ru.death.chaosshard.init.ModItems.GRIMOIRE)), "после возрождения Гримуар снова у игрока");
             BlockPos fell = base.add(-30, 0, 30);
+            for (BlockPos q : BlockPos.getAllInBox(fell.add(-3, -1, -3), fell.add(3, -1, 3))) ow.setBlockState(q, Blocks.STONE.getDefaultState(), 2);
+            for (BlockPos q : BlockPos.getAllInBox(fell.add(-3, 0, -3), fell.add(3, 3, 3))) ow.setBlockToAir(q);
+            me.setPosition(fell.getX() + 0.5, fell.getY(), fell.getZ() + 0.5);
             java.util.ArrayList<net.minecraft.entity.item.EntityItem> drops = new java.util.ArrayList<>();
             for (int i = 0; i < 3; i++) {
                 net.minecraft.entity.item.EntityItem ei = new net.minecraft.entity.item.EntityItem(ow, fell.getX() + 0.5, fell.getY() + 1, fell.getZ() + 0.5,
@@ -1361,15 +1364,51 @@ public final class AutoTest {
                 ow.spawnEntity(ei);
                 drops.add(ei);
             }
+            java.util.List<net.minecraft.entity.item.EntityItem> dropped = new java.util.ArrayList<>(drops);
             ru.death.chaosshard.death.DeathItems.onDrops(new net.minecraftforge.event.entity.player.PlayerDropsEvent(me, net.minecraft.util.DamageSource.GENERIC, drops, false));
+            check(ow.getBlockState(fell).getBlock() == ModBlocks.GRAVE, "на месте гибели встала могила");
+            net.minecraft.tileentity.TileEntity gt = ow.getTileEntity(fell);
+            check(gt instanceof ru.death.chaosshard.death.TileGrave && ((ru.death.chaosshard.death.TileGrave) gt).count() == 6,
+                    "в могиле 6 алмазов: " + (gt instanceof ru.death.chaosshard.death.TileGrave ? ((ru.death.chaosshard.death.TileGrave) gt).count() : -1));
+            check(drops.isEmpty(), "на землю ничего не выпало");
+            ow.newExplosion(null, fell.getX() + 0.5, fell.getY() + 0.5, fell.getZ() + 1.5, 4F, false, true);
+            check(ow.getBlockState(fell).getBlock() == ModBlocks.GRAVE, "взрыв могилу не берёт");
             int before = me.inventory.clearMatchingItems(net.minecraft.init.Items.DIAMOND, -1, 0, null);
             check(ru.death.chaosshard.death.DeathItems.reclaim(me), "сфера Возврата сработала");
             int got = me.inventory.clearMatchingItems(net.minecraft.init.Items.DIAMOND, -1, 0, null);
             check(got == 6 && before == 0, "вернулось 6 алмазов: " + got);
+            check(ow.isAirBlock(fell), "могила опустела и ушла");
             boolean gone = true;
-            for (net.minecraft.entity.item.EntityItem ei : drops) gone &= ei.isDead;
+            for (net.minecraft.entity.item.EntityItem ei : dropped) gone &= ei.isDead;
             check(gone, "на месте гибели копий не осталось");
             check(!ru.death.chaosshard.death.DeathItems.reclaim(me), "второй раз возвращать нечего — сфера цела");
+        });
+        step("Могила: открыть руками — броня сама надевается; пустота и лава", () -> {
+            BlockPos fell = base.add(-30, 0, 30);
+            for (BlockPos q : BlockPos.getAllInBox(fell.add(-3, -1, -3), fell.add(3, -1, 3))) ow.setBlockState(q, Blocks.STONE.getDefaultState(), 2);
+            for (BlockPos q : BlockPos.getAllInBox(fell.add(-3, 0, -3), fell.add(3, 3, 3))) ow.setBlockToAir(q);
+            me.setPosition(fell.getX() + 0.5, fell.getY(), fell.getZ() + 0.5);
+            me.inventory.clear();
+            java.util.ArrayList<net.minecraft.entity.item.EntityItem> drops = new java.util.ArrayList<>();
+            drops.add(new net.minecraft.entity.item.EntityItem(ow, me.posX, me.posY, me.posZ, new net.minecraft.item.ItemStack(net.minecraft.init.Items.IRON_HELMET)));
+            drops.add(new net.minecraft.entity.item.EntityItem(ow, me.posX, me.posY, me.posZ, new net.minecraft.item.ItemStack(net.minecraft.init.Items.GOLD_INGOT, 5)));
+            ru.death.chaosshard.death.DeathItems.onDrops(new net.minecraftforge.event.entity.player.PlayerDropsEvent(me, net.minecraft.util.DamageSource.GENERIC, drops, false));
+            check(ow.getBlockState(fell).getBlock() == ModBlocks.GRAVE, "могила встала");
+            ModBlocks.GRAVE.onBlockActivated(ow, fell, ow.getBlockState(fell), me, EnumHand.MAIN_HAND, EnumFacing.UP, 0.5F, 0.5F, 0.5F);
+            check(me.getItemStackFromSlot(net.minecraft.inventory.EntityEquipmentSlot.HEAD).getItem() == net.minecraft.init.Items.IRON_HELMET, "шлем снова на голове");
+            check(me.inventory.clearMatchingItems(net.minecraft.init.Items.GOLD_INGOT, -1, 0, null) == 5, "5 слитков золота в инвентаре");
+            check(ow.isAirBlock(fell), "открытая могила ушла");
+            check(!ru.death.chaosshard.death.DeathItems.reclaim(me), "после открытой могилы сфере возвращать нечего");
+            me.inventory.clear();
+            // упал в пустоту — могила встаёт в мире, а не под ним
+            BlockPos voidSpot = ru.death.chaosshard.death.DeathItems.graveSpot(ow, new BlockPos(fell.getX(), -40, fell.getZ()));
+            check(voidSpot != null && voidSpot.getY() >= 1, "смерть в пустоте: могила встаёт в мире: " + voidSpot);
+            // умер в лаве — могила над лавой, а не в ней
+            BlockPos lava = fell.add(2, 0, 0);
+            for (BlockPos q : BlockPos.getAllInBox(fell.add(-3, 0, -3), fell.add(3, 1, 3))) ow.setBlockState(q, Blocks.LAVA.getDefaultState(), 2);
+            BlockPos lavaSpot = ru.death.chaosshard.death.DeathItems.graveSpot(ow, lava);
+            check(lavaSpot != null && !ow.getBlockState(lavaSpot).getMaterial().isLiquid(), "смерть в лаве: могила не в лаве: " + lavaSpot);
+            for (BlockPos q : BlockPos.getAllInBox(fell.add(-3, 0, -3), fell.add(3, 1, 3))) ow.setBlockToAir(q);
         });
         step("Кровавая луна: сфера встаёт и держит луну", () -> {
             moonPos = base.add(-24, 0, 4);

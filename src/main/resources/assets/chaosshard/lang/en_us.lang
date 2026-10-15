@@ -1768,7 +1768,7 @@ death.attack.chaosshard.anchor=%1$s was struck down by an Anchor's Corruption
 death.attack.chaosshard.anchor.player=%1$s was struck down by %2$s's Anchor
 item.chaosshard.ritual_sphere.reclaim.name=Sphere of Reclaiming
 chaosshard.ritual.reclaim=Reclaiming
-chaosshard.ritual.reclaim.desc=Sphere. Break it anywhere — items dropped at my latest deaths vanish from where I fell and come back to me. They never despawn there. The Grimoire stays with me on death anyway.
+chaosshard.ritual.reclaim.desc=Sphere. Break it anywhere — items from the graves of my latest deaths (or lying where no grave could stand) come back to me, and the graves empty. The Grimoire stays with me on death anyway.
 chaosshard.ritual.reclaim.none=Nothing to reclaim: no items left where I fell.
 chaosshard.ritual.reclaim.done="Mine, to me." Items returned: %s.
 fluid.chaosshard_chaos=Molten Chaosite
@@ -1779,3 +1779,15 @@ fluid.chaosshard_bloodplatinum=Molten Blood Platinum
 fluid.chaosshard_bloodplatinum.name=Molten Blood Platinum
 fluid.chaosshard_starlight=Molten Starlight
 fluid.chaosshard_starlight.name=Molten Starlight
+
+# Grave
+tile.chaosshard.grave.name=Shard's Grave
+chaosshard.grave.where=My things wait in a grave: %s %s %s (%s). Walk up and right-click it — or break a Reclaiming sphere and they come back by themselves.
+chaosshard.grave.opened=The grave gave my things back: %s.
+chaosshard.grave.not_yours=This is %s's grave, not mine.
+chaosshard.dim.overworld=Overworld
+chaosshard.dim.the_nether=the Nether
+chaosshard.dim.the_end=the End
+chaosshard.dim.chaosshard_rift=the Rift
+chaosshard.dim.chaosshard_antechamber=the Antechamber
+chaosshard.dim.chaosshard_archive=the Archive

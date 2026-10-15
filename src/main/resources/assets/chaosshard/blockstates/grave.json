@@ -1,0 +1,19 @@
+{
+ "variants": {
+  "facing=north": {
+   "model": "chaosshard:grave"
+  },
+  "facing=east": {
+   "model": "chaosshard:grave",
+   "y": 90
+  },
+  "facing=south": {
+   "model": "chaosshard:grave",
+   "y": 180
+  },
+  "facing=west": {
+   "model": "chaosshard:grave",
+   "y": 270
+  }
+ }
+}

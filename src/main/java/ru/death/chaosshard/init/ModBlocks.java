@@ -32,6 +32,8 @@ public final class ModBlocks {
     public static Block ANCHOR_PART;
     public static Block ANCHOR_RIM;
     public static Block TROPHY;
+    /** Могила Осколка: встаёт на месте гибели с выпавшими вещами. */
+    public static Block GRAVE;
     public static Block RITUAL_BOWL;
     public static Block STAR_PUMP;
     public static Block DEFILED_GENERATOR;
@@ -131,6 +133,12 @@ public final class ModBlocks {
         event.getRegistry().register(TROPHY);
         net.minecraftforge.fml.common.registry.GameRegistry.registerTileEntity(ru.death.chaosshard.hero.TileTrophy.class,
                 new net.minecraft.util.ResourceLocation(Tags.MOD_ID, "hero_trophy"));
+        GRAVE = new ru.death.chaosshard.death.BlockGrave();
+        GRAVE.setRegistryName(Tags.MOD_ID, "grave");
+        GRAVE.setTranslationKey(Tags.MOD_ID + ".grave");
+        event.getRegistry().register(GRAVE);
+        net.minecraftforge.fml.common.registry.GameRegistry.registerTileEntity(ru.death.chaosshard.death.TileGrave.class,
+                new net.minecraft.util.ResourceLocation(Tags.MOD_ID, "grave"));
     }
 
     @SubscribeEvent

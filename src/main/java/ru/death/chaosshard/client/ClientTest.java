@@ -388,6 +388,16 @@ public class ClientTest {
                 step = 52;
                 return;
             case 55:
+                onServer(this::graveShow);
+                wait = 40;
+                step++;
+                return;
+            case 56:
+                check(mc.world.getBlockState(graveAt).getBlock() == ModBlocks.GRAVE, "могила видна клиенту");
+                shot = "40_grave";
+                step++;
+                return;
+            case 57:
                 finish();
                 step++;
                 return;
@@ -582,6 +592,23 @@ public class ClientTest {
         boolean dying = h.dying() && !h.isDead;
         String who = testHero.id();
         mc.addScheduledTask(() -> check(dying, "Светоч гаснет, а не исчезает сразу: " + who));
+    }
+
+    private BlockPos graveAt;
+
+    /** Могила на площадке: камень с кристаллом, холм земли, огонёк. */
+    private void graveShow(IntegratedServer s, WorldServer w, EntityPlayerMP p) {
+        graveAt = heroSpot.add(0, 0, -4);
+        for (net.minecraft.entity.item.EntityItem e : w.getEntitiesWithinAABB(net.minecraft.entity.item.EntityItem.class,
+                new net.minecraft.util.math.AxisAlignedBB(heroSpot).grow(12))) {
+            e.setDead();
+        }
+        w.setBlockState(graveAt, ModBlocks.GRAVE.getDefaultState(), 3);
+        if (w.getTileEntity(graveAt) instanceof ru.death.chaosshard.death.TileGrave) {
+            ((ru.death.chaosshard.death.TileGrave) w.getTileEntity(graveAt)).fill(p,
+                    java.util.Collections.singletonList(new ItemStack(net.minecraft.init.Items.DIAMOND, 3)));
+        }
+        p.connection.setPlayerLocation(graveAt.getX() + 2.2, graveAt.getY() + 0.4, graveAt.getZ() + 2.6, 140F, 28F);
     }
 
     private void heroGone(IntegratedServer s, WorldServer w, EntityPlayerMP p) {
