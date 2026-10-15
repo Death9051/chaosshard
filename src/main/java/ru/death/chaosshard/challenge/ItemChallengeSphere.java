@@ -45,7 +45,7 @@ public class ItemChallengeSphere extends Item {
     public static ChallengeSpec spec(ItemStack s) {
         ChallengeSpec spec = ChallengeSpec.read(s.hasTagCompound() ? s.getTagCompound().getCompoundTag(SPEC) : null);
         if (!s.hasTagCompound()) {
-            spec.faction = ChallengeFaction.values()[Math.max(0, Math.min(2, s.getMetadata()))];
+            spec.faction = ChallengeFaction.values()[Math.max(0, Math.min(ChallengeFaction.values().length - 1, s.getMetadata()))];
         }
         return spec;
     }

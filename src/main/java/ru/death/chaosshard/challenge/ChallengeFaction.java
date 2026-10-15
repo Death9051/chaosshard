@@ -12,6 +12,7 @@ import net.minecraft.init.Items;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
@@ -31,7 +32,9 @@ public enum ChallengeFaction {
     /** Мрачная армия Гаррота: солдаты, лучники, щитоносцы, командир. Знак — Знамя Мрачной армии. */
     GARROT(1),
     /** Твари мира: ванильные и Lycanites, вожак стаи. Знак — 8 гнилой плоти. */
-    WILD(8);
+    WILD(8),
+    /** Сборщики: кибер-зомби (с 3-й волны — громилы), босс — Сборщик. Знак — 4 железных слитка. Награда — детали и импланты. */
+    CYBER(4);
 
     public final int markerCount;
 
@@ -43,6 +46,7 @@ public enum ChallengeFaction {
         switch (this) {
             case ORDER: return Items.GOLD_INGOT;
             case GARROT: return ModItems.GARROT_BANNER;
+            case CYBER: return Items.IRON_INGOT;
             default: return Items.ROTTEN_FLESH;
         }
     }
@@ -68,6 +72,8 @@ public enum ChallengeFaction {
             }
             case GARROT:
                 return garrot(w, tier, wave, r, false);
+            case CYBER:
+                return cyber(w, tier, wave, r, false);
             default:
                 return wild(w, tier, wave, r);
         }
@@ -83,6 +89,8 @@ public enum ChallengeFaction {
             }
             case GARROT:
                 return garrot(w, tier, 0, r, true);
+            case CYBER:
+                return cyber(w, tier, 0, r, true);
             default: {
                 EntityLiving m = create(w, pick(r, existing("lycanitesmobs:ettin", "lycanitesmobs:troll", "lycanitesmobs:wendigo")), "minecraft:wither_skeleton");
                 double hp = 120 + 60 * tier;
@@ -173,6 +181,34 @@ public enum ChallengeFaction {
             pool.addAll(existing("lycanitesmobs:ettin", "lycanitesmobs:lurker"));
         }
         return create(w, pool.get(r.nextInt(pool.size())), "minecraft:zombie");
+    }
+
+    /** Метка Сборщиков: ступень Вызова (и босс ли), по ней режутся трофейные импланты. */
+    public static final String CYBER_TAG = "chaosshard_cyber";
+
+    /** Кибер-зомби Cyberware; с 3-й волны часть — громилы (на ступени 4+ чаще). Без Cyberware — обычные зомби в железе. */
+    private static EntityLiving cyber(WorldServer w, int tier, int wave, Random r, boolean boss) {
+        EntityLiving m = create(w, "cyberware:cyberzombie", "minecraft:zombie");
+        boolean brute = boss || wave >= 3 && r.nextInt(tier >= 4 ? 2 : 3) == 0;
+        if (net.minecraftforge.fml.common.Loader.isModLoaded("cyberware")) {
+            if (brute) {
+                ru.death.chaosshard.compat.body.CyberLoot.brute(m);
+            }
+        } else {
+            m.setItemStackToSlot(EntityEquipmentSlot.CHEST, new ItemStack(Items.IRON_CHESTPLATE));
+            m.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, new ItemStack(Items.IRON_SWORD));
+        }
+        NBTTagCompound t = new NBTTagCompound();
+        t.setInteger("Tier", Math.max(1, tier));
+        t.setBoolean("Boss", boss);
+        m.getEntityData().setTag(CYBER_TAG, t);
+        if (boss) {
+            double hp = 140 + 60 * tier;
+            m.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(hp);
+            m.setHealth((float) hp);
+            m.setCustomNameTag(TextFormatting.DARK_AQUA + new TextComponentTranslation("chaosshard.challenge.boss.cyber").getUnformattedText());
+        }
+        return m;
     }
 
     static List<String> existing(String... ids) {

@@ -34,6 +34,15 @@ public final class ChallengeArena {
                 light = Blocks.GLOWSTONE.getDefaultState();
                 under = Blocks.OBSIDIAN.getDefaultState();
                 break;
+            case CYBER:
+                // свалка тел: бетон, железо, решётки
+                floorA = Blocks.CONCRETE.getDefaultState().withProperty(net.minecraft.block.BlockColored.COLOR, EnumDyeColor.GRAY);
+                floorB = Blocks.IRON_BLOCK.getDefaultState();
+                wall = Blocks.CONCRETE.getDefaultState().withProperty(net.minecraft.block.BlockColored.COLOR, EnumDyeColor.SILVER);
+                wallTop = Blocks.IRON_BARS.getDefaultState();
+                light = Blocks.SEA_LANTERN.getDefaultState();
+                under = Blocks.STONE.getDefaultState();
+                break;
             default:
                 floorA = Blocks.GRASS.getDefaultState();
                 floorB = Blocks.MOSSY_COBBLESTONE.getDefaultState();

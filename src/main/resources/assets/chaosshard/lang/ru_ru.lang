@@ -1001,10 +1001,12 @@ chaosshard.ritual.breed.none=Рядом нет взрослых зверей —
 # Вызов
 item.chaosshard.challenge_sphere.name=Сфера Вызова
 chaosshard.ritual.challenge=Вызов
-chaosshard.ritual.challenge.desc=Волны убийц: дар за каждую отбитую, награда за ступень. Сверх основы на Алтарь: знак стороны (4 золота / Знамя Гаррота / 8 гнилой плоти), 1–5 Осколков мира или Звезда Незера, модификаторы по желанию — всё в квесте «Вызов».
+chaosshard.ritual.challenge.desc=Волны убийц: дар за каждую отбитую, награда за ступень. Сверх основы на Алтарь: знак стороны (4 золота / Знамя Гаррота / 8 гнилой плоти / 4 железа — Сборщики), 1–5 Осколков мира или Звезда Незера, модификаторы по желанию — всё в квесте «Вызов».
 chaosshard.challenge.faction.order=Орден Света
 chaosshard.challenge.faction.garrot=Мрачная армия Гаррота
 chaosshard.challenge.faction.wild=Твари мира
+chaosshard.challenge.faction.cyber=Сборщики
+chaosshard.challenge.boss.cyber=Сборщик
 chaosshard.challenge.tier=Ступень %s (%s волн)
 chaosshard.challenge.endless=Бесконечный — волны, пока стоишь
 chaosshard.challenge.bonus=Награда +%s%%

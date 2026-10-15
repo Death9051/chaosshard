@@ -1471,6 +1471,52 @@ public final class AutoTest {
             check(sp != null && sp.faction == ru.death.chaosshard.challenge.ChallengeFaction.WILD && sp.tier == 1, "Сфера Вызова: твари мира, 1-я ступень");
             got.forEach(net.minecraft.entity.Entity::setDead);
         });
+        step("Сборщики: знак — 4 железа, кибер-зомби и громилы, добыча — детали и импланты", () -> {
+            List<net.minecraft.item.ItemStack> ok = new ArrayList<>();
+            ok.add(new net.minecraft.item.ItemStack(ru.death.chaosshard.init.ModItems.CHAOS_ESSENCE, 4));
+            ok.add(new net.minecraft.item.ItemStack(ru.death.chaosshard.init.ModItems.VEIL_SHARD, 2));
+            ok.add(new net.minecraft.item.ItemStack(net.minecraft.init.Items.IRON_INGOT, 4));
+            ok.add(new net.minecraft.item.ItemStack(ru.death.chaosshard.init.ModItems.WORLD_SHARD, 4));
+            ru.death.chaosshard.challenge.ChallengeSpec sp = ru.death.chaosshard.challenge.ChallengeSpec.parse(ok);
+            check(sp != null && sp.faction == ru.death.chaosshard.challenge.ChallengeFaction.CYBER && sp.tier == 4, "Сборщики, 4-я ступень");
+            check(ru.death.chaosshard.challenge.ItemChallengeSphere.spec(ru.death.chaosshard.challenge.ItemChallengeSphere.of(sp)).faction
+                    == ru.death.chaosshard.challenge.ChallengeFaction.CYBER, "сфера помнит Сборщиков");
+            if (!net.minecraftforge.fml.common.Loader.isModLoaded("cyberware")) {
+                line("    Cyberware нет — бойцы и добыча не проверяются");
+                return;
+            }
+            java.util.Random r = new java.util.Random(7);
+            net.minecraft.entity.EntityLiving m = ru.death.chaosshard.challenge.ChallengeFaction.CYBER.regular(ow, 2, 1, r);
+            check(m != null && "cyberware:cyberzombie".equals(String.valueOf(net.minecraft.entity.EntityList.getKey(m))), "боец — кибер-зомби: "
+                    + (m == null ? null : net.minecraft.entity.EntityList.getKey(m)));
+            int brutes = 0;
+            for (int i = 0; i < 40; i++) {
+                if (ru.death.chaosshard.compat.body.CyberLoot.isBrute(ru.death.chaosshard.challenge.ChallengeFaction.CYBER.regular(ow, 4, 4, r))) brutes++;
+            }
+            check(brutes > 5 && brutes < 35, "на 4-й волне 4-й ступени громил около половины: " + brutes + " из 40");
+            net.minecraft.entity.EntityLiving boss = ru.death.chaosshard.challenge.ChallengeFaction.CYBER.boss(ow, 3, r);
+            check(ru.death.chaosshard.compat.body.CyberLoot.isBrute(boss) && boss.hasCustomName(), "Сборщик — громила с именем: " + boss.getCustomNameTag());
+            check(ru.death.chaosshard.compat.body.CyberLoot.implantKinds() > 10, "имплантов Cyberware в добыче: " + ru.death.chaosshard.compat.body.CyberLoot.implantKinds());
+            List<net.minecraft.item.ItemStack> loot = ru.death.chaosshard.compat.body.CyberLoot.victory(r, 5, 1.0);
+            int comps = 0, scav = 0;
+            for (net.minecraft.item.ItemStack st : loot) {
+                if ("cyberware:component".equals(String.valueOf(st.getItem().getRegistryName()))) comps += st.getCount();
+                if (ru.death.chaosshard.compat.body.CyberLoot.isScavenged(st)) scav++;
+            }
+            check(comps == 12 && scav == 2, "победа на 5-й: 12 деталей и 2 импланта «с трупа»: " + comps + " / " + scav);
+            check(ru.death.chaosshard.compat.body.CyberLoot.victory(r, 1, 1.0).stream().noneMatch(ru.death.chaosshard.compat.body.CyberLoot::isImplant),
+                    "на 1-й ступени имплантов за победу нет");
+            // с рядовых — только часть имплантов, Сборщик — хотя бы один
+            List<net.minecraft.entity.item.EntityItem> drops = new ArrayList<>();
+            for (int i = 0; i < 200; i++) {
+                drops.add(new net.minecraft.entity.item.EntityItem(ow, 0, 100, 0, ru.death.chaosshard.compat.body.CyberLoot.scavenged(r)));
+            }
+            MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.living.LivingDropsEvent(m, DamageSource.causePlayerDamage(me), drops, 0, true));
+            check(drops.size() > 0 && drops.size() < 30, "рядовой 2-й ступени отдаёт ~10% имплантов: " + drops.size() + " из 200");
+            List<net.minecraft.entity.item.EntityItem> bossDrops = new ArrayList<>();
+            MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.living.LivingDropsEvent(boss, DamageSource.causePlayerDamage(me), bossDrops, 0, true));
+            check(bossDrops.size() == 1 && ru.death.chaosshard.compat.body.CyberLoot.isScavenged(bossDrops.get(0).getItem()), "Сборщик без имплантов — всё равно отдаёт один");
+        });
         step("арена в архиве строится", () -> {
             net.minecraft.world.WorldServer arc = server.getWorld(ru.death.chaosshard.trial.TrialDimension.id());
             BlockPos c = new BlockPos(ru.death.chaosshard.challenge.ChallengeManager.ARENA_X - 99 * 256, ru.death.chaosshard.challenge.ChallengeManager.ARENA_Y, 0);

@@ -218,6 +218,43 @@ public class ChallengeManager {
 
     // ------------------------------------------------------------------ ход
 
+    static final boolean CYBERWARE = net.minecraftforge.fml.common.Loader.isModLoaded("cyberware");
+
+    /**
+     * Сборщики: импланты с убитых кибер-зомби выпадают не все — 5% за ступень (иначе десятки за Вызов);
+     * Сборщик-босс отдаёт всё и хотя бы один имплант.
+     */
+    @SubscribeEvent
+    public void onCyberDrops(net.minecraftforge.event.entity.living.LivingDropsEvent event) {
+        net.minecraft.nbt.NBTTagCompound data = event.getEntityLiving().getEntityData();
+        if (!CYBERWARE || !data.hasKey(ChallengeFaction.CYBER_TAG) || event.getEntityLiving().world.isRemote) {
+            return;
+        }
+        net.minecraft.nbt.NBTTagCompound t = data.getCompoundTag(ChallengeFaction.CYBER_TAG);
+        boolean boss = t.getBoolean("Boss");
+        double keep = 0.05 * Math.max(1, t.getInteger("Tier"));
+        Random r = event.getEntityLiving().world.rand;
+        boolean any = false;
+        java.util.Iterator<net.minecraft.entity.item.EntityItem> it = event.getDrops().iterator();
+        while (it.hasNext()) {
+            ItemStack s = it.next().getItem();
+            if (ru.death.chaosshard.compat.body.CyberLoot.isImplant(s)) {
+                if (boss || r.nextDouble() < keep) {
+                    any = true;
+                } else {
+                    it.remove();
+                }
+            }
+        }
+        if (boss && !any) {
+            ItemStack s = ru.death.chaosshard.compat.body.CyberLoot.scavenged(r);
+            if (!s.isEmpty()) {
+                net.minecraft.entity.EntityLivingBase e = event.getEntityLiving();
+                event.getDrops().add(new net.minecraft.entity.item.EntityItem(e.world, e.posX, e.posY + 0.5, e.posZ, s));
+            }
+        }
+    }
+
     @SubscribeEvent
     public void onServerTick(TickEvent.ServerTickEvent event) {
         if (event.phase != TickEvent.Phase.END || ACTIVE.isEmpty()) {
@@ -487,6 +524,11 @@ public class ChallengeManager {
         ThreadManager.addPoints(p, nit);
         int rolls = 1 + (c.wave >= 3 ? 1 : 0) + (w.rand.nextDouble() < mul - 1 ? 1 : 0);
         give(w, p, "challenge/wave_" + c.spec.faction.name().toLowerCase(), rolls);
+        if (c.spec.faction == ChallengeFaction.CYBER && CYBERWARE) {
+            for (ItemStack s : ru.death.chaosshard.compat.body.CyberLoot.wave(w.rand, c.effTier(), mul)) {
+                ItemHandlerHelper.giveItemToPlayer(p, s);
+            }
+        }
         p.addExperience(8 * c.wave);
         w.playSound(null, p.getPosition(), SoundEvents.ENTITY_PLAYER_LEVELUP, SoundCategory.PLAYERS, 0.8F, 1.2F);
         p.sendMessage(Breach.grimoire("chaosshard.challenge.wave.done", c.wave, nit));
@@ -510,6 +552,11 @@ public class ChallengeManager {
         ThreadManager.addPoints(p, nit);
         int rolls = tier + (int) Math.floor((mul - 1) * tier);
         give(w, p, "challenge/final_" + c.spec.faction.name().toLowerCase(), Math.max(1, rolls));
+        if (c.spec.faction == ChallengeFaction.CYBER && CYBERWARE) {
+            for (ItemStack s : ru.death.chaosshard.compat.body.CyberLoot.victory(w.rand, tier, mul)) {
+                ItemHandlerHelper.giveItemToPlayer(p, s);
+            }
+        }
         if (!c.arena) {
             net.minecraft.tileentity.TileEntity te = w.getTileEntity(c.center);
             if (te instanceof TileAnchor) {

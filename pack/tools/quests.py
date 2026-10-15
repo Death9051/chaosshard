@@ -1090,6 +1090,7 @@ q("a3_sign", "act3", 6, 11, "Знаки Якоря", "", I("chaosshard:anchor_se
 q("a3_alpha", "act3", 12, 4, "§5Альфа", "", I("chaosshard:chaos_anchor"), adv("anchor_alpha"), [NIT(80), XP(15)], ["a3_pillar"])
 q("a3_borrow", "act3", 14, 4, "Чужое ремесло", "", I("chaosshard:chaos_anchor"), adv("anchor_borrow"), [NIT(20), XP(4)], ["a3_alpha", "a3_spec"])
 q("a3_alpha_max", "act3", 14, 2, "§5Сердце сети", "", I("minecraft:nether_star"), adv("anchor_alpha_max"), [NIT(150), XP(25)], ["a3_alpha"])
+q("bd_scavengers", "body", 4, 1, "§bСборщики", "", I("chaosshard:challenge_sphere", 3), lore(), [XP(1)], ["bd_zombie", "ch_start"])
 
 # ---------------------------------------------------------------- сборка
 
