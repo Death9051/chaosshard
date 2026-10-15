@@ -1047,7 +1047,7 @@ public class EntityHero extends EntityMob implements ru.death.chaosshard.hero.Po
             w.playSound(null, getPosition(), SoundEvents.BLOCK_NOTE_BELL, SoundCategory.HOSTILE, 2.5F, t == 26 ? 0.42F : 0.35F);
         }
         if (t == DISSOLVE_FROM) {
-            w.playSound(null, getPosition(), SoundEvents.BLOCK_BEACON_DEACTIVATE, SoundCategory.HOSTILE, 3.0F, 0.8F);
+            w.playSound(null, getPosition(), SoundEvents.BLOCK_PORTAL_TRIGGER, SoundCategory.HOSTILE, 1.2F, 1.8F);
         }
         if (t > DISSOLVE_FROM && t < DYING) {
             w.spawnParticle(EnumParticleTypes.FIREWORKS_SPARK, x, y + 1.0, z, 3, 0.25, 0.4, 0.25, 0.02);
