@@ -1,0 +1,730 @@
+[11:26:35] [main/INFO] [GradleStart]: userProperties: {}
+[11:26:35] [main/INFO] [GradleStart]: assetsDir: /home/runner/.gradle/caches/retro_futura_gradle/assets
+[11:26:35] [main/INFO] [GradleStart]: assetIndex: 1.12.2
+[11:26:35] [main/INFO] [GradleStart]: version: FML_DEV
+[11:26:35] [main/INFO] [GradleStart]: username: Developer
+[11:26:35] [main/INFO] [GradleStart]: Extra: [--gameDir, /home/runner/work/chaosshard/chaosshard/run, --uuid, 31c4910d-9b69-4725-8969-9ed53ac8a7dc]
+[11:26:35] [main/INFO] [GradleStart]: Found and added coremod: com.cleanroommc.osxnarratorblocker.OSXNarratorBlocker
+[11:26:35] [main/INFO] [GradleStart]: Found and added coremod: com.cleanroommc.stripforgereq.StripLatestForgeRequirements
+[11:26:35] [main/INFO] [GradleStart]: Found and added coremod: zone.rong.mixinbooter.MixinBooterPlugin
+[11:26:35] [main/INFO] [GradleStart]: Found and added coremod: hellfirepvp.astralsorcery.core.AstralCore
+[11:26:35] [main/INFO] [GradleStart]: Running with arguments: [--userProperties, {}, --assetsDir, /home/runner/.gradle/caches/retro_futura_gradle/assets, --assetIndex, 1.12.2, --accessToken{REDACTED}, --version, FML_DEV, --username, Developer, --tweakClass, net.minecraftforge.fml.common.launcher.FMLTweaker, --gameDir, /home/runner/work/chaosshard/chaosshard/run, --uuid, 31c4910d-9b69-4725-8969-9ed53ac8a7dc, --tweakClass, net.minecraftforge.gradle.tweakers.CoremodTweaker]
+[11:26:35] [main/INFO] [LaunchWrapper]: Loading tweak class name net.minecraftforge.fml.common.launcher.FMLTweaker
+[11:26:35] [main/INFO] [LaunchWrapper]: Using primary tweak class name net.minecraftforge.fml.common.launcher.FMLTweaker
+[11:26:35] [main/INFO] [LaunchWrapper]: Loading tweak class name net.minecraftforge.gradle.tweakers.CoremodTweaker
+[11:26:35] [main/INFO] [LaunchWrapper]: Calling tweak class net.minecraftforge.fml.common.launcher.FMLTweaker
+[11:26:35] [main/INFO] [FML]: Forge Mod Loader version 14.23.5.2847 for Minecraft 1.12.2 loading
+[11:26:35] [main/INFO] [FML]: Java is OpenJDK 64-Bit Server VM, version 1.8.0_504, running on Linux:amd64:6.17.0-1022-azure, installed at /home/runner/.gradle/jdks/azul_systems__inc_-8-amd64-linux.2/jre
+[11:26:35] [main/ERROR] [FML]: Apache Maven library folder was not in the format expected. Using default libraries directory.
+[11:26:35] [main/ERROR] [FML]: Full: /home/runner/.gradle/caches/modules-2/files-2.1/org.apache.maven/maven-artifact/3.5.3/7dc72b6d6d8a6dced3d294ed54c2cc3515ade9f4/maven-artifact-3.5.3.jar
+[11:26:35] [main/ERROR] [FML]: Trimmed: /home/runner/.gradle/caches/modules-2/files-2.1/org.apache.maven/maven-artifact/3.5.3/
+[11:26:35] [main/INFO] [FML]: Managed to load a deobfuscated Minecraft name- we are in a deobfuscated environment. Skipping runtime deobfuscation
+[11:26:35] [main/INFO] [FML]: Detected deobfuscated environment, loading log configs for colored console logs.
+[11:26:35] [main/INFO] [FML]: Ignoring missing certificate for coremod FMLCorePlugin (net.minecraftforge.fml.relauncher.FMLCorePlugin), we are in deobf and it's a forge core plugin
+[11:26:35] [main/INFO] [FML]: Ignoring missing certificate for coremod FMLForgePlugin (net.minecraftforge.classloading.FMLForgePlugin), we are in deobf and it's a forge core plugin
+[11:26:35] [main/INFO] [FML]: Found a command line coremod : hellfirepvp.astralsorcery.core.AstralCore
+[11:26:35] [main/WARN] [FML]: The coremod hellfirepvp.astralsorcery.core.AstralCore does not have a MCVersion annotation, it may cause issues with this version of Minecraft
+[11:26:35] [main/INFO] [FML]: Ignoring missing certificate for coremod AstralCore (hellfirepvp.astralsorcery.core.AstralCore), as this is probably a dev workspace
+[11:26:35] [main/INFO] [Astral Core]: [AstralCore] Initialized.
+[11:26:35] [main/INFO] [FML]: Found a command line coremod : com.cleanroommc.stripforgereq.StripLatestForgeRequirements
+[11:26:35] [main/WARN] [FML]: The coremod com.cleanroommc.stripforgereq.StripLatestForgeRequirements does not have a MCVersion annotation, it may cause issues with this version of Minecraft
+[11:26:35] [main/INFO] [FML]: Ignoring missing certificate for coremod StripLatestForgeRequirements (com.cleanroommc.stripforgereq.StripLatestForgeRequirements), as this is probably a dev workspace
+[11:26:35] [main/INFO] [FML]: Found a command line coremod : com.cleanroommc.osxnarratorblocker.OSXNarratorBlocker
+[11:26:35] [main/WARN] [FML]: The coremod com.cleanroommc.osxnarratorblocker.OSXNarratorBlocker does not have a MCVersion annotation, it may cause issues with this version of Minecraft
+[11:26:35] [main/INFO] [FML]: Ignoring missing certificate for coremod OSXNarratorBlocker (com.cleanroommc.osxnarratorblocker.OSXNarratorBlocker), as this is probably a dev workspace
+[11:26:35] [main/INFO] [FML]: Found a command line coremod : zone.rong.mixinbooter.MixinBooterPlugin
+[11:26:35] [main/WARN] [FML]: The coremod zone.rong.mixinbooter.MixinBooterPlugin does not have a MCVersion annotation, it may cause issues with this version of Minecraft
+[11:26:35] [main/INFO] [FML]: Ignoring missing certificate for coremod MixinBooter (zone.rong.mixinbooter.MixinBooterPlugin), as this is probably a dev workspace
+[11:26:35] [main/INFO] [CleanMix]: SpongePowered MIXIN Subsystem Version=0.8.7 Source=file:/home/runner/.gradle/caches/modules-2/files-2.1/zone.rong/mixinbooter/11.13/60b7cd79ce98c5578006aab3220a3dbd82e544c0/mixinbooter-11.13.jar Service=MixinBooter Env=CLIENT
+[11:26:35] [main/INFO] [CleanMix]: Attempting to load Fernflower decompiler (Threaded mode)
+[11:26:35] [main/INFO] [CleanMix]: Fernflower decompiler was successfully initialised from mixinbooter-11.13.jar, exported classes will be decompiled in a separate thread
+[11:26:35] [main/INFO] [Srg2McpRemapper]: Initialized. Loaded 21622 mappings from /home/runner/.gradle/caches/minecraft/de/oceanlabs/mcp/mcp_stable/39/rfg_srgs/srg-mcp.srg
+[11:26:36] [main/INFO] [MixinBooter]: Finished gathering 4 mods, took 1262 ms.
+[11:26:36] [main/INFO] [FML]: Searching /home/runner/work/chaosshard/chaosshard/run/mods for mods
+[11:26:36] [main/INFO] [LaunchWrapper]: Calling tweak class net.minecraftforge.gradle.tweakers.CoremodTweaker
+[11:26:36] [main/INFO] [GradleStart]: Injecting location in coremod net.minecraftforge.fml.relauncher.FMLCorePlugin
+[11:26:36] [main/INFO] [GradleStart]: Injecting location in coremod net.minecraftforge.classloading.FMLForgePlugin
+[11:26:36] [main/INFO] [GradleStart]: Injecting location in coremod hellfirepvp.astralsorcery.core.AstralCore
+[11:26:36] [main/INFO] [GradleStart]: Injecting location in coremod com.cleanroommc.stripforgereq.StripLatestForgeRequirements
+[11:26:36] [main/INFO] [GradleStart]: Injecting location in coremod com.cleanroommc.osxnarratorblocker.OSXNarratorBlocker
+[11:26:36] [main/INFO] [GradleStart]: Injecting location in coremod zone.rong.mixinbooter.MixinBooterPlugin
+[11:26:36] [main/INFO] [LaunchWrapper]: Loading tweak class name zone.rong.mixinbooter.service.CoremodsRescuer
+[11:26:36] [main/INFO] [LaunchWrapper]: Loading tweak class name net.minecraftforge.fml.common.launcher.FMLInjectionAndSortingTweaker
+[11:26:36] [main/INFO] [LaunchWrapper]: Loading tweak class name org.spongepowered.asm.mixin.EnvironmentStateTweaker
+[11:26:36] [main/INFO] [LaunchWrapper]: Loading tweak class name net.minecraftforge.fml.common.launcher.FMLDeobfTweaker
+[11:26:36] [main/INFO] [LaunchWrapper]: Loading tweak class name net.minecraftforge.gradle.tweakers.AccessTransformerTweaker
+[11:26:36] [main/INFO] [LaunchWrapper]: Calling tweak class net.minecraftforge.fml.common.launcher.FMLInjectionAndSortingTweaker
+[11:26:36] [main/INFO] [LaunchWrapper]: Calling tweak class net.minecraftforge.fml.common.launcher.FMLInjectionAndSortingTweaker
+[11:26:36] [main/INFO] [LaunchWrapper]: Calling tweak class net.minecraftforge.fml.relauncher.CoreModManager$FMLPluginWrapper
+[11:26:36] [main/INFO] [MixinBooter]: Initializing MixinExtras...
+[11:26:37] [main/INFO] [MixinBooter]: Loading early loader com.cleanroommc.stripforgereq.StripLatestForgeRequirements for its mixins.
+[11:26:37] [main/INFO] [MixinBooter]: Adding [mixins.striplatestforgerequirements.json] mixin configuration.
+[11:26:37] [main/INFO] [MixinBooter]: Loading early loader com.cleanroommc.osxnarratorblocker.OSXNarratorBlocker for its mixins.
+[11:26:37] [main/INFO] [MixinBooter]: Adding [mixins.osxnarratorblocker.json] mixin configuration.
+[11:26:37] [main/INFO] [MixinBooter]: Added mixinbooter-11.13.jar to the classloader to process its mixin manifest attributes.
+[11:26:37] [main/INFO] [LaunchWrapper]: Calling tweak class zone.rong.mixinbooter.service.CoremodsRescuer
+[11:26:37] [main/INFO] [LaunchWrapper]: Calling tweak class net.minecraftforge.fml.relauncher.CoreModManager$FMLPluginWrapper
+[11:26:37] [main/ERROR] [FML]: FML appears to be missing any signature data. This is not a good thing
+[11:26:37] [main/INFO] [LaunchWrapper]: Calling tweak class net.minecraftforge.fml.relauncher.CoreModManager$FMLPluginWrapper
+[11:26:37] [main/INFO] [LaunchWrapper]: Calling tweak class net.minecraftforge.fml.relauncher.CoreModManager$FMLPluginWrapper
+[11:26:37] [main/INFO] [LaunchWrapper]: Calling tweak class net.minecraftforge.fml.relauncher.CoreModManager$FMLPluginWrapper
+[11:26:37] [main/INFO] [LaunchWrapper]: Calling tweak class org.spongepowered.asm.mixin.EnvironmentStateTweaker
+[11:26:37] [main/INFO] [LaunchWrapper]: Calling tweak class net.minecraftforge.fml.common.launcher.FMLDeobfTweaker
+[11:26:37] [main/INFO] [Astral Core]: [AstralTransformer] Loading patches...
+[11:26:37] [main/INFO] [Astral Core]: [AstralTransformer] Initialized! Loaded 14 class patches!
+[11:26:37] [main/INFO] [LaunchWrapper]: Calling tweak class net.minecraftforge.gradle.tweakers.AccessTransformerTweaker
+[11:26:37] [main/INFO] [GradleStart]: Remapping AccessTransformer rules...
+[11:26:37] [main/INFO] [LaunchWrapper]: Calling tweak class net.minecraftforge.fml.relauncher.CoreModManager$FMLPluginWrapper
+[11:26:37] [main/INFO] [LaunchWrapper]: Loading tweak class name net.minecraftforge.fml.common.launcher.TerminalTweaker
+[11:26:37] [main/INFO] [LaunchWrapper]: Calling tweak class net.minecraftforge.fml.common.launcher.TerminalTweaker
+[11:26:37] [main/INFO] [LaunchWrapper]: Launching wrapped minecraft {net.minecraft.client.main.Main}
+[11:26:37] [main/INFO] [Astral Core]: [AstralTransformer] Transforming net.minecraft.world.World : net.minecraft.world.World with 2 patches!
+[11:26:37] [main/INFO] [Astral Core]: [AstralTransformer] Applied patch PATCHSUNBRIGHTNESSWORLDCLIENT
+[11:26:37] [main/INFO] [Astral Core]: [AstralTransformer] Applied patch PATCHSUNBRIGHTNESSWORLDCOMMON
+[11:26:37] [main/INFO] [Astral Core]: [AstralTransformer] Transforming net.minecraft.entity.EntityLivingBase : net.minecraft.entity.EntityLivingBase with 4 patches!
+[11:26:37] [main/INFO] [Astral Core]: [AstralTransformer] Applied patch PATCHAPPLYPOTIONEFFECTEVENT
+[11:26:37] [main/INFO] [Astral Core]: [AstralTransformer] Applied patch PATCHENTITYLIVINGBASEWATERSLOWDOWN
+[11:26:37] [main/INFO] [Astral Core]: [AstralTransformer] Applied patch PATCHSETPLAYERATTRIBUTE
+[11:26:37] [main/INFO] [Astral Core]: [AstralTransformer] Applied patch PATCHUPDATEELYTRA
+[11:26:38] [Client thread/INFO] [net.minecraft.client.Minecraft]: Setting user: Developer
+[11:26:38] [Client thread/INFO] [Astral Core]: [AstralTransformer] Transforming net.minecraft.item.ItemStack : net.minecraft.item.ItemStack with 2 patches!
+[11:26:38] [Client thread/INFO] [Astral Core]: [AstralTransformer] Applied patch PATCHMODIFYENCHANTMENTLEVELSTOOLTIP
+[11:26:38] [Client thread/INFO] [Astral Core]: [AstralTransformer] Applied patch PATCHMODIFYENCHANTMENTLEVELSTOOLTIPEVENT
+[11:26:38] [Client thread/INFO] [Astral Core]: [AstralTransformer] Transforming net.minecraft.entity.ai.attributes.AbstractAttributeMap : net.minecraft.entity.ai.attributes.AbstractAttributeMap with 1 patches!
+[11:26:38] [Client thread/INFO] [Astral Core]: [AstralTransformer] Applied patch PATCHADDPLAYERATTRIBUTE
+[11:26:39] [Client thread/INFO] [net.minecraft.client.Minecraft]: LWJGL Version: 2.9.4
+[11:26:40] [Client thread/INFO] [FML]: Could not load splash.properties, will create a default one
+[11:26:41] [Client thread/INFO] [MixinExtras|Service]: Initializing MixinExtras via com.llamalad7.mixinextras.service.MixinExtrasServiceImpl(version=0.5.5).
+[11:26:41] [Client thread/INFO] [FML]: -- System Details --
+Details:
+	Minecraft Version: 1.12.2
+	Operating System: Linux (amd64) version 6.17.0-1022-azure
+	Java Version: 1.8.0_504, Azul Systems, Inc.
+	Java VM Version: OpenJDK 64-Bit Server VM (mixed mode), Azul Systems, Inc.
+	Memory: 1187572808 bytes (1132 MB) / 1622147072 bytes (1547 MB) up to 5726797824 bytes (5461 MB)
+	JVM Flags: 2 total; -Xms1G -Xmx6G
+	IntCache: cache: 0, tcache: 0, allocated: 0, tallocated: 0
+	FML: 
+	Loaded coremods (and transformers): 
+MixinBooter (mixinbooter-11.13.jar)
+  
+StripLatestForgeRequirements (strip-latest-forge-requirements-1.0-dev.jar)
+  
+AstralCore (astral-sorcery-241721-3044416-deobf.jar)
+  
+OSXNarratorBlocker (osxnarratorblocker-1.0-dev.jar)
+  
+	GL info: ' Vendor: 'Mesa' Version: '4.5 (Compatibility Profile) Mesa 25.2.8-0ubuntu0.24.04.4' Renderer: 'llvmpipe (LLVM 20.1.2, 256 bits)'
+[11:26:41] [Client thread/INFO] [FML]: MinecraftForge v14.23.5.2847 Initialized
+[11:26:41] [Decompiler Thread/INFO] [fernflower]: Decompiling net/minecraft/crash/CrashReport
+[11:26:41] [Client thread/INFO] [FML]: Starts to replace vanilla recipe ingredients with ore ingredients.
+[11:26:41] [Client thread/INFO] [FML]: Invalid recipe found with multiple oredict ingredients in the same ingredient...
+[11:26:41] [Client thread/INFO] [FML]: Replaced 1227 ore ingredients
+[11:26:41] [Client thread/INFO] [FML]: Searching /home/runner/work/chaosshard/chaosshard/run/mods for mods
+[11:26:41] [Decompiler Thread/INFO] [fernflower]: Writing /home/runner/work/chaosshard/chaosshard/run/.mixin.out/java/net/minecraft/crash/CrashReport.java
+[11:26:41] [Decompiler Thread/INFO] [fernflower]: Decompiling net/minecraftforge/fml/common/LoadController
+[11:26:42] [Decompiler Thread/INFO] [fernflower]: Writing /home/runner/work/chaosshard/chaosshard/run/.mixin.out/java/net/minecraftforge/fml/common/LoadController.java
+[11:26:42] [Decompiler Thread/INFO] [fernflower]: Decompiling net/minecraftforge/fml/common/discovery/asm/ASMModParser
+[11:26:42] [Decompiler Thread/INFO] [fernflower]: Writing /home/runner/work/chaosshard/chaosshard/run/.mixin.out/java/net/minecraftforge/fml/common/discovery/asm/ASMModParser.java
+[11:26:42] [Decompiler Thread/INFO] [fernflower]: Decompiling net/minecraftforge/fml/common/FMLModContainer
+[11:26:42] [Decompiler Thread/INFO] [fernflower]: Writing /home/runner/work/chaosshard/chaosshard/run/.mixin.out/java/net/minecraftforge/fml/common/FMLModContainer.java
+[11:26:43] [Client thread/INFO] [FML]: Forge Mod Loader has identified 8 mods to load
+[11:26:43] [Client thread/INFO] [MixinBooter]: Loading late loader [ru.death.chaosshard.mixin.ChaosMixinLoader] for its mixins.
+[11:26:43] [Client thread/INFO] [MixinBooter]: Adding [mixins.chaosshard.astral.json] mixin configuration.
+[11:26:43] [Client thread/INFO] [FML]: Attempting connection with missing mods [minecraft, mcp, mixinbooter, FML, forge, chaosshard, astralsorcery, baubles] at CLIENT
+[11:26:43] [Client thread/INFO] [FML]: Attempting connection with missing mods [minecraft, mcp, mixinbooter, FML, forge, chaosshard, astralsorcery, baubles] at SERVER
+[11:26:43] [Client thread/ERROR] [FML]: The mod astralsorcery is expecting signature a0f0b759d895c15ceb3e3bcb5f3c2db7c582edf0 for source astral-sorcery-241721-3044416-deobf.jar, however there is no signature matching that description
+[11:26:43] [Decompiler Thread/INFO] [fernflower]: Decompiling hellfirepvp/astralsorcery/common/constellation/perk/PerkLevelManager
+[11:26:43] [Decompiler Thread/INFO] [fernflower]: Writing /home/runner/work/chaosshard/chaosshard/run/.mixin.out/java/hellfirepvp/astralsorcery/common/constellation/perk/PerkLevelManager.java
+[11:26:44] [Client thread/INFO] [net.minecraft.client.resources.SimpleReloadableResourceManager]: Reloading ResourceManager: Default, FMLFileResourcePack:Forge Mod Loader, FMLFileResourcePack:Minecraft Forge, FMLFileResourcePack:Chaos Shard, FMLFileResourcePack:Astral Sorcery, FMLFileResourcePack:Baubles
+[11:26:44] [Client thread/INFO] [Astral Core]: [AstralTransformer] Transforming net.minecraft.client.renderer.EntityRenderer : net.minecraft.client.renderer.EntityRenderer with 1 patches!
+[11:26:44] [Client thread/INFO] [Astral Core]: [AstralTransformer] Applied patch PATCHENTITYRENDEREREXTENDEDENTITYREACH
+[11:26:44] [Client thread/INFO] [FML]: Processing ObjectHolder annotations
+[11:26:44] [Client thread/INFO] [FML]: Found 1169 ObjectHolder annotations
+[11:26:44] [Client thread/INFO] [FML]: Identifying ItemStackHolder annotations
+[11:26:44] [Client thread/INFO] [FML]: Found 0 ItemStackHolder annotations
+[11:26:44] [Client thread/INFO] [FML]: Configured a dormant chunk cache size of 0
+[11:26:44] [Forge Version Check/INFO] [forge.VersionCheck]: [forge] Starting version check at http://files.minecraftforge.net/maven/net/minecraftforge/forge/promotions_slim.json
+[11:26:44] [Thread-3/INFO] [FML]: Using sync timing. 200 frames of Display.update took 841485905 nanos
+[11:26:44] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Refreshing and Invalidating Resources
+[11:26:44] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Finished reloading, rebinding textures...
+[11:26:44] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Preload mandatory textures
+[11:26:44] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/gui/guijblankbook.png to 6
+[11:26:44] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/gui/guijspacebook.png to 7
+[11:26:44] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/gui/guijspaceconstellation.png to 8
+[11:26:44] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/gui/guicontippaper.png to 9
+[11:26:44] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/gui/guicontippaper_blank.png to 10
+[11:26:44] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/gui/guijbookmark.png to 11
+[11:26:44] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/gui/guijbookmarkstretched.png to 12
+[11:26:44] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/gui/guiknowledgebookmark.png to 13
+[11:26:44] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/gui/guiknowledgebookmarkstretched.png to 14
+[11:26:44] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/gui/guijarrow.png to 15
+[11:26:44] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/misc/underline.png to 16
+[11:26:44] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/gui/guiresbg.png to 17
+[11:26:45] [Forge Version Check/INFO] [forge.VersionCheck]: [forge] Found status: OUTDATED Target: 14.23.5.2859
+[11:26:45] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/gui/guiresbg2.png to 18
+[11:26:45] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/gui/guiresbgcst.png to 19
+[11:26:45] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/gui/guijresoverlay.png to 20
+[11:26:45] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/gui/hud_charge_frame.png to 21
+[11:26:45] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/gui/hud_charge_charge.png to 22
+[11:26:45] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/gui/hud_item_frame.png to 23
+[11:26:45] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/gui/hud_item_frame_extender.png to 24
+[11:26:45] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/gui/observatoryframe.png to 25
+[11:26:45] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/gui/gridsextant.png to 26
+[11:26:45] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/gui/guiscructpreviewicons.png to 27
+[11:26:45] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/gui/slotgemcontext.png to 28
+[11:26:45] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/effect/connectionperks.png to 29
+[11:26:45] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/environment/star1.png to 30
+[11:26:45] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/environment/star2.png to 31
+[11:26:45] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/environment/connection.png to 32
+[11:26:45] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/environment/solareclipse.png to 33
+[11:26:45] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Preload textures
+[11:26:45] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/gui/cloud1.png to 34
+[11:26:45] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/gui/cloud2.png to 35
+[11:26:45] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/gui/cloud3.png to 36
+[11:26:45] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/gui/cloud4.png to 37
+[11:26:45] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/gui/cloud5.png to 38
+[11:26:45] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/gui/cloud6.png to 39
+[11:26:45] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/gui/cloud7.png to 40
+[11:26:45] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/gui/cloud8.png to 41
+[11:26:45] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/gui/guiconpaper.png to 42
+[11:26:45] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/gui/guialtar1.png to 43
+[11:26:45] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/gui/guialtar2.png to 44
+[11:26:45] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/gui/guialtar3.png to 45
+[11:26:45] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/gui/griddisc.png to 46
+[11:26:45] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/gui/gridatt.png to 47
+[11:26:45] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/gui/gridcst.png to 48
+[11:26:45] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/gui/guijstoragebook.png to 49
+[11:26:45] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/gui/guidrawing.png to 50
+[11:26:45] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/gui/guidrawing_empty.png to 51
+[11:26:45] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/effect/lightbeam.png to 52
+[11:26:45] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/effect/burst1.png to 53
+[11:26:45] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/effect/burst2.png to 54
+[11:26:45] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/effect/burst3.png to 55
+[11:26:45] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/effect/ceffect1.png to 56
+[11:26:45] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/effect/ceffect2.png to 57
+[11:26:45] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/effect/ceffect3.png to 58
+[11:26:45] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/effect/lightningpart.png to 59
+[11:26:45] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/effect/starlight_store.png to 60
+[11:26:45] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/effect/halo1.png to 61
+[11:26:45] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/effect/halo2.png to 62
+[11:26:46] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/effect/halo7.png to 63
+[11:26:46] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/effect/star1.png to 64
+[11:26:46] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/effect/star2.png to 65
+[11:26:46] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/effect/flarestar.png to 66
+[11:26:46] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/effect/flarestatic.png to 67
+[11:26:46] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/effect/flaresmall.png to 68
+[11:26:46] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/effect/flareperkinactive.png to 69
+[11:26:46] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/effect/flareperkactive.png to 70
+[11:26:46] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/effect/flareperkactivateable.png to 71
+[11:26:46] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/effect/unlock_perk.png to 72
+[11:26:46] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/effect/flare1.png to 73
+[11:26:46] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/effect/flare2.png to 74
+[11:26:46] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/effect/charge.png to 75
+[11:26:46] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/effect/vortex1.png to 76
+[11:26:46] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/effect/g_explode_blue.png to 77
+[11:26:46] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/effect/g_explode_gray.png to 78
+[11:26:46] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/effect/g_explode_red.png to 79
+[11:26:46] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/effect/g_explode_white.png to 80
+[11:26:46] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/misc/potion_cheatdeath.png to 81
+[11:26:46] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/misc/potion_bleed.png to 82
+[11:26:46] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/misc/moon_full.png to 83
+[11:26:46] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/misc/moon_waning1.png to 84
+[11:26:46] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/misc/moon_waning2.png to 85
+[11:26:46] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/misc/moon_waning3.png to 86
+[11:26:46] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/misc/moon_new.png to 87
+[11:26:46] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/misc/moon_waxing1.png to 88
+[11:26:46] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/misc/moon_waxing2.png to 89
+[11:26:46] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/misc/moon_waxing3.png to 90
+[11:26:46] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/misc/smoke.png to 91
+[11:26:46] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/effect/halo3.png to 92
+[11:26:46] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/effect/halo4.png to 93
+[11:26:46] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/effect/halo5.png to 94
+[11:26:46] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/effect/halo6.png to 95
+[11:26:46] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/effect/patreonflares/gray_mono.png to 96
+[11:26:46] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/effect/hook.png to 97
+[11:26:46] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/blocks/fluid/starlight_still.png to 98
+[11:26:46] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Initializing sprite library
+[11:26:46] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Texture Preloading took 1376ms!
+[11:26:46] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Successfully reloaded and rebound library.
+[11:26:46] [Client thread/INFO] [FML]: OBJLoader: Domain astralsorcery has been added.
+[11:26:46] [Client thread/INFO] [ChaosShard]: Созвездие Хаоса зарегистрировано: astralsorcery.constellation.chaos
+[11:26:47] [Client thread/INFO] [Astral Sorcery]: Crafttweaker not found!
+[11:26:48] [Client thread/INFO] [ChaosShard]: Осколок собран. Модуль Звёзд: активен
+[11:26:48] [Client thread/INFO] [FML]: Applying holder lookups
+[11:26:48] [Client thread/INFO] [FML]: Holder lookups applied
+[11:26:48] [Client thread/INFO] [FML]: Applying holder lookups
+[11:26:48] [Client thread/INFO] [FML]: Holder lookups applied
+[11:26:48] [Client thread/INFO] [FML]: Applying holder lookups
+[11:26:48] [Client thread/INFO] [FML]: Holder lookups applied
+[11:26:48] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/models/crystal_big_white.png to 99
+[11:26:48] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/models/crystal_big_blue.png to 100
+[11:26:48] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/models/crystal_big_red.png to 101
+[11:26:48] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/models/base/grindstone.png to 102
+[11:26:48] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/models/base/telescope.png to 103
+[11:26:48] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/models/base/altarattunement.png to 104
+[11:26:48] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/models/base/lens.png to 105
+[11:26:48] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/models/lens/lens_color.png to 106
+[11:26:48] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/models/prism/prism_color.png to 107
+[11:26:48] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/models/starmapper/astralsorcery_starmapper.png to 108
+[11:26:48] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/models/base/observatory.png to 109
+[11:26:48] [Client thread/INFO] [FML]: Applying holder lookups
+[11:26:48] [Client thread/INFO] [FML]: Holder lookups applied
+[11:26:48] [Client thread/INFO] [FML]: Injecting itemstacks
+[11:26:48] [Client thread/INFO] [FML]: Itemstack injection complete
+[11:26:48] [Sound Library Loader/INFO] [net.minecraft.client.audio.SoundManager]: Starting up SoundSystem...
+[11:26:48] [Thread-4/INFO] [net.minecraft.client.audio.SoundManager]: Initializing LWJGL OpenAL
+[11:26:48] [Thread-4/INFO] [net.minecraft.client.audio.SoundManager]: (The LWJGL binding of OpenAL.  For more information, see http://www.lwjgl.org)
+[11:26:48] [Thread-4/ERROR] [net.minecraft.client.audio.SoundManager]: Error in class 'LibraryLWJGLOpenAL'
+[11:26:48] [Thread-4/ERROR] [net.minecraft.client.audio.SoundManager]: Unable to initialize OpenAL.  Probable cause: OpenAL not supported.
+[11:26:48] [Thread-4/WARN] [net.minecraft.client.audio.SoundManager]: ERROR MESSAGE:
+[11:26:48] [Thread-4/INFO] [net.minecraft.client.audio.SoundManager]: Could not locate OpenAL library.
+[11:26:48] [Thread-4/WARN] [net.minecraft.client.audio.SoundManager]: STACK TRACE:
+[11:26:48] [Thread-4/INFO] [net.minecraft.client.audio.SoundManager]: org.lwjgl.openal.AL.create(AL.java:156)
+[11:26:48] [Thread-4/INFO] [net.minecraft.client.audio.SoundManager]: org.lwjgl.openal.AL.create(AL.java:102)
+[11:26:48] [Thread-4/INFO] [net.minecraft.client.audio.SoundManager]: org.lwjgl.openal.AL.create(AL.java:206)
+[11:26:48] [Thread-4/INFO] [net.minecraft.client.audio.SoundManager]: paulscode.sound.libraries.LibraryLWJGLOpenAL.init(LibraryLWJGLOpenAL.java:164)
+[11:26:48] [Thread-4/INFO] [net.minecraft.client.audio.SoundManager]: paulscode.sound.SoundSystem.CommandNewLibrary(SoundSystem.java:1576)
+[11:26:48] [Thread-4/INFO] [net.minecraft.client.audio.SoundManager]: paulscode.sound.SoundSystem.CommandQueue(SoundSystem.java:2572)
+[11:26:48] [Thread-4/INFO] [net.minecraft.client.audio.SoundManager]: paulscode.sound.CommandThread.run(CommandThread.java:121)
+[11:26:49] [Sound Library Loader/WARN] [net.minecraft.client.audio.SoundManager]: ERROR MESSAGE:
+[11:26:49] [Sound Library Loader/INFO] [net.minecraft.client.audio.SoundManager]: Could not locate OpenAL library.
+[11:26:49] [Sound Library Loader/INFO] [net.minecraft.client.audio.SoundManager]: Starting up SoundSystem...
+[11:26:49] [Client thread/INFO] [FML]: Max texture size: 16384
+[11:26:49] [Thread-6/INFO] [net.minecraft.client.audio.SoundManager]: Switching to No Sound
+[11:26:49] [Thread-6/INFO] [net.minecraft.client.audio.SoundManager]: (Silent Mode)
+[11:26:49] [Sound Library Loader/INFO] [net.minecraft.client.audio.SoundManager]: Sound engine started
+[11:26:50] [Client thread/INFO] [net.minecraft.client.renderer.texture.TextureMap]: Created: 1024x512 textures-atlas
+[11:26:50] [Client thread/ERROR] [FML]: Exception loading model for variant chaosshard:hero_echo#inventory for item "chaosshard:hero_echo", normal location exception: 
+net.minecraftforge.client.model.ModelLoaderRegistry$LoaderException: Exception loading model chaosshard:item/hero_echo with loader VanillaLoader.INSTANCE, skipping
+	at net.minecraftforge.client.model.ModelLoaderRegistry.getModel(ModelLoaderRegistry.java:161) ~[ModelLoaderRegistry.class:?]
+	at net.minecraftforge.client.model.ModelLoader.loadItemModels(ModelLoader.java:302) ~[ModelLoader.class:?]
+	at net.minecraft.client.renderer.block.model.ModelBakery.loadVariantItemModels(ModelBakery.java:175) ~[ModelBakery.class:?]
+	at net.minecraftforge.client.model.ModelLoader.setupModelRegistry(ModelLoader.java:151) ~[ModelLoader.class:?]
+	at net.minecraft.client.renderer.block.model.ModelManager.onResourceManagerReload(ModelManager.java:28) [ModelManager.class:?]
+	at net.minecraft.client.resources.SimpleReloadableResourceManager.registerReloadListener(SimpleReloadableResourceManager.java:128) [SimpleReloadableResourceManager.class:?]
+	at net.minecraft.client.Minecraft.init(Minecraft.java:560) [Minecraft.class:?]
+	at net.minecraft.client.Minecraft.run(Minecraft.java:422) [Minecraft.class:?]
+	at net.minecraft.client.main.Main.main(Main.java:118) [Main.class:?]
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[?:1.8.0_504]
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) ~[?:1.8.0_504]
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[?:1.8.0_504]
+	at java.lang.reflect.Method.invoke(Method.java:498) ~[?:1.8.0_504]
+	at net.minecraft.launchwrapper.Launch.launch(Launch.java:135) [launchwrapper-1.12.jar:?]
+	at net.minecraft.launchwrapper.Launch.main(Launch.java:28) [launchwrapper-1.12.jar:?]
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[?:1.8.0_504]
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) ~[?:1.8.0_504]
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[?:1.8.0_504]
+	at java.lang.reflect.Method.invoke(Method.java:498) ~[?:1.8.0_504]
+	at net.minecraftforge.gradle.GradleStartCommon.launch(GradleStartCommon.java:87) [mclauncher-1.12.2.jar:?]
+	at GradleStart.main(GradleStart.java:19) [mclauncher-1.12.2.jar:?]
+Caused by: java.io.FileNotFoundException: chaosshard:models/item/hero_echo.json
+	at net.minecraft.client.resources.FallbackResourceManager.getResource(FallbackResourceManager.java:69) ~[FallbackResourceManager.class:?]
+	at net.minecraft.client.resources.SimpleReloadableResourceManager.getResource(SimpleReloadableResourceManager.java:65) ~[SimpleReloadableResourceManager.class:?]
+	at net.minecraft.client.renderer.block.model.ModelBakery.loadModel(ModelBakery.java:334) ~[ModelBakery.class:?]
+	at net.minecraftforge.client.model.ModelLoader.access$1400(ModelLoader.java:115) ~[ModelLoader.class:?]
+	at net.minecraftforge.client.model.ModelLoader$VanillaLoader.loadModel(ModelLoader.java:861) ~[ModelLoader$VanillaLoader.class:?]
+	at net.minecraftforge.client.model.ModelLoaderRegistry.getModel(ModelLoaderRegistry.java:157) ~[ModelLoaderRegistry.class:?]
+	... 20 more
+[11:26:50] [Client thread/ERROR] [FML]: Exception loading model for variant chaosshard:hero_echo#inventory for item "chaosshard:hero_echo", blockstate location exception: 
+net.minecraftforge.client.model.ModelLoaderRegistry$LoaderException: Exception loading model chaosshard:hero_echo#inventory with loader VariantLoader.INSTANCE, skipping
+	at net.minecraftforge.client.model.ModelLoaderRegistry.getModel(ModelLoaderRegistry.java:161) ~[ModelLoaderRegistry.class:?]
+	at net.minecraftforge.client.model.ModelLoader.loadItemModels(ModelLoader.java:296) ~[ModelLoader.class:?]
+	at net.minecraft.client.renderer.block.model.ModelBakery.loadVariantItemModels(ModelBakery.java:175) ~[ModelBakery.class:?]
+	at net.minecraftforge.client.model.ModelLoader.setupModelRegistry(ModelLoader.java:151) ~[ModelLoader.class:?]
+	at net.minecraft.client.renderer.block.model.ModelManager.onResourceManagerReload(ModelManager.java:28) [ModelManager.class:?]
+	at net.minecraft.client.resources.SimpleReloadableResourceManager.registerReloadListener(SimpleReloadableResourceManager.java:128) [SimpleReloadableResourceManager.class:?]
+	at net.minecraft.client.Minecraft.init(Minecraft.java:560) [Minecraft.class:?]
+	at net.minecraft.client.Minecraft.run(Minecraft.java:422) [Minecraft.class:?]
+	at net.minecraft.client.main.Main.main(Main.java:118) [Main.class:?]
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[?:1.8.0_504]
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) ~[?:1.8.0_504]
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[?:1.8.0_504]
+	at java.lang.reflect.Method.invoke(Method.java:498) ~[?:1.8.0_504]
+	at net.minecraft.launchwrapper.Launch.launch(Launch.java:135) [launchwrapper-1.12.jar:?]
+	at net.minecraft.launchwrapper.Launch.main(Launch.java:28) [launchwrapper-1.12.jar:?]
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[?:1.8.0_504]
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) ~[?:1.8.0_504]
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[?:1.8.0_504]
+	at java.lang.reflect.Method.invoke(Method.java:498) ~[?:1.8.0_504]
+	at net.minecraftforge.gradle.GradleStartCommon.launch(GradleStartCommon.java:87) [mclauncher-1.12.2.jar:?]
+	at GradleStart.main(GradleStart.java:19) [mclauncher-1.12.2.jar:?]
+Caused by: net.minecraft.client.renderer.block.model.ModelBlockDefinition$MissingVariantException
+	at net.minecraft.client.renderer.block.model.ModelBlockDefinition.getVariant(ModelBlockDefinition.java:83) ~[ModelBlockDefinition.class:?]
+	at net.minecraftforge.client.model.ModelLoader$VariantLoader.loadModel(ModelLoader.java:1175) ~[ModelLoader$VariantLoader.class:?]
+	at net.minecraftforge.client.model.ModelLoaderRegistry.getModel(ModelLoaderRegistry.java:157) ~[ModelLoaderRegistry.class:?]
+	... 20 more
+[11:26:51] [Client thread/INFO] [FML]: Applying holder lookups
+[11:26:51] [Client thread/INFO] [FML]: Holder lookups applied
+[11:26:51] [Client thread/INFO] [Astral Sorcery]: Ignoring fluid crystaloil for rarity registry - it doesn't exist in the current environment
+[11:26:51] [Client thread/INFO] [Astral Sorcery]: Ignoring fluid empoweredoil for rarity registry - it doesn't exist in the current environment
+[11:26:51] [Client thread/INFO] [Astral Sorcery]: Ignoring fluid redstone for rarity registry - it doesn't exist in the current environment
+[11:26:51] [Client thread/INFO] [Astral Sorcery]: Ignoring fluid glowstone for rarity registry - it doesn't exist in the current environment
+[11:26:51] [Client thread/INFO] [Astral Sorcery]: Ignoring fluid ender for rarity registry - it doesn't exist in the current environment
+[11:26:51] [Client thread/INFO] [Astral Sorcery]: Ignoring fluid pyrotheum for rarity registry - it doesn't exist in the current environment
+[11:26:51] [Client thread/INFO] [Astral Sorcery]: Ignoring fluid cryotheum for rarity registry - it doesn't exist in the current environment
+[11:26:51] [Client thread/INFO] [Astral Sorcery]: Ignoring fluid refined_oil for rarity registry - it doesn't exist in the current environment
+[11:26:51] [Client thread/INFO] [Astral Sorcery]: Ignoring fluid refined_fuel for rarity registry - it doesn't exist in the current environment
+[11:26:51] [Client thread/INFO] [Astral Sorcery]: Ignoring fluid iron for rarity registry - it doesn't exist in the current environment
+[11:26:51] [Client thread/INFO] [Astral Sorcery]: Ignoring fluid gold for rarity registry - it doesn't exist in the current environment
+[11:26:51] [Client thread/INFO] [Astral Sorcery]: Ignoring fluid cobalt for rarity registry - it doesn't exist in the current environment
+[11:26:51] [Client thread/INFO] [Astral Sorcery]: Ignoring fluid ardite for rarity registry - it doesn't exist in the current environment
+[11:26:51] [Client thread/INFO] [Astral Sorcery]: Ignoring fluid emerald for rarity registry - it doesn't exist in the current environment
+[11:26:51] [Client thread/INFO] [Astral Sorcery]: Ignoring fluid fluidoil for rarity registry - it doesn't exist in the current environment
+[11:26:51] [Client thread/INFO] [Astral Sorcery]: Ignoring fluid fluidnitrodiesel for rarity registry - it doesn't exist in the current environment
+[11:26:51] [Client thread/INFO] [Astral Sorcery]: Ignoring fluid ic2uu_matter for rarity registry - it doesn't exist in the current environment
+[11:26:51] [Client thread/INFO] [Astral Sorcery]: Ignoring fluid ic2biomass for rarity registry - it doesn't exist in the current environment
+[11:26:51] [Client thread/INFO] [Astral Sorcery]: Ignoring fluid ic2biogas for rarity registry - it doesn't exist in the current environment
+[11:26:51] [Client thread/INFO] [Astral Sorcery]: Ignoring fluid mana for rarity registry - it doesn't exist in the current environment
+[11:26:51] [Client thread/INFO] [Astral Sorcery]: Ignoring fluid nacre for rarity registry - it doesn't exist in the current environment
+[11:26:51] [Decompiler Thread/INFO] [fernflower]: Decompiling hellfirepvp/astralsorcery/common/constellation/perk/PlayerAttributeMap
+[11:26:51] [Client thread/INFO] [Astral Core]: [AstralTransformer] Transforming net.minecraft.entity.ai.attributes.ModifiableAttributeInstance : net.minecraft.entity.ai.attributes.ModifiableAttributeInstance with 1 patches!
+[11:26:51] [Client thread/INFO] [Astral Core]: [AstralTransformer] Applied patch PATCHPOSTPROCESSATTRIBUTES
+[11:26:51] [Decompiler Thread/INFO] [fernflower]: Writing /home/runner/work/chaosshard/chaosshard/run/.mixin.out/java/hellfirepvp/astralsorcery/common/constellation/perk/PlayerAttributeMap.java
+[11:26:51] [Decompiler Thread/INFO] [fernflower]: Decompiling hellfirepvp/astralsorcery/common/constellation/distribution/ConstellationSkyHandler
+[11:26:51] [Client thread/INFO] [Astral Sorcery]: Loaded OAK of minecraft into tree registry.
+[11:26:51] [Client thread/INFO] [Astral Sorcery]: Loaded SPRUCE of minecraft into tree registry.
+[11:26:51] [Client thread/INFO] [Astral Sorcery]: Loaded BIRCH of minecraft into tree registry.
+[11:26:51] [Client thread/INFO] [Astral Sorcery]: Loaded JUNGLE of minecraft into tree registry.
+[11:26:51] [Client thread/INFO] [Astral Sorcery]: Loaded ACACIA of minecraft into tree registry.
+[11:26:51] [Client thread/INFO] [Astral Sorcery]: Loaded DARK_OAK of minecraft into tree registry.
+[11:26:51] [Client thread/INFO] [Astral Sorcery]: Not loading tree type SLIME as the mod tconstruct is not loaded.
+[11:26:51] [Client thread/INFO] [Astral Sorcery]: [AssetLibrary] Allocated astralsorcery:textures/gui/guijtextarea.png to 117
+[11:26:51] [Decompiler Thread/INFO] [fernflower]: Writing /home/runner/work/chaosshard/chaosshard/run/.mixin.out/java/hellfirepvp/astralsorcery/common/constellation/distribution/ConstellationSkyHandler.java
+[11:26:51] [Client thread/INFO] [ChaosShard]: [clienttest] включён
+[11:26:51] [Client thread/INFO] [FML]: Injecting itemstacks
+[11:26:51] [Client thread/INFO] [FML]: Itemstack injection complete
+[11:26:51] [Client thread/INFO] [Astral Sorcery]: Post compile recipes
+[11:26:51] [AstralSorcery Patreon Effect Loader/INFO] [STDERR]: [java.lang.ThreadGroup:uncaughtException:1052]: com.google.gson.JsonSyntaxException: java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING at line 1 column 1 path $
+[11:26:51] [AstralSorcery Patreon Effect Loader/INFO] [STDERR]: [java.lang.ThreadGroup:uncaughtException:1052]: 	at com.google.gson.internal.bind.ReflectiveTypeAdapterFactory$Adapter.read(ReflectiveTypeAdapterFactory.java:224)
+[11:26:51] [AstralSorcery Patreon Effect Loader/INFO] [STDERR]: [java.lang.ThreadGroup:uncaughtException:1052]: 	at com.google.gson.Gson.fromJson(Gson.java:887)
+[11:26:51] [AstralSorcery Patreon Effect Loader/INFO] [STDERR]: [java.lang.ThreadGroup:uncaughtException:1052]: 	at com.google.gson.Gson.fromJson(Gson.java:825)
+[11:26:51] [AstralSorcery Patreon Effect Loader/INFO] [STDERR]: [java.lang.ThreadGroup:uncaughtException:1052]: 	at hellfirepvp.astralsorcery.common.base.patreon.PatreonDataManager.lambda$loadPatreonEffects$1(PatreonDataManager.java:52)
+[11:26:51] [AstralSorcery Patreon Effect Loader/INFO] [STDERR]: [java.lang.ThreadGroup:uncaughtException:1052]: 	at java.lang.Thread.run(Thread.java:750)
+[11:26:51] [AstralSorcery Patreon Effect Loader/INFO] [STDERR]: [java.lang.ThreadGroup:uncaughtException:1061]: Caused by: java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING at line 1 column 1 path $
+[11:26:51] [AstralSorcery Patreon Effect Loader/INFO] [STDERR]: [java.lang.ThreadGroup:uncaughtException:1061]: 	at com.google.gson.stream.JsonReader.beginObject(JsonReader.java:385)
+[11:26:51] [AstralSorcery Patreon Effect Loader/INFO] [STDERR]: [java.lang.ThreadGroup:uncaughtException:1061]: 	at com.google.gson.internal.bind.ReflectiveTypeAdapterFactory$Adapter.read(ReflectiveTypeAdapterFactory.java:213)
+[11:26:51] [AstralSorcery Patreon Effect Loader/INFO] [STDERR]: [java.lang.ThreadGroup:uncaughtException:1061]: 	... 4 more
+[11:26:51] [Client thread/INFO] [Astral Sorcery]: Item Colorization Helper: Rebuilding colorization cache! This might take longer for higher-res texture packs...
+[11:26:51] [Client thread/INFO] [Astral Sorcery]: Item Colorization Helper: Cache rebuilt! Time required: 69ms - Entries cached: 41
+[11:26:51] [Client thread/INFO] [ChaosShard]: Добавлены места на небе: теперь их 19
+[11:26:52] [Client thread/INFO] [Astral Core]: [AstralTransformer] Transforming net.minecraft.enchantment.EnchantmentHelper : net.minecraft.enchantment.EnchantmentHelper with 1 patches!
+[11:26:52] [Client thread/INFO] [Astral Core]: [AstralTransformer] Applied patch PATCHMODIFYENCHANTMENTLEVELS
+[11:26:52] [Client thread/INFO] [FML]: Forge Mod Loader has successfully loaded 8 mods
+[11:26:52] [Decompiler Thread/INFO] [fernflower]: Decompiling com/mojang/text2speech/Narrator
+[11:26:52] [Decompiler Thread/INFO] [fernflower]: Writing /home/runner/work/chaosshard/chaosshard/run/.mixin.out/java/com/mojang/text2speech/Narrator.java
+[11:26:52] [Client thread/WARN] [com.mojang.text2speech.NarratorLinux]: ERROR : Couldn't load Narrator library : Unable to load library 'fliteWrapper': Can't obtain InputStream for linux-x86-64/libfliteWrapper.so
+[11:26:52] [Client thread/INFO] [ChaosShard]: [clienttest] === Осколок Хаоса — клиентский прогон ===
+[11:26:52] [Realms Notification Availability checker #1/INFO] [com.mojang.realmsclient.client.RealmsClient]: Could not authorize you against Realms server: java.lang.RuntimeException: Failed to parse into SignedJWT: 0
+[11:26:52] [Client thread/INFO] [ChaosShard]: [clienttest]   [OK]   главное меню открылось
+[11:26:52] [Client thread/INFO] [ChaosShard]: [clienttest]   [OK]   модели предметов: 100
+[11:26:52] [Client thread/INFO] [ChaosShard]: [clienttest]   [OK]   названия предметов
+[11:26:52] [Client thread/INFO] [ChaosShard]: [clienttest]   [OK]   модели блоков: 118 состояний
+[11:26:52] [Client thread/INFO] [ChaosShard]: [clienttest]   [OK]   строки с % форматируются (ru_ru)
+[11:26:52] [Client thread/INFO] [ChaosShard]: [clienttest]   [OK]   отрисовщики существ
+[11:26:52] [Client thread/INFO] [ChaosShard]: [clienttest]   [OK]   названия существ
+[11:26:54] [Client thread/INFO] [ChaosShard]: [clienttest]   снимок: ct_01_menu.png
+[11:26:55] [Server thread/INFO] [net.minecraft.server.integrated.IntegratedServer]: Starting integrated minecraft server version 1.12.2
+[11:26:55] [Server thread/INFO] [net.minecraft.server.integrated.IntegratedServer]: Generating keypair
+[11:26:55] [Server thread/INFO] [FML]: Injecting existing registry data into this server instance
+[11:26:55] [Server thread/INFO] [FML]: Applying holder lookups
+[11:26:55] [Server thread/INFO] [FML]: Holder lookups applied
+[11:26:55] [Server thread/INFO] [FML]: Loading dimension 0 (chaosshard_clienttest) (net.minecraft.server.integrated.IntegratedServer@70a32fc9)
+[11:26:55] [Server thread/ERROR] [FML]: Parsing error loading built-in advancement chaosshard:m/starlight_dynamo
+com.google.gson.JsonSyntaxException: Expected item to be an item, was unknown string 'thermalexpansion:dynamo'
+	at net.minecraft.util.JsonUtils.getItem(JsonUtils.java:133) ~[JsonUtils.class:?]
+	at net.minecraft.util.JsonUtils.getItem(JsonUtils.java:150) ~[JsonUtils.class:?]
+	at net.minecraft.advancements.DisplayInfo.deserializeIcon(DisplayInfo.java:133) ~[DisplayInfo.class:?]
+	at net.minecraft.advancements.DisplayInfo.deserialize(DisplayInfo.java:111) ~[DisplayInfo.class:?]
+	at net.minecraft.advancements.Advancement$Builder.deserialize(Advancement.java:281) ~[Advancement$Builder.class:?]
+	at net.minecraft.advancements.AdvancementManager$1.deserialize(AdvancementManager.java:50) ~[AdvancementManager$1.class:?]
+	at net.minecraft.advancements.AdvancementManager$1.deserialize(AdvancementManager.java:46) ~[AdvancementManager$1.class:?]
+	at com.google.gson.internal.bind.TreeTypeAdapter.read(TreeTypeAdapter.java:69) ~[TreeTypeAdapter.class:?]
+	at net.minecraft.util.JsonUtils.gsonDeserialize(JsonUtils.java:435) ~[JsonUtils.class:?]
+	at net.minecraft.util.JsonUtils.gsonDeserialize(JsonUtils.java:467) ~[JsonUtils.class:?]
+	at net.minecraft.util.JsonUtils.gsonDeserialize(JsonUtils.java:491) ~[JsonUtils.class:?]
+	at net.minecraftforge.common.ForgeHooks.lambda$loadAdvancements$0(ForgeHooks.java:1381) ~[ForgeHooks.class:?]
+	at net.minecraftforge.common.crafting.CraftingHelper.findFiles(CraftingHelper.java:833) [CraftingHelper.class:?]
+	at net.minecraftforge.common.ForgeHooks.loadAdvancements(ForgeHooks.java:1359) [ForgeHooks.class:?]
+	at net.minecraftforge.common.ForgeHooks.loadAdvancements(ForgeHooks.java:1326) [ForgeHooks.class:?]
+	at net.minecraft.advancements.AdvancementManager.reload(AdvancementManager.java:70) [AdvancementManager.class:?]
+	at net.minecraft.advancements.AdvancementManager.<init>(AdvancementManager.java:61) [AdvancementManager.class:?]
+	at net.minecraft.world.WorldServer.init(WorldServer.java:161) [WorldServer.class:?]
+	at net.minecraft.server.integrated.IntegratedServer.loadAllWorlds(IntegratedServer.java:123) [IntegratedServer.class:?]
+	at net.minecraft.server.integrated.IntegratedServer.init(IntegratedServer.java:160) [IntegratedServer.class:?]
+	at net.minecraft.server.MinecraftServer.run(MinecraftServer.java:551) [MinecraftServer.class:?]
+	at java.lang.Thread.run(Thread.java:750) [?:1.8.0_504]
+[11:26:55] [Server thread/ERROR] [FML]: Parsing error loading built-in advancement chaosshard:m/pocket_personal
+com.google.gson.JsonSyntaxException: Expected item to be an item, was unknown string 'dimdoors:quartz_dimensional_door'
+	at net.minecraft.util.JsonUtils.getItem(JsonUtils.java:133) ~[JsonUtils.class:?]
+	at net.minecraft.util.JsonUtils.getItem(JsonUtils.java:150) ~[JsonUtils.class:?]
+	at net.minecraft.advancements.DisplayInfo.deserializeIcon(DisplayInfo.java:133) ~[DisplayInfo.class:?]
+	at net.minecraft.advancements.DisplayInfo.deserialize(DisplayInfo.java:111) ~[DisplayInfo.class:?]
+	at net.minecraft.advancements.Advancement$Builder.deserialize(Advancement.java:281) ~[Advancement$Builder.class:?]
+	at net.minecraft.advancements.AdvancementManager$1.deserialize(AdvancementManager.java:50) ~[AdvancementManager$1.class:?]
+	at net.minecraft.advancements.AdvancementManager$1.deserialize(AdvancementManager.java:46) ~[AdvancementManager$1.class:?]
+	at com.google.gson.internal.bind.TreeTypeAdapter.read(TreeTypeAdapter.java:69) ~[TreeTypeAdapter.class:?]
+	at net.minecraft.util.JsonUtils.gsonDeserialize(JsonUtils.java:435) ~[JsonUtils.class:?]
+	at net.minecraft.util.JsonUtils.gsonDeserialize(JsonUtils.java:467) ~[JsonUtils.class:?]
+	at net.minecraft.util.JsonUtils.gsonDeserialize(JsonUtils.java:491) ~[JsonUtils.class:?]
+	at net.minecraftforge.common.ForgeHooks.lambda$loadAdvancements$0(ForgeHooks.java:1381) ~[ForgeHooks.class:?]
+	at net.minecraftforge.common.crafting.CraftingHelper.findFiles(CraftingHelper.java:833) [CraftingHelper.class:?]
+	at net.minecraftforge.common.ForgeHooks.loadAdvancements(ForgeHooks.java:1359) [ForgeHooks.class:?]
+	at net.minecraftforge.common.ForgeHooks.loadAdvancements(ForgeHooks.java:1326) [ForgeHooks.class:?]
+	at net.minecraft.advancements.AdvancementManager.reload(AdvancementManager.java:70) [AdvancementManager.class:?]
+	at net.minecraft.advancements.AdvancementManager.<init>(AdvancementManager.java:61) [AdvancementManager.class:?]
+	at net.minecraft.world.WorldServer.init(WorldServer.java:161) [WorldServer.class:?]
+	at net.minecraft.server.integrated.IntegratedServer.loadAllWorlds(IntegratedServer.java:123) [IntegratedServer.class:?]
+	at net.minecraft.server.integrated.IntegratedServer.init(IntegratedServer.java:160) [IntegratedServer.class:?]
+	at net.minecraft.server.MinecraftServer.run(MinecraftServer.java:551) [MinecraftServer.class:?]
+	at java.lang.Thread.run(Thread.java:750) [?:1.8.0_504]
+[11:26:55] [Server thread/ERROR] [FML]: Parsing error loading built-in advancement chaosshard:m/pocket_dungeon
+com.google.gson.JsonSyntaxException: Expected item to be an item, was unknown string 'dimdoors:iron_dimensional_door'
+	at net.minecraft.util.JsonUtils.getItem(JsonUtils.java:133) ~[JsonUtils.class:?]
+	at net.minecraft.util.JsonUtils.getItem(JsonUtils.java:150) ~[JsonUtils.class:?]
+	at net.minecraft.advancements.DisplayInfo.deserializeIcon(DisplayInfo.java:133) ~[DisplayInfo.class:?]
+	at net.minecraft.advancements.DisplayInfo.deserialize(DisplayInfo.java:111) ~[DisplayInfo.class:?]
+	at net.minecraft.advancements.Advancement$Builder.deserialize(Advancement.java:281) ~[Advancement$Builder.class:?]
+	at net.minecraft.advancements.AdvancementManager$1.deserialize(AdvancementManager.java:50) ~[AdvancementManager$1.class:?]
+	at net.minecraft.advancements.AdvancementManager$1.deserialize(AdvancementManager.java:46) ~[AdvancementManager$1.class:?]
+	at com.google.gson.internal.bind.TreeTypeAdapter.read(TreeTypeAdapter.java:69) ~[TreeTypeAdapter.class:?]
+	at net.minecraft.util.JsonUtils.gsonDeserialize(JsonUtils.java:435) ~[JsonUtils.class:?]
+	at net.minecraft.util.JsonUtils.gsonDeserialize(JsonUtils.java:467) ~[JsonUtils.class:?]
+	at net.minecraft.util.JsonUtils.gsonDeserialize(JsonUtils.java:491) ~[JsonUtils.class:?]
+	at net.minecraftforge.common.ForgeHooks.lambda$loadAdvancements$0(ForgeHooks.java:1381) ~[ForgeHooks.class:?]
+	at net.minecraftforge.common.crafting.CraftingHelper.findFiles(CraftingHelper.java:833) [CraftingHelper.class:?]
+	at net.minecraftforge.common.ForgeHooks.loadAdvancements(ForgeHooks.java:1359) [ForgeHooks.class:?]
+	at net.minecraftforge.common.ForgeHooks.loadAdvancements(ForgeHooks.java:1326) [ForgeHooks.class:?]
+	at net.minecraft.advancements.AdvancementManager.reload(AdvancementManager.java:70) [AdvancementManager.class:?]
+	at net.minecraft.advancements.AdvancementManager.<init>(AdvancementManager.java:61) [AdvancementManager.class:?]
+	at net.minecraft.world.WorldServer.init(WorldServer.java:161) [WorldServer.class:?]
+	at net.minecraft.server.integrated.IntegratedServer.loadAllWorlds(IntegratedServer.java:123) [IntegratedServer.class:?]
+	at net.minecraft.server.integrated.IntegratedServer.init(IntegratedServer.java:160) [IntegratedServer.class:?]
+	at net.minecraft.server.MinecraftServer.run(MinecraftServer.java:551) [MinecraftServer.class:?]
+	at java.lang.Thread.run(Thread.java:750) [?:1.8.0_504]
+[11:26:55] [Server thread/ERROR] [FML]: Parsing error loading built-in advancement chaosshard:m/limbo
+com.google.gson.JsonSyntaxException: Expected item to be an item, was unknown string 'dimdoors:unravelled_fabric'
+	at net.minecraft.util.JsonUtils.getItem(JsonUtils.java:133) ~[JsonUtils.class:?]
+	at net.minecraft.util.JsonUtils.getItem(JsonUtils.java:150) ~[JsonUtils.class:?]
+	at net.minecraft.advancements.DisplayInfo.deserializeIcon(DisplayInfo.java:133) ~[DisplayInfo.class:?]
+	at net.minecraft.advancements.DisplayInfo.deserialize(DisplayInfo.java:111) ~[DisplayInfo.class:?]
+	at net.minecraft.advancements.Advancement$Builder.deserialize(Advancement.java:281) ~[Advancement$Builder.class:?]
+	at net.minecraft.advancements.AdvancementManager$1.deserialize(AdvancementManager.java:50) ~[AdvancementManager$1.class:?]
+	at net.minecraft.advancements.AdvancementManager$1.deserialize(AdvancementManager.java:46) ~[AdvancementManager$1.class:?]
+	at com.google.gson.internal.bind.TreeTypeAdapter.read(TreeTypeAdapter.java:69) ~[TreeTypeAdapter.class:?]
+	at net.minecraft.util.JsonUtils.gsonDeserialize(JsonUtils.java:435) ~[JsonUtils.class:?]
+	at net.minecraft.util.JsonUtils.gsonDeserialize(JsonUtils.java:467) ~[JsonUtils.class:?]
+	at net.minecraft.util.JsonUtils.gsonDeserialize(JsonUtils.java:491) ~[JsonUtils.class:?]
+	at net.minecraftforge.common.ForgeHooks.lambda$loadAdvancements$0(ForgeHooks.java:1381) ~[ForgeHooks.class:?]
+	at net.minecraftforge.common.crafting.CraftingHelper.findFiles(CraftingHelper.java:833) [CraftingHelper.class:?]
+	at net.minecraftforge.common.ForgeHooks.loadAdvancements(ForgeHooks.java:1359) [ForgeHooks.class:?]
+	at net.minecraftforge.common.ForgeHooks.loadAdvancements(ForgeHooks.java:1326) [ForgeHooks.class:?]
+	at net.minecraft.advancements.AdvancementManager.reload(AdvancementManager.java:70) [AdvancementManager.class:?]
+	at net.minecraft.advancements.AdvancementManager.<init>(AdvancementManager.java:61) [AdvancementManager.class:?]
+	at net.minecraft.world.WorldServer.init(WorldServer.java:161) [WorldServer.class:?]
+	at net.minecraft.server.integrated.IntegratedServer.loadAllWorlds(IntegratedServer.java:123) [IntegratedServer.class:?]
+	at net.minecraft.server.integrated.IntegratedServer.init(IntegratedServer.java:160) [IntegratedServer.class:?]
+	at net.minecraft.server.MinecraftServer.run(MinecraftServer.java:551) [MinecraftServer.class:?]
+	at java.lang.Thread.run(Thread.java:750) [?:1.8.0_504]
+[11:26:55] [Server thread/ERROR] [FML]: Parsing error loading built-in advancement chaosshard:m/implant_installed
+com.google.gson.JsonSyntaxException: Expected item to be an item, was unknown string 'cyberware:cybereyes'
+	at net.minecraft.util.JsonUtils.getItem(JsonUtils.java:133) ~[JsonUtils.class:?]
+	at net.minecraft.util.JsonUtils.getItem(JsonUtils.java:150) ~[JsonUtils.class:?]
+	at net.minecraft.advancements.DisplayInfo.deserializeIcon(DisplayInfo.java:133) ~[DisplayInfo.class:?]
+	at net.minecraft.advancements.DisplayInfo.deserialize(DisplayInfo.java:111) ~[DisplayInfo.class:?]
+	at net.minecraft.advancements.Advancement$Builder.deserialize(Advancement.java:281) ~[Advancement$Builder.class:?]
+	at net.minecraft.advancements.AdvancementManager$1.deserialize(AdvancementManager.java:50) ~[AdvancementManager$1.class:?]
+	at net.minecraft.advancements.AdvancementManager$1.deserialize(AdvancementManager.java:46) ~[AdvancementManager$1.class:?]
+	at com.google.gson.internal.bind.TreeTypeAdapter.read(TreeTypeAdapter.java:69) ~[TreeTypeAdapter.class:?]
+	at net.minecraft.util.JsonUtils.gsonDeserialize(JsonUtils.java:435) ~[JsonUtils.class:?]
+	at net.minecraft.util.JsonUtils.gsonDeserialize(JsonUtils.java:467) ~[JsonUtils.class:?]
+	at net.minecraft.util.JsonUtils.gsonDeserialize(JsonUtils.java:491) ~[JsonUtils.class:?]
+	at net.minecraftforge.common.ForgeHooks.lambda$loadAdvancements$0(ForgeHooks.java:1381) ~[ForgeHooks.class:?]
+	at net.minecraftforge.common.crafting.CraftingHelper.findFiles(CraftingHelper.java:833) [CraftingHelper.class:?]
+	at net.minecraftforge.common.ForgeHooks.loadAdvancements(ForgeHooks.java:1359) [ForgeHooks.class:?]
+	at net.minecraftforge.common.ForgeHooks.loadAdvancements(ForgeHooks.java:1326) [ForgeHooks.class:?]
+	at net.minecraft.advancements.AdvancementManager.reload(AdvancementManager.java:70) [AdvancementManager.class:?]
+	at net.minecraft.advancements.AdvancementManager.<init>(AdvancementManager.java:61) [AdvancementManager.class:?]
+	at net.minecraft.world.WorldServer.init(WorldServer.java:161) [WorldServer.class:?]
+	at net.minecraft.server.integrated.IntegratedServer.loadAllWorlds(IntegratedServer.java:123) [IntegratedServer.class:?]
+	at net.minecraft.server.integrated.IntegratedServer.init(IntegratedServer.java:160) [IntegratedServer.class:?]
+	at net.minecraft.server.MinecraftServer.run(MinecraftServer.java:551) [MinecraftServer.class:?]
+	at java.lang.Thread.run(Thread.java:750) [?:1.8.0_504]
+[11:26:55] [Server thread/ERROR] [FML]: Parsing error loading built-in advancement chaosshard:m/enter_age
+com.google.gson.JsonSyntaxException: Expected item to be an item, was unknown string 'mystcraft:agebook'
+	at net.minecraft.util.JsonUtils.getItem(JsonUtils.java:133) ~[JsonUtils.class:?]
+	at net.minecraft.util.JsonUtils.getItem(JsonUtils.java:150) ~[JsonUtils.class:?]
+	at net.minecraft.advancements.DisplayInfo.deserializeIcon(DisplayInfo.java:133) ~[DisplayInfo.class:?]
+	at net.minecraft.advancements.DisplayInfo.deserialize(DisplayInfo.java:111) ~[DisplayInfo.class:?]
+	at net.minecraft.advancements.Advancement$Builder.deserialize(Advancement.java:281) ~[Advancement$Builder.class:?]
+	at net.minecraft.advancements.AdvancementManager$1.deserialize(AdvancementManager.java:50) ~[AdvancementManager$1.class:?]
+	at net.minecraft.advancements.AdvancementManager$1.deserialize(AdvancementManager.java:46) ~[AdvancementManager$1.class:?]
+	at com.google.gson.internal.bind.TreeTypeAdapter.read(TreeTypeAdapter.java:69) ~[TreeTypeAdapter.class:?]
+	at net.minecraft.util.JsonUtils.gsonDeserialize(JsonUtils.java:435) ~[JsonUtils.class:?]
+	at net.minecraft.util.JsonUtils.gsonDeserialize(JsonUtils.java:467) ~[JsonUtils.class:?]
+	at net.minecraft.util.JsonUtils.gsonDeserialize(JsonUtils.java:491) ~[JsonUtils.class:?]
+	at net.minecraftforge.common.ForgeHooks.lambda$loadAdvancements$0(ForgeHooks.java:1381) ~[ForgeHooks.class:?]
+	at net.minecraftforge.common.crafting.CraftingHelper.findFiles(CraftingHelper.java:833) [CraftingHelper.class:?]
+	at net.minecraftforge.common.ForgeHooks.loadAdvancements(ForgeHooks.java:1359) [ForgeHooks.class:?]
+	at net.minecraftforge.common.ForgeHooks.loadAdvancements(ForgeHooks.java:1326) [ForgeHooks.class:?]
+	at net.minecraft.advancements.AdvancementManager.reload(AdvancementManager.java:70) [AdvancementManager.class:?]
+	at net.minecraft.advancements.AdvancementManager.<init>(AdvancementManager.java:61) [AdvancementManager.class:?]
+	at net.minecraft.world.WorldServer.init(WorldServer.java:161) [WorldServer.class:?]
+	at net.minecraft.server.integrated.IntegratedServer.loadAllWorlds(IntegratedServer.java:123) [IntegratedServer.class:?]
+	at net.minecraft.server.integrated.IntegratedServer.init(IntegratedServer.java:160) [IntegratedServer.class:?]
+	at net.minecraft.server.MinecraftServer.run(MinecraftServer.java:551) [MinecraftServer.class:?]
+	at java.lang.Thread.run(Thread.java:750) [?:1.8.0_504]
+[11:26:55] [Server thread/ERROR] [FML]: Parsing error loading built-in advancement chaosshard:m/chaos_core
+com.google.gson.JsonSyntaxException: Expected item to be an item, was unknown string 'chaosshard:chaos_implant'
+	at net.minecraft.util.JsonUtils.getItem(JsonUtils.java:133) ~[JsonUtils.class:?]
+	at net.minecraft.util.JsonUtils.getItem(JsonUtils.java:150) ~[JsonUtils.class:?]
+	at net.minecraft.advancements.DisplayInfo.deserializeIcon(DisplayInfo.java:133) ~[DisplayInfo.class:?]
+	at net.minecraft.advancements.DisplayInfo.deserialize(DisplayInfo.java:111) ~[DisplayInfo.class:?]
+	at net.minecraft.advancements.Advancement$Builder.deserialize(Advancement.java:281) ~[Advancement$Builder.class:?]
+	at net.minecraft.advancements.AdvancementManager$1.deserialize(AdvancementManager.java:50) ~[AdvancementManager$1.class:?]
+	at net.minecraft.advancements.AdvancementManager$1.deserialize(AdvancementManager.java:46) ~[AdvancementManager$1.class:?]
+	at com.google.gson.internal.bind.TreeTypeAdapter.read(TreeTypeAdapter.java:69) ~[TreeTypeAdapter.class:?]
+	at net.minecraft.util.JsonUtils.gsonDeserialize(JsonUtils.java:435) ~[JsonUtils.class:?]
+	at net.minecraft.util.JsonUtils.gsonDeserialize(JsonUtils.java:467) ~[JsonUtils.class:?]
+	at net.minecraft.util.JsonUtils.gsonDeserialize(JsonUtils.java:491) ~[JsonUtils.class:?]
+	at net.minecraftforge.common.ForgeHooks.lambda$loadAdvancements$0(ForgeHooks.java:1381) ~[ForgeHooks.class:?]
+	at net.minecraftforge.common.crafting.CraftingHelper.findFiles(CraftingHelper.java:833) [CraftingHelper.class:?]
+	at net.minecraftforge.common.ForgeHooks.loadAdvancements(ForgeHooks.java:1359) [ForgeHooks.class:?]
+	at net.minecraftforge.common.ForgeHooks.loadAdvancements(ForgeHooks.java:1326) [ForgeHooks.class:?]
+	at net.minecraft.advancements.AdvancementManager.reload(AdvancementManager.java:70) [AdvancementManager.class:?]
+	at net.minecraft.advancements.AdvancementManager.<init>(AdvancementManager.java:61) [AdvancementManager.class:?]
+	at net.minecraft.world.WorldServer.init(WorldServer.java:161) [WorldServer.class:?]
+	at net.minecraft.server.integrated.IntegratedServer.loadAllWorlds(IntegratedServer.java:123) [IntegratedServer.class:?]
+	at net.minecraft.server.integrated.IntegratedServer.init(IntegratedServer.java:160) [IntegratedServer.class:?]
+	at net.minecraft.server.MinecraftServer.run(MinecraftServer.java:551) [MinecraftServer.class:?]
+	at java.lang.Thread.run(Thread.java:750) [?:1.8.0_504]
+[11:26:55] [Server thread/ERROR] [FML]: Parsing error loading built-in advancement chaosshard:m/capture_1
+com.google.gson.JsonSyntaxException: Expected item to be an item, was unknown string 'defiledlands:grass_defiled'
+	at net.minecraft.util.JsonUtils.getItem(JsonUtils.java:133) ~[JsonUtils.class:?]
+	at net.minecraft.util.JsonUtils.getItem(JsonUtils.java:150) ~[JsonUtils.class:?]
+	at net.minecraft.advancements.DisplayInfo.deserializeIcon(DisplayInfo.java:133) ~[DisplayInfo.class:?]
+	at net.minecraft.advancements.DisplayInfo.deserialize(DisplayInfo.java:111) ~[DisplayInfo.class:?]
+	at net.minecraft.advancements.Advancement$Builder.deserialize(Advancement.java:281) ~[Advancement$Builder.class:?]
+	at net.minecraft.advancements.AdvancementManager$1.deserialize(AdvancementManager.java:50) ~[AdvancementManager$1.class:?]
+	at net.minecraft.advancements.AdvancementManager$1.deserialize(AdvancementManager.java:46) ~[AdvancementManager$1.class:?]
+	at com.google.gson.internal.bind.TreeTypeAdapter.read(TreeTypeAdapter.java:69) ~[TreeTypeAdapter.class:?]
+	at net.minecraft.util.JsonUtils.gsonDeserialize(JsonUtils.java:435) ~[JsonUtils.class:?]
+	at net.minecraft.util.JsonUtils.gsonDeserialize(JsonUtils.java:467) ~[JsonUtils.class:?]
+	at net.minecraft.util.JsonUtils.gsonDeserialize(JsonUtils.java:491) ~[JsonUtils.class:?]
+	at net.minecraftforge.common.ForgeHooks.lambda$loadAdvancements$0(ForgeHooks.java:1381) ~[ForgeHooks.class:?]
+	at net.minecraftforge.common.crafting.CraftingHelper.findFiles(CraftingHelper.java:833) [CraftingHelper.class:?]
+	at net.minecraftforge.common.ForgeHooks.loadAdvancements(ForgeHooks.java:1359) [ForgeHooks.class:?]
+	at net.minecraftforge.common.ForgeHooks.loadAdvancements(ForgeHooks.java:1326) [ForgeHooks.class:?]
+	at net.minecraft.advancements.AdvancementManager.reload(AdvancementManager.java:70) [AdvancementManager.class:?]
+	at net.minecraft.advancements.AdvancementManager.<init>(AdvancementManager.java:61) [AdvancementManager.class:?]
+	at net.minecraft.world.WorldServer.init(WorldServer.java:161) [WorldServer.class:?]
+	at net.minecraft.server.integrated.IntegratedServer.loadAllWorlds(IntegratedServer.java:123) [IntegratedServer.class:?]
+	at net.minecraft.server.integrated.IntegratedServer.init(IntegratedServer.java:160) [IntegratedServer.class:?]
+	at net.minecraft.server.MinecraftServer.run(MinecraftServer.java:551) [MinecraftServer.class:?]
+	at java.lang.Thread.run(Thread.java:750) [?:1.8.0_504]
+[11:26:55] [Server thread/INFO] [net.minecraft.advancements.AdvancementList]: Loaded 617 advancements
+[11:26:56] [Server thread/INFO] [Astral Sorcery]: Checking GatewayCache integrity for dimension 0
+[11:26:56] [Server thread/INFO] [Astral Sorcery]: GatewayCache checked and fully loaded in 0ms! Collected and checked 0 gateway nodes!
+[11:26:56] [Server thread/INFO] [Astral Core]: [AstralTransformer] Transforming net.minecraft.network.NetHandlerPlayServer : net.minecraft.network.NetHandlerPlayServer with 1 patches!
+[11:26:56] [Server thread/INFO] [Astral Core]: [AstralTransformer] Applied patch PATCHSERVEREXTENDENTITYINTERACTREACH
+[11:26:56] [Server thread/INFO] [FML]: Loading dimension -1 (chaosshard_clienttest) (net.minecraft.server.integrated.IntegratedServer@70a32fc9)
+[11:26:56] [Server thread/INFO] [Astral Sorcery]: Checking GatewayCache integrity for dimension -1
+[11:26:56] [Server thread/INFO] [Astral Sorcery]: GatewayCache checked and fully loaded in 0ms! Collected and checked 0 gateway nodes!
+[11:26:56] [Server thread/INFO] [FML]: Loading dimension 1 (chaosshard_clienttest) (net.minecraft.server.integrated.IntegratedServer@70a32fc9)
+[11:26:56] [Server thread/INFO] [Astral Sorcery]: Checking GatewayCache integrity for dimension 1
+[11:26:56] [Server thread/INFO] [Astral Sorcery]: GatewayCache checked and fully loaded in 0ms! Collected and checked 0 gateway nodes!
+[11:26:56] [Server thread/INFO] [FML]: Loading dimension 66 (chaosshard_clienttest) (net.minecraft.server.integrated.IntegratedServer@70a32fc9)
+[11:26:56] [Server thread/INFO] [Astral Sorcery]: Checking GatewayCache integrity for dimension 66
+[11:26:56] [Server thread/INFO] [Astral Sorcery]: GatewayCache checked and fully loaded in 0ms! Collected and checked 0 gateway nodes!
+[11:26:56] [Server thread/INFO] [FML]: Loading dimension 67 (chaosshard_clienttest) (net.minecraft.server.integrated.IntegratedServer@70a32fc9)
+[11:26:56] [Server thread/INFO] [Astral Sorcery]: Checking GatewayCache integrity for dimension 67
+[11:26:56] [Server thread/INFO] [Astral Sorcery]: GatewayCache checked and fully loaded in 0ms! Collected and checked 0 gateway nodes!
+[11:26:56] [Server thread/INFO] [FML]: Loading dimension 68 (chaosshard_clienttest) (net.minecraft.server.integrated.IntegratedServer@70a32fc9)
+[11:26:56] [Server thread/INFO] [Astral Sorcery]: Checking GatewayCache integrity for dimension 68
+[11:26:56] [Server thread/INFO] [Astral Sorcery]: GatewayCache checked and fully loaded in 0ms! Collected and checked 0 gateway nodes!
+[11:26:56] [Server thread/INFO] [net.minecraft.server.MinecraftServer]: Preparing start region for level 0
+[11:26:56] [Decompiler Thread/INFO] [fernflower]: Decompiling hellfirepvp/astralsorcery/common/constellation/distribution/WorldSkyHandler
+[11:26:56] [Server thread/INFO] [FML]: Unloading dimension -1
+[11:26:56] [Server thread/INFO] [FML]: Unloading dimension 1
+[11:26:56] [Server thread/INFO] [FML]: Unloading dimension 66
+[11:26:56] [Server thread/INFO] [FML]: Unloading dimension 67
+[11:26:56] [Server thread/INFO] [FML]: Unloading dimension 68
+[11:26:56] [Decompiler Thread/INFO] [fernflower]: Writing /home/runner/work/chaosshard/chaosshard/run/.mixin.out/java/hellfirepvp/astralsorcery/common/constellation/distribution/WorldSkyHandler.java
+[11:26:56] [Server thread/INFO] [net.minecraft.server.integrated.IntegratedServer]: Changing view distance to 12, from 10
+[11:26:57] [Server thread/INFO] [ChaosShard]: Постройка Ордена crystal_spires встала: -1016 4 -8
+[11:26:57] [Netty Local Client IO #0/INFO] [FML]: Server protocol version 2
+[11:26:57] [Netty Server IO #1/INFO] [FML]: Client protocol version 2
+[11:26:57] [Netty Server IO #1/INFO] [FML]: Client attempting to join with 8 mods : minecraft@1.12.2,chaosshard@0.45.4,FML@8.0.99.99,astralsorcery@1.10.27,forge@14.23.5.2847,mixinbooter@11.13,baubles@1.5.2,mcp@9.42
+[11:26:57] [Netty Local Client IO #0/INFO] [FML]: [Netty Local Client IO #0] Client side modded connection established
+[11:26:57] [Client thread/INFO] [Astral Sorcery]: Using gateway screenshots for folder 'chaosshard_clienttest'
+[11:26:57] [Server thread/INFO] [FML]: [Server thread] Server side modded connection established
+[11:26:57] [Server thread/INFO] [net.minecraft.server.management.PlayerList]: Developer[local:E:6bf73bbf] logged in with entity id 0 at (-824.5, 4.0, -40.5)
+[11:26:57] [Server thread/INFO] [net.minecraft.server.MinecraftServer]: Developer присоединился к игре
+[11:26:57] [Server thread/INFO] [net.minecraft.server.MinecraftServer]: Неизвестная команда. Введите /help для просмотра списка команд.
+[11:26:57] [Server thread/INFO] [FML]: Loading dimension 66 (chaosshard_clienttest) (net.minecraft.server.integrated.IntegratedServer@70a32fc9)
+[11:26:57] [Server thread/INFO] [ChaosShard]: Сердце Острова поставлено в BlockPos{x=0, y=131, z=5}
+[11:26:57] [Server thread/INFO] [Astral Sorcery]: [Astral Sorcery] Waiting for server synchronization on login for Developer...
+[11:26:57] [Server thread/INFO] [Astral Sorcery]: [Astral Sorcery] Synchronizing baseline information to Developer
+[11:26:58] [Server thread/INFO] [net.minecraft.server.integrated.IntegratedServer]: Saving and pausing game...
+[11:26:58] [Server thread/INFO] [net.minecraft.server.MinecraftServer]: Saving chunks for level 'chaosshard_clienttest'/overworld
+[11:26:58] [Server thread/INFO] [net.minecraft.server.MinecraftServer]: Saving chunks for level 'chaosshard_clienttest'/chaosshard_antechamber
+[11:26:59] [Client thread/INFO] [net.minecraft.client.gui.GuiNewChat]: [CHAT] Преддверие. Малый план, который Хаос создал для этого мира. Осмотреться. К краю не подходить: за ним пустота.
+[11:26:59] [Client thread/INFO] [net.minecraft.advancements.AdvancementList]: Loaded 8 advancements
+[11:26:59] [Client thread/INFO] [ChaosShard]: [clienttest]   [OK]   мир загружен
+[11:27:04] [Server thread/INFO] [net.minecraft.server.MinecraftServer]: Неизвестная команда. Введите /help для просмотра списка команд.
+[11:27:04] [Server thread/INFO] [net.minecraft.server.MinecraftServer]: Неизвестная команда. Введите /help для просмотра списка команд.
+[11:27:04] [Server thread/INFO] [net.minecraft.server.MinecraftServer]: Неизвестная команда. Введите /help для просмотра списка команд.
+[11:27:04] [Server thread/INFO] [net.minecraft.server.MinecraftServer]: Неизвестная команда. Введите /help для просмотра списка команд.
+[11:27:04] [Server thread/INFO] [net.minecraft.server.MinecraftServer]: Неизвестная команда. Введите /help для просмотра списка команд.
+[11:27:04] [Client thread/INFO] [ChaosShard]: [clienttest]   [OK]   блоки мода поставлены: 34
+[11:27:04] [Client thread/INFO] [ChaosShard]: [clienttest]   существа на снимке: [servant_hare, servant_tiger, servant_cat, servant_husk, servant_bone, servant_executioner, servant_reaper, servant_lumberjack, servant_miner, order_knight, hero, garrot, king, archon]
+[11:27:06] [Server thread/WARN] [net.minecraft.server.MinecraftServer]: Can't keep up! Did the system time change, or is the server overloaded? Running 6840ms behind, skipping 136 tick(s)
+[11:27:07] [Client thread/INFO] [net.minecraft.advancements.AdvancementList]: Loaded 9 advancements
+[11:27:08] [Client thread/INFO] [ChaosShard]: [clienttest]   снимок: ct_02_blocks.png
+[11:27:10] [Client thread/INFO] [ChaosShard]: [clienttest]   снимок: ct_03_entities.png
+[11:27:12] [Client thread/INFO] [ChaosShard]: [clienttest]   снимок: ct_04_grimoire_spells.png
+[11:27:13] [Client thread/INFO] [ChaosShard]: [clienttest]   снимок: ct_05_grimoire_rituals.png
+[11:27:14] [Client thread/INFO] [ChaosShard]: [clienttest]   снимок: ct_06_grimoire_rituals_end.png
+[11:27:15] [Client thread/INFO] [ChaosShard]: [clienttest]   снимок: ct_07_grimoire_servants.png
+[11:27:16] [Client thread/INFO] [ChaosShard]: [clienttest]   снимок: ct_08_spell_wheel.png
+[11:27:17] [Client thread/INFO] [ChaosShard]: [clienttest]   [OK]   окно Сердца открылось: GuiHeart
+[11:27:17] [Client thread/INFO] [ChaosShard]: [clienttest]   снимок: ct_09_heart.png
+[11:27:19] [Client thread/INFO] [ChaosShard]: [clienttest]   [OK]   окно Якоря открылось: GuiAnchor
+[11:27:19] [Client thread/INFO] [ChaosShard]: [clienttest]   снимок: ct_10_anchor_tab0.png
+[11:27:20] [Client thread/INFO] [ChaosShard]: [clienttest]   снимок: ct_11_anchor_tab1.png
+[11:27:21] [Client thread/INFO] [ChaosShard]: [clienttest]   снимок: ct_12_anchor_tab2.png
+[11:27:22] [Client thread/INFO] [ChaosShard]: [clienttest]   снимок: ct_13_anchor_tab3.png
+[11:27:23] [Client thread/INFO] [ChaosShard]: [clienttest]   снимок: ct_20_creative.png
+[11:27:24] [Client thread/INFO] [ChaosShard]: [clienttest]   снимок: ct_21_creative_end.png
+[11:27:27] [Client thread/INFO] [ChaosShard]: [clienttest]   снимок: ct_30_trophies.png
+[11:27:29] [Client thread/INFO] [ChaosShard]: [clienttest]   снимок: ct_31_trophies_turned.png
+[11:27:30] [Server thread/INFO] [ChaosShard]: Опора kael пала у BlockPos{x=33, y=128, z=-26}
+[11:27:30] [Client thread/INFO] [ChaosShard]: [clienttest]   [OK]   Светоч гаснет, а не исчезает сразу
+[11:27:30] [Client thread/INFO] [net.minecraft.advancements.AdvancementList]: Loaded 19 advancements
+[11:27:31] [Client thread/INFO] [ChaosShard]: [clienttest]   снимок: ct_32_hero_kneel.png
+[11:27:31] [Client thread/INFO] [ChaosShard]: [clienttest]   снимок: ct_33_hero_light.png
+[11:27:32] [Client thread/INFO] [ChaosShard]: [clienttest]   снимок: ct_34_hero_dissolve.png
+[11:27:35] [Client thread/INFO] [ChaosShard]: [clienttest]   рядом лежит: chaosshard:kael_blade 23 131 -40
+[11:27:35] [Client thread/INFO] [ChaosShard]: [clienttest]   рядом лежит: chaosshard:hero_echo 24 131 -39
+[11:27:35] [Client thread/INFO] [ChaosShard]: [clienttest]   [OK]   Светоч растаял
+[11:27:35] [Client thread/INFO] [ChaosShard]: [clienttest]   [OK]   клинок Каэля выпал, когда он растаял
+[11:27:35] [Client thread/INFO] [ChaosShard]: [clienttest] 
+[11:27:35] [Client thread/INFO] [ChaosShard]: [clienttest] Итого: пройдено 14, провалено 0
+[11:27:35] [Client thread/INFO] [ChaosShard]: CLIENTTEST DONE pass=14 fail=0
+[11:27:35] [Netty Local Client IO #0/INFO] [Astral Sorcery]: Cleaning client cache...
+[11:27:35] [Netty Local Client IO #0/INFO] [Astral Sorcery]: Cleared cached client data! Disconnected from server.
+[11:27:35] [Server thread/INFO] [net.minecraft.network.NetHandlerPlayServer]: Developer lost connection: Отключение
+[11:27:35] [Server thread/INFO] [net.minecraft.server.MinecraftServer]: Developer покинул игру
+[11:27:35] [Server thread/INFO] [net.minecraft.network.NetHandlerPlayServer]: Stopping singleplayer server as player logged out
+[11:27:35] [Server thread/INFO] [net.minecraft.server.MinecraftServer]: Stopping server
+[11:27:35] [Server thread/INFO] [net.minecraft.server.MinecraftServer]: Saving players
+[11:27:35] [Server thread/INFO] [net.minecraft.server.MinecraftServer]: Saving worlds
+[11:27:35] [Server thread/INFO] [net.minecraft.server.MinecraftServer]: Saving chunks for level 'chaosshard_clienttest'/overworld
+[11:27:35] [Server thread/INFO] [net.minecraft.server.MinecraftServer]: Saving chunks for level 'chaosshard_clienttest'/chaosshard_antechamber
+[11:27:36] [Server thread/INFO] [FML]: Unloading dimension 0
+[11:27:36] [Server thread/INFO] [FML]: Unloading dimension 66
+[11:27:36] [Server thread/INFO] [FML]: Applying holder lookups
+[11:27:36] [Server thread/INFO] [FML]: Holder lookups applied
+[11:27:36] [Client thread/INFO] [net.minecraft.client.Minecraft]: Stopping!
+[11:27:36] [Client thread/INFO] [net.minecraft.client.audio.SoundManager]: SoundSystem shutting down...
+[11:27:36] [Client thread/WARN] [net.minecraft.client.audio.SoundManager]: Author: Paul Lamb, www.paulscode.com
