@@ -468,6 +468,9 @@ public class ClientTest {
             w.setBlockState(at, ModBlocks.TROPHY.getDefaultState().withProperty(ru.death.chaosshard.hero.BlockTrophy.HERO, i), 2);
         }
         p.connection.setPlayerLocation(row.getX() + 0.5, row.getY() + 0.6, row.getZ() - 4.2, 0F, 8F);
+        // пустая рука, чтобы Гримуар не заслонял крайний трофей
+        p.inventory.currentItem = 8;
+        p.connection.sendPacket(new net.minecraft.network.play.server.SPacketHeldItemChange(8));
     }
 
     private void turnBack(IntegratedServer s, WorldServer w, EntityPlayerMP p) {

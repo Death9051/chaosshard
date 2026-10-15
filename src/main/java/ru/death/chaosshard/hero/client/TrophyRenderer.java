@@ -15,11 +15,11 @@ public class TrophyRenderer extends TileEntitySpecialRenderer<TileTrophy> {
     /** Высота модели трофея в пикселях модели — чтобы все стояли на подставке одного роста. */
     private static float scaleOf(ru.death.chaosshard.hero.Lightbearer h) {
         switch (h) {
-            case KAEL: return 0.56F;
-            case VELMOR: return 0.44F;
-            case LIAN: return 0.54F;
-            case ELIS: return 0.72F;
-            default: return 0.64F;
+            case KAEL: return 0.64F;
+            case VELMOR: return 0.52F;
+            case LIAN: return 0.62F;
+            case ELIS: return 0.8F;
+            default: return 0.72F;
         }
     }
 
@@ -39,7 +39,7 @@ public class TrophyRenderer extends TileEntitySpecialRenderer<TileTrophy> {
         boolean full = model != mc.getRenderItem().getItemModelMesher().getModelManager().getMissingModel();
         float t = te.getWorld().getTotalWorldTime() + pt;
         GlStateManager.pushMatrix();
-        GlStateManager.translate(x + 0.5, y + 1.3 + Math.sin(t / 20.0) * 0.05, z + 0.5);
+        GlStateManager.translate(x + 0.5, y + (full ? 1.42 : 1.3) + Math.sin(t / 20.0) * 0.05, z + 0.5);
         GlStateManager.rotate(t * 1.5F, 0, 1, 0);
         RenderHelper.enableStandardItemLighting();
         GlStateManager.enableRescaleNormal();
