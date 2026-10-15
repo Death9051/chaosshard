@@ -73,8 +73,10 @@ def CHOICE(*its):
 # ---------------------------------------------------------------- данные
 
 CHAPTERS = []   # (key, name, desc, icon)
-DISPLAY_ORDER = ["act0", "act1", "act2", "act3", "act4", "act5",
-                 "servants", "storage", "dungeons", "stars", "plans", "tech", "body", "evil"]
+DISPLAY_ORDER = ["act0", "servants", "storage", "tech",          # открываются в Акте 0
+                 "act1",
+                 "act2", "stars", "body", "dungeons", "evil", "plans",   # открываются Прорывом (Акт 2)
+                 "act3", "act4", "act5"]
 QUESTS = []     # dicts
 
 
@@ -1141,7 +1143,7 @@ def build():
             "tasks:9": tasks, "rewards:9": rewards,
         }
     lines = {}
-    # Порядок в книге: сначала сюжет (акты 0–5), потом побочные главы — в том порядке, в каком они открываются.
+    # Порядок в книге: каждая побочная глава — сразу за актом, в котором она открывается.
     # lineID — по CHAPTERS (не меняется, на него ничего не завязано), order — по DISPLAY_ORDER.
     order = {k: n for n, k in enumerate(DISPLAY_ORDER)}
     chapters = sorted(enumerate(CHAPTERS), key=lambda c: order.get(c[1][0], 100 + c[0]))
