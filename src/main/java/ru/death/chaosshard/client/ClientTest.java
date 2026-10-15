@@ -388,6 +388,9 @@ public class ClientTest {
                 step = 52;
                 return;
             case 55:
+                if (ru.death.chaosshard.cutscene.client.CutsceneClient.active()) {
+                    return;   // досмотреть сцену падения Опоры
+                }
                 onServer(this::graveShow);
                 wait = 40;
                 step++;
