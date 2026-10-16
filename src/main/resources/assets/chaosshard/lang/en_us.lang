@@ -1793,3 +1793,12 @@ chaosshard.dim.the_end=the End
 chaosshard.dim.chaosshard_rift=the Rift
 chaosshard.dim.chaosshard_antechamber=the Antechamber
 chaosshard.dim.chaosshard_archive=the Archive
+
+# Challenge loot bag
+item.chaosshard.loot_bag.name=Loot Pouch
+chaosshard.loot_bag.wave=Challenge: %s - wave %s
+chaosshard.loot_bag.final=Challenge reward: %s, tier %s
+chaosshard.loot_bag.more=...and %s more
+chaosshard.loot_bag.hint=Right-click to empty into your bag
+chaosshard.loot_bag.opened=The pouch is empty now: %s.
+chaosshard.loot_bag.empty=The pouch was empty.

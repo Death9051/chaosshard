@@ -1584,9 +1584,27 @@ public final class AutoTest {
             check(ru.death.chaosshard.challenge.ChallengeManager.of(me) == null, "Вызов завершён");
             check(nitGrew(challengeNit), "Нить выросла (или перелилась): " + challengeNit + " → " + ru.death.chaosshard.thread.ThreadManager.getPoints(me));
             check(((TileAnchor) ow.getTileEntity(anchorPos)).getCorrupted() > challengeCorrupt, "Якорь окреп");
-            int items = 0;
-            for (int i = 0; i < me.inventory.getSizeInventory(); i++) if (!me.inventory.getStackInSlot(i).isEmpty()) items++;
-            check(items > 0, "дары в сумке: стопок " + items);
+            int bags = 0, finals = 0, loose = 0;
+            net.minecraft.item.ItemStack fin = net.minecraft.item.ItemStack.EMPTY;
+            for (int i = 0; i < me.inventory.getSizeInventory(); i++) {
+                net.minecraft.item.ItemStack st = me.inventory.getStackInSlot(i);
+                if (st.isEmpty()) continue;
+                if (st.getItem() == ru.death.chaosshard.init.ModItems.LOOT_BAG) {
+                    bags++;
+                    if (st.hasEffect()) { finals++; fin = st; }
+                } else loose++;
+            }
+            check(bags == 4 && finals == 1, "награда в мешочках: за 3 волны и за Вызов: " + bags + " (за Вызов " + finals + ")");
+            check(loose == 0, "мимо мешочков в сумку ничего не упало: " + loose);
+            int inside = ru.death.chaosshard.challenge.ItemLootBag.contents(fin).size();
+            check(inside > 0, "в мешочке за Вызов строк добычи: " + inside);
+            me.inventory.clear();
+            me.setHeldItem(EnumHand.MAIN_HAND, fin);
+            fin.getItem().onItemRightClick(ow, me, EnumHand.MAIN_HAND);
+            int after = 0;
+            for (int i = 0; i < me.inventory.getSizeInventory(); i++) if (!me.inventory.getStackInSlot(i).isEmpty()) after++;
+            check(me.getHeldItemMainhand().getItem() != ru.death.chaosshard.init.ModItems.LOOT_BAG && after >= inside,
+                    "мешочек открыт: он пропал, в сумке стопок " + after);
             me.inventory.clear();
         });
         step("бесконечный: после волны можно уйти с наградой", () -> {
@@ -1615,11 +1633,41 @@ public final class AutoTest {
         until("последняя волна отбита — Вызов закрыт с наградой", () -> ru.death.chaosshard.challenge.ChallengeManager.of(me) == null, 60);
         step("награда за бесконечный в сумке", () -> {
             int items = 0;
-            for (int i = 0; i < me.inventory.getSizeInventory(); i++) if (!me.inventory.getStackInSlot(i).isEmpty()) items++;
-            check(items > 0, "стопок в сумке: " + items);
+            for (int i = 0; i < me.inventory.getSizeInventory(); i++) if (me.inventory.getStackInSlot(i).getItem() == ru.death.chaosshard.init.ModItems.LOOT_BAG) items++;
+            check(items > 0, "мешочков в сумке: " + items);
             me.inventory.clear();
         });
 
+        step("Твари Скверны нейтральны: сами не нападают, за удар мстят вместе", () -> {
+            if (!net.minecraftforge.fml.common.Loader.isModLoaded("defiledlands")) {
+                line("    Defiled Lands нет — не проверяется");
+                return;
+            }
+            BlockPos at = base.add(40, 0, -40);
+            java.util.List<net.minecraft.entity.EntityLiving> sh = new ArrayList<>();
+            for (int i = 0; i < 2; i++) {
+                Entity e = net.minecraft.entity.EntityList.createEntityByIDFromName(new ResourceLocation("defiledlands", "shambler"), ow);
+                if (!(e instanceof net.minecraft.entity.EntityLiving)) { check(false, "шамблер не создаётся"); return; }
+                e.setPosition(at.getX() + 0.5 + i * 3, at.getY() + 1, at.getZ() + 0.5);
+                ow.spawnEntity(e);
+                sh.add((net.minecraft.entity.EntityLiving) e);
+            }
+            net.minecraft.entity.EntityLiving a1 = sh.get(0), a2 = sh.get(1);
+            check(ru.death.chaosshard.compat.world.DefiledPeace.neutral(a1), "шамблер — нейтральная тварь Скверны");
+            a1.setAttackTarget(me);
+            check(a1.getAttackTarget() == null, "сам Осколка целью не берёт");
+            net.minecraftforge.event.entity.living.LivingAttackEvent hit = new net.minecraftforge.event.entity.living.LivingAttackEvent(me, DamageSource.causeMobDamage(a1), 4F);
+            MinecraftForge.EVENT_BUS.post(hit);
+            check(hit.isCanceled(), "без причины не ранит");
+            MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.living.LivingAttackEvent(a1, DamageSource.causePlayerDamage(me), 1F));
+            check(ru.death.chaosshard.compat.world.DefiledPeace.provokedBy(a2, me) && a2.getAttackTarget() == me, "сородич рядом мстит за удар");
+            net.minecraftforge.event.entity.living.LivingAttackEvent back = new net.minecraftforge.event.entity.living.LivingAttackEvent(me, DamageSource.causeMobDamage(a1), 4F);
+            MinecraftForge.EVENT_BUS.post(back);
+            check(!back.isCanceled(), "задетый бьёт в ответ");
+            Entity boss = net.minecraft.entity.EntityList.createEntityByIDFromName(new ResourceLocation("defiledlands", "the_destroyer"), ow);
+            check(boss == null || !ru.death.chaosshard.compat.world.DefiledPeace.neutral(boss), "босс Скверны — враг как прежде");
+            sh.forEach(Entity::setDead);
+        });
         section("Постройки Ордена в Лучезарии");
         step("все пять встают, блоки разобраны, сундуки с добычей", () -> {
             ru.death.chaosshard.structure.BlueprintPlacer.FAILED.clear();

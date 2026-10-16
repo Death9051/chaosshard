@@ -1816,3 +1816,12 @@ chaosshard.dim.the_end=Край
 chaosshard.dim.chaosshard_rift=Разлом
 chaosshard.dim.chaosshard_antechamber=Преддверие
 chaosshard.dim.chaosshard_archive=Архив
+
+# Мешочек с добычей Вызова
+item.chaosshard.loot_bag.name=Мешочек с добычей
+chaosshard.loot_bag.wave=Вызов: %s — волна %s
+chaosshard.loot_bag.final=Награда за Вызов: %s, ступень %s
+chaosshard.loot_bag.more=…и ещё %s
+chaosshard.loot_bag.hint=ПКМ — высыпать в сумку
+chaosshard.loot_bag.opened=Мешочек опустел: %s.
+chaosshard.loot_bag.empty=Мешочек был пуст.

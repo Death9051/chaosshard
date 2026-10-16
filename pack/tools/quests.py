@@ -610,8 +610,8 @@ q("a3_capture", "act3", 4, 2, "§5Первый захваченный край",
   I("defiledlands:grass_defiled"), adv("capture_1"), [NIT(30), XP(5)], ["a3_place"], main=True)
 
 q("a3_defiled", "act3", 4, 0, "Обитатели Скверны",
-  G + "Скверна зовёт своих: в осквернённых землях водятся твари Defiled Lands. Они не друзья — но и не враги Лорду. "
-  "Пока что.\n\n§7Убей 5 тварей в осквернённой земле.§r",
+  G + "Скверна зовёт своих: в осквернённых землях водятся твари Defiled Lands. Меня они признают своим и сами не нападают — "
+  "пока я их не трону. Ударишь одну — сородичи рядом будут мстить полминуты.\n\n§7Убей 5 тварей в осквернённой земле.§r",
   I("defiledlands:umbrium_ore"), {"taskID:8": "bq_standard:hunt", "target:8": "defiledlands:shambler", "required:3": 5,
                                   "ignoreNBT:1": 1, "subtypes:1": 1},
   [NIT(15), R(I("chaosshard:world_shard", 0, 2))], ["a3_place"])

@@ -55,6 +55,8 @@ public final class ModItems {
     public static Item RITUAL_SPHERE;
     /** Сфера Вызова (метаданные — сторона, состав — в NBT). */
     public static Item CHALLENGE_SPHERE;
+    /** Мешочек с добычей Вызова. */
+    public static Item LOOT_BAG;
 
     /** Клинок Каэля — трофей первой Опоры. */
     public static Item KAEL_BLADE;
@@ -100,6 +102,7 @@ public final class ModItems {
         RITUAL_SPHERE.setCreativeTab(ru.death.chaosshard.ChaosTab.TAB);
         CHALLENGE_SPHERE = add(new ru.death.chaosshard.challenge.ItemChallengeSphere(), "challenge_sphere");
         CHALLENGE_SPHERE.setCreativeTab(ru.death.chaosshard.ChaosTab.TAB);
+        LOOT_BAG = add(new ru.death.chaosshard.challenge.ItemLootBag(), "loot_bag");
         KAEL_BLADE = add(new ru.death.chaosshard.hero.ItemKaelBlade(), "kael_blade");
         KAEL_BLADE.setCreativeTab(ru.death.chaosshard.ChaosTab.TAB);
         IRENA_ROSARY = add(new ru.death.chaosshard.hero.ItemIrenaRosary(), "irena_rosary");

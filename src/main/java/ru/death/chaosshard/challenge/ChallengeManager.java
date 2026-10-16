@@ -523,12 +523,11 @@ public class ChallengeManager {
         int nit = (int) Math.round((4 + 2 * c.wave) * c.effTier() * mul);
         ThreadManager.addPoints(p, nit);
         int rolls = 1 + (c.wave >= 3 ? 1 : 0) + (w.rand.nextDouble() < mul - 1 ? 1 : 0);
-        give(w, p, "challenge/wave_" + c.spec.faction.name().toLowerCase(), rolls);
+        List<ItemStack> loot = roll(w, p, "challenge/wave_" + c.spec.faction.name().toLowerCase(), rolls);
         if (c.spec.faction == ChallengeFaction.CYBER && CYBERWARE) {
-            for (ItemStack s : ru.death.chaosshard.compat.body.CyberLoot.wave(w.rand, c.effTier(), mul)) {
-                ItemHandlerHelper.giveItemToPlayer(p, s);
-            }
+            loot.addAll(ru.death.chaosshard.compat.body.CyberLoot.wave(w.rand, c.effTier(), mul));
         }
+        ItemHandlerHelper.giveItemToPlayer(p, ItemLootBag.of(c.spec.faction, c.wave, false, loot));
         p.addExperience(8 * c.wave);
         w.playSound(null, p.getPosition(), SoundEvents.ENTITY_PLAYER_LEVELUP, SoundCategory.PLAYERS, 0.8F, 1.2F);
         p.sendMessage(Breach.grimoire("chaosshard.challenge.wave.done", c.wave, nit));
@@ -551,12 +550,11 @@ public class ChallengeManager {
         int nit = (int) Math.round(40 * tier * mul);
         ThreadManager.addPoints(p, nit);
         int rolls = tier + (int) Math.floor((mul - 1) * tier);
-        give(w, p, "challenge/final_" + c.spec.faction.name().toLowerCase(), Math.max(1, rolls));
+        List<ItemStack> loot = roll(w, p, "challenge/final_" + c.spec.faction.name().toLowerCase(), Math.max(1, rolls));
         if (c.spec.faction == ChallengeFaction.CYBER && CYBERWARE) {
-            for (ItemStack s : ru.death.chaosshard.compat.body.CyberLoot.victory(w.rand, tier, mul)) {
-                ItemHandlerHelper.giveItemToPlayer(p, s);
-            }
+            loot.addAll(ru.death.chaosshard.compat.body.CyberLoot.victory(w.rand, tier, mul));
         }
+        ItemHandlerHelper.giveItemToPlayer(p, ItemLootBag.of(c.spec.faction, tier, true, loot));
         if (!c.arena) {
             net.minecraft.tileentity.TileEntity te = w.getTileEntity(c.center);
             if (te instanceof TileAnchor) {
@@ -572,14 +570,15 @@ public class ChallengeManager {
         end(c, p);
     }
 
-    static void give(WorldServer w, EntityPlayerMP p, String table, int rolls) {
+    /** Бросить таблицу добычи rolls раз. */
+    static List<ItemStack> roll(WorldServer w, EntityPlayerMP p, String table, int rolls) {
         LootTable lt = w.getLootTableManager().getLootTableFromLocation(new ResourceLocation(ru.death.chaosshard.Tags.MOD_ID, table));
         LootContext ctx = new LootContext.Builder(w).withPlayer(p).withLuck(p.getLuck()).build();
+        List<ItemStack> out = new ArrayList<>();
         for (int i = 0; i < rolls; i++) {
-            for (ItemStack s : lt.generateLootForPools(w.rand, ctx)) {
-                ItemHandlerHelper.giveItemToPlayer(p, s);
-            }
+            out.addAll(lt.generateLootForPools(w.rand, ctx));
         }
+        return out;
     }
 
     /** Бесконечный: уйти с накопленным после отбитой волны. */
