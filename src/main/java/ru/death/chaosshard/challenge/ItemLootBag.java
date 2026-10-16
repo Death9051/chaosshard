@@ -127,9 +127,15 @@ public class ItemLootBag extends Item {
         return new ActionResult<>(EnumActionResult.SUCCESS, ItemStack.EMPTY);
     }
 
-    @Override
-    public boolean hasEffect(ItemStack stack) {
+    /** Мешочек за весь Вызов (а не за волну). */
+    public static boolean isFinal(ItemStack stack) {
         return stack.hasTagCompound() && stack.getTagCompound().getBoolean(FINAL);
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public boolean hasEffect(ItemStack stack) {
+        return isFinal(stack);
     }
 
     @Override

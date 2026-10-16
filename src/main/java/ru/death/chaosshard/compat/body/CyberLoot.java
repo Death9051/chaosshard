@@ -36,7 +36,7 @@ public final class CyberLoot {
     }
 
     public static boolean isScavenged(ItemStack s) {
-        return isImplant(s) && CyberwareAPI.getQualityTag(s) == CyberwareAPI.QUALITY_SCAVENGED;
+        return isImplant(s) && CyberwareAPI.getCyberware(s).getQuality(s) == CyberwareAPI.QUALITY_SCAVENGED;
     }
 
     public static int implantKinds() {
@@ -75,15 +75,26 @@ public final class CyberLoot {
         return id != null && "cyberware".equals(id.getNamespace()) && CyberwareAPI.isCyberware(s);
     }
 
-    /** Случайный имплант «снятый с трупа». */
+    private static List<ItemStack> scavengeable;
+
+    /** Случайный имплант «снятый с трупа» (только из тех, что бывают такого качества). */
     public static ItemStack scavenged(Random r) {
-        List<ItemStack> all = implants();
-        if (all.isEmpty()) {
+        if (scavengeable == null) {
+            List<ItemStack> out = new ArrayList<>();
+            for (ItemStack s : implants()) {
+                flaxbeard.cyberware.api.item.ICyberware w = CyberwareAPI.getCyberware(s);
+                if (w != null && w.canHoldQuality(s, CyberwareAPI.QUALITY_SCAVENGED)) {
+                    out.add(s);
+                }
+            }
+            scavengeable = out;
+        }
+        if (scavengeable.isEmpty()) {
             return ItemStack.EMPTY;
         }
-        ItemStack s = all.get(r.nextInt(all.size())).copy();
+        ItemStack s = scavengeable.get(r.nextInt(scavengeable.size())).copy();
         s.setCount(1);
-        return CyberwareAPI.writeQualityTag(s, CyberwareAPI.QUALITY_SCAVENGED);
+        return CyberwareAPI.getCyberware(s).setQuality(s, CyberwareAPI.QUALITY_SCAVENGED);
     }
 
     private static List<ItemStack> components(Random r, int n) {

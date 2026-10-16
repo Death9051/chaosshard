@@ -1591,7 +1591,7 @@ public final class AutoTest {
                 if (st.isEmpty()) continue;
                 if (st.getItem() == ru.death.chaosshard.init.ModItems.LOOT_BAG) {
                     bags++;
-                    if (st.hasEffect()) { finals++; fin = st; }
+                    if (ru.death.chaosshard.challenge.ItemLootBag.isFinal(st)) { finals++; fin = st; }
                 } else loose++;
             }
             check(bags == 4 && finals == 1, "награда в мешочках: за 3 волны и за Вызов: " + bags + " (за Вызов " + finals + ")");
