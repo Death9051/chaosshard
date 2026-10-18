@@ -255,6 +255,14 @@ public class ChallengeManager {
         }
     }
 
+    /** Кибер-зомби в Лучезарии не водятся: их приносит только Вызов «Сборщики» (естественное появление и рассадники — запрещены). */
+    @SubscribeEvent
+    public void onCyberSpawn(net.minecraftforge.event.entity.living.LivingSpawnEvent.CheckSpawn event) {
+        if (CYBERWARE && "cyberware:cyberzombie".equals(String.valueOf(net.minecraft.entity.EntityList.getKey(event.getEntityLiving())))) {
+            event.setResult(net.minecraftforge.fml.common.eventhandler.Event.Result.DENY);
+        }
+    }
+
     @SubscribeEvent
     public void onServerTick(TickEvent.ServerTickEvent event) {
         if (event.phase != TickEvent.Phase.END || ACTIVE.isEmpty()) {

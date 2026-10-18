@@ -258,6 +258,16 @@ public class Servants {
         m.targetTasks.taskEntries.clear();
         m.setCanPickUpLoot(false);
         m.tasks.addTask(0, new EntityAISwimming(m));
+        if (m instanceof EntityChaosBeast.Hare || m instanceof EntityChaosBeast.Cat) {
+            // заяц и кошка не дерутся: идут за хозяином, а если ранят — убегают
+            m.tasks.addTask(1, new net.minecraft.entity.ai.EntityAIPanic(m, 1.4D));
+            m.tasks.addTask(4, new FollowOwner(m));
+            m.tasks.addTask(6, new EntityAIWanderAvoidWater(m, 0.8D));
+            m.tasks.addTask(7, new EntityAIWatchClosest(m, EntityPlayer.class, 8.0F));
+            m.tasks.addTask(8, new EntityAILookIdle(m));
+            m.setAttackTarget(null);
+            return;
+        }
         m.tasks.addTask(2, new EntityAIAttackMelee(m, 1.2D, true));
         if (kind != null && kind.gatherer()) {
             // добытчик: работает у сундука, отбивается, только если тронули

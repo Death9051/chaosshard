@@ -110,7 +110,7 @@ public class ServantEffects {
         }
         event.setAmount(amount);
         if (has(m, HUSK_BITE)) {
-            t.addPotionEffect(new PotionEffect(MobEffects.HUNGER, 100, 1));
+            t.addPotionEffect(new PotionEffect(MobEffects.WEAKNESS, 100, 0));
             t.addPotionEffect(new PotionEffect(MobEffects.SLOWNESS, 60, 0));
         }
         if (has(m, BONE_WITHER)) {

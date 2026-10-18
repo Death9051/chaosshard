@@ -733,7 +733,7 @@ q("bd_start", "body", 0, 3, "§5Наскоро собранное тело", "",
 q("bd_g_cyber", "body", 0, 6, "§eСправочник: импланты", "", I(CW + "component", 3), lore(), [XP(1)], ["bd_start"])
 q("bd_zombie", "body", 2, 2, "Кибер-зомби", "", I(CW + "component", 0),
   {"taskID:8": "bq_standard:hunt", "target:8": "cyberware:cyberzombie", "required:3": 3, "ignoreNBT:1": 1, "subtypes:1": 1},
-  [NIT(10), R(I(CW + "component", 2, 2))], ["bd_start"])
+  [NIT(10), R(I(CW + "component", 2, 2))], ["bd_scavengers"])
 q("bd_parts", "body", 2, 4, "Детали", "", I(CW + "component", 1), got(I(CW + "component", 32767, 6)), [NIT(10)], ["bd_start"])
 q("bd_surgery", "body", 4, 3, "§5Операционная", "", I(CW + "surgery_chamber"),
   got(I(CW + "surgery_chamber"), I(CW + "surgery")), [NIT(15), XP(3)], ["bd_zombie", "bd_parts"], main=True)
@@ -1090,7 +1090,7 @@ q("a3_sign", "act3", 6, 11, "Знаки Якоря", "", I("chaosshard:anchor_se
 q("a3_alpha", "act3", 12, 4, "§5Альфа", "", I("chaosshard:chaos_anchor"), adv("anchor_alpha"), [NIT(80), XP(15)], ["a3_pillar"])
 q("a3_borrow", "act3", 14, 4, "Чужое ремесло", "", I("chaosshard:chaos_anchor"), adv("anchor_borrow"), [NIT(20), XP(4)], ["a3_alpha", "a3_spec"])
 q("a3_alpha_max", "act3", 14, 2, "§5Сердце сети", "", I("minecraft:nether_star"), adv("anchor_alpha_max"), [NIT(150), XP(25)], ["a3_alpha"])
-q("bd_scavengers", "body", 4, 1, "§bСборщики", "", I("chaosshard:challenge_sphere", 3), lore(), [XP(1)], ["bd_zombie", "ch_start"])
+q("bd_scavengers", "body", 4, 1, "§bСборщики", "", I("chaosshard:challenge_sphere", 3), lore(), [XP(1)], ["bd_start", "ch_start"])
 
 # ---------------------------------------------------------------- сборка
 

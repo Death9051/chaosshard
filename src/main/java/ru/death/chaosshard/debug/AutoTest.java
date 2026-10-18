@@ -460,6 +460,14 @@ public final class AutoTest {
                     me.getEntityBoundingBox().grow(8), b -> b.isEntityAlive() && b.beast() == BeastData.Beast.HARE);
             check(!l.isEmpty(), "заяц рядом после зова");
             check(Beasts.entry(ow, me.getUniqueID(), BeastData.Beast.HARE).level() >= 3, "уровень сохранился");
+            if (!l.isEmpty()) {
+                ru.death.chaosshard.servant.EntityChaosBeast h = l.get(0);
+                boolean fights = h.targetTasks.taskEntries.size() > 0;
+                for (net.minecraft.entity.ai.EntityAITasks.EntityAITaskEntry te : h.tasks.taskEntries) {
+                    fights |= te.action instanceof net.minecraft.entity.ai.EntityAIAttackMelee;
+                }
+                check(!fights, "заяц не нападает на мобов (нет боевого разума)");
+            }
         });
 
         section("Якорь и Скверна");
@@ -1489,6 +1497,10 @@ public final class AutoTest {
             net.minecraft.entity.EntityLiving m = ru.death.chaosshard.challenge.ChallengeFaction.CYBER.regular(ow, 2, 1, r);
             check(m != null && "cyberware:cyberzombie".equals(String.valueOf(net.minecraft.entity.EntityList.getKey(m))), "боец — кибер-зомби: "
                     + (m == null ? null : net.minecraft.entity.EntityList.getKey(m)));
+            net.minecraftforge.event.entity.living.LivingSpawnEvent.CheckSpawn cs = new net.minecraftforge.event.entity.living.LivingSpawnEvent.CheckSpawn(
+                    m, ow, (float) me.posX, (float) me.posY, (float) me.posZ, null);
+            MinecraftForge.EVENT_BUS.post(cs);
+            check(cs.getResult() == net.minecraftforge.fml.common.eventhandler.Event.Result.DENY, "сами по себе кибер-зомби в мире не появляются");
             int brutes = 0;
             for (int i = 0; i < 40; i++) {
                 if (ru.death.chaosshard.compat.body.CyberLoot.isBrute(ru.death.chaosshard.challenge.ChallengeFaction.CYBER.regular(ow, 4, 4, r))) brutes++;
