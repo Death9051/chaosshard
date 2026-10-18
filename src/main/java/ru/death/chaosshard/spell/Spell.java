@@ -25,7 +25,11 @@ public enum Spell {
     /** Стрела Хаоса: удар по цели на линии взгляда; по блоку — взрыв без разрушений. */
     BOLT(1, 10, 30, false, true, true),
     /** Форма Хаоса: боевая форма на 30 секунд. */
-    FORM(2, 50, 1200, false, false, true);
+    FORM(2, 50, 1200, false, false, true),
+    /** Проклятие: метка на враге — по нему бьют сильнее. */
+    CURSE(2, 12, 100, false, true, true),
+    /** Щит: поглощающий щит на 20 секунд. */
+    SHIELD(1, 15, 400, false, false, true);
 
     public final int minThread;
     public final int energy;

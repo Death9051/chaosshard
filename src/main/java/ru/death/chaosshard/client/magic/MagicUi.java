@@ -32,14 +32,16 @@ public final class MagicUi {
     public static ItemStack icon(Spell s) {
         switch (s) {
             case SPROUT: return new ItemStack(net.minecraft.init.Blocks.SAPLING);
-            case BRIDGE: return new ItemStack(ModBlocks.CHAOS_STONE);
-            case SPRING: return new ItemStack(net.minecraft.init.Items.WATER_BUCKET);
+            case BRIDGE: return new ItemStack(ModBlocks.CHAOS_TRAIL);
+            case SPRING: return new ItemStack(net.minecraft.init.Items.DRAGON_BREATH);
             case RIFT: return new ItemStack(net.minecraft.init.Items.IRON_PICKAXE);
             case STARSIGHT: return new ItemStack(net.minecraft.init.Items.ENDER_EYE);
             case RECALL: return new ItemStack(ModItems.BREACH_BOOK);
             case DASH: return new ItemStack(net.minecraft.init.Items.FEATHER);
             case BOLT: return new ItemStack(ModItems.VEIL_SHARD);
             case FORM: return new ItemStack(ModItems.CHAOS_ESSENCE);
+            case CURSE: return new ItemStack(net.minecraft.init.Items.FERMENTED_SPIDER_EYE);
+            case SHIELD: return new ItemStack(net.minecraft.init.Items.SHIELD);
             default: return new ItemStack(ModItems.GRIMOIRE);
         }
     }

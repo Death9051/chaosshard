@@ -84,6 +84,10 @@ public final class SpellEffects {
                 return bolt(p, target, pos, air);
             case FORM:
                 return form(p);
+            case CURSE:
+                return curse(p, target);
+            case SHIELD:
+                return shield(p);
             default:
                 return false;
         }
@@ -100,6 +104,8 @@ public final class SpellEffects {
                 return SpellData.b(p, s, 2) ? 40 : SpellData.b(p, s, 1) ? 24 : 8;
             case RECALL:
                 return SpellData.a(p, s, 2) ? 64 : SpellData.a(p, s, 1) ? 32 : 8;
+            case CURSE:
+                return 24;
             default:
                 return 8;
         }
@@ -776,6 +782,19 @@ public final class SpellEffects {
         if (e.getEntity().world.isRemote) {
             return;
         }
+        // Проклятие: по меченому бьют сильнее ты и твоя свита; Цепи 2 — твои удары лечат тебя
+        NBTTagCompound c = curseOf(e.getEntityLiving());
+        if (c != null && e.getSource().getTrueSource() != null) {
+            java.util.UUID owner = c.getUniqueId("owner");
+            net.minecraft.entity.Entity src = e.getSource().getTrueSource();
+            boolean mine = owner.equals(src.getUniqueID()) || Servants.isServantOf(src, owner);
+            if (mine) {
+                e.setAmount(e.getAmount() * c.getFloat("mult"));
+                if (c.getInteger("kind") == 2 && c.getInteger("tier") >= 2 && src instanceof EntityPlayer) {
+                    ((EntityPlayer) src).heal(e.getAmount() * 0.1F);
+                }
+            }
+        }
         // Берсерк 3: удары лечат
         if (e.getSource().getTrueSource() instanceof EntityPlayer) {
             EntityPlayer a = (EntityPlayer) e.getSource().getTrueSource();
@@ -798,6 +817,236 @@ public final class SpellEffects {
     public static void onKnockBack(LivingKnockBackEvent e) {
         if (e.getEntityLiving() instanceof EntityPlayer && formKind((EntityPlayer) e.getEntityLiving(), 1) == 2) {
             e.setCanceled(true);
+        }
+    }
+
+    // ================================================================== Проклятие (боевое)
+
+    static final String TAG_CURSE = "chaosshard_curse";
+
+    /**
+     * База: метка на враге на 15 с — по нему бьют сильнее (ты и твоя свита), он светится.
+     * A «Порча»: ещё иссушение; погибнув, проклятый передаёт порчу ближайшему врагу (на 2-й — сильнее;
+     *   на 3-й — двоим, и труп лопается Хаосом).
+     * B «Цепи»: замедление и слабость (на 2-й — удары по нему лечат тебя; на 3-й — цель скована на 4 с).
+     */
+    static boolean curse(EntityPlayerMP p, EntityLivingBase t) {
+        Spell s = Spell.CURSE;
+        if (t == null) {
+            SpellCaster.status(p, new TextComponentTranslation("chaosshard.spell.curse.no_target"));
+            return false;
+        }
+        double power = SpellMods.power(p, s);
+        int dur = (int) (300 * power);
+        int kind = SpellData.branch(p, s), tier = SpellData.tier(p, s);
+        float mult = (float) (1 + 0.25 * power + (kind == 1 && tier >= 2 ? 0.15 : 0));
+        mark(t, p.getUniqueID(), kind, tier, dur, mult);
+        WorldServer ws = (WorldServer) p.world;
+        SpellCaster.beam(ws, p.getPositionEyes(1.0F), t.getPositionVector().add(0, t.height / 2, 0));
+        ws.spawnParticle(EnumParticleTypes.SPELL_MOB, t.posX, t.posY + t.height / 2, t.posZ, 30, 0.3, 0.5, 0.3, 0.0);
+        p.world.playSound(null, t.getPosition(), SoundEvents.ENTITY_ELDER_GUARDIAN_CURSE, SoundCategory.PLAYERS, 0.4F, 1.4F);
+        return true;
+    }
+
+    /** Наложить метку (и её эффекты) на цель. */
+    static void mark(EntityLivingBase t, java.util.UUID owner, int kind, int tier, int dur, float mult) {
+        NBTTagCompound c = new NBTTagCompound();
+        c.setUniqueId("owner", owner);
+        c.setLong("until", t.world.getTotalWorldTime() + dur);
+        c.setInteger("kind", kind);
+        c.setInteger("tier", tier);
+        c.setFloat("mult", mult);
+        t.getEntityData().setTag(TAG_CURSE, c);
+        t.addPotionEffect(new PotionEffect(MobEffects.GLOWING, dur, 0, false, false));
+        if (kind == 1) {
+            t.addPotionEffect(new PotionEffect(MobEffects.WITHER, dur, tier >= 2 ? 1 : 0));
+        } else if (kind == 2) {
+            t.addPotionEffect(new PotionEffect(MobEffects.SLOWNESS, 120, 1));
+            t.addPotionEffect(new PotionEffect(MobEffects.WEAKNESS, 120, 0));
+            if (tier >= 3) {
+                t.addPotionEffect(new PotionEffect(MobEffects.SLOWNESS, 80, 6));
+                t.addPotionEffect(new PotionEffect(MobEffects.JUMP_BOOST, 80, 128));
+            }
+        }
+    }
+
+    /** Метка на существе (живая) или null. */
+    static NBTTagCompound curseOf(EntityLivingBase e) {
+        NBTTagCompound d = e.getEntityData();
+        if (!d.hasKey(TAG_CURSE)) {
+            return null;
+        }
+        NBTTagCompound c = d.getCompoundTag(TAG_CURSE);
+        return c.getLong("until") >= e.world.getTotalWorldTime() ? c : null;
+    }
+
+    /** Порча: погибший проклятый передаёт метку ближайшим врагам; на 3-й ступени — ещё и лопается. */
+    @SubscribeEvent
+    public static void onDeath(net.minecraftforge.event.entity.living.LivingDeathEvent e) {
+        EntityLivingBase dead = e.getEntityLiving();
+        if (dead.world.isRemote) {
+            return;
+        }
+        NBTTagCompound c = curseOf(dead);
+        if (c == null || c.getInteger("kind") != 1) {
+            return;
+        }
+        java.util.UUID owner = c.getUniqueId("owner");
+        int tier = c.getInteger("tier");
+        int jumps = tier >= 3 ? 2 : 1;
+        List<EntityLivingBase> near = dead.world.getEntitiesWithinAABB(EntityLivingBase.class, dead.getEntityBoundingBox().grow(6),
+                x -> x != dead && x.isEntityAlive() && x instanceof IMob && curseOf(x) == null);
+        near.sort((x, y) -> Double.compare(x.getDistanceSq(dead), y.getDistanceSq(dead)));
+        for (int i = 0; i < Math.min(jumps, near.size()); i++) {
+            mark(near.get(i), owner, 1, tier, 300, c.getFloat("mult"));
+            SpellCaster.beam((WorldServer) dead.world, dead.getPositionVector().add(0, dead.height / 2, 0),
+                    near.get(i).getPositionVector().add(0, near.get(i).height / 2, 0));
+        }
+        if (tier >= 3) {
+            EntityPlayer op = dead.world.getPlayerEntityByUUID(owner);
+            if (op instanceof EntityPlayerMP) {
+                SpellCaster.blast((EntityPlayerMP) op, dead.getPositionVector().add(0, dead.height / 2, 0), SpellCaster.boltDamage(op) * 0.6F);
+            }
+        }
+    }
+
+    // ================================================================== Щит (боевое)
+
+    static final String TAG_SHIELD_UNTIL = "chaosshard_shield_until";
+    static final String TAG_SHIELD_KIND = "chaosshard_shield_kind";
+    static final String TAG_SHIELD_TIER = "chaosshard_shield_tier";
+    static final String TAG_SHIELD_ABS = "chaosshard_shield_abs";
+
+    /**
+     * База: поглощающий щит (запас здоровья) на 20 с.
+     * A «Отражение»: стрелы и снаряды отлетают обратно в стрелка (на 2-й — щит крепче и дольше;
+     *   на 3-й — разбитый щит взрывается волной, отбрасывая врагов).
+     * B «Купол»: щит и на свиту в 12 блоках (на 2-й — в 20 и с сопротивлением; на 3-й — купол сбивает
+     *   вражеские снаряды рядом и всех лечит).
+     */
+    static boolean shield(EntityPlayerMP p) {
+        Spell s = Spell.SHIELD;
+        double power = SpellMods.power(p, s);
+        int kind = SpellData.branch(p, s), tier = SpellData.tier(p, s);
+        int dur = (int) ((kind == 1 && tier >= 2 ? 600 : 400) * power);
+        int amp = kind == 1 && tier >= 2 ? 2 : 1;
+        p.addPotionEffect(new PotionEffect(MobEffects.ABSORPTION, dur, amp, false, true));
+        NBTTagCompound d = p.getEntityData();
+        d.setLong(TAG_SHIELD_UNTIL, p.world.getTotalWorldTime() + dur);
+        d.setInteger(TAG_SHIELD_KIND, kind);
+        d.setInteger(TAG_SHIELD_TIER, tier);
+        d.setFloat(TAG_SHIELD_ABS, 0);
+        WorldServer ws = (WorldServer) p.world;
+        if (kind == 2) {
+            double r = (tier >= 2 ? 20 : 12) + 4 * SpellMods.area(p, s);
+            for (EntityLivingBase e : p.world.getEntitiesWithinAABB(EntityLivingBase.class, p.getEntityBoundingBox().grow(r),
+                    x -> x.isEntityAlive() && Servants.isServantOf(x, p.getUniqueID()))) {
+                e.addPotionEffect(new PotionEffect(MobEffects.ABSORPTION, dur, 1, false, true));
+                if (tier >= 2) {
+                    e.addPotionEffect(new PotionEffect(MobEffects.RESISTANCE, dur, 0, false, true));
+                }
+                if (tier >= 3) {
+                    e.addPotionEffect(new PotionEffect(MobEffects.REGENERATION, dur, 0, false, true));
+                }
+                ws.spawnParticle(EnumParticleTypes.END_ROD, e.posX, e.posY + e.height / 2, e.posZ, 8, 0.3, 0.4, 0.3, 0.02);
+            }
+            if (tier >= 2) {
+                p.addPotionEffect(new PotionEffect(MobEffects.RESISTANCE, dur, 0, false, true));
+            }
+            if (tier >= 3) {
+                p.addPotionEffect(new PotionEffect(MobEffects.REGENERATION, dur, 0, false, true));
+            }
+        }
+        ws.spawnParticle(EnumParticleTypes.SPELL_INSTANT, p.posX, p.posY + 1, p.posZ, 40, 0.6, 0.8, 0.6, 0.05);
+        p.world.playSound(null, p.getPosition(), SoundEvents.ITEM_SHIELD_BLOCK, SoundCategory.PLAYERS, 1.0F, 0.7F);
+        return true;
+    }
+
+    /** Какой щит действует: 0 — нет/базовый, 1 — Отражение, 2 — Купол (с не меньшей ступенью). */
+    static int shieldKind(EntityPlayer p, int minTier) {
+        NBTTagCompound d = p.getEntityData();
+        if (d.getLong(TAG_SHIELD_UNTIL) < p.world.getTotalWorldTime() || d.getInteger(TAG_SHIELD_TIER) < minTier) {
+            return 0;
+        }
+        return d.getInteger(TAG_SHIELD_KIND);
+    }
+
+    /** Отражение: снаряд, попавший в игрока со щитом, летит обратно. */
+    @SubscribeEvent
+    public static void onProjectile(net.minecraftforge.event.entity.ProjectileImpactEvent e) {
+        RayTraceResult hit = e.getRayTraceResult();
+        if (e.getEntity().world.isRemote || hit == null || !(hit.entityHit instanceof EntityPlayer)) {
+            return;
+        }
+        EntityPlayer p = (EntityPlayer) hit.entityHit;
+        if (shieldKind(p, 1) != 1) {
+            return;
+        }
+        net.minecraft.entity.Entity pr = e.getEntity();
+        if (pr instanceof net.minecraft.entity.projectile.EntityArrow) {
+            net.minecraft.entity.projectile.EntityArrow a = (net.minecraft.entity.projectile.EntityArrow) pr;
+            if (a.shootingEntity == p) {
+                return;
+            }
+            a.shootingEntity = p;
+        } else if (pr instanceof net.minecraft.entity.projectile.EntityFireball) {
+            net.minecraft.entity.projectile.EntityFireball f = (net.minecraft.entity.projectile.EntityFireball) pr;
+            if (f.shootingEntity == p) {
+                return;
+            }
+            f.shootingEntity = p;
+            f.accelerationX = -f.accelerationX;
+            f.accelerationY = -f.accelerationY;
+            f.accelerationZ = -f.accelerationZ;
+        }
+        pr.motionX = -pr.motionX;
+        pr.motionY = -pr.motionY;
+        pr.motionZ = -pr.motionZ;
+        pr.velocityChanged = true;
+        p.world.playSound(null, p.getPosition(), SoundEvents.ITEM_SHIELD_BLOCK, SoundCategory.PLAYERS, 0.8F, 1.4F);
+        e.setCanceled(true);
+    }
+
+    /** Купол 3 сбивает вражеские снаряды рядом; Отражение 3 — разбитый щит бьёт волной. */
+    @SubscribeEvent
+    public static void onShieldTick(TickEvent.PlayerTickEvent e) {
+        if (e.phase != TickEvent.Phase.END || e.player.world.isRemote || e.player.ticksExisted % 2 != 0) {
+            return;
+        }
+        EntityPlayer p = e.player;
+        NBTTagCompound d = p.getEntityData();
+        if (d.getLong(TAG_SHIELD_UNTIL) < p.world.getTotalWorldTime()) {
+            return;
+        }
+        int kind = shieldKind(p, 3);
+        if (kind == 2) {
+            for (net.minecraft.entity.Entity pr : p.world.getEntitiesWithinAABB(net.minecraft.entity.Entity.class, p.getEntityBoundingBox().grow(6),
+                    x -> x instanceof net.minecraft.entity.IProjectile || x instanceof net.minecraft.entity.projectile.EntityFireball)) {
+                net.minecraft.entity.Entity shooter = pr instanceof net.minecraft.entity.projectile.EntityArrow
+                        ? ((net.minecraft.entity.projectile.EntityArrow) pr).shootingEntity
+                        : pr instanceof net.minecraft.entity.projectile.EntityFireball ? ((net.minecraft.entity.projectile.EntityFireball) pr).shootingEntity
+                        : pr instanceof net.minecraft.entity.projectile.EntityThrowable ? ((net.minecraft.entity.projectile.EntityThrowable) pr).getThrower() : null;
+                if (shooter == null || shooter == p || Servants.isServantOf(shooter, p.getUniqueID()) || shooter instanceof EntityPlayer) {
+                    continue;
+                }
+                ((WorldServer) p.world).spawnParticle(EnumParticleTypes.END_ROD, pr.posX, pr.posY, pr.posZ, 6, 0.1, 0.1, 0.1, 0.05);
+                pr.setDead();
+            }
+        } else if (kind == 1) {
+            float abs = p.getAbsorptionAmount();
+            float was = d.getFloat(TAG_SHIELD_ABS);
+            if (was > 0 && abs <= 0) {
+                d.setInteger(TAG_SHIELD_TIER, 0);    // один раз
+                double power = SpellMods.power(p, Spell.SHIELD);
+                for (EntityLivingBase x : p.world.getEntitiesWithinAABB(EntityLivingBase.class, p.getEntityBoundingBox().grow(5),
+                        y -> SpellCaster.hostileTo(p, y))) {
+                    x.attackEntityFrom(DamageSource.causeIndirectMagicDamage(p, p), (float) (4 * power));
+                    x.knockBack(p, 1.5F, p.posX - x.posX, p.posZ - x.posZ);
+                }
+                ((WorldServer) p.world).spawnParticle(EnumParticleTypes.EXPLOSION_LARGE, p.posX, p.posY + 1, p.posZ, 1, 0.0, 0.0, 0.0, 0.0);
+                p.world.playSound(null, p.getPosition(), SoundEvents.ENTITY_GENERIC_EXPLODE, SoundCategory.PLAYERS, 0.6F, 1.6F);
+            }
+            d.setFloat(TAG_SHIELD_ABS, abs);
         }
     }
 }

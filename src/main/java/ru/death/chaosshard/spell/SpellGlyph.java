@@ -43,11 +43,11 @@ public enum SpellGlyph {
     public boolean fits(Spell s) {
         switch (this) {
             case WIDE:
-                return s == Spell.SPROUT || s == Spell.BRIDGE || s == Spell.SPRING || s == Spell.RIFT || s == Spell.STARSIGHT || s == Spell.BOLT;
+                return s == Spell.SPROUT || s == Spell.BRIDGE || s == Spell.SPRING || s == Spell.RIFT || s == Spell.STARSIGHT || s == Spell.BOLT || s == Spell.SHIELD;
             case POTENT:
-                return s == Spell.SPROUT || s == Spell.BRIDGE || s == Spell.STARSIGHT || s == Spell.DASH || s == Spell.BOLT || s == Spell.FORM;
+                return s == Spell.SPROUT || s == Spell.BRIDGE || s == Spell.STARSIGHT || s == Spell.DASH || s == Spell.BOLT || s == Spell.FORM || s == Spell.CURSE || s == Spell.SHIELD;
             case ECHO:
-                return s != Spell.RECALL && s != Spell.FORM && s != Spell.DASH && s != Spell.STARSIGHT && s != Spell.BRIDGE;
+                return s != Spell.RECALL && s != Spell.FORM && s != Spell.DASH && s != Spell.STARSIGHT && s != Spell.BRIDGE && s != Spell.CURSE && s != Spell.SHIELD;
             default:
                 return s != Spell.BOOK;
         }

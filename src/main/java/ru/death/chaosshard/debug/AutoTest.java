@@ -3102,6 +3102,65 @@ public final class AutoTest {
             me.setPosition(base.getX() + 0.5, base.getY() + 1, base.getZ() + 0.5);
         });
 
+        step("Проклятие и Щит", () -> {
+            BlockPos o = base.add(70, 0, 70);
+            ru.death.chaosshard.spell.SpellHeat.set(me, 0, 0);
+            Runnable ready = () -> {
+                ru.death.chaosshard.spell.SpellCaster.clearCooldowns(me);
+                ru.death.chaosshard.spell.ChaosEnergy.set(me, 9999);
+                ru.death.chaosshard.spell.SpellHeat.set(me, 0, 0);
+            };
+            me.setPositionAndRotation(o.getX() + 0.5, o.getY() + 1, o.getZ() + 0.5, 0, 0);
+            ru.death.chaosshard.spell.Spell CU = ru.death.chaosshard.spell.Spell.CURSE, SH = ru.death.chaosshard.spell.Spell.SHIELD;
+            // Проклятие: по меченому бьют сильнее
+            net.minecraft.entity.monster.EntityZombie zc = new net.minecraft.entity.monster.EntityZombie(ow);
+            zc.setPosition(o.getX() + 0.5, o.getY() + 1, o.getZ() + 4.5);
+            ow.spawnEntity(zc);
+            ready.run();
+            check(ru.death.chaosshard.spell.SpellCaster.castAt(me, CU, null, EnumFacing.UP, zc, null), "Проклятие легло");
+            float before = zc.getHealth();
+            zc.hurtResistantTime = 0;
+            zc.attackEntityFrom(net.minecraft.util.DamageSource.causePlayerDamage(me), 4);
+            check(before - zc.getHealth() > 4.5F, "по меченому урон больше: " + (before - zc.getHealth()));
+            // Порча: погибнув, передаёт метку соседу
+            ru.death.chaosshard.spell.SpellData.debugSet(me, CU, 1, 1);
+            net.minecraft.entity.monster.EntityZombie zn = new net.minecraft.entity.monster.EntityZombie(ow);
+            zn.setPosition(o.getX() + 2.5, o.getY() + 1, o.getZ() + 4.5);
+            ow.spawnEntity(zn);
+            ready.run();
+            ru.death.chaosshard.spell.SpellCaster.castAt(me, CU, null, EnumFacing.UP, zc, null);
+            zc.hurtResistantTime = 0;
+            zc.attackEntityFrom(net.minecraft.util.DamageSource.OUT_OF_WORLD, 1000);
+            check(zn.getEntityData().hasKey("chaosshard_curse"), "Порча перешла на соседа");
+            zn.setDead();
+            zc.setDead();
+            ru.death.chaosshard.spell.SpellData.debugSet(me, CU, 0, 0);
+            // Щит: запас здоровья
+            me.clearActivePotions();
+            ready.run();
+            check(ru.death.chaosshard.spell.SpellCaster.castAt(me, SH, null, EnumFacing.UP, null, null) && me.getAbsorptionAmount() > 0,
+                    "Щит дал запас здоровья: " + me.getAbsorptionAmount());
+            // Отражение: стрела летит обратно
+            ru.death.chaosshard.spell.SpellData.debugSet(me, SH, 1, 1);
+            ready.run();
+            ru.death.chaosshard.spell.SpellCaster.castAt(me, SH, null, EnumFacing.UP, null, null);
+            net.minecraft.entity.monster.EntitySkeleton sk = new net.minecraft.entity.monster.EntitySkeleton(ow);
+            sk.setPosition(o.getX() + 0.5, o.getY() + 1, o.getZ() + 8.5);
+            ow.spawnEntity(sk);
+            net.minecraft.entity.projectile.EntityTippedArrow arrow = new net.minecraft.entity.projectile.EntityTippedArrow(ow, sk);
+            arrow.motionZ = -1.5;
+            ow.spawnEntity(arrow);
+            boolean canceled = net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(
+                    new net.minecraftforge.event.entity.ProjectileImpactEvent.Arrow(arrow, new net.minecraft.util.math.RayTraceResult(me)));
+            check(canceled && arrow.shootingEntity == me && arrow.motionZ > 0, "Отражение: стрела развернулась к стрелку");
+            arrow.setDead();
+            sk.setDead();
+            ru.death.chaosshard.spell.SpellData.debugSet(me, SH, 0, 0);
+            me.clearActivePotions();
+            ru.death.chaosshard.spell.SpellCaster.clearCooldowns(me);
+            me.setPosition(base.getX() + 0.5, base.getY() + 1, base.getZ() + 0.5);
+        });
+
         if (Loader.isModLoaded("tconstruct")) {
             step("материалы Хаоса: уровни и модификаторы заклинаний", () -> {
             ru.death.chaosshard.spell.SpellHeat.set(me, 0, 0);   // разогрев не должен вмешиваться
