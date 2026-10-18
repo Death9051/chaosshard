@@ -1,0 +1,11 @@
+{
+  "book.page": {
+    "category": "master",
+    "subtitle": "chaosshard.subtitle.book_page",
+    "sounds": [
+      {"name": "chaosshard:book/page1", "volume": 0.8},
+      {"name": "chaosshard:book/page2", "volume": 0.8},
+      {"name": "chaosshard:book/page3", "volume": 0.8}
+    ]
+  }
+}

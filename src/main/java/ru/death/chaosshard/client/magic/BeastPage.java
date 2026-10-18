@@ -84,10 +84,11 @@ class BeastPage {
             gui.drawRow(row, ic, name, col, i == sel, mx, my);
         }
 
-        int x = gui.pageX(), y = top + 12, w = gui.pageW();
+        int x = gui.pageX(), y = top + 15, w = gui.pageW();
         if (sel < 0) {
             y = gui.title(tr("chaosshard.beast.intro"), x, y, ACCENT);
-            gui.paragraph(tr("chaosshard.beast.intro.text"), x, y, w, OPEN);
+            int ty = gui.paragraph(tr("chaosshard.beast.intro.text"), x, y, w, OPEN);
+            gui.noteKey("chaosshard.note.beasts", x + 4, ty + 4, gui.pageBottom(), -2.5F);
             return;
         }
         if (sel >= HEADER_ROW) {
@@ -411,6 +412,7 @@ class BeastPage {
             icons(u.offerings(), iconsX, y, mx, my);
             y += 17;
         }
+        gui.noteKey("chaosshard.note.kind." + k.key(), x + 4, y + 2, gui.pageBottom() + 8, -2.5F);
     }
 
     /**
@@ -427,9 +429,9 @@ class BeastPage {
             hoverLines = hover[0];
         }
         y += 23;
-        gui.text(tr("chaosshard.magic.need_thread", r.minThread), x, y + 6, r.minThread <= MagicUi.threadLevel() ? 0x9AD08A : 0xD07070);
+        gui.text(tr("chaosshard.magic.need_thread", r.minThread), x, y + 8, r.minThread <= MagicUi.threadLevel() ? 0x9AD08A : 0xD07070);
         gui.setFillTarget(r, x + w, y);
-        return y + 22;
+        return y + 30;
     }
 
     /** Нарисовать стопки в ряд; наведённая — в подсказку. Возвращает x после последней. */
