@@ -75,7 +75,7 @@ public class ServantEffects {
         if (has(m, HUSK_SAND)) {
             m.addPotionEffect(new PotionEffect(MobEffects.FIRE_RESISTANCE, 60, 0, true, false));
         }
-        // Приманка: твари вокруг бросаются на Скорлупу
+        // Приманка: твари вокруг бросаются на Хаска
         if (has(m, HUSK_BAIT) && sec % 10 == 0) {
             for (EntityLiving t : ws.getEntitiesWithinAABB(EntityLiving.class, m.getEntityBoundingBox().grow(12),
                     x -> x instanceof IMob && !Servants.isServant(x))) {

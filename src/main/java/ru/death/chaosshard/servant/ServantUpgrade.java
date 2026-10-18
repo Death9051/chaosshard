@@ -25,7 +25,7 @@ import java.util.List;
  * типа, которые стоят в круге (до 8 блоков от Чаши). Улучшение живёт в самом слуге: погиб — пропало.
  */
 public enum ServantUpgrade {
-    // Скорлупа
+    // Хаск
     HUSK_FLESH(Kind.HUSK, 0, 1, "minecraft:rotten_flesh", 4, "minecraft:leather", 0, 4),
     HUSK_BITE(Kind.HUSK, 0, 1, "minecraft:rotten_flesh", 4, "minecraft:spider_eye", 0, 2),
     HUSK_BLAST(Kind.HUSK, 1, 1, "minecraft:rotten_flesh", 4, "minecraft:gunpowder", 0, 4),

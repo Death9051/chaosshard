@@ -47,7 +47,7 @@ public final class ServantEntities {
         }
     }
 
-    /** Скорлупа Хаоса и добытчики. */
+    /** Хаск и добытчики. */
     public static class Husk extends EntityHusk {
         public Husk(World world) {
             super(world);

@@ -63,7 +63,7 @@ public class Servants {
     public static final String TAG_DIR = "chaosshard_dir";
 
     public enum Kind {
-        HUSK("chaosshard:servant_husk", "Скорлупа Хаоса", 30, 0),
+        HUSK("chaosshard:servant_husk", "Хаск", 30, 0),
         BONE("chaosshard:servant_bone", "Костяной страж", 40, 2),
         EXECUTIONER("chaosshard:servant_executioner", "Палач Хаоса", 50, 3),
         HARE("chaosshard:servant_hare", "Заяц", 20, 1),
