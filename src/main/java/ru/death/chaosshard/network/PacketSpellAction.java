@@ -9,10 +9,10 @@ import ru.death.chaosshard.spell.Spell;
 import ru.death.chaosshard.spell.SpellCaster;
 import ru.death.chaosshard.spell.SpellData;
 
-/** Клиент → сервер: купить перк, сменить форму, прочитать заклинание клавишей. */
+/** Клиент → сервер: купить перк, сменить форму, прочитать заклинание клавишей, вложить/вынуть глиф (arg = гнездо·16 + вид+1, 0 — вынуть). */
 public class PacketSpellAction implements IMessage {
 
-    public static final int BUY = 0, FORM = 1, CAST = 2;
+    public static final int BUY = 0, FORM = 1, CAST = 2, GLYPH = 3;
 
     private int action, spell, arg;
 
@@ -54,6 +54,9 @@ public class PacketSpellAction implements IMessage {
                         break;
                     case CAST:
                         SpellCaster.castKey(p);
+                        break;
+                    case GLYPH:
+                        ru.death.chaosshard.spell.SpellGlyphs.set(p, s, m.arg / 16, m.arg % 16 - 1);
                         break;
                     default:
                         break;

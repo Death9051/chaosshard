@@ -264,7 +264,7 @@ public final class SpellCaster {
         int ticks = (int) ((200 + 100 * flow) * power);
         int extra = 2 + 2 * flow;
         float chance = 0.1F * (1 + flow);
-        int r = form == 1 ? (SpellData.has(p, Spell.SPROUT, "wide") ? 2 : 1) : 0;
+        int r = (form == 1 ? (SpellData.has(p, Spell.SPROUT, "wide") ? 2 : 1) : 0) + SpellMods.area(p, Spell.SPROUT);
         int n = 0;
         for (BlockPos q : BlockPos.getAllInBox(pos.add(-r, -1, -r), pos.add(r, 1, r))) {
             if (SpellAccel.add(p.world, q, ticks, extra, chance)) {
@@ -293,14 +293,14 @@ public final class SpellCaster {
         EnumFacing dir = p.getHorizontalFacing();
         List<BlockPos> place = new ArrayList<>();
         if (form == 2) {
-            int r = range > 0 ? 3 : 2;
+            int r = (range > 0 ? 3 : 2) + SpellMods.area(p, Spell.BRIDGE);
             for (int dx = -r; dx <= r; dx++) {
                 for (int dz = -r; dz <= r; dz++) {
                     place.add(from.add(dx, 0, dz));
                 }
             }
         } else {
-            int len = 8 + 4 * range;
+            int len = 8 + 4 * range + 4 * SpellMods.area(p, Spell.BRIDGE);
             int up = p.rotationPitch < -10 ? 1 : p.rotationPitch > 10 ? -1 : 0;
             for (int i = 1; i <= len; i++) {
                 place.add(from.offset(dir, i).up(form == 1 ? up * i : 0));
@@ -338,7 +338,8 @@ public final class SpellCaster {
         World w = p.world;
         if (form == 2) {
             int n = 0;
-            for (BlockPos q : BlockPos.getAllInBox(pos.add(-2, -2, -2), pos.add(2, 2, 2))) {
+            int dr = 2 + SpellMods.area(p, Spell.SPRING);
+            for (BlockPos q : BlockPos.getAllInBox(pos.add(-dr, -dr, -dr), pos.add(dr, dr, dr))) {
                 if (w.getBlockState(q).getMaterial() == Material.WATER && p.canPlayerEdit(q, EnumFacing.UP, ItemStack.EMPTY)) {
                     w.setBlockState(q, Blocks.AIR.getDefaultState(), 2);
                     n++;
@@ -354,8 +355,9 @@ public final class SpellCaster {
         BlockPos at = pos.offset(side);
         List<BlockPos> spots = new ArrayList<>();
         if (form == 1) {
-            for (int dx = -1; dx <= 1; dx++) {
-                for (int dz = -1; dz <= 1; dz++) {
+            int lr = 1 + SpellMods.area(p, Spell.SPRING);
+            for (int dx = -lr; dx <= lr; dx++) {
+                for (int dz = -lr; dz <= lr; dz++) {
                     spots.add(at.add(dx, 0, dz));
                 }
             }
@@ -457,7 +459,7 @@ public final class SpellCaster {
         int radius = SpellData.rank(p, Spell.STARSIGHT, "radius");
         double power = SpellMods.power(p, Spell.STARSIGHT);
         if (form == 1) {
-            double r = radius == 0 ? 24 : radius == 1 ? 32 : 48;
+            double r = (radius == 0 ? 24 : radius == 1 ? 32 : 48) + 8 * SpellMods.area(p, Spell.STARSIGHT);
             int n = 0;
             for (EntityLivingBase e : p.world.getEntitiesWithinAABB(EntityLivingBase.class, p.getEntityBoundingBox().grow(r),
                     x -> x instanceof IMob && x.isEntityAlive())) {
@@ -468,7 +470,7 @@ public final class SpellCaster {
             return true;
         }
         if (form == 2) {
-            int r = 8 + 4 * radius;
+            int r = 8 + 4 * radius + 4 * SpellMods.area(p, Spell.STARSIGHT);
             boolean sort = SpellData.has(p, Spell.STARSIGHT, "sort");
             List<Long> pos = new ArrayList<>();
             List<Byte> tier = new ArrayList<>();
@@ -689,7 +691,7 @@ public final class SpellCaster {
         ws.spawnParticle(EnumParticleTypes.DRAGON_BREATH, at.x, at.y, at.z, 60, 1.2, 0.8, 1.2, 0.03);
         p.world.playSound(null, new BlockPos(at), SoundEvents.ENTITY_GENERIC_EXPLODE, SoundCategory.PLAYERS, 0.8F, 1.3F);
         int n = 0;
-        for (EntityLivingBase e : p.world.getEntitiesWithinAABB(EntityLivingBase.class, new AxisAlignedBB(at.x, at.y, at.z, at.x, at.y, at.z).grow(3),
+        for (EntityLivingBase e : p.world.getEntitiesWithinAABB(EntityLivingBase.class, new AxisAlignedBB(at.x, at.y, at.z, at.x, at.y, at.z).grow(3 + SpellMods.area(p, Spell.BOLT)),
                 x -> x != p && x.isEntityAlive() && !Servants.isServantOf(x, p.getUniqueID()) && !(x instanceof EntityPlayer))) {
             hit(p, e, dmg * 0.8F);
             n++;

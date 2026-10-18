@@ -220,6 +220,15 @@ public final class WildChaos {
                                     new net.minecraft.world.storage.loot.RandomValueRange(0, 6))},
                     new net.minecraft.world.storage.loot.conditions.LootCondition[0], "chaosshard:ritual_sphere"));
         }
+        // глиф Хаоса — модификатор заклинания, случайного вида
+        net.minecraft.item.Item glyph = ru.death.chaosshard.init.ModItems.SPELL_GLYPH;
+        if (glyph != null) {
+            entries.add(new net.minecraft.world.storage.loot.LootEntryItem(glyph, 4, 0,
+                    new net.minecraft.world.storage.loot.functions.LootFunction[]{
+                            new net.minecraft.world.storage.loot.functions.SetMetadata(new net.minecraft.world.storage.loot.conditions.LootCondition[0],
+                                    new net.minecraft.world.storage.loot.RandomValueRange(0, ru.death.chaosshard.spell.SpellGlyph.values().length - 1))},
+                    new net.minecraft.world.storage.loot.conditions.LootCondition[0], "chaosshard:spell_glyph"));
+        }
         entries.add(new net.minecraft.world.storage.loot.LootEntryEmpty(40, 0, new net.minecraft.world.storage.loot.conditions.LootCondition[0],
                 "chaosshard:nothing"));
         event.getTable().addPool(new net.minecraft.world.storage.loot.LootPool(entries.toArray(new net.minecraft.world.storage.loot.LootEntry[0]),

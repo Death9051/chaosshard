@@ -26,7 +26,8 @@ public class EnergyHud {
         int e = ClientThreadCache.energy(), m = ClientThreadCache.maxEnergy();
         ItemStack g = MagicKeys.heldGrimoire(mc.player);
         boolean magic = !g.isEmpty() && SpellCaster.magicMode(g);
-        if (!magic && e >= m) {
+        float heat = ru.death.chaosshard.spell.SpellHeat.heat(mc.player);
+        if (!magic && e >= m && heat <= 0) {
             return;
         }
         ScaledResolution sr = event.getResolution();
@@ -36,6 +37,17 @@ public class EnergyHud {
         int fill = h * Math.min(e, m) / Math.max(1, m);
         Gui.drawRect(x, y + h - fill, x + 4, y + h, 0xFF9B4DFF);
         Gui.drawRect(x, y + h - fill, x + 1, y + h, 0xFFD9B8FF);
-        mc.fontRenderer.drawStringWithShadow(String.valueOf(e), x + 8, y + 6, 0xC9A0FF);
+        mc.fontRenderer.drawStringWithShadow(String.valueOf(e), x + 14, y + 6, 0xC9A0FF);
+        // разогрев: тонкая полоска рядом; на максимуме мигает
+        if (heat > 0 || magic) {
+            int hx = x + 7;
+            Gui.drawRect(hx - 1, y - 1, hx + 3, y + h + 1, 0xFF6E5A88);
+            Gui.drawRect(hx, y, hx + 2, y + h, 0xFF1A0A2A);
+            int hf = (int) (h * heat / ru.death.chaosshard.spell.SpellHeat.MAX);
+            boolean surge = heat >= ru.death.chaosshard.spell.SpellHeat.MAX;
+            int col = surge ? (System.currentTimeMillis() / 250 % 2 == 0 ? 0xFFFFE090 : 0xFFFF7040)
+                    : ru.death.chaosshard.spell.SpellHeat.locked(mc.player) > 0 ? 0xFF8A7A9A : 0xFFFF9A30;
+            Gui.drawRect(hx, y + h - hf, hx + 2, y + h, col);
+        }
     }
 }

@@ -768,6 +768,7 @@ public final class AutoTest {
             check(ru.death.chaosshard.anchor.AnchorSpecs.nestOf(t, false).isEmpty(), "Гнездо распущено — твари ушли");
         });
         step("Пульс: заклинания дешевле, энергии больше на своей земле", () -> {
+            ru.death.chaosshard.spell.SpellHeat.set(me, 0, 0);   // разогрев не должен вмешиваться
             TileAnchor t = respec(specA[0], ru.death.chaosshard.anchor.AnchorSpec.PULSE, 3);
             if (t == null) return;
             me.setPosition(specA[0].getX() + 3.5, specA[0].getY(), specA[0].getZ() + 0.5);
@@ -2812,6 +2813,7 @@ public final class AutoTest {
             check(ru.death.chaosshard.spell.SpellCaster.magicMode(g), "старый Гримуар в Магии остаётся в Магии");
         });
         step("прокачка: очки по Нити, перки, формы, сброс", () -> {
+            ru.death.chaosshard.spell.SpellHeat.set(me, 0, 0);   // разогрев не должен вмешиваться
             ru.death.chaosshard.spell.SpellData.reset(me);
             int pts = ru.death.chaosshard.spell.SpellData.points(me);
             check(pts == ru.death.chaosshard.thread.ThreadManager.getLevel(me), "очков на заклинание = уровень Нити: " + pts);
@@ -2842,6 +2844,57 @@ public final class AutoTest {
             check(ru.death.chaosshard.spell.SpellData.spent(me, ru.death.chaosshard.spell.Spell.BOLT) == 0
                     && ru.death.chaosshard.spell.SpellData.form(me, ru.death.chaosshard.spell.Spell.BOLT) == 0, "Чистые страницы всё сбросили");
         });
+        step("разогрев и глифы", () -> {
+            ru.death.chaosshard.spell.Spell sp = ru.death.chaosshard.spell.Spell.SPROUT;
+            BlockPos fur = base.add(70, 1, 64);
+            ow.setBlockState(fur, Blocks.FURNACE.getDefaultState(), 2);
+            Runnable ready = () -> {
+                ru.death.chaosshard.spell.SpellCaster.clearCooldowns(me);
+                ru.death.chaosshard.spell.ChaosEnergy.set(me, 9999);
+            };
+            ru.death.chaosshard.spell.SpellHeat.set(me, 0, 0);
+            ready.run();
+            ru.death.chaosshard.spell.SpellCaster.castAt(me, sp, fur, EnumFacing.UP, null, null);
+            float h1 = ru.death.chaosshard.spell.SpellHeat.heat(me);
+            check(h1 > 0, "заклинание греет шкалу: " + h1);
+            int normal = ru.death.chaosshard.spell.SpellCaster.cost(me, ru.death.chaosshard.spell.Spell.BOLT);
+            ru.death.chaosshard.spell.SpellHeat.set(me, ru.death.chaosshard.spell.SpellHeat.MAX, 0);
+            check(ru.death.chaosshard.spell.SpellHeat.surge(me) && ru.death.chaosshard.spell.SpellMods.power(me, sp) > 1.5
+                    && ru.death.chaosshard.spell.SpellMods.area(me, sp) >= 2, "на максимуме — мощная модификация (сила и ширь)");
+            check(ru.death.chaosshard.spell.SpellCaster.cost(me, ru.death.chaosshard.spell.Spell.BOLT) <= 1, "мощное заклинание почти даром (обычно " + normal + ")");
+            ready.run();
+            ru.death.chaosshard.spell.SpellCaster.castAt(me, sp, fur, EnumFacing.UP, null, null);
+            check(Math.abs(ru.death.chaosshard.spell.SpellHeat.heat(me) - ru.death.chaosshard.spell.SpellHeat.MAX / 2) < 0.01
+                    && ru.death.chaosshard.spell.SpellHeat.locked(me) > 0, "после мощного — половина шкалы и пауза роста");
+            ready.run();
+            ru.death.chaosshard.spell.SpellCaster.castAt(me, sp, fur, EnumFacing.UP, null, null);
+            check(Math.abs(ru.death.chaosshard.spell.SpellHeat.heat(me) - ru.death.chaosshard.spell.SpellHeat.MAX / 2) < 0.01, "во время паузы шкала не растёт");
+            ru.death.chaosshard.spell.SpellHeat.set(me, 0, 0);
+            // глифы: гнездо одно на малой Нити, вкладывание берёт из сумки, возвращает прежний
+            net.minecraft.nbt.NBTTagList saved = me.inventory.writeToNBT(new net.minecraft.nbt.NBTTagList());
+            me.inventory.clear();
+            me.inventory.addItemStackToInventory(ru.death.chaosshard.spell.ItemSpellGlyph.of(ru.death.chaosshard.spell.SpellGlyph.THRIFT));
+            me.inventory.addItemStackToInventory(ru.death.chaosshard.spell.ItemSpellGlyph.of(ru.death.chaosshard.spell.SpellGlyph.HASTE));
+            ru.death.chaosshard.spell.Spell bolt = ru.death.chaosshard.spell.Spell.BOLT;
+            int c0 = ru.death.chaosshard.spell.SpellCaster.cost(me, bolt);
+            boolean put = ru.death.chaosshard.spell.SpellGlyphs.set(me, bolt, 0, ru.death.chaosshard.spell.SpellGlyph.THRIFT.ordinal());
+            int c1 = ru.death.chaosshard.spell.SpellCaster.cost(me, bolt);
+            check(put && c1 < c0, "Глиф Бережливости удешевил Стрелу: " + c0 + " → " + c1);
+            check(!me.inventory.hasItemStack(ru.death.chaosshard.spell.ItemSpellGlyph.of(ru.death.chaosshard.spell.SpellGlyph.THRIFT)), "глиф ушёл из сумки в гнездо");
+            ru.death.chaosshard.spell.SpellGlyphs.set(me, bolt, 0, ru.death.chaosshard.spell.SpellGlyph.HASTE.ordinal());
+            check(ru.death.chaosshard.spell.SpellGlyphs.get(me, bolt, 0) == ru.death.chaosshard.spell.SpellGlyph.HASTE
+                    && me.inventory.hasItemStack(ru.death.chaosshard.spell.ItemSpellGlyph.of(ru.death.chaosshard.spell.SpellGlyph.THRIFT)), "замена: прежний глиф вернулся в сумку");
+            check(ru.death.chaosshard.spell.SpellCaster.cooldown(me, bolt) < bolt.cooldown, "Глиф Спешки укоротил перезарядку");
+            check(!ru.death.chaosshard.spell.SpellGlyphs.set(me, ru.death.chaosshard.spell.Spell.RECALL, 0, ru.death.chaosshard.spell.SpellGlyph.ECHO.ordinal()),
+                    "неподходящий глиф не вкладывается");
+            int open = ru.death.chaosshard.spell.SpellGlyphs.slots(me);
+            check(!ru.death.chaosshard.spell.SpellGlyphs.set(me, bolt, open, ru.death.chaosshard.spell.SpellGlyph.THRIFT.ordinal()), "закрытое гнездо недоступно (открыто " + open + ")");
+            ru.death.chaosshard.spell.SpellGlyphs.set(me, bolt, 0, -1);
+            check(ru.death.chaosshard.spell.SpellGlyphs.get(me, bolt, 0) == null, "глиф вынут");
+            me.inventory.clear();
+            me.inventory.readFromNBT(saved);
+            ow.setBlockToAir(fur);
+        });
         step("заклинания по блокам и существам", () -> {
             BlockPos o = base.add(70, 0, 70);
             ow.getChunk(o);
@@ -2850,6 +2903,7 @@ public final class AutoTest {
             java.util.function.Consumer<ru.death.chaosshard.spell.Spell> ready = sp -> {
                 ru.death.chaosshard.spell.SpellCaster.clearCooldowns(me);
                 ru.death.chaosshard.spell.ChaosEnergy.set(me, 9999);
+                ru.death.chaosshard.spell.SpellHeat.set(me, 0, 0);
             };
             me.setPositionAndRotation(o.getX() + 0.5, o.getY() + 1, o.getZ() + 0.5, 0, 0);
             ru.death.chaosshard.spell.SpellData.reset(me);
@@ -2962,6 +3016,7 @@ public final class AutoTest {
 
         if (Loader.isModLoaded("tconstruct")) {
             step("материалы Хаоса: уровни и модификаторы заклинаний", () -> {
+            ru.death.chaosshard.spell.SpellHeat.set(me, 0, 0);   // разогрев не должен вмешиваться
                 java.util.List<slimeknights.tconstruct.library.materials.Material> mats = java.util.Arrays.asList(
                         slimeknights.tconstruct.library.TinkerRegistry.getMaterial(ru.death.chaosshard.compat.tinkers.ChaosMaterials.BLOOD),
                         slimeknights.tconstruct.library.TinkerRegistry.getMaterial(ru.death.chaosshard.compat.tinkers.ChaosMaterials.CRYSTAL),

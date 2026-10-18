@@ -237,7 +237,7 @@ public class GuiGrimoireMagic extends GuiScreen {
                 return;
             }
         }
-        if (tab == 0 && clickSpell(mx, my)) {
+        if (tab == 0 && clickSpell(mx, my, button)) {
             return;
         }
         int idx = rowAt(mx, my);
@@ -419,6 +419,18 @@ public class GuiGrimoireMagic extends GuiScreen {
             font.drawScaled(I18n.format("chaosshard.magic.energy", e, m), ex, fy - 3, BookArt.VIOLET, 0.8F);
             Gui.drawRect(ex, fy + 7, ex + ew, fy + 9, 0xFF1A0E26);
             drawGradientRect(ex, fy + 7, ex + ew * Math.min(e, m) / Math.max(1, m), fy + 9, 0xFFD0A0FF, 0xFF8A50E0);
+            // разогрев
+            float heat = ru.death.chaosshard.spell.SpellHeat.heat(mc.player);
+            boolean surge = heat >= ru.death.chaosshard.spell.SpellHeat.MAX;
+            long lock = ru.death.chaosshard.spell.SpellHeat.locked(mc.player);
+            Gui.drawRect(ex, fy + 11, ex + ew, fy + 13, 0xFF1A0E26);
+            int hw = (int) (ew * heat / ru.death.chaosshard.spell.SpellHeat.MAX);
+            int hot = surge ? (System.currentTimeMillis() / 250 % 2 == 0 ? 0xFFFFE090 : 0xFFFF7040) : lock > 0 ? 0xFF8A7A9A : 0xFFFF9A30;
+            Gui.drawRect(ex, fy + 11, ex + hw, fy + 13, hot);
+            if (mx >= ex && mx < ex + ew && my >= fy + 5 && my < fy + 15) {
+                hoverText = split(I18n.format(surge ? "chaosshard.heat.tip.surge" : lock > 0 ? "chaosshard.heat.tip.lock" : "chaosshard.heat.tip",
+                        (int) heat, (int) ru.death.chaosshard.spell.SpellHeat.MAX, (lock + 19) / 20));
+            }
         }
         int lastRow = listTop() + Math.min(visibleRows(), listSize()) * ROW;
         noteKey("chaosshard.note.section." + tab, listX() + 6, lastRow + 4, fy - 4, -2.5F);
@@ -549,7 +561,8 @@ public class GuiGrimoireMagic extends GuiScreen {
         font.drawString(costS, x + pw - font.getStringWidth(costS), y, enough ? BookArt.VIOLET : BookArt.BAD, false);
         y += 11;
         font.drawString(I18n.format("chaosshard.magic.cooldown", cooldown(SpellCaster.cooldown(mc.player, s))), x, y, BookArt.SOFT, false);
-        y += 15;
+        y += 14;
+        y = drawGlyphs(s, x, y, pw, mx, my);
         // формы
         formRects.clear();
         String[] forms = ru.death.chaosshard.spell.SpellPerks.forms(s);
@@ -623,8 +636,11 @@ public class GuiGrimoireMagic extends GuiScreen {
     private final List<int[]> perkRects = new ArrayList<>();
 
     /** Клик по форме или перку на странице заклинания. */
-    private boolean clickSpell(int mx, int my) {
+    private boolean clickSpell(int mx, int my, int button) {
         Spell s = spells.get(selSpell);
+        if (clickGlyph(s, mx, my, button)) {
+            return true;
+        }
         for (int[] r : formRects) {
             if (mx >= r[0] && mx < r[0] + r[2] && my >= r[1] && my < r[1] + r[3]) {
                 if (ru.death.chaosshard.spell.SpellData.formOpen(mc.player, s, r[4])) {
@@ -642,6 +658,139 @@ public class GuiGrimoireMagic extends GuiScreen {
                         net.minecraft.init.SoundEvents.BLOCK_ENCHANTMENT_TABLE_USE, 1.2F));
                 return true;
             }
+        }
+        return false;
+    }
+
+    // ------------------------------------------------------------------ глифы
+
+    private final List<int[]> glyphRects = new ArrayList<>();
+    private final List<int[]> pickRects = new ArrayList<>();
+    private int pickSlot = -1;
+    private Spell pickSpell;
+
+    /** Гнёзда глифов заклинания и, если открыт, выбор глифа из сумки. Возвращает y под рядом. */
+    private int drawGlyphs(Spell s, int x, int y, int pw, int mx, int my) {
+        glyphRects.clear();
+        pickRects.clear();
+        if (pickSpell != s) {
+            pickSlot = -1;
+        }
+        String label = "\u00A7o" + I18n.format("chaosshard.glyph.slots");
+        font.drawString(label, x, y + 5, BookArt.VIOLET, false);
+        int gx = x + font.getStringWidth(label) + 6;
+        int open = ru.death.chaosshard.spell.SpellGlyphs.slots(mc.player);
+        for (int i = 0; i < ru.death.chaosshard.spell.SpellGlyphs.MAX_SLOTS; i++) {
+            int bx = gx + i * 22;
+            boolean on = i < open;
+            boolean over = on && mx >= bx && mx < bx + 18 && my >= y && my < y + 18;
+            int border = !on ? 0xFF2E2438 : pickSlot == i ? 0xFFECB064 : over ? 0xFFC496FF : 0xFF6E5A88;
+            Gui.drawRect(bx, y, bx + 18, y + 18, border);
+            Gui.drawRect(bx + 1, y + 1, bx + 17, y + 17, 0xFF140C1C);
+            ru.death.chaosshard.spell.SpellGlyph g = on ? ru.death.chaosshard.spell.SpellGlyphs.get(mc.player, s, i) : null;
+            if (g != null) {
+                RenderHelper.enableGUIStandardItemLighting();
+                itemRender.renderItemAndEffectIntoGUI(ru.death.chaosshard.spell.ItemSpellGlyph.of(g), bx + 1, y + 1);
+                RenderHelper.disableStandardItemLighting();
+            } else if (!on) {
+                font.drawScaled(String.valueOf(i == 1 ? 3 : 5), bx + 6.5F, y + 5, BookArt.DIM, 0.85F);
+            }
+            if (over) {
+                hoverText = g != null ? split("\u00A7d" + I18n.format(g.key()) + "\n\u00A77" + I18n.format(g.key() + ".desc") + "\n\u00A78" + I18n.format("chaosshard.glyph.slot.filled"))
+                        : split(I18n.format("chaosshard.glyph.slot.empty"));
+            } else if (!on && mx >= bx && mx < bx + 18 && my >= y && my < y + 18) {
+                hoverText = split(I18n.format("chaosshard.glyph.slot.locked", i == 1 ? 3 : 5));
+            }
+            glyphRects.add(new int[]{bx, y, 18, 18, i, on ? 1 : 0});
+        }
+        y += 22;
+        if (pickSlot >= 0) {
+            List<ru.death.chaosshard.spell.SpellGlyph> have = new ArrayList<>();
+            for (ru.death.chaosshard.spell.SpellGlyph g : ru.death.chaosshard.spell.SpellGlyph.values()) {
+                if (g.fits(s) && glyphCount(g) > 0 && !onSpell(s, g)) {
+                    have.add(g);
+                }
+            }
+            Gui.drawRect(x - 2, y - 2, x + pw + 2, y + 21, 0xF0100818);
+            Gui.drawRect(x - 2, y - 2, x + pw + 2, y - 1, 0xFF6E5A88);
+            if (have.isEmpty()) {
+                font.drawString("\u00A7o" + I18n.format("chaosshard.glyph.none"), x + 2, y + 4, BookArt.SOFT, false);
+            }
+            for (int i = 0; i < have.size(); i++) {
+                int bx = x + i * 20;
+                ru.death.chaosshard.spell.SpellGlyph g = have.get(i);
+                boolean over = mx >= bx && mx < bx + 18 && my >= y && my < y + 18;
+                if (over) {
+                    Gui.drawRect(bx, y, bx + 18, y + 18, 0x40ECB064);
+                    hoverText = split("\u00A7d" + I18n.format(g.key()) + "\n\u00A77" + I18n.format(g.key() + ".desc"));
+                }
+                RenderHelper.enableGUIStandardItemLighting();
+                ItemStack st = ru.death.chaosshard.spell.ItemSpellGlyph.of(g);
+                st.setCount(glyphCount(g));
+                itemRender.renderItemAndEffectIntoGUI(st, bx + 1, y + 1);
+                itemRender.renderItemOverlayIntoGUI(mc.fontRenderer, st, bx + 1, y + 1, null);
+                RenderHelper.disableStandardItemLighting();
+                pickRects.add(new int[]{bx, y, 18, 18, g.ordinal()});
+            }
+            y += 24;
+        }
+        return y;
+    }
+
+    private boolean onSpell(Spell s, ru.death.chaosshard.spell.SpellGlyph g) {
+        for (int i = 0; i < ru.death.chaosshard.spell.SpellGlyphs.MAX_SLOTS; i++) {
+            if (ru.death.chaosshard.spell.SpellGlyphs.get(mc.player, s, i) == g) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private int glyphCount(ru.death.chaosshard.spell.SpellGlyph g) {
+        if (mc.player.isCreative()) {
+            return 1;
+        }
+        int n = 0;
+        for (ItemStack st : mc.player.inventory.mainInventory) {
+            if (!st.isEmpty() && st.getItem() == ModItems.SPELL_GLYPH && st.getMetadata() == g.ordinal()) {
+                n += st.getCount();
+            }
+        }
+        return n;
+    }
+
+    /** ЛКМ по гнезду — выбрать глиф из сумки, ПКМ — вынуть; клик по глифу в выборе — вложить. */
+    private boolean clickGlyph(Spell s, int mx, int my, int button) {
+        for (int[] r : pickRects) {
+            if (mx >= r[0] && mx < r[0] + r[2] && my >= r[1] && my < r[1] + r[3]) {
+                ChaosNetwork.CHANNEL.sendToServer(new ru.death.chaosshard.network.PacketSpellAction(
+                        ru.death.chaosshard.network.PacketSpellAction.GLYPH, s, pickSlot * 16 + r[4] + 1));
+                mc.getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(net.minecraft.init.SoundEvents.BLOCK_ENCHANTMENT_TABLE_USE, 1.4F));
+                pickSlot = -1;
+                return true;
+            }
+        }
+        for (int[] r : glyphRects) {
+            if (mx >= r[0] && mx < r[0] + r[2] && my >= r[1] && my < r[1] + r[3]) {
+                if (r[5] == 0) {
+                    return true;
+                }
+                if (button == 1) {
+                    if (ru.death.chaosshard.spell.SpellGlyphs.get(mc.player, s, r[4]) != null) {
+                        ChaosNetwork.CHANNEL.sendToServer(new ru.death.chaosshard.network.PacketSpellAction(
+                                ru.death.chaosshard.network.PacketSpellAction.GLYPH, s, r[4] * 16));
+                        mc.getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(net.minecraft.init.SoundEvents.ENTITY_ITEM_PICKUP, 1.0F));
+                    }
+                    pickSlot = -1;
+                } else {
+                    pickSlot = pickSlot == r[4] ? -1 : r[4];
+                    pickSpell = s;
+                }
+                return true;
+            }
+        }
+        if (pickSlot >= 0) {
+            pickSlot = -1;
         }
         return false;
     }
@@ -830,7 +979,7 @@ public class GuiGrimoireMagic extends GuiScreen {
 
     private List<String> split(String text) {
         List<String> out = new ArrayList<>();
-        for (String part : text.split("\n")) {
+        for (String part : text.replace("\\n", "\n").split("\n")) {
             out.addAll(font.listFormattedStringToWidth(part, 220));
         }
         return out;

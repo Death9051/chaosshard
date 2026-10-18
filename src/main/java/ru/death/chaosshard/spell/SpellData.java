@@ -25,7 +25,7 @@ public final class SpellData {
     /** Копия на клиенте. */
     public static NBTTagCompound client = new NBTTagCompound();
 
-    private static NBTTagCompound root(EntityPlayer p) {
+    static NBTTagCompound root(EntityPlayer p) {
         if (p.world.isRemote) {
             return client;
         }

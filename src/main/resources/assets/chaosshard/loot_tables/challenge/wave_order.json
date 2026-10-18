@@ -84,6 +84,21 @@
      "name": "minecraft:emerald",
      "weight": 4,
      "entryName": "emerald"
+    },
+    {
+     "type": "item",
+     "name": "chaosshard:spell_glyph",
+     "weight": 4,
+     "functions": [
+      {
+       "function": "set_data",
+       "data": {
+        "min": 0,
+        "max": 6
+       }
+      }
+     ],
+     "entryName": "spell_glyph"
     }
    ]
   },
