@@ -193,6 +193,11 @@ public class ClientTest {
                 return;
             case 8:
                 onServer(this::clearEntities);
+                onServer((s2, w2, p2) -> {
+                    ru.death.chaosshard.spell.SpellGlyphs.set(p2, ru.death.chaosshard.spell.Spell.SPROUT, 0,
+                            ru.death.chaosshard.spell.SpellGlyph.POTENT.ordinal());
+                    ru.death.chaosshard.spell.SpellHeat.set(p2, 70, 0);
+                });
                 magic(0);
                 step++;
                 return;
