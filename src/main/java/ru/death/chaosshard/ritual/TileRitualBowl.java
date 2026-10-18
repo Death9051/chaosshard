@@ -96,6 +96,100 @@ public class TileRitualBowl extends TileEntity implements ITickable {
         changed();
     }
 
+    /**
+     * Сложить подношения ритуала из сумки (по кнопке в Гримуаре): то, что в Чаше не к этому ритуалу, возвращается,
+     * недостающее берётся из инвентаря. Возвращает true, если всё на месте.
+     */
+    public boolean fill(EntityPlayer player, Ritual r) {
+        if (active >= 0) {
+            player.sendStatusMessage(Breach.grimoire("chaosshard.ritual.busy"), true);
+            return false;
+        }
+        int n = r.offeringCount();
+        int[] need = new int[n];
+        for (int i = 0; i < n; i++) {
+            need[i] = r.offeringNeed(i);
+        }
+        List<ItemStack> kept = new ArrayList<>();
+        // что уже лежит: нужное оставить, лишнее — хозяину
+        for (int k = 0; k < SLOTS; k++) {
+            ItemStack s = items.get(k).copy();
+            for (int i = 0; i < n && !s.isEmpty(); i++) {
+                if (need[i] > 0 && r.offeringMatches(i, s)) {
+                    int take = Math.min(need[i], s.getCount());
+                    kept.add(s.splitStack(take));
+                    need[i] -= take;
+                }
+            }
+            if (!s.isEmpty()) {
+                ItemHandlerHelper.giveItemToPlayer(player, s);
+            }
+            items.set(k, ItemStack.EMPTY);
+        }
+        // недостающее — из сумки
+        List<NonNullList<ItemStack>> bags = new ArrayList<>();
+        bags.add(player.inventory.mainInventory);
+        bags.add(player.inventory.offHandInventory);
+        for (int i = 0; i < n; i++) {
+            if (player.isCreative() && need[i] > 0) {
+                ItemStack free = r.offeringStacks().get(i);
+                free.setCount(need[i]);
+                kept.add(free);
+                need[i] = 0;
+            }
+            for (NonNullList<ItemStack> bag : bags) {
+                for (ItemStack s : bag) {
+                    if (need[i] > 0 && r.offeringMatches(i, s)
+                            && !(s.getItem() instanceof ru.death.chaosshard.item.ItemGrimoire)) {
+                        int take = Math.min(need[i], s.getCount());
+                        kept.add(s.splitStack(take));
+                        need[i] -= take;
+                    }
+                }
+            }
+        }
+        // в слоты, одинаковое — в одну стопку
+        for (ItemStack s : kept) {
+            for (int k = 0; k < SLOTS && !s.isEmpty(); k++) {
+                ItemStack in = items.get(k);
+                if (in.isEmpty()) {
+                    items.set(k, s.copy());
+                    s.setCount(0);
+                } else if (ItemHandlerHelper.canItemStacksStack(in, s)) {
+                    int add = Math.min(s.getCount(), in.getMaxStackSize() - in.getCount());
+                    in.grow(add);
+                    s.shrink(add);
+                }
+            }
+            if (!s.isEmpty()) {
+                ItemHandlerHelper.giveItemToPlayer(player, s);
+            }
+        }
+        player.inventoryContainer.detectAndSendChanges();
+        world.playSound(null, pos, SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.BLOCKS, 0.6F, 0.9F);
+        changed();
+        net.minecraft.util.text.TextComponentString missing = new net.minecraft.util.text.TextComponentString("");
+        boolean first = true;
+        for (int i = 0; i < n; i++) {
+            if (need[i] > 0) {
+                ItemStack s = r.offeringStacks().get(i);
+                if (!first) {
+                    missing.appendText(", ");
+                }
+                missing.appendText(need[i] + "× ");
+                missing.appendSibling(new net.minecraft.util.text.TextComponentTranslation(s.getTranslationKey() + ".name"));
+                first = false;
+            }
+        }
+        if (first) {
+            player.sendStatusMessage(Breach.grimoire("chaosshard.magic.fill.ready",
+                    new net.minecraft.util.text.TextComponentTranslation(r.key())), true);
+            return true;
+        }
+        player.sendMessage(Breach.grimoire("chaosshard.magic.fill.missing", missing));
+        return false;
+    }
+
     public void takeLast(EntityPlayer player) {
         for (int i = SLOTS - 1; i >= 0; i--) {
             if (!items.get(i).isEmpty()) {

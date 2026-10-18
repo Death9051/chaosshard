@@ -211,17 +211,25 @@ public class ClientTest {
                 step++;
                 return;
             case 12: {
-                ReflectionHelper.findField(ru.death.chaosshard.client.magic.GuiGrimoireMagic.class, "ritScroll").setInt(null, 100);
-                wait = 10;
+                // страница ритуала: Чаша рядом, костной муки не хватает, эссенция есть
+                onServer((s, w, p) -> {
+                    w.setBlockState(new net.minecraft.util.math.BlockPos(p).add(2, 0, 0), ru.death.chaosshard.init.ModBlocks.RITUAL_BOWL.getDefaultState());
+                    p.inventory.addItemStackToInventory(new ItemStack(net.minecraft.init.Items.DYE, 5, 15));
+                    p.inventory.addItemStackToInventory(new ItemStack(ModItems.CHAOS_ESSENCE, 3));
+                });
+                ru.death.chaosshard.client.magic.GuiGrimoireMagic.testState(1,
+                        ru.death.chaosshard.client.magic.GuiGrimoireMagic.shownRitualIndex(ru.death.chaosshard.ritual.Ritual.GROWTH), 0);
+                wait = 20;
                 step++;
                 return;
             }
             case 13:
-                shot = "06_grimoire_rituals_end";
+                shot = "06_grimoire_ritual_page";
                 wait = 5;
                 step++;
                 return;
             case 14:
+                onServer((s, w, p) -> w.setBlockToAir(new net.minecraft.util.math.BlockPos(p).add(2, 0, 0)));
                 magic(2);
                 step++;
                 return;
@@ -433,8 +441,7 @@ public class ClientTest {
     }
 
     private void magic(int tab) throws Exception {
-        ReflectionHelper.findField(ru.death.chaosshard.client.magic.GuiGrimoireMagic.class, "tab").setInt(null, tab);
-        ReflectionHelper.findField(ru.death.chaosshard.client.magic.GuiGrimoireMagic.class, "ritScroll").setInt(null, 0);
+        ru.death.chaosshard.client.magic.GuiGrimoireMagic.testState(tab, -1, 0);
         mc.displayGuiScreen(new ru.death.chaosshard.client.magic.GuiGrimoireMagic(new ItemStack(ModItems.GRIMOIRE)));
         wait = 15;
     }

@@ -215,6 +215,21 @@ public enum Ritual {
         return out;
     }
 
+    public int offeringCount() {
+        return offerings.length;
+    }
+
+    /** Сколько нужно i-го подношения. */
+    public int offeringNeed(int i) {
+        return offerings[i].count;
+    }
+
+    /** Подходит ли стопка как i-е подношение (вариант -1 — любой). */
+    public boolean offeringMatches(int i, ItemStack s) {
+        Offering o = offerings[i];
+        return !s.isEmpty() && s.getItem() == o.item.get() && (o.meta < 0 || s.getMetadata() == o.meta);
+    }
+
     /** Совпадает ли содержимое Чаши с подношениями ритуала. */
     public boolean matches(List<ItemStack> contents) {
         List<ItemStack> left = new ArrayList<>();

@@ -1176,6 +1176,37 @@ public final class AutoTest {
             check(bowl.getItems().stream().allMatch(net.minecraft.item.ItemStack::isEmpty), "подношения потрачены");
             items.forEach(net.minecraft.entity.Entity::setDead);
         });
+        step("Гримуар складывает подношения в Чашу", () -> {
+            ru.death.chaosshard.ritual.TileRitualBowl bowl = (ru.death.chaosshard.ritual.TileRitualBowl) ow.getTileEntity(bowlPos);
+            if (bowl == null) { check(false, "нет Чаши"); return; }
+            net.minecraft.nbt.NBTTagList saved = me.inventory.writeToNBT(new net.minecraft.nbt.NBTTagList());
+            me.inventory.clear();
+            bowl.getItems().clear();
+            bowl.insert(me, new net.minecraft.item.ItemStack(Blocks.DIRT, 1), true);
+            bowl.insert(me, new net.minecraft.item.ItemStack(net.minecraft.init.Items.DYE, 3, 15), true);
+            me.inventory.addItemStackToInventory(new net.minecraft.item.ItemStack(net.minecraft.init.Items.DYE, 10, 15));
+            me.inventory.addItemStackToInventory(new net.minecraft.item.ItemStack(ru.death.chaosshard.init.ModItems.CHAOS_ESSENCE, 2));
+            java.util.function.BiFunction<net.minecraft.item.Item, Integer, Integer> has = (it, meta) -> {
+                int n = 0;
+                for (net.minecraft.item.ItemStack st : me.inventory.mainInventory) {
+                    if (st.getItem() == it && st.getMetadata() == meta) n += st.getCount();
+                }
+                return n;
+            };
+            boolean ok = bowl.fill(me, ru.death.chaosshard.ritual.Ritual.GROWTH);
+            check(ok && ru.death.chaosshard.ritual.Ritual.GROWTH.matches(bowl.getItems()), "в Чаше ровно подношения Роста");
+            check(has.apply(net.minecraft.item.Item.getItemFromBlock(Blocks.DIRT), 0) == 1, "лишнее из Чаши вернулось в сумку");
+            check(has.apply(net.minecraft.init.Items.DYE, 15) == 5 && has.apply(ru.death.chaosshard.init.ModItems.CHAOS_ESSENCE, 0) == 1,
+                    "из сумки взято только недостающее: мука " + has.apply(net.minecraft.init.Items.DYE, 15)
+                            + ", эссенция " + has.apply(ru.death.chaosshard.init.ModItems.CHAOS_ESSENCE, 0));
+            me.inventory.clear();
+            boolean ok2 = bowl.fill(me, ru.death.chaosshard.ritual.Ritual.SKY);
+            check(!ok2 && !ru.death.chaosshard.ritual.Ritual.SKY.matches(bowl.getItems()), "без осколка Завесы Небо не собрано");
+            check(has.apply(net.minecraft.init.Items.DYE, 15) == 8, "мука от прошлого ритуала вернулась");
+            me.inventory.clear();
+            me.inventory.readFromNBT(saved);
+            bowl.getItems().clear();
+        });
         step("Сфера роста ставится в поле", () -> {
             BlockPos field = base.add(-14, 0, 2);
             for (int dx = -3; dx <= 3; dx++) {
