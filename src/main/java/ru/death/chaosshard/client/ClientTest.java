@@ -432,8 +432,10 @@ public class ClientTest {
                 return;
             case 61:
                 // Хаск вплотную: модель, лапки из пасти, свечение
-                onServer((s2, w2, p2) -> p2.connection.setPlayerLocation(graveAt.getX() + 2.4, graveAt.getY() - 0.1,
-                        graveAt.getZ() - 8.7, 90F, 6F));
+                onServer((s2, w2, p2) -> {
+                    w2.setWorldTime(6000);   // днём видно шкуру; свечение пульсирует и так
+                    p2.connection.setPlayerLocation(graveAt.getX() + 3.3, graveAt.getY() + 0.2, graveAt.getZ() - 6.4, 135F, 12F);
+                });
                 wait = 20;
                 step++;
                 return;
