@@ -64,7 +64,13 @@ public class GuiGrimoireMagic extends GuiScreen {
 
     /** Для теста клиента: открыть на вкладке, выбрать ритуал (индекс в списке ритуалов) и прокрутить. */
     public static void testState(int t, int ritual, int sc) {
+        testState(t, ritual, sc, -1);
+    }
+
+    /** То же, плюс выбранная строка вкладки «Слуги» (-1 — «Отголоски»). */
+    public static void testState(int t, int ritual, int sc, int beast) {
         tab = t;
+        selBeast = beast;
         selRitual = ritual;
         scroll[t] = sc;
     }

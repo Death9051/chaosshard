@@ -58,7 +58,7 @@ class BeastPage {
         for (int row = 0; row < ROWS; row++) {
             int i = row - 1;
             if (row == HEADER_ROW) {
-                gui.drawHeader(row, tr("chaosshard.servant.gui.retinue"));
+                gui.drawHeader(row, tr("chaosshard.servant.gui.retinue").replace("\u2014", "").replace("-", "").trim());
                 continue;
             }
             ItemStack ic;

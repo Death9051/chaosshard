@@ -229,16 +229,18 @@ public class ClientTest {
                 step++;
                 return;
             case 14:
-                onServer((s, w, p) -> w.setBlockToAir(new net.minecraft.util.math.BlockPos(p).add(2, 0, 0)));
                 magic(2);
+                // страница слуги: призыв, подношения и «Сложить в Чашу» (Чаша ещё рядом)
+                ru.death.chaosshard.client.magic.GuiGrimoireMagic.testState(2, -1, 0, 4);
                 step++;
                 return;
             case 15:
-                shot = "07_grimoire_servants";
+                shot = "07_grimoire_servant_page";
                 wait = 5;
                 step++;
                 return;
             case 16:
+                onServer((s, w, p) -> w.setBlockToAir(new net.minecraft.util.math.BlockPos(p).add(2, 0, 0)));
                 mc.displayGuiScreen(new ru.death.chaosshard.client.magic.GuiSpellWheel(mc.player.getHeldItemMainhand()));
                 wait = 15;
                 step++;
