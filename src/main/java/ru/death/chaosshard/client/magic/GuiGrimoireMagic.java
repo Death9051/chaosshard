@@ -192,7 +192,7 @@ public class GuiGrimoireMagic extends GuiScreen {
             if (mx >= tx && mx < tx + TAB_W && my >= top - TAB_H && my < top) {
                 if (tab != i) {
                     mc.getSoundHandler().playSound(net.minecraft.client.audio.PositionedSoundRecord.getMasterRecord(
-                            net.minecraft.init.SoundEvents.ITEM_BOOK_PAGE_TURN, 1.0F));
+                            net.minecraft.init.SoundEvents.UI_BUTTON_CLICK, 1.2F));
                 }
                 tab = i;
                 updateButton();
