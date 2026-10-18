@@ -401,6 +401,26 @@ public class ClientTest {
                 step++;
                 return;
             case 57:
+                onServer(this::beastShow);
+                wait = 40;
+                step++;
+                return;
+            case 58:
+                shot = "42_beasts";
+                wait = 10;
+                step++;
+                return;
+            case 59:
+                onServer((s2, w2, p2) -> p2.connection.setPlayerLocation(graveAt.getX() + 4.5, graveAt.getY() + 1.6, graveAt.getZ() - 4.0, 90F, 30F));
+                wait = 20;
+                step++;
+                return;
+            case 60:
+                shot = "43_beasts_top";
+                wait = 5;
+                step++;
+                return;
+            case 61:
                 finish();
                 step++;
                 return;
@@ -612,6 +632,23 @@ public class ClientTest {
                     java.util.Collections.singletonList(new ItemStack(net.minecraft.init.Items.DIAMOND, 3)));
         }
         p.connection.setPlayerLocation(graveAt.getX() + 2.2, graveAt.getY() + 0.4, graveAt.getZ() + 2.6, 140F, 28F);
+    }
+
+    /** Заяц, кошка и тигр Хаоса в ряд, без разума, камера вплотную (смотреть текстуры и обгрызенное ухо зайца). */
+    private void beastShow(IntegratedServer s, WorldServer w, EntityPlayerMP p) {
+        w.setBlockToAir(graveAt);
+        Entity[] beasts = {new ru.death.chaosshard.servant.EntityChaosBeast.Hare(w), new ru.death.chaosshard.servant.EntityChaosBeast.Cat(w),
+                new ru.death.chaosshard.servant.EntityChaosBeast.Tiger(w)};
+        for (int i = 0; i < beasts.length; i++) {
+            EntityLiving b = (EntityLiving) beasts[i];
+            b.setLocationAndAngles(graveAt.getX() + 0.5, graveAt.getY(), graveAt.getZ() - 1.5 - i * 2.4, 270F, 0F);
+            b.rotationYawHead = b.renderYawOffset = 270F;
+            b.setNoAI(true);
+            b.enablePersistence();
+            w.spawnEntity(b);
+            shown.add(b);
+        }
+        p.connection.setPlayerLocation(graveAt.getX() + 3.6, graveAt.getY() + 0.3, graveAt.getZ() - 4.0, 90F, 8F);
     }
 
     private void heroGone(IntegratedServer s, WorldServer w, EntityPlayerMP p) {
