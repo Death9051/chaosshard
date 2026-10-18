@@ -431,6 +431,33 @@ public class ClientTest {
                 step++;
                 return;
             case 61:
+                // Хаск вплотную: модель, лапки из пасти, свечение
+                onServer((s2, w2, p2) -> p2.connection.setPlayerLocation(graveAt.getX() + 2.4, graveAt.getY() - 0.1,
+                        graveAt.getZ() - 8.7, 90F, 6F));
+                wait = 20;
+                step++;
+                return;
+            case 62:
+                check(huskId >= 0 && mc.world.getEntityByID(huskId) != null, "Хаск виден клиенту");
+                shot = "44_husk";
+                wait = 5;
+                step++;
+                return;
+            case 63: {
+                Entity h = mc.world.getEntityByID(huskId);
+                if (h instanceof EntityLiving) {
+                    ((EntityLiving) h).swingArm(net.minecraft.util.EnumHand.MAIN_HAND);
+                }
+                wait = 2;
+                step++;
+                return;
+            }
+            case 64:
+                shot = "45_husk_attack";
+                wait = 5;
+                step++;
+                return;
+            case 65:
                 finish();
                 step++;
                 return;
@@ -657,8 +684,20 @@ public class ClientTest {
             w.spawnEntity(b);
             shown.add(b);
         }
+        // Хаск — четвёртым, с мечом (оружие в руке есть и на новой модели)
+        ru.death.chaosshard.servant.entity.ServantEntities.Husk husk = new ru.death.chaosshard.servant.entity.ServantEntities.Husk(w);
+        husk.setLocationAndAngles(graveAt.getX() + 0.5, graveAt.getY(), graveAt.getZ() - 1.5 - 3 * 2.4, 270F, 0F);
+        husk.rotationYawHead = husk.renderYawOffset = 270F;
+        husk.setItemStackToSlot(net.minecraft.inventory.EntityEquipmentSlot.MAINHAND, new ItemStack(net.minecraft.init.Items.IRON_SWORD));
+        husk.setNoAI(true);
+        husk.enablePersistence();
+        w.spawnEntity(husk);
+        shown.add(husk);
+        huskId = husk.getEntityId();
         p.connection.setPlayerLocation(graveAt.getX() + 3.6, graveAt.getY() + 0.3, graveAt.getZ() - 4.0, 90F, 8F);
     }
+
+    private volatile int huskId = -1;
 
     private void heroGone(IntegratedServer s, WorldServer w, EntityPlayerMP p) {
         net.minecraft.util.math.AxisAlignedBB box = new net.minecraft.util.math.AxisAlignedBB(heroSpot).grow(8);

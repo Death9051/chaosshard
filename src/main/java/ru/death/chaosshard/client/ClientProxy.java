@@ -31,7 +31,7 @@ public class ClientProxy extends CommonProxy {
                 rm -> new ru.death.chaosshard.servant.client.RenderChaosBeast<>(rm, new ru.death.chaosshard.servant.client.ModelCat(), 0.35F, "cat"));
         {
             net.minecraftforge.fml.client.registry.RenderingRegistry.registerEntityRenderingHandler(ru.death.chaosshard.servant.entity.ServantEntities.Husk.class,
-                    rm -> new ru.death.chaosshard.servant.client.ServantRenders.Husk(rm, "husk"));
+                    ru.death.chaosshard.servant.client.RenderChaosHusk::new);
             net.minecraftforge.fml.client.registry.RenderingRegistry.registerEntityRenderingHandler(ru.death.chaosshard.servant.entity.ServantEntities.Reaper.class,
                     rm -> new ru.death.chaosshard.servant.client.ServantRenders.Husk(rm, "reaper"));
             net.minecraftforge.fml.client.registry.RenderingRegistry.registerEntityRenderingHandler(ru.death.chaosshard.servant.entity.ServantEntities.Lumberjack.class,
