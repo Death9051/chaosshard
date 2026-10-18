@@ -1,0 +1,51 @@
+[PREINITIALIZATION][SERVER][INFO] Current loaders after merging: [[preinit]]
+[PREINITIALIZATION][SERVER][INFO] Loading scripts for loader with names [preinit]
+[PREINITIALIZATION][SERVER][INFO] [preinit | SIDE_SERVER]: Skipping file {[0:crafttweaker]: chaosshard_compat.zs} as we are currently loading with a different loader
+[PREINITIALIZATION][SERVER][INFO] [preinit | SIDE_SERVER]: Skipping file {[0:crafttweaker]: chaosshard_evilcraft.zs} as we are currently loading with a different loader
+[PREINITIALIZATION][SERVER][INFO] [preinit | SIDE_SERVER]: Skipping file {[0:crafttweaker]: chaosshard_stars.zs} as we are currently loading with a different loader
+[PREINITIALIZATION][SERVER][INFO] Completed script loading in: 3ms
+[PREINITIALIZATION][SERVER][INFO] Current loaders after merging: [[preinit], [contenttweaker]]
+[PREINITIALIZATION][SERVER][INFO] Loading scripts for loader with names [contenttweaker]
+[PREINITIALIZATION][SERVER][INFO] [contenttweaker | SIDE_SERVER]: Skipping file {[0:crafttweaker]: chaosshard_compat.zs} as we are currently loading with a different loader
+[PREINITIALIZATION][SERVER][INFO] [contenttweaker | SIDE_SERVER]: Skipping file {[0:crafttweaker]: chaosshard_evilcraft.zs} as we are currently loading with a different loader
+[PREINITIALIZATION][SERVER][INFO] [contenttweaker | SIDE_SERVER]: Skipping file {[0:crafttweaker]: chaosshard_stars.zs} as we are currently loading with a different loader
+[PREINITIALIZATION][SERVER][INFO] Completed script loading in: 0ms
+[INITIALIZATION][SERVER][INFO] CraftTweaker: Building registry
+[INITIALIZATION][SERVER][INFO] CraftTweaker: Successfully built item registry
+[INITIALIZATION][SERVER][INFO] Current loaders after merging: [[preinit], [contenttweaker], [recipeevent | crafttweaker]]
+[INITIALIZATION][SERVER][INFO] Loading scripts for loader with names [crafttweaker | recipeevent]
+[INITIALIZATION][SERVER][INFO] [crafttweaker | SIDE_SERVER]: Loading Script: {[0:crafttweaker]: chaosshard_compat.zs}
+[INITIALIZATION][SERVER][INFO] [crafttweaker | SIDE_SERVER]: Loading Script: {[0:crafttweaker]: chaosshard_evilcraft.zs}
+[INITIALIZATION][SERVER][INFO] Adding 1 BloodInfuser Recipe(s) for BloodInfuser recipe: Input: IngredientAndFluidStackRecipeComponent(ingredient=net.minecraft.item.crafting.Ingredient@35d2628e, fluidStack=net.minecraftforge.fluids.FluidStack@32bc96c8, chance=0.0); Output: IngredientRecipeComponent(ingredient=net.minecraft.item.crafting.Ingredient@79266e4, chance=1.0); Properties: DurationXpRecipeProperties(duration=100, xp=5.0); 
+[INITIALIZATION][SERVER][INFO] Adding 1 BloodInfuser Recipe(s) for BloodInfuser recipe: Input: IngredientAndFluidStackRecipeComponent(ingredient=net.minecraft.item.crafting.Ingredient@19e08881, fluidStack=net.minecraftforge.fluids.FluidStack@32bc96c8, chance=0.0); Output: IngredientRecipeComponent(ingredient=net.minecraft.item.crafting.Ingredient@149be0d8, chance=1.0); Properties: DurationXpRecipeProperties(duration=200, xp=8.0); 
+[INITIALIZATION][SERVER][INFO] [crafttweaker | SIDE_SERVER]: Loading Script: {[0:crafttweaker]: chaosshard_stars.zs}
+[INITIALIZATION][SERVER][INFO] Completed script loading in: 397ms
+[POSTINITIALIZATION][SERVER][INFO] Removing recipes for various outputs
+[POSTINITIALIZATION][SERVER][INFO] Removing recipe with name "evilcraft:box_of_eternal_closure"
+[POSTINITIALIZATION][SERVER][INFO] Adding shaped recipe for Box of Eternal Closure with name chaosshard_box_of_eternal_closure
+[POSTINITIALIZATION][SERVER][INFO] Adding 1 Mekanism Enrichment Chamber Recipe(s) for <astralsorcery:itemcraftingcomponent:1> * 2
+[POSTINITIALIZATION][SERVER][INFO] Adding 1 Mekanism Enrichment Chamber Recipe(s) for <astralsorcery:itemcraftingcomponent> * 4
+[POSTINITIALIZATION][SERVER][INFO] Adding 1 Mekanism Crusher Recipe(s) for <astralsorcery:itemcraftingcomponent:2> * 2
+[POSTINITIALIZATION][SERVER][INFO] Adding 1 Mekanism Crusher Recipe(s) for <minecraft:gravel>
+[POSTINITIALIZATION][SERVER][INFO] Adding 1 Mekanism Crusher Recipe(s) for <minecraft:sand>
+[POSTINITIALIZATION][SERVER][INFO] Adding 1 Mekanism Crusher Recipe(s) for <chaosshard:chaos_essence> * 2
+[POSTINITIALIZATION][SERVER][INFO] Adding 1 Mekanism Combiner Recipe(s) for <chaosshard:distorted_starmetal>
+[POSTINITIALIZATION][SERVER][INFO] Adding 1 Mekanism Enrichment Chamber Recipe(s) for <defiledlands:umbrium_ingot> * 2
+[POSTINITIALIZATION][SERVER][INFO] Adding 1 Mekanism Enrichment Chamber Recipe(s) for <defiledlands:scarlite> * 2
+[POSTINITIALIZATION][SERVER][INFO] Adding 1 Mekanism Enrichment Chamber Recipe(s) for <defiledlands:hephaestite> * 3
+[POSTINITIALIZATION][SERVER][INFO] Adding 1 Mekanism Crusher Recipe(s) for <defiledlands:gravel_defiled>
+[POSTINITIALIZATION][SERVER][INFO] Adding 1 Mekanism Crusher Recipe(s) for <defiledlands:sand_defiled>
+[POSTINITIALIZATION][SERVER][INFO] Adding 1 Mekanism Crusher Recipe(s) for <chaosshard:chaos_essence>
+[AVAILABLE][SERVER][INFO] Altering Pulverizer Recipe(s) for <astralsorcery:itemcraftingcomponent:1> * 2
+[AVAILABLE][SERVER][INFO] Altering Pulverizer Recipe(s) for <astralsorcery:itemcraftingcomponent> * 4
+[AVAILABLE][SERVER][INFO] Altering Pulverizer Recipe(s) for <minecraft:gravel>
+[AVAILABLE][SERVER][INFO] Altering Pulverizer Recipe(s) for <minecraft:sand>
+[AVAILABLE][SERVER][INFO] Altering Transposer Fill Recipe(s) for <liquid:astralsorcery.liquidstarlight> * 100
+[AVAILABLE][SERVER][INFO] Altering Pulverizer Recipe(s) for <chaosshard:chaos_essence> * 2
+[AVAILABLE][SERVER][INFO] Altering InductionSmelter Recipe(s) for <chaosshard:distorted_starmetal> * 2
+[AVAILABLE][SERVER][INFO] Altering CompressionDynamo Recipe(s) for <liquid:astralsorcery.liquidstarlight>
+[AVAILABLE][SERVER][INFO] Altering Pulverizer Recipe(s) for <defiledlands:umbrium_ingot> * 2
+[AVAILABLE][SERVER][INFO] Altering Pulverizer Recipe(s) for <defiledlands:scarlite> * 2
+[AVAILABLE][SERVER][INFO] Altering Pulverizer Recipe(s) for <defiledlands:hephaestite> * 3
+[AVAILABLE][SERVER][INFO] Altering Pulverizer Recipe(s) for <defiledlands:gravel_defiled>
+[AVAILABLE][SERVER][INFO] Altering Pulverizer Recipe(s) for <chaosshard:chaos_essence>
