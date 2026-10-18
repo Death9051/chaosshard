@@ -1158,6 +1158,12 @@ public final class AutoTest {
             }
             ru.death.chaosshard.ritual.TileRitualBowl bowl = (ru.death.chaosshard.ritual.TileRitualBowl) ow.getTileEntity(bowlPos);
             check(bowl != null && bowl.chalkCount() == 8, "Чаша и круг мела");
+            java.util.Set<Integer> runes = new java.util.HashSet<>();
+            for (int[] rr : ru.death.chaosshard.ritual.TileRitualBowl.RING) {
+                BlockPos cp = bowlPos.add(rr[0], 0, rr[1]);
+                runes.add(ow.getBlockState(cp).getActualState(ow, cp).getValue(ru.death.chaosshard.ritual.BlockChalk.RUNE));
+            }
+            check(runes.size() == 8, "восемь печатей вокруг Чаши — восемь разных знаков: " + runes);
             if (bowl == null) return;
             bowl.insert(me, new net.minecraft.item.ItemStack(net.minecraft.init.Items.DYE, 8, 15), true);
             bowl.insert(me, new net.minecraft.item.ItemStack(ru.death.chaosshard.init.ModItems.CHAOS_ESSENCE, 1), true);

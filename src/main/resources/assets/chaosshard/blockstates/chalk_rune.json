@@ -1,7 +1,31 @@
 {
  "variants": {
-  "normal": {
+  "rune=0": {
    "model": "chaosshard:chalk_rune"
+  },
+  "rune=1": {
+   "model": "chaosshard:chalk_rune_1"
+  },
+  "rune=2": {
+   "model": "chaosshard:chalk_rune_2"
+  },
+  "rune=3": {
+   "model": "chaosshard:chalk_rune_3"
+  },
+  "rune=4": {
+   "model": "chaosshard:chalk_rune_4"
+  },
+  "rune=5": {
+   "model": "chaosshard:chalk_rune_5"
+  },
+  "rune=6": {
+   "model": "chaosshard:chalk_rune_6"
+  },
+  "rune=7": {
+   "model": "chaosshard:chalk_rune_7"
+  },
+  "rune=8": {
+   "model": "chaosshard:chalk_rune_8"
   }
  }
 }
