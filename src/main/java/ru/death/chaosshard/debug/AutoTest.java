@@ -343,6 +343,16 @@ public final class AutoTest {
     private int challengeNit, challengeCorrupt;
 
     /** Подобрать с земли рядом сферу нужного ритуала (true — была). */
+    /** Что лежит на земле в 3 блоках от точки (для сообщений о провале). */
+    private String describeItems(BlockPos at) {
+        StringBuilder sb = new StringBuilder();
+        for (net.minecraft.entity.item.EntityItem ei : ow.getEntitiesWithinAABB(net.minecraft.entity.item.EntityItem.class, new AxisAlignedBB(at).grow(3),
+                net.minecraft.entity.Entity::isEntityAlive)) {
+            sb.append(sb.length() > 0 ? ", " : "").append(ei.getItem().toString());
+        }
+        return sb.length() == 0 ? "пусто" : sb.toString();
+    }
+
     private boolean takeSphere(BlockPos at, ru.death.chaosshard.ritual.Ritual r) {
         boolean found = false;
         for (net.minecraft.entity.item.EntityItem ei : ow.getEntitiesWithinAABB(net.minecraft.entity.item.EntityItem.class, new AxisAlignedBB(at).grow(3),
@@ -1289,7 +1299,11 @@ public final class AutoTest {
             bowl.insert(me, new net.minecraft.item.ItemStack(ru.death.chaosshard.init.ModItems.CHAOS_ESSENCE, 1), true);
             bowl.insert(me, new net.minecraft.item.ItemStack(net.minecraft.init.Items.COAL, 4, 1), true);
             bowl.tryStart(me);
-            check(takeSphere(bowlPos, ru.death.chaosshard.ritual.Ritual.DUSK), "над Чашей — Сфера сумерек (древесный уголь годится)");
+            String around = describeItems(bowlPos);
+            boolean dusk = takeSphere(bowlPos, ru.death.chaosshard.ritual.Ritual.DUSK);
+            check(dusk, "над Чашей — Сфера сумерек (древесный уголь годится)" + (dusk ? "" : "; у Чаши: " + around
+                    + "; в Чаше: " + bowl.getItems().stream().filter(st -> !st.isEmpty()).map(net.minecraft.item.ItemStack::toString)
+                    .collect(java.util.stream.Collectors.joining(", "))));
             long day0 = ow.getWorldTime() - ow.getWorldTime() % 24000;
             ow.setWorldTime(day0 + 1000);
             check(useSphere(ru.death.chaosshard.ritual.Ritual.DUSK, base.add(0, 0, -20)), "сфера разбита");
