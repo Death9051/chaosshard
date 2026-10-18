@@ -242,8 +242,12 @@ public class GuiGrimoireMagic extends GuiScreen {
         }
         int idx = rowAt(mx, my);
         if (idx >= 0) {
-            if (tab == 0 && idx < spells.size()) {
-                selSpell = idx;
+            if (tab == 0 && idx < spellRows().size()) {
+                Spell picked = spellRows().get(idx);
+                if (picked == null) {
+                    return;
+                }
+                selSpell = spells.indexOf(picked);
             } else if (tab == 1 && idx <= shownRituals().size()) {
                 selRitual = idx - 1;
             } else if (tab == 2 && idx < BeastPage.ROWS && idx != BeastPage.HEADER_ROW) {
@@ -276,7 +280,7 @@ public class GuiGrimoireMagic extends GuiScreen {
     int visibleRows() { return (BookArt.PB - 48 - 24) / ROW; }
 
     private int listSize() {
-        return tab == 0 ? spells.size() : tab == 1 ? shownRituals().size() + 1 : BeastPage.ROWS;
+        return tab == 0 ? spells.size() + 2 : tab == 1 ? shownRituals().size() + 1 : BeastPage.ROWS;
     }
 
     private int clampScroll(int v, int rows) {
@@ -543,17 +547,28 @@ public class GuiGrimoireMagic extends GuiScreen {
 
     private void drawSpells(int mx, int my) {
         Spell current = SpellCaster.magicMode(grimoire) ? SpellCaster.selected(grimoire) : null;
-        for (int i = 0; i < spells.size(); i++) {
-            Spell s = spells.get(i);
+        List<Spell> rows = spellRows();
+        for (int i = 0; i < rows.size(); i++) {
+            Spell s = rows.get(i);
+            if (s == null) {
+                drawHeader(i, I18n.format(i == 0 ? "chaosshard.magic.peaceful" : "chaosshard.magic.combat"));
+                continue;
+            }
             boolean open = MagicUi.unlocked(s);
-            drawRow(i, MagicUi.icon(s), I18n.format(s.key()), !open ? BookArt.DIM : s == current ? BookArt.VIOLET : BookArt.INK, i == selSpell, mx, my);
+            drawRow(i, MagicUi.icon(s), I18n.format(s.key()), !open ? BookArt.DIM : s == current ? BookArt.VIOLET : BookArt.INK,
+                    spells.indexOf(s) == selSpell, mx, my);
         }
         updateButton();
         Spell s = spells.get(selSpell);
         int x = pageX(), pw = pageW();
         boolean open = MagicUi.unlocked(s);
+        int br = ru.death.chaosshard.spell.SpellData.branch(mc.player, s);
         int y = heading(I18n.format(s.key()), x, top + 19, pw, open ? BookArt.INK : BookArt.SOFT);
-        y = para(I18n.format(s.key() + ".desc"), x, y, pw, BookArt.INK) + 5;
+        if (br > 0) {
+            String bn = "§o" + I18n.format(ru.death.chaosshard.spell.SpellPerks.branchKey(s, br - 1));
+            font.drawScaled(bn, x + pw - font.width(bn) * 0.85F, top + 22, BookArt.ACCENT, 0.85F);
+        }
+        y = para(I18n.format(br > 0 ? ru.death.chaosshard.spell.SpellPerks.branchKey(s, br - 1) + ".desc" : s.key() + ".desc"), x, y, pw, BookArt.INK) + 5;
         boolean enough = ru.death.chaosshard.client.ClientThreadCache.energy() >= SpellCaster.cost(mc.player, s);
         String req = I18n.format("chaosshard.magic.need_thread", s.minThread);
         font.drawString(req, x, y, open ? BookArt.GOOD : BookArt.BAD, false);
@@ -591,45 +606,81 @@ public class GuiGrimoireMagic extends GuiScreen {
             }
             y += 17;
         }
-        // перки
+        // ветки: две колонки, по три ступени
         perkRects.clear();
         ru.death.chaosshard.spell.SpellPerks.Perk[] perks = ru.death.chaosshard.spell.SpellPerks.perks(s);
         int points = ru.death.chaosshard.spell.SpellData.points(mc.player);
         int free = ru.death.chaosshard.spell.SpellData.free(mc.player, s);
-        y = section(I18n.format("chaosshard.magic.perks", free, points), x, y);
+        y = section(I18n.format("chaosshard.magic.branches", free, points), x, y);
         String hoverPerk = null;
-        for (int q = 0; q < perks.length; q++) {
-            ru.death.chaosshard.spell.SpellPerks.Perk pk = perks[q];
-            int r = ru.death.chaosshard.spell.SpellData.rank(mc.player, s, pk.id);
-            boolean can = r < pk.max && free > 0 && open;
-            boolean over = mx >= x && mx < x + pw && my >= y - 1 && my < y + 12;
-            if (over) {
-                Gui.drawRect(x - 2, y - 1, x + pw, y + 12, 0x18E8D8FF);
+        int colW = (pw - 8) / 2;
+        for (int b = 0; b < 2; b++) {
+            int cx = x + b * (colW + 8);
+            boolean closed = br != 0 && br != b + 1;
+            String bn = I18n.format(ru.death.chaosshard.spell.SpellPerks.branchKey(s, b));
+            boolean overTitle = mx >= cx && mx < cx + colW && my >= y && my < y + 11;
+            font.drawString("§l" + font.trimStringToWidth(bn, colW), cx, y, closed ? BookArt.DIM : br == b + 1 ? BookArt.ACCENT : BookArt.INK, false);
+            if (overTitle) {
+                hoverPerk = "§d" + bn + "§r\n" + I18n.format(ru.death.chaosshard.spell.SpellPerks.branchKey(s, b) + ".desc");
             }
-            int box = r >= pk.max ? 0xFFECB064 : can ? 0xFFB070FF : 0xFF3A3048;
-            Gui.drawRect(x, y + 1, x + 9, y + 10, box);
-            Gui.drawRect(x + 1, y + 2, x + 8, y + 9, 0xFF160D20);
-            font.drawString(r >= pk.max ? "✔" : "+", x + 1.5F, y + 1, r >= pk.max ? BookArt.ACCENT : can ? 0xFFFFFF : BookArt.DIM, false);
-            perkRects.add(new int[]{x, y, 10, 11, q});
-            String name = I18n.format(pk.key(s));
-            font.drawString(name, x + 14, y + 1, r > 0 ? BookArt.ACCENT : BookArt.INK, false);
-            int px = x + 18 + font.getStringWidth(name);
-            for (int z = 0; z < pk.max; z++) {
-                Gui.drawRect(px + z * 7, y + 4, px + z * 7 + 5, y + 8, z < r ? 0xFFC890FF : 0xFF3A3048);
+            int ty = y + 13;
+            for (int q = 0; q < perks.length; q++) {
+                ru.death.chaosshard.spell.SpellPerks.Perk pk = perks[q];
+                if (pk.branch != b) {
+                    continue;
+                }
+                boolean own = ru.death.chaosshard.spell.SpellData.has(mc.player, s, pk.id);
+                boolean can = !own && !closed && open && free >= pk.cost()
+                        && (pk.tier == 1 || ru.death.chaosshard.spell.SpellData.tier(mc.player, s) >= pk.tier - 1 && br == b + 1);
+                boolean over = mx >= cx && mx < cx + colW && my >= ty - 1 && my < ty + 11;
+                if (over) {
+                    Gui.drawRect(cx - 2, ty - 1, cx + colW, ty + 11, 0x18E8D8FF);
+                    hoverPerk = (own ? "§6" : "§d") + I18n.format(pk.key(s)) + "§r\n" + I18n.format(pk.key(s) + ".desc")
+                            + "\n§8" + I18n.format(own ? "chaosshard.magic.tier.own" : closed ? "chaosshard.magic.tier.closed"
+                            : "chaosshard.magic.tier.cost", pk.cost());
+                }
+                int box = own ? 0xFFECB064 : can ? 0xFFB070FF : 0xFF3A3048;
+                Gui.drawRect(cx, ty + 1, cx + 9, ty + 10, box);
+                Gui.drawRect(cx + 1, ty + 2, cx + 8, ty + 9, 0xFF160D20);
+                font.drawString(own ? "✔" : String.valueOf(pk.cost()), cx + 2F, ty + 1, own ? BookArt.ACCENT : can ? 0xFFFFFF : BookArt.DIM, false);
+                perkRects.add(new int[]{cx, ty, colW, 11, q});
+                font.drawString(font.trimStringToWidth(I18n.format(pk.key(s)), colW - 13), cx + 13, ty + 1,
+                        own ? BookArt.ACCENT : closed ? BookArt.DIM : BookArt.INK, false);
+                ty += 13;
             }
-            if (over) {
-                hoverPerk = I18n.format(pk.key(s) + ".desc");
-            }
-            y += 13;
         }
+        y += 13 + 3 * 13;
         y += 3;
         int bottom = choose.y - 4;
         if (hoverPerk != null) {
-            para(hoverPerk, x, y, pw, BookArt.SOFT);
-        } else {
-            int ly = para("§o" + I18n.format(s.key() + ".lore"), x, y, pw, BookArt.SOFT);
+            hoverText = split(hoverPerk);
+        }
+        {
+            List<String> lore = font.listFormattedStringToWidth("§o" + I18n.format(s.key() + ".lore"), pw);
+            int ly = y;
+            if (y + lore.size() * 11 <= bottom) {
+                ly = para("§o" + I18n.format(s.key() + ".lore"), x, y, pw, BookArt.SOFT);
+            }
             noteKey("chaosshard.note.spell." + s.name().toLowerCase(), x + 2, ly + 2, bottom, -2F);
         }
+    }
+
+    /** Строки оглавления заклинаний: null — подзаголовок («Мирные», «Боевые»). */
+    private List<Spell> spellRows() {
+        List<Spell> out = new ArrayList<>();
+        out.add(null);
+        for (Spell s : spells) {
+            if (!s.combat) {
+                out.add(s);
+            }
+        }
+        out.add(null);
+        for (Spell s : spells) {
+            if (s.combat) {
+                out.add(s);
+            }
+        }
+        return out;
     }
 
     private final List<int[]> formRects = new ArrayList<>();

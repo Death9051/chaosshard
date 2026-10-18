@@ -125,8 +125,7 @@ public class ItemGrimoire extends Item {
             tooltip.add(TextFormatting.LIGHT_PURPLE + I18n.format("item.chaosshard.grimoire.current", I18n.format(spell.key())));
             if (net.minecraft.client.Minecraft.getMinecraft().player != null) {
                 tooltip.add(TextFormatting.DARK_PURPLE + I18n.format("item.chaosshard.grimoire.form",
-                        I18n.format(ru.death.chaosshard.spell.SpellPerks.formKey(spell,
-                                ru.death.chaosshard.spell.SpellData.form(net.minecraft.client.Minecraft.getMinecraft().player, spell)))));
+                        I18n.format(ru.death.chaosshard.spell.SpellData.variantKey(net.minecraft.client.Minecraft.getMinecraft().player, spell))));
             }
             tooltip.add(TextFormatting.DARK_GRAY + I18n.format(spell.key() + ".desc"));
         }

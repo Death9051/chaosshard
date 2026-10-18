@@ -125,8 +125,7 @@ public class GuiSpellWheel extends GuiScreen {
             boolean open = MagicUi.unlocked(show);
             drawCenteredString(fontRenderer, name, cx, cy - 14, open ? 0xD9B8FF : 0x7A7288);
             if (open) {
-                drawCenteredString(fontRenderer, I18n.format(ru.death.chaosshard.spell.SpellPerks.formKey(show,
-                        ru.death.chaosshard.spell.SpellData.form(mc.player, show))), cx, cy - 4, 0xC890FF);
+                drawCenteredString(fontRenderer, I18n.format(ru.death.chaosshard.spell.SpellData.variantKey(mc.player, show)), cx, cy - 4, 0xC890FF);
             }
             String sub = open ? I18n.format(show.key() + ".desc") : I18n.format("chaosshard.magic.need_thread", show.minThread);
             if (open) {

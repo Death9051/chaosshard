@@ -62,9 +62,45 @@ public final class SpellData {
     public static int spent(EntityPlayer p, Spell s) {
         int n = 0;
         for (SpellPerks.Perk k : SpellPerks.perks(s)) {
-            n += rank(p, s, k.id);
+            if (rank(p, s, k.id) > 0) {
+                n += k.cost();
+            }
         }
         return n;
+    }
+
+    /** Что показать рядом с именем заклинания: место (Зов Нити), иначе ветку или «без ветки». */
+    public static String variantKey(EntityPlayer p, Spell s) {
+        if (SpellPerks.forms(s).length > 1) {
+            return SpellPerks.formKey(s, form(p, s));
+        }
+        int b = branch(p, s);
+        return b > 0 ? SpellPerks.branchKey(s, b - 1) : "chaosshard.magic.branch.none";
+    }
+
+    /** Выбранная ветка: 0 — нет, 1 — A, 2 — B. */
+    public static int branch(EntityPlayer p, Spell s) {
+        return has(p, s, "a1") ? 1 : has(p, s, "b1") ? 2 : 0;
+    }
+
+    /** Сколько ступеней взято в выбранной ветке (0–3). */
+    public static int tier(EntityPlayer p, Spell s) {
+        int b = branch(p, s);
+        if (b == 0) {
+            return 0;
+        }
+        String c = b == 1 ? "a" : "b";
+        return has(p, s, c + "3") ? 3 : has(p, s, c + "2") ? 2 : 1;
+    }
+
+    /** Ветка A не ниже ступени t. */
+    public static boolean a(EntityPlayer p, Spell s, int t) {
+        return branch(p, s) == 1 && tier(p, s) >= t;
+    }
+
+    /** Ветка B не ниже ступени t. */
+    public static boolean b(EntityPlayer p, Spell s, int t) {
+        return branch(p, s) == 2 && tier(p, s) >= t;
     }
 
     /** Очков на заклинание: уровень Нити. */
@@ -122,7 +158,16 @@ public final class SpellData {
         if (r >= k.max) {
             return false;
         }
-        if (free(p, s) <= 0) {
+        int br = branch(p, s);
+        if (br != 0 && br != k.branch + 1) {
+            p.sendStatusMessage(Breach.grimoire("chaosshard.spell.branch_closed"), true);
+            return false;
+        }
+        if (k.tier > 1 && tier(p, s) < k.tier - 1) {
+            p.sendStatusMessage(Breach.grimoire("chaosshard.spell.tier_first"), true);
+            return false;
+        }
+        if (free(p, s) < k.cost()) {
             p.sendStatusMessage(Breach.grimoire("chaosshard.spell.no_points"), true);
             return false;
         }
@@ -132,8 +177,12 @@ public final class SpellData {
         }
         sync(p);
         p.sendStatusMessage(new TextComponentTranslation("chaosshard.spell.perk_taken",
-                new TextComponentTranslation(k.key(s)), r + 1, k.max), true);
+                new TextComponentTranslation(k.key(s)), k.tier, 3), true);
         ru.death.chaosshard.quest.Milestones.grant(p, ru.death.chaosshard.quest.Milestones.SPELL_PERK);
+        if (k.tier == 1) {
+            // выбор ветки — бывшая веха «другая форма»
+            ru.death.chaosshard.quest.Milestones.grant(p, ru.death.chaosshard.quest.Milestones.SPELL_FORM);
+        }
         return true;
     }
 
@@ -149,6 +198,18 @@ public final class SpellData {
             ru.death.chaosshard.quest.Milestones.grant(p, ru.death.chaosshard.quest.Milestones.SPELL_FORM);
         }
         return true;
+    }
+
+    /** Для автотеста и отладки: у заклинания только ветка branch (1 — A, 2 — B, 0 — без ветки) до ступени tier. */
+    public static void debugSet(EntityPlayerMP p, Spell s, int branch, int tier) {
+        NBTTagCompound t = of(p, s);
+        for (SpellPerks.Perk k : SpellPerks.perks(s)) {
+            t.removeTag(k.id);
+        }
+        for (int i = 1; i <= tier && branch > 0; i++) {
+            t.setInteger((branch == 1 ? "a" : "b") + i, 1);
+        }
+        sync(p);
     }
 
     /** Сбросить все перки (ритуал «Чистые страницы»). */

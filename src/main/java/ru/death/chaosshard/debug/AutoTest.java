@@ -2812,37 +2812,27 @@ public final class AutoTest {
             g.setTagCompound(old);
             check(ru.death.chaosshard.spell.SpellCaster.magicMode(g), "старый Гримуар в Магии остаётся в Магии");
         });
-        step("прокачка: очки по Нити, перки, формы, сброс", () -> {
+        step("прокачка: очки по Нити, ветки, сброс", () -> {
             ru.death.chaosshard.spell.SpellHeat.set(me, 0, 0);   // разогрев не должен вмешиваться
             ru.death.chaosshard.spell.SpellData.reset(me);
+            ru.death.chaosshard.spell.Spell bolt = ru.death.chaosshard.spell.Spell.BOLT;
             int pts = ru.death.chaosshard.spell.SpellData.points(me);
             check(pts == ru.death.chaosshard.thread.ThreadManager.getLevel(me), "очков на заклинание = уровень Нити: " + pts);
-            check(!ru.death.chaosshard.spell.SpellData.formOpen(me, ru.death.chaosshard.spell.Spell.BOLT, 1), "Цепь закрыта без перка");
-            check(ru.death.chaosshard.spell.SpellData.formOpen(me, ru.death.chaosshard.spell.Spell.DASH, 1), "Скачок открыт сразу");
-            int chain = ru.death.chaosshard.spell.SpellPerks.index(ru.death.chaosshard.spell.Spell.BOLT, "chain");
-            check(ru.death.chaosshard.spell.SpellData.buy(me, ru.death.chaosshard.spell.Spell.BOLT, chain), "куплен перк Цепь");
-            check(ru.death.chaosshard.spell.SpellData.form(me, ru.death.chaosshard.spell.Spell.BOLT) == 1, "форма сразу стала Цепью");
-            int bought = 1;
-            while (ru.death.chaosshard.spell.SpellData.free(me, ru.death.chaosshard.spell.Spell.BOLT) > 0 && bought < 10) {
-                boolean any = false;
-                for (int k = 0; k < ru.death.chaosshard.spell.SpellPerks.perks(ru.death.chaosshard.spell.Spell.BOLT).length; k++) {
-                    if (ru.death.chaosshard.spell.SpellData.buy(me, ru.death.chaosshard.spell.Spell.BOLT, k)) {
-                        any = true;
-                        bought++;
-                        break;
-                    }
-                }
-                if (!any) break;
+            check(ru.death.chaosshard.spell.SpellData.branch(me, bolt) == 0, "сначала ветка не выбрана");
+            int a1 = ru.death.chaosshard.spell.SpellPerks.index(bolt, "a1"), a2 = ru.death.chaosshard.spell.SpellPerks.index(bolt, "a2"),
+                    b1 = ru.death.chaosshard.spell.SpellPerks.index(bolt, "b1");
+            check(!ru.death.chaosshard.spell.SpellData.buy(me, bolt, a2), "вторая ступень — не раньше первой");
+            check(ru.death.chaosshard.spell.SpellData.buy(me, bolt, a1) && ru.death.chaosshard.spell.SpellData.branch(me, bolt) == 1, "выбрана ветка A (Цепь)");
+            check(!ru.death.chaosshard.spell.SpellData.buy(me, bolt, b1), "вторая ветка закрыта");
+            if (pts >= 3) {
+                check(ru.death.chaosshard.spell.SpellData.buy(me, bolt, a2) && ru.death.chaosshard.spell.SpellData.tier(me, bolt) == 2, "вторая ступень взята");
+                check(ru.death.chaosshard.spell.SpellData.spent(me, bolt) == 3, "ступени стоят 1 и 2: потрачено " + ru.death.chaosshard.spell.SpellData.spent(me, bolt));
             }
-            check(ru.death.chaosshard.spell.SpellData.spent(me, ru.death.chaosshard.spell.Spell.BOLT) == Math.min(pts, 6),
-                    "потрачено очков: " + ru.death.chaosshard.spell.SpellData.spent(me, ru.death.chaosshard.spell.Spell.BOLT));
-            check(!ru.death.chaosshard.spell.SpellData.buy(me, ru.death.chaosshard.spell.Spell.BOLT, chain) || pts > 6, "больше очков нет");
             check(ru.death.chaosshard.spell.SpellData.spent(me, ru.death.chaosshard.spell.Spell.SPROUT) == 0, "у других заклинаний очки свои");
-            check(ru.death.chaosshard.spell.SpellCaster.cost(me, ru.death.chaosshard.spell.Spell.BOLT) < ru.death.chaosshard.spell.Spell.BOLT.energy
-                    || !ru.death.chaosshard.spell.SpellData.has(me, ru.death.chaosshard.spell.Spell.BOLT, "economy"), "Экономия снижает цену");
             ru.death.chaosshard.spell.SpellData.reset(me);
-            check(ru.death.chaosshard.spell.SpellData.spent(me, ru.death.chaosshard.spell.Spell.BOLT) == 0
-                    && ru.death.chaosshard.spell.SpellData.form(me, ru.death.chaosshard.spell.Spell.BOLT) == 0, "Чистые страницы всё сбросили");
+            check(ru.death.chaosshard.spell.SpellData.spent(me, bolt) == 0 && ru.death.chaosshard.spell.SpellData.branch(me, bolt) == 0, "Чистые страницы всё сбросили");
+            check(ru.death.chaosshard.spell.SpellData.buy(me, bolt, b1) && ru.death.chaosshard.spell.SpellData.branch(me, bolt) == 2, "после сброса можно взять другую ветку");
+            ru.death.chaosshard.spell.SpellData.reset(me);
         });
         step("разогрев и глифы", () -> {
             ru.death.chaosshard.spell.Spell sp = ru.death.chaosshard.spell.Spell.SPROUT;
@@ -2915,8 +2905,9 @@ public final class AutoTest {
             float hp = z1.getHealth();
             boolean ok = ru.death.chaosshard.spell.SpellCaster.castAt(me, ru.death.chaosshard.spell.Spell.BOLT, null, EnumFacing.UP, z1, null);
             check(ok && z1.getHealth() < hp, "Стрела ранила цель: " + hp + " → " + z1.getHealth());
-            // Стрела: цепь
-            ru.death.chaosshard.spell.SpellData.buy(me, ru.death.chaosshard.spell.Spell.BOLT, ru.death.chaosshard.spell.SpellPerks.index(ru.death.chaosshard.spell.Spell.BOLT, "chain"));
+            // Стрела, ветка A «Цепь»
+            ru.death.chaosshard.spell.Spell B = ru.death.chaosshard.spell.Spell.BOLT;
+            ru.death.chaosshard.spell.SpellData.debugSet(me, B, 1, 1);
             net.minecraft.entity.monster.EntityZombie z2 = new net.minecraft.entity.monster.EntityZombie(ow);
             net.minecraft.entity.monster.EntityZombie z3 = new net.minecraft.entity.monster.EntityZombie(ow);
             z2.setPosition(o.getX() + 3.5, o.getY() + 1, o.getZ() + 5.5);
@@ -2924,16 +2915,33 @@ public final class AutoTest {
             ow.spawnEntity(z2);
             ow.spawnEntity(z3);
             z1.setHealth(z1.getMaxHealth());
-            ready.accept(ru.death.chaosshard.spell.Spell.BOLT);
-            ru.death.chaosshard.spell.SpellCaster.castAt(me, ru.death.chaosshard.spell.Spell.BOLT, null, EnumFacing.UP, z1, null);
+            ready.accept(B);
+            ru.death.chaosshard.spell.SpellCaster.castAt(me, B, null, EnumFacing.UP, z1, null);
             check(z2.getHealth() < z2.getMaxHealth() && z3.getHealth() < z3.getMaxHealth(), "Цепь перескочила на двоих");
-            // Стрела: взрыв по блоку
-            z2.setHealth(z2.getMaxHealth());
-            z3.setHealth(z3.getMaxHealth());
-            ready.accept(ru.death.chaosshard.spell.Spell.BOLT);
-            ru.death.chaosshard.spell.SpellCaster.castAt(me, ru.death.chaosshard.spell.Spell.BOLT, o.add(3, 0, 6), EnumFacing.UP, null, null);
-            check(z2.getHealth() < z2.getMaxHealth() && ow.getBlockState(o.add(3, 0, 6)).getBlock() == Blocks.STONE, "взрыв по блоку ранил, блок цел");
+            // Стрела, ветка B «Копьё»: пронзает всех на линии
             for (net.minecraft.entity.monster.EntityZombie z : new net.minecraft.entity.monster.EntityZombie[]{z1, z2, z3}) z.setDead();
+            ru.death.chaosshard.spell.SpellData.debugSet(me, B, 2, 1);
+            me.setPositionAndRotation(o.getX() + 0.5, o.getY() + 1, o.getZ() + 0.5, 0, 0);
+            net.minecraft.entity.monster.EntityZombie l1 = new net.minecraft.entity.monster.EntityZombie(ow);
+            net.minecraft.entity.monster.EntityZombie l2 = new net.minecraft.entity.monster.EntityZombie(ow);
+            l1.setPosition(o.getX() + 0.5, o.getY() + 1, o.getZ() + 3.5);
+            l2.setPosition(o.getX() + 0.5, o.getY() + 1, o.getZ() + 7.5);
+            ow.spawnEntity(l1);
+            ow.spawnEntity(l2);
+            ready.accept(B);
+            ru.death.chaosshard.spell.SpellCaster.castAt(me, B, null, EnumFacing.UP, l1, null);
+            check(l1.getHealth() < l1.getMaxHealth() && l2.getHealth() < l2.getMaxHealth(), "Копьё пронзило обоих на линии");
+            l1.setDead();
+            l2.setDead();
+            // Стрела без ветки: взрыв по блоку
+            ru.death.chaosshard.spell.SpellData.debugSet(me, B, 0, 0);
+            net.minecraft.entity.monster.EntityZombie zb = new net.minecraft.entity.monster.EntityZombie(ow);
+            zb.setPosition(o.getX() + 3.5, o.getY() + 1, o.getZ() + 5.5);
+            ow.spawnEntity(zb);
+            ready.accept(B);
+            ru.death.chaosshard.spell.SpellCaster.castAt(me, B, o.add(3, 0, 6), EnumFacing.UP, null, null);
+            check(zb.getHealth() < zb.getMaxHealth() && ow.getBlockState(o.add(3, 0, 6)).getBlock() == Blocks.STONE, "взрыв по блоку ранил, блок цел");
+            zb.setDead();
             // Росток: печь ускоряется
             BlockPos fur = o.add(-4, 1, 0);
             ow.setBlockState(fur, Blocks.FURNACE.getDefaultState(), 3);
@@ -2942,27 +2950,79 @@ public final class AutoTest {
             check(ru.death.chaosshard.spell.SpellCaster.castAt(me, ru.death.chaosshard.spell.Spell.SPROUT, fur, EnumFacing.UP, null, null)
                     && ru.death.chaosshard.spell.SpellAccel.active() > was, "Росток ускорил печь");
             ow.setBlockToAir(fur);
-            // Мост: вперёд 8 блоков (смотрим на юг)
-            ready.accept(ru.death.chaosshard.spell.Spell.BRIDGE);
-            BlockPos from = o.add(0, 3, 0);
-            ow.setBlockState(from, Blocks.STONE.getDefaultState());
-            ru.death.chaosshard.spell.SpellCaster.castAt(me, ru.death.chaosshard.spell.Spell.BRIDGE, from, EnumFacing.UP, null, null);
-            int bridge = 0;
-            for (int i = 1; i <= 8; i++) if (ow.getBlockState(from.offset(me.getHorizontalFacing(), i)).getBlock() == ru.death.chaosshard.init.ModBlocks.CHAOS_STONE) bridge++;
-            check(bridge == 8, "Мост: блоков " + bridge);
-            for (int i = 0; i <= 8; i++) ow.setBlockToAir(from.offset(me.getHorizontalFacing(), i));
-            // Источник: вода, водяной удар
-            ready.accept(ru.death.chaosshard.spell.Spell.SPRING);
-            ru.death.chaosshard.spell.SpellCaster.castAt(me, ru.death.chaosshard.spell.Spell.SPRING, o.add(5, 0, -5), EnumFacing.UP, null, null);
-            check(ow.getBlockState(o.add(5, 1, -5)).getMaterial() == net.minecraft.block.material.Material.WATER, "Источник: вода");
-            ow.setBlockToAir(o.add(5, 1, -5));
-            net.minecraft.entity.monster.EntityZombie zw = new net.minecraft.entity.monster.EntityZombie(ow);
-            zw.setPosition(o.getX() + 0.5, o.getY() + 1, o.getZ() + 3.5);
-            ow.spawnEntity(zw);
-            ready.accept(ru.death.chaosshard.spell.Spell.SPRING);
-            ru.death.chaosshard.spell.SpellCaster.castAt(me, ru.death.chaosshard.spell.Spell.SPRING, null, EnumFacing.UP, zw, null);
-            check(zw.motionZ > 0.5, "водяной удар отбросил цель: " + zw.motionZ);
-            zw.setDead();
+            // Тропа: без ветки — дорожка вперёд по воздуху
+            ru.death.chaosshard.spell.Spell T = ru.death.chaosshard.spell.Spell.BRIDGE;
+            net.minecraft.block.Block TRAIL = ru.death.chaosshard.init.ModBlocks.CHAOS_TRAIL;
+            me.setPositionAndRotation(o.getX() + 0.5, o.getY() + 5, o.getZ() + 0.5, 0, 0);
+            ready.accept(T);
+            ru.death.chaosshard.spell.SpellCaster.castAt(me, T, null, EnumFacing.UP, null, null);
+            BlockPos feet = new BlockPos(me.posX, me.posY - 0.5, me.posZ);
+            int trail = 0;
+            for (int i = 1; i <= 8; i++) if (ow.getBlockState(feet.offset(EnumFacing.SOUTH, i)).getBlock() == TRAIL) trail++;
+            check(trail == 8, "Тропа: плит " + trail);
+            for (int i = 1; i <= 8; i++) ow.setBlockToAir(feet.offset(EnumFacing.SOUTH, i));
+            // плита на воде, рассыпаясь, возвращает воду
+            BlockPos wp = o.add(-6, 1, -6);
+            ow.setBlockState(wp, Blocks.WATER.getDefaultState(), 2);
+            ru.death.chaosshard.spell.BlockChaosTrail.place(ow, wp, 20);
+            check(ow.getBlockState(wp).getBlock() == TRAIL, "плита легла на воду");
+            TRAIL.updateTick(ow, wp, ow.getBlockState(wp), ow.rand);
+            check(ow.getBlockState(wp).getBlock() == Blocks.WATER, "рассыпалась — вода вернулась");
+            ow.setBlockToAir(wp);
+            // Тропа B «Перекинуть»: лента через яму к блоку под взглядом
+            ru.death.chaosshard.spell.SpellData.debugSet(me, T, 2, 1);
+            me.setPositionAndRotation(o.getX() + 0.5, o.getY() + 1, o.getZ() + 0.5, 0, 0);
+            for (int z = 2; z <= 9; z++) ow.setBlockToAir(o.add(0, 0, z));
+            ready.accept(T);
+            ru.death.chaosshard.spell.SpellCaster.castAt(me, T, o.add(0, 0, 10), EnumFacing.UP, null, null);
+            int span = 0;
+            for (int z = 2; z <= 9; z++) if (ow.getBlockState(o.add(0, 0, z)).getBlock() == TRAIL) span++;
+            check(span == 8, "лента через яму: плит " + span);
+            for (int z = 2; z <= 9; z++) ow.setBlockState(o.add(0, 0, z), Blocks.STONE.getDefaultState(), 2);
+            // Тропа A «Поступь»: под ногами в воздухе застывает Хаос
+            ru.death.chaosshard.spell.SpellData.debugSet(me, T, 1, 1);
+            ready.accept(T);
+            ru.death.chaosshard.spell.SpellCaster.castAt(me, T, null, EnumFacing.UP, null, null);
+            me.setPositionAndRotation(o.getX() + 4.5, o.getY() + 6, o.getZ() + 4.5, 0, 0);
+            me.onGround = false;
+            ru.death.chaosshard.spell.SpellEffects.onPlayerTick(new net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent(
+                    net.minecraftforge.fml.common.gameevent.TickEvent.Phase.END, me));
+            BlockPos under = new BlockPos(me.posX, me.posY - 0.5, me.posZ);
+            check(ow.getBlockState(under).getBlock() == TRAIL, "Поступь: под ногами застыл Хаос");
+            ow.setBlockToAir(under);
+            me.getEntityData().removeTag("chaosshard_trail_until");
+            ru.death.chaosshard.spell.SpellData.debugSet(me, T, 0, 0);
+            me.setPositionAndRotation(o.getX() + 0.5, o.getY() + 1, o.getZ() + 0.5, 0, 0);
+            // Пожирание: без ветки — куб исчезает без следа
+            ru.death.chaosshard.spell.Spell D = ru.death.chaosshard.spell.Spell.SPRING;
+            BlockPos dc = o.add(-8, 4, -8);
+            for (BlockPos q : BlockPos.getAllInBox(dc.add(-1, -1, -1), dc.add(1, 1, 1))) ow.setBlockState(q, Blocks.STONE.getDefaultState(), 2);
+            ready.accept(D);
+            ru.death.chaosshard.spell.SpellCaster.castAt(me, D, dc, EnumFacing.UP, null, null);
+            int left = 0;
+            for (BlockPos q : BlockPos.getAllInBox(dc.add(-1, -1, -1), dc.add(1, 1, 1))) if (!ow.isAirBlock(q)) left++;
+            boolean drops = !ow.getEntitiesWithinAABB(net.minecraft.entity.item.EntityItem.class, new AxisAlignedBB(dc).grow(3)).isEmpty();
+            check(left == 0 && !drops, "Пожирание: куб съеден без следа (осталось " + left + ")");
+            // Пожирание B «Просеивание»: руда приходит целой
+            ru.death.chaosshard.spell.SpellData.debugSet(me, D, 2, 1);
+            for (BlockPos q : BlockPos.getAllInBox(dc.add(-1, -1, -1), dc.add(1, 1, 1))) ow.setBlockState(q, Blocks.STONE.getDefaultState(), 2);
+            ow.setBlockState(dc, Blocks.DIAMOND_ORE.getDefaultState(), 2);
+            net.minecraft.nbt.NBTTagList inv = me.inventory.writeToNBT(new net.minecraft.nbt.NBTTagList());
+            me.inventory.clear();
+            ready.accept(D);
+            ru.death.chaosshard.spell.SpellCaster.castAt(me, D, dc, EnumFacing.UP, null, null);
+            check(me.inventory.hasItemStack(new net.minecraft.item.ItemStack(Blocks.DIAMOND_ORE)), "Просеивание: алмазная руда в сумке");
+            // Пожирание A «Переплавка»: съеденное возвращает энергию
+            ru.death.chaosshard.spell.SpellData.debugSet(me, D, 1, 1);
+            for (BlockPos q : BlockPos.getAllInBox(dc.add(-1, -1, -1), dc.add(1, 1, 1))) ow.setBlockState(q, Blocks.STONE.getDefaultState(), 2);
+            ready.accept(D);
+            ru.death.chaosshard.spell.ChaosEnergy.set(me, 20);
+            int dcost = ru.death.chaosshard.spell.SpellCaster.cost(me, D);
+            ru.death.chaosshard.spell.SpellCaster.castAt(me, D, dc, EnumFacing.UP, null, null);
+            check(ru.death.chaosshard.spell.ChaosEnergy.get(me) > 20 - dcost, "Переплавка вернула энергию: " + ru.death.chaosshard.spell.ChaosEnergy.get(me) + " (цена " + dcost + ")");
+            me.inventory.clear();
+            me.inventory.readFromNBT(inv);
+            ru.death.chaosshard.spell.SpellData.debugSet(me, D, 0, 0);
             // Разлом: куб 3×3×3 в камне
             BlockPos rc = o.add(8, -3, 8);
             for (BlockPos q : BlockPos.getAllInBox(rc.add(-1, -1, -1), rc.add(1, 1, 1))) ow.setBlockState(q, Blocks.STONE.getDefaultState(), 2);
@@ -2971,43 +3031,71 @@ public final class AutoTest {
             ru.death.chaosshard.spell.SpellCaster.castAt(me, ru.death.chaosshard.spell.Spell.RIFT, rc, EnumFacing.UP, null, null);
             check(ow.isAirBlock(rc) && ow.isAirBlock(rc.add(-1, -1, -1)) && ow.isAirBlock(rc.add(1, 1, 1)), "Разлом раздробил камень и обсидиан");
             check(!ru.death.chaosshard.spell.SpellCaster.breakable(ow, new BlockPos(o.getX(), 0, o.getZ())), "коренную породу не берёт");
-            // Рывок: скачок и бросок к цели
-            ready.accept(ru.death.chaosshard.spell.Spell.DASH);
-            ru.death.chaosshard.spell.SpellData.setForm(me, ru.death.chaosshard.spell.Spell.DASH, 1);
-            ru.death.chaosshard.spell.SpellCaster.castAt(me, ru.death.chaosshard.spell.Spell.DASH, o.add(6, 0, 0), EnumFacing.UP, null, null);
-            check(Math.abs(me.posX - (o.getX() + 6.5)) < 0.01 && Math.abs(me.posY - (o.getY() + 1)) < 0.01, "Скачок перенёс на блок");
+            // Разлом A «Тоннель»: 1×2 вглубь на 8
+            ru.death.chaosshard.spell.SpellData.debugSet(me, ru.death.chaosshard.spell.Spell.RIFT, 1, 1);
+            for (int z = 3; z <= 12; z++) for (int y = 1; y <= 2; y++) ow.setBlockState(o.add(-10, y, z), Blocks.STONE.getDefaultState(), 2);
+            ready.accept(ru.death.chaosshard.spell.Spell.RIFT);
+            ru.death.chaosshard.spell.SpellCaster.castAt(me, ru.death.chaosshard.spell.Spell.RIFT, o.add(-10, 2, 3), EnumFacing.NORTH, null, null);
+            check(ow.isAirBlock(o.add(-10, 2, 3)) && ow.isAirBlock(o.add(-10, 1, 10)) && !ow.isAirBlock(o.add(-10, 1, 12)), "Тоннель 1×2 на 8 блоков");
+            for (int z = 3; z <= 12; z++) for (int y = 1; y <= 2; y++) ow.setBlockToAir(o.add(-10, y, z));
+            // Разлом B «Карьер»: шахта вниз
+            ru.death.chaosshard.spell.SpellData.debugSet(me, ru.death.chaosshard.spell.Spell.RIFT, 2, 1);
+            BlockPos qc = o.add(10, 0, -10);
+            for (BlockPos q : BlockPos.getAllInBox(qc.add(-1, -7, -1), qc.add(1, 0, 1))) ow.setBlockState(q, Blocks.STONE.getDefaultState(), 2);
+            ready.accept(ru.death.chaosshard.spell.Spell.RIFT);
+            ru.death.chaosshard.spell.SpellCaster.castAt(me, ru.death.chaosshard.spell.Spell.RIFT, qc, EnumFacing.UP, null, null);
+            check(ow.isAirBlock(qc) && ow.isAirBlock(qc.add(1, -5, 1)) && !ow.isAirBlock(qc.down(6)), "Карьер: шахта 3×3 на 6 вниз");
+            ru.death.chaosshard.spell.SpellData.debugSet(me, ru.death.chaosshard.spell.Spell.RIFT, 0, 0);
+            // Рывок: без цели не работает; к цели — бросок и удар; «Тень» — за спину и невидимость
+            ru.death.chaosshard.spell.Spell R = ru.death.chaosshard.spell.Spell.DASH;
+            ready.accept(R);
+            check(!ru.death.chaosshard.spell.SpellCaster.castAt(me, R, o.add(6, 0, 0), EnumFacing.UP, null, null), "Рывок без цели не срабатывает");
             net.minecraft.entity.monster.EntityZombie zd = new net.minecraft.entity.monster.EntityZombie(ow);
             zd.setPosition(o.getX() - 6.5, o.getY() + 1, o.getZ() + 0.5);
             ow.spawnEntity(zd);
             me.setHeldItem(EnumHand.MAIN_HAND, new net.minecraft.item.ItemStack(net.minecraft.init.Items.IRON_SWORD));
-            ready.accept(ru.death.chaosshard.spell.Spell.DASH);
+            ready.accept(R);
             float zh = zd.getHealth();
-            ru.death.chaosshard.spell.SpellCaster.castAt(me, ru.death.chaosshard.spell.Spell.DASH, null, EnumFacing.UP, zd, null);
+            ru.death.chaosshard.spell.SpellCaster.castAt(me, R, null, EnumFacing.UP, zd, null);
             check(me.getDistance(zd) < 2.5 && zd.getHealth() < zh, "бросок к цели и удар: " + zh + " → " + zd.getHealth());
+            ru.death.chaosshard.spell.SpellData.debugSet(me, R, 2, 1);
+            zd.setHealth(zd.getMaxHealth());
+            me.setPositionAndRotation(o.getX() + 0.5, o.getY() + 1, o.getZ() + 0.5, 0, 0);
+            ready.accept(R);
+            ru.death.chaosshard.spell.SpellCaster.castAt(me, R, null, EnumFacing.UP, zd, null);
+            check(me.isPotionActive(net.minecraft.init.MobEffects.INVISIBILITY) && me.getDistance(zd) < 2.5, "Тень: за спиной цели и невидим");
             zd.setDead();
             me.setHeldItem(EnumHand.MAIN_HAND, net.minecraft.item.ItemStack.EMPTY);
-            // Звёздный взор: руды
-            ru.death.chaosshard.spell.SpellData.buy(me, ru.death.chaosshard.spell.Spell.STARSIGHT,
-                    ru.death.chaosshard.spell.SpellPerks.index(ru.death.chaosshard.spell.Spell.STARSIGHT, "ores"));
+            ru.death.chaosshard.spell.SpellData.debugSet(me, R, 0, 0);
+            // Звёздный взор: руды (ветка B)
+            ru.death.chaosshard.spell.SpellData.debugSet(me, ru.death.chaosshard.spell.Spell.STARSIGHT, 2, 1);
             ow.setBlockState(o.add(2, -2, 2), Blocks.DIAMOND_ORE.getDefaultState(), 2);
             check(ru.death.chaosshard.spell.SpellCaster.oreTier(Blocks.DIAMOND_ORE.getDefaultState()) == 2
                     && ru.death.chaosshard.spell.SpellCaster.oreTier(Blocks.COAL_ORE.getDefaultState()) == 0
                     && ru.death.chaosshard.spell.SpellCaster.oreTier(Blocks.STONE.getDefaultState()) < 0, "ценность руд");
             ready.accept(ru.death.chaosshard.spell.Spell.STARSIGHT);
-            check(ru.death.chaosshard.spell.SpellCaster.castAt(me, ru.death.chaosshard.spell.Spell.STARSIGHT, null, EnumFacing.UP, null, null),
-                    "взгляд сквозь камень работает");
-            // Форма Хаоса: перки длительности
-            ru.death.chaosshard.spell.SpellData.buy(me, ru.death.chaosshard.spell.Spell.FORM, ru.death.chaosshard.spell.SpellPerks.index(ru.death.chaosshard.spell.Spell.FORM, "long"));
+            check(ru.death.chaosshard.spell.SpellCaster.castAt(me, ru.death.chaosshard.spell.Spell.STARSIGHT, null, EnumFacing.UP, null, null)
+                    && me.isPotionActive(net.minecraft.init.MobEffects.NIGHT_VISION), "Рудознатец работает, ночное зрение есть");
+            // Форма Хаоса, ветка B «Монолит»
+            ru.death.chaosshard.spell.SpellData.debugSet(me, ru.death.chaosshard.spell.Spell.FORM, 2, 2);
             ready.accept(ru.death.chaosshard.spell.Spell.FORM);
             ru.death.chaosshard.spell.SpellCaster.castAt(me, ru.death.chaosshard.spell.Spell.FORM, null, EnumFacing.UP, null, null);
-            net.minecraft.potion.PotionEffect st = me.getActivePotionEffect(net.minecraft.init.MobEffects.STRENGTH);
-            check(st != null && st.getDuration() > 20 * 40, "Долгая форма: " + (st == null ? 0 : st.getDuration()));
-            // Зов: без своего Якоря — не работает
-            ru.death.chaosshard.spell.SpellData.setForm(me, ru.death.chaosshard.spell.Spell.RECALL, 2);
-            ready.accept(ru.death.chaosshard.spell.Spell.RECALL);
-            BlockPos before = me.getPosition();
-            boolean rec = ru.death.chaosshard.spell.SpellCaster.castAt(me, ru.death.chaosshard.spell.Spell.RECALL, null, EnumFacing.UP, null, null);
-            check(rec ? me.getPosition().distanceSq(before) > 4 : true, "Зов к Якорю: " + (rec ? "перенёс" : "Якоря нет — остался"));
+            net.minecraft.potion.PotionEffect res = me.getActivePotionEffect(net.minecraft.init.MobEffects.RESISTANCE);
+            check(res != null && res.getDuration() > 20 * 40 && me.isPotionActive(net.minecraft.init.MobEffects.ABSORPTION), "Монолит 2: стойкость 45 с и запас здоровья");
+            // Зов Нити A «Шаг Нити»: на блок под взглядом
+            ru.death.chaosshard.spell.Spell C = ru.death.chaosshard.spell.Spell.RECALL;
+            ru.death.chaosshard.spell.SpellData.debugSet(me, C, 1, 1);
+            me.setPositionAndRotation(o.getX() + 0.5, o.getY() + 1, o.getZ() + 0.5, 0, 0);
+            ready.accept(C);
+            ru.death.chaosshard.spell.SpellCaster.castAt(me, C, o.add(4, 0, 0), EnumFacing.UP, null, null);
+            check(Math.abs(me.posX - (o.getX() + 4.5)) < 0.01 && Math.abs(me.posY - (o.getY() + 1)) < 0.01, "Шаг Нити перенёс на блок");
+            // Зов Нити B «Метка»: присев — поставить метку
+            ru.death.chaosshard.spell.SpellData.debugSet(me, C, 2, 1);
+            me.setSneaking(true);
+            ready.accept(C);
+            ru.death.chaosshard.spell.SpellCaster.castAt(me, C, null, EnumFacing.UP, null, null);
+            me.setSneaking(false);
+            check(ru.death.chaosshard.spell.SpellData.formOpen(me, C, 3), "место «К метке» открыто");
             ru.death.chaosshard.spell.SpellData.reset(me);
             me.clearActivePotions();
             ru.death.chaosshard.spell.SpellCaster.clearCooldowns(me);

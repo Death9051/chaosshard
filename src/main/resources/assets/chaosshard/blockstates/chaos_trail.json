@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "origin=0": {"model": "chaosshard:chaos_trail"},
+    "origin=1": {"model": "chaosshard:chaos_trail"},
+    "origin=2": {"model": "chaosshard:chaos_trail"}
+  }
+}

@@ -58,6 +58,8 @@ public final class ModBlocks {
     /** Тестовые блоки-структуры (только творческий режим). */
     public static final List<Block> SEEDS = new ArrayList<>();
 
+    /** Застывший Хаос — плиты Тропы Хаоса (рассыпаются сами). */
+    public static Block CHAOS_TRAIL;
     public static final List<Block> ALL = new ArrayList<>();
 
     @SubscribeEvent
@@ -98,6 +100,8 @@ public final class ModBlocks {
         TRIAL_EXIT = add(new ru.death.chaosshard.trial.TrialBlocks.Exit(), "trial_exit");
         LAIR = add(new ru.death.chaosshard.lair.BlockLair(), "lair_core");
         ORDER_BEACON = add(new ru.death.chaosshard.structure.BlockOrderBeacon(), "order_beacon");
+        CHAOS_TRAIL = add(new ru.death.chaosshard.spell.BlockChaosTrail(), "chaos_trail");
+        CHAOS_TRAIL.setCreativeTab(null);
         net.minecraftforge.fml.common.registry.GameRegistry.registerTileEntity(ru.death.chaosshard.structure.TileOrderBeacon.class,
                 new net.minecraft.util.ResourceLocation(Tags.MOD_ID, "order_beacon"));
         net.minecraftforge.fml.common.registry.GameRegistry.registerTileEntity(ru.death.chaosshard.lair.TileLair.class,

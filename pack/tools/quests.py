@@ -1078,7 +1078,7 @@ q("a5_end", "act5", 16, 3, "§5§lЗавеса пала", "", I("chaosshard:grim
 q("a3_sigil", "act3", 14, 8, "Печать Цитадели", "", I("chaosshard:citadel_sigil"), adv("citadel_recall"), [NIT(20), XP(3)], ["a3_lair3"])
 q("st_chaos_link", "stars", 22, 4, "§5Связь с Хаосом", "", I("minecraft:nether_star"), adv("chaos_link"), [NIT(30), XP(5)], ["st_attalt", "st_chaos"])
 q("a0_perk", "act0", 6, 1, "Своя страница", "", I("minecraft:writable_book"), adv("spell_perk"), [NIT(10), XP(2)], ["a0_spell"])
-q("a0_form", "act0", 8, 1, "Другая форма", "", I("chaosshard:grimoire"), adv("spell_form"), [NIT(10), XP(2)], ["a0_perk"])
+q("a0_form", "act0", 8, 1, "Своя ветка", "", I("chaosshard:grimoire"), adv("spell_form"), [NIT(10), XP(2)], ["a0_perk"])
 q("a4_trophy", "act4", 22, 5, "Зал трофеев", "", I("chaosshard:kael_blade"), adv("trophy_hall"), [NIT(20), XP(5)], ["a4_blade", "a3_lair2"])
 q("tc_crystal", "tech", 2, 4, "§5Кристаллизованный Хаос", "", I("chaosshard:crystal_chaos_ingot"), got(I("chaosshard:crystal_chaos_ingot")), [NIT(15), XP(3)], ["tc_distorted"])
 q("tc_blood", "tech", 4, 4, "§5Кровавая платина", "", I("chaosshard:blood_platinum_ingot"), got(I("chaosshard:blood_platinum_ingot")), [NIT(15), XP(3)], ["tc_distorted"])
