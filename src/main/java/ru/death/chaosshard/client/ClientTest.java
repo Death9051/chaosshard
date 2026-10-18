@@ -434,7 +434,7 @@ public class ClientTest {
                 // Хаск вплотную: модель, лапки из пасти, свечение
                 onServer((s2, w2, p2) -> {
                     w2.setWorldTime(6000);   // днём видно шкуру; свечение пульсирует и так
-                    p2.connection.setPlayerLocation(graveAt.getX() + 3.3, graveAt.getY() + 0.2, graveAt.getZ() - 6.4, 135F, 12F);
+                    p2.connection.setPlayerLocation(graveAt.getX() + 2.4, graveAt.getY() - 0.05, graveAt.getZ() - 7.6, 120F, 8F);
                 });
                 wait = 20;
                 step++;
