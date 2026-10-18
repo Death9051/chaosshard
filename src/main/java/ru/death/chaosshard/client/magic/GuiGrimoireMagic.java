@@ -422,10 +422,6 @@ public class GuiGrimoireMagic extends GuiScreen {
         }
         int lastRow = listTop() + Math.min(visibleRows(), listSize()) * ROW;
         noteKey("chaosshard.note.section." + tab, listX() + 6, lastRow + 4, fy - 4, -2.5F);
-        // правая страница: номер
-        String pn = String.valueOf(4 + Math.max(0, key % 1000) * 2);
-        font.drawScaled(pn, left + BookArt.PR - 16 - font.width(pn) * 0.8F, top + BookArt.PB - 13, BookArt.DIM, 0.8F);
-        font.drawScaled(String.valueOf(3 + Math.max(0, key % 1000) * 2), left + BookArt.PL + 10, top + BookArt.PB - 13, BookArt.DIM, 0.8F);
         // перелистывание
         if (key != pageKey) {
             if (pageKey != Integer.MIN_VALUE) {
