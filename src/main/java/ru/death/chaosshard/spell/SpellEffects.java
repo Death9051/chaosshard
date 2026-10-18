@@ -144,7 +144,7 @@ public final class SpellEffects {
             }
         }
         if (n > 0 && SpellData.b(p, s, 3)) {
-            ChaosEnergy.set(p, ChaosEnergy.get(p) + SpellCaster.cost(p, s) / 2.0);
+            ChaosEnergy.set(p, ChaosEnergy.get(p) + SpellCaster.cost(p, s) / 2.0F);
         }
         return n > 0;
     }
@@ -299,7 +299,7 @@ public final class SpellEffects {
             return false;
         }
         if (smelt) {
-            ChaosEnergy.set(p, ChaosEnergy.get(p) + solids / 6.0 * power);
+            ChaosEnergy.set(p, (float) (ChaosEnergy.get(p) + solids / 6.0 * power));
             if (essence > 0) {
                 loot.add(new ItemStack(ru.death.chaosshard.init.ModItems.CHAOS_ESSENCE, essence));
             }
