@@ -197,6 +197,7 @@ public class ClientTest {
                     ru.death.chaosshard.spell.SpellGlyphs.set(p2, ru.death.chaosshard.spell.Spell.SPROUT, 0,
                             ru.death.chaosshard.spell.SpellGlyph.POTENT.ordinal());
                     ru.death.chaosshard.spell.SpellHeat.set(p2, 70, 0);
+                    ru.death.chaosshard.spell.SpellData.debugSet(p2, ru.death.chaosshard.spell.Spell.SPROUT, 1, 2);
                 });
                 magic(0);
                 step++;
