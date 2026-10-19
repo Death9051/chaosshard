@@ -121,6 +121,7 @@ public final class AutoTest {
             return false;
         }
         AutoTest a = new AutoTest(server, shutdown);
+        ru.death.chaosshard.spell.SpellHeat.noBonus = true;   // случайные добавки разогрева мешают точным проверкам
         a.plan();
         if (Boolean.getBoolean("chaosshard.dumponly")) {
             // прогон со всей сборкой: только подготовка, выписка реестров и самотест
@@ -273,6 +274,7 @@ public final class AutoTest {
     }
 
     private void finish() {
+        ru.death.chaosshard.spell.SpellHeat.noBonus = false;
         line("");
         line("Итого: пройдено " + pass + ", провалено " + fail);
         for (String f : failures) {
@@ -1515,6 +1517,19 @@ public final class AutoTest {
             check(sp != null && Math.abs(sp.rewardMul() - 1.5) < 1e-6, "награда +50%");
             ok.add(new net.minecraft.item.ItemStack(net.minecraft.init.Items.ROTTEN_FLESH, 8));
             check(ru.death.chaosshard.challenge.ChallengeSpec.parse(ok) == null, "две стороны сразу — не Вызов");
+        });
+        step("добыча бойцов Вызова летит к хозяину", () -> {
+            net.minecraft.entity.item.EntityItem it = new net.minecraft.entity.item.EntityItem(ow, me.posX + 12, me.posY + 1, me.posZ,
+                    new net.minecraft.item.ItemStack(net.minecraft.init.Items.BONE));
+            ow.spawnEntity(it);
+            double d0 = it.getDistance(me);
+            ru.death.chaosshard.challenge.ChallengeManager.track(it, me.getUniqueID());
+            for (int i = 0; i < 6; i++) {
+                ru.death.chaosshard.challenge.ChallengeManager.pullLoot(server);
+                it.onUpdate();
+            }
+            check(it.isDead || it.getDistance(me) < d0 - 1, "вещь подтянулась: было " + (int) d0 + ", стало " + (it.isDead ? 0 : (int) it.getDistance(me)));
+            it.setDead();
         });
         step("Вызов на Алтаре складывается в Сферу Вызова", () -> {
             drop(altarPos, new net.minecraft.item.ItemStack(ru.death.chaosshard.init.ModItems.CHAOS_ESSENCE, 4),
@@ -2859,6 +2874,29 @@ public final class AutoTest {
             ready.run();
             ru.death.chaosshard.spell.SpellCaster.castAt(me, sp, fur, EnumFacing.UP, null, null);
             check(Math.abs(ru.death.chaosshard.spell.SpellHeat.heat(me) - ru.death.chaosshard.spell.SpellHeat.MAX / 2) < 0.01, "во время паузы шкала не растёт");
+            // добавки разогрева: шанс растёт с шкалой, на нуле их нет, на накале не бросаются
+            ru.death.chaosshard.spell.SpellHeat.noBonus = false;
+            ru.death.chaosshard.spell.SpellHeat.set(me, 0, 0);
+            int zero = 0;
+            for (int i = 0; i < 100; i++) {
+                if (ru.death.chaosshard.spell.SpellHeat.roll(me, sp) != null) zero++;
+            }
+            ru.death.chaosshard.spell.SpellHeat.set(me, ru.death.chaosshard.spell.SpellHeat.MAX - 1, 0);
+            int hot = 0;
+            boolean powered = false;
+            for (int i = 0; i < 400; i++) {
+                ru.death.chaosshard.spell.SpellGlyph g = ru.death.chaosshard.spell.SpellHeat.roll(me, sp);
+                if (g != null) {
+                    hot++;
+                    if (g == ru.death.chaosshard.spell.SpellGlyph.POTENT) {
+                        powered |= ru.death.chaosshard.spell.SpellMods.power(me, sp) > 1.2;
+                    }
+                }
+            }
+            ru.death.chaosshard.spell.SpellHeat.clear(me);
+            check(zero == 0 && hot > 120 && hot < 280, "добавки разогрева: на холодной шкале " + zero + ", на горячей " + hot + " из 400");
+            check(powered, "добавка «мощь» усиливает заклинание");
+            ru.death.chaosshard.spell.SpellHeat.noBonus = true;
             ru.death.chaosshard.spell.SpellHeat.set(me, 0, 0);
             // глифы: гнездо одно на малой Нити, вкладывание берёт из сумки, возвращает прежний
             net.minecraft.nbt.NBTTagList saved = me.inventory.writeToNBT(new net.minecraft.nbt.NBTTagList());

@@ -210,6 +210,7 @@ public final class SpellCaster {
         if (!canCast(p, s)) {
             return false;
         }
+        SpellHeat.roll(p, s);
         int cost = cost(p, s);
         boolean ok = effect(p, s, pos, side, target, air);
         if (ok && p.world.rand.nextDouble() < SpellMods.twice(p, s)) {
@@ -217,6 +218,7 @@ public final class SpellCaster {
             ((WorldServer) p.world).spawnParticle(EnumParticleTypes.PORTAL, p.posX, p.posY + 1, p.posZ, 30, 0.4, 0.6, 0.4, 0.5);
         }
         finish(p, s, ok, pos != null ? pos : p.getPosition(), cost);
+        SpellHeat.clear(p);
         return ok;
     }
 

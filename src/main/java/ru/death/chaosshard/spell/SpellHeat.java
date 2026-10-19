@@ -14,9 +14,10 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 import ru.death.chaosshard.Tags;
 
 /**
- * Разогрев (замечание №27): каждое заклинание греет шкалу Хаоса. На максимуме следующее выходит в мощной модификации
- * (сильнее, шире, почти даром и с короткой перезарядкой), после чего шкала падает до половины и полминуты не растёт.
- * Без заклинаний шкала остывает. Ничего плохого разогрев не делает.
+ * Разогрев (замечание №27): каждое заклинание греет шкалу Хаоса. Чем горячее шкала, тем выше шанс, что заклинание
+ * выйдет с дополнительным модификатором (Мощь, Ширь, Бережливость, Спешка или Эхо — из тех, что ему подходят).
+ * На максимуме следующее выходит в мощной модификации наверняка (сильнее, шире, почти даром и с короткой перезарядкой),
+ * после чего шкала падает до половины и полминуты не растёт. Без заклинаний шкала остывает. Ничего плохого разогрев не делает.
  * Хранится в корне SpellData ("_heat", "_heat_lock", "_heat_last"), на клиент — вместе с перками.
  */
 @Mod.EventBusSubscriber(modid = Tags.MOD_ID)
@@ -28,6 +29,14 @@ public final class SpellHeat implements SpellMods.Hook {
     public static final int LOCK = 600;
     /** Через сколько тиков без заклинаний шкала начинает остывать. */
     public static final int IDLE = 100;
+
+    /** Шанс доп. модификатора при почти полной шкале; растёт линейно с разогревом. */
+    public static final double BONUS_CHANCE = 0.5;
+    /** Для автотеста: выключить случайные модификаторы, чтобы проверки были предсказуемы. */
+    public static boolean noBonus;
+    private static final SpellGlyph[] BONUS_POOL = {SpellGlyph.POTENT, SpellGlyph.WIDE, SpellGlyph.THRIFT, SpellGlyph.HASTE, SpellGlyph.ECHO};
+    /** Доп. модификатор текущего заклинания (на время одного чтения). */
+    private static final java.util.Map<java.util.UUID, SpellGlyph> BONUS = new java.util.HashMap<>();
 
     public static float heat(EntityPlayer p) {
         return SpellData.root(p).getFloat("_heat");
@@ -61,31 +70,76 @@ public final class SpellHeat implements SpellMods.Hook {
         SpellData.sync(p);
     }
 
-    // ------------------------------------------------------------------ мощная модификация
+    // ------------------------------------------------------------------ доп. модификатор по шансу
+
+    /** Перед чтением: бросить шанс на доп. модификатор (шанс = разогрев/максимум × BONUS_CHANCE). На накале — не нужен. */
+    public static SpellGlyph roll(EntityPlayerMP p, Spell s) {
+        BONUS.remove(p.getUniqueID());
+        if (noBonus || surge(p)) {
+            return null;
+        }
+        float h = heat(p);
+        if (h <= 0 || p.world.rand.nextDouble() >= h / MAX * BONUS_CHANCE) {
+            return null;
+        }
+        java.util.List<SpellGlyph> pool = new java.util.ArrayList<>();
+        for (SpellGlyph g : BONUS_POOL) {
+            if (g.fits(s)) {
+                pool.add(g);
+            }
+        }
+        if (pool.isEmpty()) {
+            return null;
+        }
+        SpellGlyph g = pool.get(p.world.rand.nextInt(pool.size()));
+        BONUS.put(p.getUniqueID(), g);
+        WorldServer ws = (WorldServer) p.world;
+        ws.spawnParticle(EnumParticleTypes.FLAME, p.posX, p.posY + 1, p.posZ, 12, 0.4, 0.6, 0.4, 0.03);
+        p.sendStatusMessage(new TextComponentTranslation("chaosshard.heat.bonus",
+                new TextComponentTranslation("chaosshard.heat.bonus." + g.id())), true);
+        return g;
+    }
+
+    /** Снять доп. модификатор (после чтения или неудачи). */
+    public static void clear(EntityPlayer p) {
+        BONUS.remove(p.getUniqueID());
+    }
+
+    private static SpellGlyph bonus(EntityPlayer p) {
+        return p.world.isRemote ? null : BONUS.get(p.getUniqueID());
+    }
+
+    // ------------------------------------------------------------------ мощная модификация и доп. модификатор
 
     @Override
     public double power(EntityPlayer p, Spell s) {
-        return surge(p) ? 1.75 : 1;
+        return surge(p) ? 1.75 : bonus(p) == SpellGlyph.POTENT ? 1.35 : 1;
     }
 
     @Override
     public int area(EntityPlayer p, Spell s) {
-        return surge(p) ? 2 : 0;
+        return surge(p) ? 2 : bonus(p) == SpellGlyph.WIDE ? 1 : 0;
     }
 
     @Override
     public double cost(EntityPlayer p, Spell s) {
-        return surge(p) ? 0.01 : 1;
+        return surge(p) ? 0.01 : bonus(p) == SpellGlyph.THRIFT ? 0.5 : 1;
     }
 
     @Override
     public double cooldown(EntityPlayer p, Spell s) {
-        return surge(p) ? 0.25 : 1;
+        return surge(p) ? 0.25 : bonus(p) == SpellGlyph.HASTE ? 0.5 : 1;
+    }
+
+    @Override
+    public double twice(EntityPlayer p, Spell s) {
+        return bonus(p) == SpellGlyph.ECHO ? 1.0 : 0;
     }
 
     /** После удачного заклинания: мощное — сбросить до половины и заморозить; обычное — нагреть. */
     @Override
     public void after(EntityPlayerMP p, Spell s, int energy) {
+        clear(p);
         NBTTagCompound r = SpellData.root(p);
         long now = p.world.getTotalWorldTime();
         float h = r.getFloat("_heat");

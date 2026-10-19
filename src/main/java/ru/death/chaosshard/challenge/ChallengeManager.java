@@ -255,6 +255,82 @@ public class ChallengeManager {
         }
     }
 
+    // ------------------------------------------------------------------ добыча летит к хозяину Вызова
+
+    /** Вещи с убитых бойцов Вызова: тянутся к тому, кто бросил Вызов, чтобы он успел их собрать. */
+    private static final List<Object[]> PULL = new ArrayList<>();
+    /** Сколько тиков вещь тянется (дальше лежит как обычно). */
+    static final int PULL_TICKS = 600;
+
+    @SubscribeEvent(priority = net.minecraftforge.fml.common.eventhandler.EventPriority.LOWEST)
+    public void onLootDrops(net.minecraftforge.event.entity.living.LivingDropsEvent event) {
+        net.minecraft.entity.EntityLivingBase e = event.getEntityLiving();
+        if (e.world.isRemote || !e.getEntityData().hasUniqueId(TAG) || event.isCanceled()) {
+            return;
+        }
+        UUID owner = e.getEntityData().getUniqueId(TAG);
+        long until = e.world.getTotalWorldTime() + PULL_TICKS;
+        for (net.minecraft.entity.item.EntityItem it : event.getDrops()) {
+            it.setPickupDelay(5);
+            PULL.add(new Object[]{it, owner, until});
+        }
+    }
+
+    /** Опыт с бойцов Вызова — сразу хозяину. */
+    @SubscribeEvent
+    public void onLootXp(net.minecraftforge.event.entity.living.LivingExperienceDropEvent event) {
+        net.minecraft.entity.EntityLivingBase e = event.getEntityLiving();
+        if (e.world.isRemote || !e.getEntityData().hasUniqueId(TAG) || event.getDroppedExperience() <= 0) {
+            return;
+        }
+        MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
+        EntityPlayerMP p = server == null ? null : server.getPlayerList().getPlayerByUUID(e.getEntityData().getUniqueId(TAG));
+        if (p != null && p.dimension == e.dimension) {
+            p.addExperience(event.getDroppedExperience());
+            event.setDroppedExperience(0);
+        }
+    }
+
+    /** Поставить вещь на притяжение к хозяину (для автотеста и своих наград). */
+    public static void track(net.minecraft.entity.item.EntityItem it, UUID owner) {
+        PULL.add(new Object[]{it, owner, it.world.getTotalWorldTime() + PULL_TICKS});
+    }
+
+    public static void pullLoot(MinecraftServer server) {
+        java.util.Iterator<Object[]> it = PULL.iterator();
+        while (it.hasNext()) {
+            Object[] o = it.next();
+            net.minecraft.entity.item.EntityItem item = (net.minecraft.entity.item.EntityItem) o[0];
+            if (item.isDead || item.world.getTotalWorldTime() > (Long) o[2]) {
+                if (!item.isDead) {
+                    item.noClip = false;
+                }
+                it.remove();
+                continue;
+            }
+            EntityPlayerMP p = server.getPlayerList().getPlayerByUUID((UUID) o[1]);
+            if (p == null || p.dimension != item.dimension || p.isDead) {
+                item.noClip = false;
+                continue;
+            }
+            double dx = p.posX - item.posX, dy = p.posY + 0.6 - item.posY, dz = p.posZ - item.posZ;
+            double d = Math.sqrt(dx * dx + dy * dy + dz * dz);
+            if (d > 48) {
+                item.setPosition(p.posX, p.posY + 0.6, p.posZ);
+                continue;
+            }
+            if (d < 0.6) {
+                continue;
+            }
+            double v = Math.min(1.1, 0.2 + d * 0.06) / d;
+            item.noClip = true;
+            item.motionX = dx * v;
+            item.motionY = dy * v + 0.04;   // EntityItem сам тянет вниз на 0.04
+            item.motionZ = dz * v;
+            item.velocityChanged = true;
+        }
+    }
+
     /** Кибер-зомби в Лучезарии не водятся: их приносит только Вызов «Сборщики» (естественное появление и рассадники — запрещены). */
     @SubscribeEvent
     public void onCyberSpawn(net.minecraftforge.event.entity.living.LivingSpawnEvent.CheckSpawn event) {
@@ -265,10 +341,16 @@ public class ChallengeManager {
 
     @SubscribeEvent
     public void onServerTick(TickEvent.ServerTickEvent event) {
-        if (event.phase != TickEvent.Phase.END || ACTIVE.isEmpty()) {
+        if (event.phase != TickEvent.Phase.END) {
             return;
         }
         MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
+        if (!PULL.isEmpty() && server != null) {
+            pullLoot(server);
+        }
+        if (ACTIVE.isEmpty()) {
+            return;
+        }
         for (Challenge c : new ArrayList<>(ACTIVE.values())) {
             EntityPlayerMP p = playerOf(server, c.owner);
             tick(server, c, p);
