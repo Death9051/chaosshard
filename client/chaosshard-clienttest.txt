@@ -1,0 +1,55 @@
+=== Осколок Хаоса — клиентский прогон ===
+  [OK]   главное меню открылось
+  [OK]   модели предметов: 110
+  [OK]   названия предметов
+  [OK]   модели блоков: 133 состояний
+  [OK]   строки с % форматируются (ru_ru)
+  [OK]   отрисовщики существ
+  [OK]   названия существ
+  снимок: ct_01_menu.png
+  [OK]   мир загружен
+  [OK]   блоки мода поставлены: 36
+  существа на снимке: [servant_hare, servant_tiger, servant_cat, servant_husk, servant_bone, servant_executioner, servant_reaper, servant_lumberjack, servant_miner, order_knight, hero, garrot, king, archon]
+  снимок: ct_02_blocks.png
+  снимок: ct_03_entities.png
+  снимок: ct_04_grimoire_spells.png
+  снимок: ct_05_grimoire_rituals.png
+  снимок: ct_06_grimoire_ritual_page.png
+  снимок: ct_07_grimoire_servant_page.png
+  снимок: ct_08_spell_wheel.png
+  [OK]   окно Сердца открылось: GuiHeart
+  снимок: ct_09_heart.png
+  [OK]   окно Якоря открылось: GuiAnchor
+  снимок: ct_10_anchor_tab0.png
+  снимок: ct_11_anchor_tab1.png
+  снимок: ct_12_anchor_tab2.png
+  снимок: ct_13_anchor_tab3.png
+  снимок: ct_20_creative.png
+  снимок: ct_21_creative_end.png
+  снимок: ct_30_trophies.png
+  снимок: ct_31_trophies_turned.png
+  [OK]   Светоч гаснет, а не исчезает сразу: kael
+  снимок: ct_32_hero_kneel.png
+  снимок: ct_33_hero_light.png
+  снимок: ct_34_hero_dissolve.png
+  рядом лежит: chaosshard:kael_blade 25 131 -38
+  рядом лежит: chaosshard:hero_echo 25 131 -38
+  [OK]   Светоч растаял
+  [OK]   клинок Каэля выпал, когда он растаял
+  [OK]   Светоч гаснет, а не исчезает сразу: irena
+  снимок: ct_35_hero_irena.png
+  [OK]   Светоч гаснет, а не исчезает сразу: velmor
+  снимок: ct_36_hero_velmor.png
+  [OK]   Светоч гаснет, а не исчезает сразу: lian
+  снимок: ct_37_hero_lian.png
+  [OK]   Светоч гаснет, а не исчезает сразу: elis
+  снимок: ct_38_hero_elis.png
+  [OK]   могила видна клиенту
+  снимок: ct_40_grave.png
+  снимок: ct_42_beasts.png
+  снимок: ct_43_beasts_top.png
+  [OK]   Хаск виден клиенту
+  снимок: ct_44_husk.png
+  снимок: ct_45_husk_attack.png
+
+Итого: пройдено 20, провалено 0
