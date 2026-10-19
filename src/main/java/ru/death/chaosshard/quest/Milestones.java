@@ -43,6 +43,8 @@ public class Milestones {
     public static final String CHAOS_LINK = "chaos_link";
     public static final String SPELL_PERK = "spell_perk";
     public static final String SPELL_FORM = "spell_form";
+    public static final String HEAT_SURGE = "heat_surge";
+    public static final String GLYPH_SET = "glyph_set";
     public static final String TROPHY_HALL = "trophy_hall";
     public static final String MATERIAL_MAX = "material_max";
     public static final String ANCHOR_SPEC = "anchor_spec";

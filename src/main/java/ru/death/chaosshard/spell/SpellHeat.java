@@ -98,6 +98,7 @@ public final class SpellHeat implements SpellMods.Hook {
             p.world.playSound(null, p.getPosition(), SoundEvents.ENTITY_BLAZE_SHOOT, SoundCategory.PLAYERS, 0.8F, 0.6F);
             p.world.playSound(null, p.getPosition(), SoundEvents.BLOCK_END_PORTAL_FRAME_FILL, SoundCategory.PLAYERS, 1.0F, 0.7F);
             p.sendStatusMessage(new TextComponentTranslation("chaosshard.heat.surge"), true);
+            ru.death.chaosshard.quest.Milestones.grant(p, ru.death.chaosshard.quest.Milestones.HEAT_SURGE);
         } else if (now >= r.getLong("_heat_lock")) {
             float nh = Math.min(MAX, h + gain(p, s, energy));
             r.setFloat("_heat", nh);

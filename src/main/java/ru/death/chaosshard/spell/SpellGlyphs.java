@@ -88,6 +88,9 @@ public final class SpellGlyphs implements SpellMods.Hook {
         g.setIntArray(s.name(), a);
         root.setTag(TAG, g);
         SpellData.sync(p);
+        if (want != null) {
+            ru.death.chaosshard.quest.Milestones.grant(p, ru.death.chaosshard.quest.Milestones.GLYPH_SET);
+        }
         return true;
     }
 

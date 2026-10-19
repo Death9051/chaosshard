@@ -158,7 +158,7 @@ q("a0_wood", "act0", 4, 1, "§5Преобразование",
 q("a0_spell", "act0", 6, 0, "§5Слово Гримуара",
   G + "Я не только болтаю. Зажми §eShift§r и нажми §eПКМ§r с Гримуаром в руке — я раскроюсь на другой странице.\n\n"
   "§dРосток§r — корка становится травой, хаосит — землёй.\n"
-  "§dМост пустоты§r — дорожка из хаосита вперёд, прямо над бездной. Остров теперь можно растить.\n"
+  "§dТропа Хаоса§r — дорожка из хаосита вперёд, прямо над бездной. Остров теперь можно растить.\n"
   "Дальше откроются §dИсточник§r, §dРазлом§r, §dЗвёздный взор§r и §dЗов Нити§r — чем крепче Нить, тем больше страниц.\n\n"
   "§7Магия ест сытость. Голодным колдовать не дам.§r\n\n§7Задание засчитается, как только сотворишь любое заклинание.§r",
   GRIM, adv("spell_cast"), [NIT(10), R(I("minecraft:bread", 0, 8))], ["a0_accept"])
@@ -287,10 +287,10 @@ q("a1_memory", "act1", 12, 2, "§5Осколки мира",
 
 # ======================================================================
 chapter("act2", "§5Акт 2. Прорыв",
-        "В памяти Лорда есть способ проскользнуть сквозь Завесу. Страница повреждена — её надо собрать заново.",
+        "Сквозь Завесу можно пройти. Нужен катализатор — частица самого мира, которую он примет за свою.",
         I("chaosshard:breach_book"))
 
-q("a2_page", "act2", 0, 2, "§5Повреждённая страница",
+q("a2_page", "act2", 0, 2, "§5Катализатор прорыва",
   G + "Четыре осколка мира, четыре Осколка Завесы и Гримуар в центре сетки — так страница соберётся.\n\n"
   "На ней Лорд помнит, как проходить сквозь Завесу. Примечание: в странице есть строки, которых нет ни в моих записях, "
   "ни в сети Гримуаров. Будто их писали до Лорда. Отложено до новых осколков.",
@@ -507,7 +507,7 @@ q("st_tuned", "stars", 28, 5, "Настроенный кристалл",
   "Кристалл запомнит его свет.",
   A("itemtunedrockcrystal"), got(A("itemtunedrockcrystal")), [NIT(15)], ["st_pedestal", "st_attalt"])
 
-q("st_ritual", "stars", 30, 4, "§5Первый ритуал",
+q("st_ritual", "stars", 30, 4, "§5Звёздный ритуал",
   G + "Поставь настроенный кристалл на пьедестал и подведи свет. "
   "Созвездие ответит — ускорит рост, отгонит мобов, напоит землю. Смотря кого позовёшь.",
   A("blockritualpedestal"), adv("star_ritual"), [NIT(40), XP(5)], ["st_tuned"], main=True)
@@ -880,7 +880,7 @@ q("sv_upgrade3", "servants", 6, 7, "§5Предел Нити", "", I("minecraft:
 #  Гарнизоны, сети Якорей, тяжёлые набеги (только в конец списка)
 # ======================================================================
 q("a3_garrison", "act3", 8, 4, "Гарнизон", "", I("minecraft:iron_sword"), adv("anchor_garrison"), [NIT(20), XP(3)], ["a3_garrot", "sv_first"])
-q("a3_cluster", "act3", 8, 6, "§5Сеть Якорей", "", I("chaosshard:chaos_anchor"), adv("anchor_cluster"), [NIT(40), XP(6)], ["a3_garrison"])
+q("a3_cluster", "act3", 8, 6, "§5Гарнизон сети", "", I("chaosshard:chaos_anchor"), adv("anchor_cluster"), [NIT(40), XP(6)], ["a3_garrison"])
 q("a3_raid_hard", "act3", 10, 0, "§4Два знамени", "", I("minecraft:banner"), adv("raid_hard"), [NIT(80), XP(12)], ["a3_garrot3", "a3_garrison"])
 
 # ======================================================================
@@ -991,7 +991,7 @@ q("tc_hum", "tech", 10, 2, "§5Гул машин", "", I("chaosshard:chaos_ancho
 ECHO = lambda i: I("chaosshard:hero_echo", i)
 q("a3_bane", "act3", 12, 0, "Погибель Порядка", "", I("minecraft:enchanted_book"), adv("bane_of_order"),
   [NIT(15), XP(3)], ["a3_garrot"])
-q("a4_echo", "act4", 4, 7, "Отголоски", "", ECHO(0), [got(ECHO(i)) for i in range(5)],
+q("a4_echo", "act4", 4, 7, "Отголоски Светочей", "", ECHO(0), [got(ECHO(i)) for i in range(5)],
   [XP(3)], ["a4_kael"], logic="OR")
 q("a4_echo_tool", "act4", 6, 7, "Чужой приём", "", I("tconstruct:pick_head"), adv("echo_applied"),
   [NIT(20), XP(5)], ["a4_echo"])
@@ -1059,7 +1059,7 @@ q("pl_final", "plans", 12, 3, "§cМалые планы исполнены", "",
 # ======================================================================
 #  Акт 5. Корона и Разлом (только в конец списка)
 # ======================================================================
-chapter("act5", "§5Акт 5. Корона и Разлом", "Светочи пали. Орден идёт сам, за ним — Король, за Королём — Архонт.", I("chaosshard:royal_crown"))
+chapter("act5", "§5Акт 5. Корона и Разлом", "Светочи пали. Орден идёт сам, за ним — Король, а за Королём — Разлом.", I("chaosshard:royal_crown"))
 # в книге Акт 5 — сразу за Актом 4 (порядок глав, а не номера квестов)
 CHAPTERS.insert([c[0] for c in CHAPTERS].index("act4") + 1, CHAPTERS.pop())
 q("a5_start", "act5", 0, 3, "§5Орден идёт сам", "", I("chaosshard:order_seal"), lore(), [XP(2)], ["a4_final"], main=True)
@@ -1073,12 +1073,12 @@ q("a5_open", "act5", 8, 3, "§5Дворец открыт", "", I("chaosshard:cap
 q("a5_king", "act5", 10, 3, "§6Король", "", I("chaosshard:royal_crown"), adv("king_slain"), [XP(40)], ["a5_open"], main=True)
 q("a5_rift", "act5", 12, 3, "§5Разлом", "", I("chaosshard:rift_key"), adv("rift_entered"), [NIT(30), XP(5)], ["a5_king"], main=True)
 q("a5_pylon", "act5", 14, 2, "Ядро пилона", "", I("minecraft:end_crystal"), adv("pylon_broken"), [NIT(20), XP(3)], ["a5_rift"])
-q("a5_archon", "act5", 14, 3, "§5Архонт", "", I("minecraft:nether_star"), adv("archon_slain"), [XP(60)], ["a5_rift"], main=True)
+q("a5_archon", "act5", 14, 3, "§5Аватар мира", "", I("minecraft:nether_star"), adv("archon_slain"), [XP(60)], ["a5_rift"], main=True)
 q("a5_end", "act5", 16, 3, "§5§lЗавеса пала", "", I("chaosshard:grimoire"), adv("game_complete"), [XP(100)], ["a5_archon"], main=True)
 q("a3_sigil", "act3", 14, 8, "Печать Цитадели", "", I("chaosshard:citadel_sigil"), adv("citadel_recall"), [NIT(20), XP(3)], ["a3_lair3"])
 q("st_chaos_link", "stars", 22, 4, "§5Связь с Хаосом", "", I("minecraft:nether_star"), adv("chaos_link"), [NIT(30), XP(5)], ["st_attalt", "st_chaos"])
-q("a0_perk", "act0", 6, 1, "Своя страница", "", I("minecraft:writable_book"), adv("spell_perk"), [NIT(10), XP(2)], ["a0_spell"])
-q("a0_form", "act0", 8, 1, "Своя ветка", "", I("chaosshard:grimoire"), adv("spell_form"), [NIT(10), XP(2)], ["a0_perk"])
+q("a0_perk", "act0", 6, 1, "Накал", "", I("minecraft:blaze_powder"), adv("heat_surge"), [NIT(10), XP(2)], ["a0_spell"])
+q("a0_form", "act0", 8, 1, "Своя ветка", "", I("chaosshard:grimoire"), adv("spell_form"), [NIT(10), XP(2)], ["a0_spell"])
 q("a4_trophy", "act4", 22, 5, "Зал трофеев", "", I("chaosshard:kael_blade"), adv("trophy_hall"), [NIT(20), XP(5)], ["a4_blade", "a3_lair2"])
 q("tc_crystal", "tech", 2, 4, "§5Кристаллизованный Хаос", "", I("chaosshard:crystal_chaos_ingot"), got(I("chaosshard:crystal_chaos_ingot")), [NIT(15), XP(3)], ["tc_distorted"])
 q("tc_blood", "tech", 4, 4, "§5Кровавая платина", "", I("chaosshard:blood_platinum_ingot"), got(I("chaosshard:blood_platinum_ingot")), [NIT(15), XP(3)], ["tc_distorted"])
@@ -1091,6 +1091,7 @@ q("a3_alpha", "act3", 12, 4, "§5Альфа", "", I("chaosshard:chaos_anchor"), 
 q("a3_borrow", "act3", 14, 4, "Чужое ремесло", "", I("chaosshard:chaos_anchor"), adv("anchor_borrow"), [NIT(20), XP(4)], ["a3_alpha", "a3_spec"])
 q("a3_alpha_max", "act3", 14, 2, "§5Сердце сети", "", I("minecraft:nether_star"), adv("anchor_alpha_max"), [NIT(150), XP(25)], ["a3_alpha"])
 q("bd_scavengers", "body", 4, 1, "§bСборщики", "", I("chaosshard:challenge_sphere", 3), lore(), [XP(1)], ["bd_start", "ch_start"])
+q("a0_glyph", "act0", 10, 1, "Глиф", "", I("chaosshard:spell_glyph"), adv("glyph_set"), [NIT(15), XP(3)], ["a0_form"])
 
 # ---------------------------------------------------------------- сборка
 

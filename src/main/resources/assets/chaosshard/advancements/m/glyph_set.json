@@ -1,0 +1,23 @@
+{
+ "parent": "chaosshard:m/root",
+ "display": {
+  "icon": {
+   "item": "chaosshard:spell_glyph"
+  },
+  "title": {
+   "translate": "advancement.chaosshard.m.glyph_set.title"
+  },
+  "description": {
+   "translate": "advancement.chaosshard.m.glyph_set.desc"
+  },
+  "frame": "task",
+  "show_toast": false,
+  "announce_to_chat": false,
+  "hidden": true
+ },
+ "criteria": {
+  "done": {
+   "trigger": "minecraft:impossible"
+  }
+ }
+}
