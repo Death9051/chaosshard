@@ -667,7 +667,8 @@ public class ChallengeManager {
                 p.clearActivePotions();
                 p.getFoodStats().setFoodLevel(Math.max(10, p.getFoodStats().getFoodLevel()));
             }
-            fail(c, p, "chaosshard.challenge.fail.died");
+            // вдали от Якоря бой идёт в зыбком кармане: падение лишь выбрасывает наружу
+            fail(c, p, c.arena ? "chaosshard.challenge.fail.pocket" : "chaosshard.challenge.fail.died");
             return;
         }
         if (e.getEntityData().hasUniqueId(TAG)) {

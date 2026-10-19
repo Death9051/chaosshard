@@ -891,6 +891,16 @@ public class GuiGrimoireMagic extends GuiScreen {
         boolean open = r.minThread <= MagicUi.threadLevel();
         int y = heading(I18n.format(r.key()), x, top + 19, pw, open ? BookArt.INK : BookArt.SOFT);
         y = para(I18n.format(r.key() + ".desc"), x, y, pw, BookArt.INK) + 6;
+        // подробности, которым не хватает места на странице (Вызов), — по наведению
+        if (I18n.hasKey(r.key() + ".more")) {
+            String ml = "§o" + I18n.format(r.key() + ".more_label");
+            boolean over = mx >= x && mx < x + font.getStringWidth(ml) && my >= y - 1 && my < y + 10;
+            font.drawString(ml, x, y, over ? BookArt.INK : BookArt.ACCENT, false);
+            if (over) {
+                hoverText = split(I18n.format(r.key() + ".more"));
+            }
+            y += 13;
+        }
         y = section(I18n.format(r.isAltar() ? "chaosshard.magic.offerings.altar" : "chaosshard.magic.offerings"), x, y);
         @SuppressWarnings("unchecked")
         List<String>[] hover = new List[1];

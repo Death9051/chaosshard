@@ -115,7 +115,9 @@ public class ItemChallengeSphere extends Item {
         if (s.mods != 0) {
             tooltip.add(TextFormatting.LIGHT_PURPLE + I18n.translateToLocalFormatted("chaosshard.challenge.bonus", (int) Math.round((s.rewardMul() - 1) * 100)));
         }
-        tooltip.add(TextFormatting.DARK_GRAY + I18n.translateToLocal("chaosshard.challenge.hint"));
+        for (String line : I18n.translateToLocal("chaosshard.challenge.hint").split("\\\\n")) {
+            tooltip.add(TextFormatting.DARK_GRAY + line);
+        }
     }
 
     @Override
