@@ -1519,17 +1519,19 @@ public final class AutoTest {
             check(ru.death.chaosshard.challenge.ChallengeSpec.parse(ok) == null, "две стороны сразу — не Вызов");
         });
         step("добыча бойцов Вызова летит к хозяину", () -> {
+            // вещь — не в мире (не мешает соседним проверкам Алтаря), шаги притяжения — вручную
             net.minecraft.entity.item.EntityItem it = new net.minecraft.entity.item.EntityItem(ow, me.posX + 12, me.posY + 1, me.posZ,
-                    new net.minecraft.item.ItemStack(net.minecraft.init.Items.BONE));
-            ow.spawnEntity(it);
+                    new net.minecraft.item.ItemStack(net.minecraft.init.Items.PAPER));
+            it.setPickupDelay(1000);
             double d0 = it.getDistance(me);
-            ru.death.chaosshard.challenge.ChallengeManager.track(it, me.getUniqueID());
             for (int i = 0; i < 6; i++) {
-                ru.death.chaosshard.challenge.ChallengeManager.pullLoot(server);
-                it.onUpdate();
+                ru.death.chaosshard.challenge.ChallengeManager.pullOne(it, me);
+                it.move(net.minecraft.entity.MoverType.SELF, it.motionX, it.motionY, it.motionZ);
             }
-            check(it.isDead || it.getDistance(me) < d0 - 1, "вещь подтянулась: было " + (int) d0 + ", стало " + (it.isDead ? 0 : (int) it.getDistance(me)));
-            it.setDead();
+            check(it.getDistance(me) < d0 - 4, "вещь подтянулась: было " + (int) d0 + ", стало " + (int) it.getDistance(me));
+            it.setPosition(me.posX + 200, me.posY + 1, me.posZ);
+            ru.death.chaosshard.challenge.ChallengeManager.pullOne(it, me);
+            check(it.getDistance(me) < 2, "дальняя вещь переносится к хозяину");
         });
         step("Вызов на Алтаре складывается в Сферу Вызова", () -> {
             drop(altarPos, new net.minecraft.item.ItemStack(ru.death.chaosshard.init.ModItems.CHAOS_ESSENCE, 4),

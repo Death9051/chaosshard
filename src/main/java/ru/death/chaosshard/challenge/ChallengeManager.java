@@ -313,22 +313,27 @@ public class ChallengeManager {
                 item.noClip = false;
                 continue;
             }
-            double dx = p.posX - item.posX, dy = p.posY + 0.6 - item.posY, dz = p.posZ - item.posZ;
-            double d = Math.sqrt(dx * dx + dy * dy + dz * dz);
-            if (d > 48) {
-                item.setPosition(p.posX, p.posY + 0.6, p.posZ);
-                continue;
-            }
-            if (d < 0.6) {
-                continue;
-            }
-            double v = Math.min(1.1, 0.2 + d * 0.06) / d;
-            item.noClip = true;
-            item.motionX = dx * v;
-            item.motionY = dy * v + 0.04;   // EntityItem сам тянет вниз на 0.04
-            item.motionZ = dz * v;
-            item.velocityChanged = true;
+            pullOne(item, p);
         }
+    }
+
+    /** Один шаг притяжения вещи к игроку: далеко — перенести, иначе лететь сквозь стены. */
+    public static void pullOne(net.minecraft.entity.item.EntityItem item, net.minecraft.entity.player.EntityPlayer p) {
+        double dx = p.posX - item.posX, dy = p.posY + 0.6 - item.posY, dz = p.posZ - item.posZ;
+        double d = Math.sqrt(dx * dx + dy * dy + dz * dz);
+        if (d > 48) {
+            item.setPosition(p.posX, p.posY + 0.6, p.posZ);
+            return;
+        }
+        if (d < 0.6) {
+            return;
+        }
+        double v = Math.min(1.1, 0.2 + d * 0.06) / d;
+        item.noClip = true;
+        item.motionX = dx * v;
+        item.motionY = dy * v + 0.04;   // EntityItem сам тянет вниз на 0.04
+        item.motionZ = dz * v;
+        item.velocityChanged = true;
     }
 
     /** Кибер-зомби в Лучезарии не водятся: их приносит только Вызов «Сборщики» (естественное появление и рассадники — запрещены). */
