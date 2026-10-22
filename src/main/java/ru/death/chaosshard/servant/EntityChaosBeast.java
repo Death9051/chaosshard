@@ -371,7 +371,8 @@ public abstract class EntityChaosBeast extends EntityCreature {
             // Еда
             foodCd--;
             if (foodCd <= 0 && close && !o.isCreative()) {
-                if (o.getFoodStats().getFoodLevel() <= 14) {
+                // хватает нехватки хотя бы половинки голода
+                if (o.getFoodStats().getFoodLevel() < 20) {
                     for (ItemStack s : food(e, lvl)) {
                         drop(o, s);
                     }

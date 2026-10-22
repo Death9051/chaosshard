@@ -27,9 +27,12 @@ public class ModelHare extends ModelBase {
         head = new ModelRenderer(this, 0, 14);
         head.addBox(-2.5F, -4.0F, -3.0F, 5, 5, 5);
         head.setRotationPoint(0.0F, 13.0F, -5.5F);
-        // левое ухо обгрызено: осталось 4 пикселя из 7 (развёртка сдвинута на 3 вниз — по текстуре)
-        ear_l = new ModelRenderer(this, 20, 17);
-        ear_l.addBox(-1.0F, -4.0F, -0.5F, 2, 4, 1);
+        // левое ухо обгрызено: 4 пикселя из 7, верх оторван наискосок — внешний угол отсутствует.
+        // Два кубика (низ 2×3 и уцелевший уголок 1×1), чтобы на месте надрыва не было дыры.
+        ear_l = new ModelRenderer(this, 42, 0);
+        ear_l.addBox(-1.0F, -3.0F, -0.5F, 2, 3, 1);
+        ear_l.setTextureOffset(48, 0);
+        ear_l.addBox(0.0F, -4.0F, -0.5F, 1, 1, 1);
         ear_l.setRotationPoint(-1.5F, -4.0F, -0.5F);
         ear_l.rotateAngleX = -0.15F;
         ear_r = new ModelRenderer(this, 26, 14);
