@@ -113,6 +113,21 @@ public final class MobSample {
         return new Events();
     }
 
+    /** Подсказка — только клиент (ItemTooltipEvent тянет клиентские классы). */
+    public static Tooltip tooltip() {
+        return new Tooltip();
+    }
+
+    public static final class Tooltip {
+        /** Подсказка на ящике с духом: годится вместо яйца. */
+        @SubscribeEvent
+        public void onTooltip(ItemTooltipEvent event) {
+            if (isSpiritBox(event.getItemStack()) && id(event.getItemStack()) != null) {
+                event.getToolTip().add(TextFormatting.DARK_PURPLE + I18n.translateToLocal("chaosshard.mobsample.box"));
+            }
+        }
+    }
+
     public static final class Events {
 
         /** ПКМ по спавнеру ящиком с духом — как яйцом: спавнер меняет моба, дух переходит в него. */
@@ -154,12 +169,5 @@ public final class MobSample {
             w.playSound(null, b, SoundEvents.EVOCATION_ILLAGER_CAST_SPELL, SoundCategory.BLOCKS, 0.8F, 0.9F);
         }
 
-        /** Подсказка на ящике с духом: годится вместо яйца. */
-        @SubscribeEvent
-        public void onTooltip(ItemTooltipEvent event) {
-            if (isSpiritBox(event.getItemStack()) && id(event.getItemStack()) != null) {
-                event.getToolTip().add(TextFormatting.DARK_PURPLE + I18n.translateToLocal("chaosshard.mobsample.box"));
-            }
-        }
     }
 }

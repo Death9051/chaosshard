@@ -44,6 +44,7 @@ jobs:
           echo "код выхода: $?" >> client.log
           set -e
           tail -40 client.log
+          grep -q "CLIENTTEST DONE pass=[0-9]* fail=0" client.log || { echo "тест клиента не дошёл до конца или есть провалы"; exit 1; }
 
       - name: Отчёт в ci-logs
         if: always()

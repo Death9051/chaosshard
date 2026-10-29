@@ -15,6 +15,7 @@ public class ClientProxy extends CommonProxy {
     public void preInit(FMLPreInitializationEvent event) {
         super.preInit(event);
         MinecraftForge.EVENT_BUS.register(new ThreadHud());
+        MinecraftForge.EVENT_BUS.register(ru.death.chaosshard.compat.MobSample.tooltip());
         MinecraftForge.EVENT_BUS.register(new EnergyHud());
         net.minecraftforge.fml.client.registry.ClientRegistry.bindTileEntitySpecialRenderer(
                 ru.death.chaosshard.heart.TileHeart.class, new ru.death.chaosshard.heart.client.HeartRenderer());

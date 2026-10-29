@@ -83,6 +83,8 @@ jobs:
           set -e
           tail -30 console.log
           ls
+          # без строки «AUTOTEST DONE … fail=0» прогон провален (падение сервера, зависание, проваленные проверки)
+          grep -hq "AUTOTEST DONE pass=[0-9]* fail=0" console.log logs/latest.log 2>/dev/null || { echo "автотест не дошёл до конца или есть провалы"; exit 1; }
 
       - name: Отчёт в ci-logs
         if: always()
