@@ -1754,6 +1754,31 @@ public final class AutoTest {
             check(boss == null || !ru.death.chaosshard.compat.world.DefiledPeace.neutral(boss), "босс Скверны — враг как прежде");
             sh.forEach(Entity::setDead);
         });
+        section("Ящик с духом вместо яйца");
+        step("дух в Ящике вечного заточения читается как моб", () -> {
+            net.minecraft.nbt.NBTTagCompound spirit = new net.minecraft.nbt.NBTTagCompound();
+            spirit.setString("innerEntity", net.minecraft.entity.monster.EntitySkeleton.class.getName());
+            net.minecraft.nbt.NBTTagCompound tag = new net.minecraft.nbt.NBTTagCompound();
+            tag.setTag("spiritTag", spirit);
+            check(new net.minecraft.util.ResourceLocation("skeleton").equals(ru.death.chaosshard.compat.MobSample.idFromBoxTag(tag)), "скелет из ящика");
+            check(ru.death.chaosshard.compat.MobSample.idFromBoxTag(new net.minecraft.nbt.NBTTagCompound()) == null, "пустой ящик — не образец");
+            net.minecraft.nbt.NBTTagCompound pl = tag.copy();
+            pl.setString("playerId", "00000000-0000-0000-0000-000000000001");
+            check(ru.death.chaosshard.compat.MobSample.idFromBoxTag(pl) == null, "дух игрока — не образец");
+            net.minecraft.item.ItemStack egg = new net.minecraft.item.ItemStack(net.minecraft.init.Items.SPAWN_EGG);
+            net.minecraft.item.ItemMonsterPlacer.applyEntityIdToItemStack(egg, new net.minecraft.util.ResourceLocation("zombie"));
+            check(new net.minecraft.util.ResourceLocation("zombie").equals(ru.death.chaosshard.compat.MobSample.id(egg)), "яйцо по-прежнему годится");
+        });
+        step("ящик с духом переделывает спавнер", () -> {
+            BlockPos sp = new BlockPos(me.posX, me.posY, me.posZ).add(-6, 0, -6);
+            ow.setBlockState(sp, net.minecraft.init.Blocks.MOB_SPAWNER.getDefaultState());
+            boolean ok = ru.death.chaosshard.compat.MobSample.applyToSpawner(ow, sp, new net.minecraft.util.ResourceLocation("skeleton"));
+            net.minecraft.tileentity.TileEntity te = ow.getTileEntity(sp);
+            net.minecraft.nbt.NBTTagCompound t = te == null ? new net.minecraft.nbt.NBTTagCompound() : te.writeToNBT(new net.minecraft.nbt.NBTTagCompound());
+            check(ok && t.getCompoundTag("SpawnData").getString("id").equals("minecraft:skeleton"), "спавнер стал скелетным: " + t.getCompoundTag("SpawnData"));
+            ow.setBlockToAir(sp);
+        });
+
         section("Постройки Ордена в Лучезарии");
         step("все пять встают, блоки разобраны, сундуки с добычей", () -> {
             ru.death.chaosshard.structure.BlueprintPlacer.FAILED.clear();

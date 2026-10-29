@@ -124,6 +124,7 @@ public class ChaosShard {
         MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.anchor.DarkCorruption());
         MinecraftForge.EVENT_BUS.register(ru.death.chaosshard.anchor.AnchorSpecs.events());
         MinecraftForge.EVENT_BUS.register(ru.death.chaosshard.anchor.AnchorSigns.events());
+        MinecraftForge.EVENT_BUS.register(ru.death.chaosshard.compat.MobSample.events());
         ru.death.chaosshard.spell.SpellMods.register(ru.death.chaosshard.anchor.AnchorSpecs.PULSE);
         ru.death.chaosshard.spell.SpellMods.register(ru.death.chaosshard.spell.SpellGlyphs.HOOK);
         ru.death.chaosshard.spell.SpellMods.register(ru.death.chaosshard.spell.SpellHeat.HOOK);

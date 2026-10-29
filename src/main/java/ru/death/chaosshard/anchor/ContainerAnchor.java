@@ -128,7 +128,7 @@ public class ContainerAnchor extends Container {
                 return ItemStack.EMPTY;
             }
         } else {
-            if (stack.getItem() instanceof net.minecraft.item.ItemMonsterPlacer && canEdit(p, tile)) {
+            if (ru.death.chaosshard.compat.MobSample.isSample(stack) && canEdit(p, tile)) {
                 Slot sm = inventorySlots.get(SAMPLE_SLOT);
                 if (sm.getHasStack() || !sm.isItemValid(stack)) {
                     return ItemStack.EMPTY;

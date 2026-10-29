@@ -50,11 +50,11 @@ public class TileAnchor extends TileEntity implements ITickable {
             markDirty();
         }
     };
-    /** Образец моба для поля Жатвы (2-я ступень). */
+    /** Образец моба для поля Жатвы (2-я ступень): яйцо или Ящик вечного заточения с духом. */
     public final net.minecraftforge.items.ItemStackHandler sample = new net.minecraftforge.items.ItemStackHandler(1) {
         @Override
         public boolean isItemValid(int slot, net.minecraft.item.ItemStack stack) {
-            return stack.getItem() instanceof net.minecraft.item.ItemMonsterPlacer;
+            return ru.death.chaosshard.compat.MobSample.isSample(stack);
         }
 
         @Override

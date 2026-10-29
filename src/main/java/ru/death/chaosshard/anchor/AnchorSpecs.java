@@ -16,7 +16,6 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.MobEffects;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemMonsterPlacer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.tileentity.TileEntity;
@@ -545,8 +544,8 @@ public final class AnchorSpecs {
 
     private static EntityLiving fieldMob(TileAnchor a, WorldServer w, BlockPos at) {
         ItemStack egg = a.sample.getStackInSlot(0);
-        if (a.stage() && egg.getItem() instanceof ItemMonsterPlacer) {
-            ResourceLocation id = ItemMonsterPlacer.getNamedIdFrom(egg);
+        if (a.stage() && ru.death.chaosshard.compat.MobSample.isSample(egg)) {
+            ResourceLocation id = ru.death.chaosshard.compat.MobSample.id(egg);
             Entity e = id == null ? null : EntityList.createEntityByIDFromName(id, w);
             if (e instanceof EntityLiving && e.isNonBoss()) {
                 return (EntityLiving) e;
