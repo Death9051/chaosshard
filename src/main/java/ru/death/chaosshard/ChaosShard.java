@@ -115,6 +115,7 @@ public class ChaosShard {
         MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.hero.TrophyPassives());
         MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.trial.TrialManager());
         MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.servant.Servants());
+        MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.servant.ServantTravel());
         MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.servant.Beasts());
         MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.servant.AltarAscension());
         MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.ritual.AltarRituals());

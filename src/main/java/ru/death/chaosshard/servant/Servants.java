@@ -318,23 +318,69 @@ public class Servants {
         });
     }
 
-    /** Следовать за владельцем (если не стережёт место). Далеко отстал — переместиться к нему. */
+    /** Ходит за мной (не стережёт место, не у сундука, не в гарнизоне). */
+    static boolean isFollower(Entity m) {
+        return !m.getEntityData().hasKey(TAG_GUARD) && !m.getEntityData().hasKey(TAG_CHEST) && !m.getEntityData().hasKey(TAG_ANCHOR);
+    }
+
+    /**
+     * Следование строем. У каждого слуги своё место полукругом за спиной хозяина (ближний ряд — до 5 мест, дальше — второй ряд).
+     * Дальше 7 блоков — догоняет своё место; ближе 1.6 — отходит на него, а не стоит вплотную. Место пересчитывается,
+     * только когда хозяин сместился, поэтому свита не мечется, пока я верчу головой. Отстал больше чем на 24 — переносится
+     * на свободное место рядом.
+     */
     static class FollowOwner extends EntityAIBase {
+        static final double START = 7.0, CROWD = 1.6, ARRIVE = 1.4, TELEPORT = 24.0;
         private final EntityCreature m;
+        private net.minecraft.util.math.Vec3d slot, anchor;
+        private int repath, timeout;
 
         FollowOwner(EntityCreature m) {
             this.m = m;
             setMutexBits(1);
         }
 
-        @Override
-        public boolean shouldExecute() {
-            if (m.getEntityData().hasKey(TAG_GUARD) || m.getEntityData().hasKey(TAG_CHEST) || m.getEntityData().hasKey(TAG_ANCHOR)
-                    || m.getAttackTarget() != null) {
-                return false;
+        private EntityPlayer target() {
+            if (!isFollower(m) || m.getAttackTarget() != null) {
+                return null;
             }
             EntityPlayer o = owner(m);
-            return o != null && o.world == m.world && m.getDistanceSq(o) > 36;
+            return o != null && o.world == m.world && !o.isSpectator() ? o : null;
+        }
+
+        @Override
+        public boolean shouldExecute() {
+            EntityPlayer o = target();
+            if (o == null) {
+                return false;
+            }
+            double d = m.getDistance(o);
+            return d > START || (d < CROWD && !o.isPlayerSleeping());
+        }
+
+        @Override
+        public boolean shouldContinueExecuting() {
+            EntityPlayer o = target();
+            if (o == null || timeout <= 0) {
+                return false;
+            }
+            updateSlot(o, false);
+            return m.getDistance(o) > TELEPORT || m.getDistanceSq(slot.x, slot.y, slot.z) > ARRIVE * ARRIVE;
+        }
+
+        @Override
+        public void startExecuting() {
+            repath = 0;
+            timeout = 400;
+            EntityPlayer o = target();
+            if (o != null) {
+                updateSlot(o, true);
+            }
+        }
+
+        @Override
+        public void resetTask() {
+            m.getNavigator().clearPath();
         }
 
         @Override
@@ -343,13 +389,85 @@ public class Servants {
             if (o == null) {
                 return;
             }
-            if (m.getDistanceSq(o) > 24 * 24) {
-                m.setPositionAndUpdate(o.posX, o.posY, o.posZ);
+            timeout--;
+            m.getLookHelper().setLookPositionWithEntity(o, 10.0F, m.getVerticalFaceSpeed());
+            if (m.getDistance(o) > TELEPORT) {
+                updateSlot(o, true);
+                BlockPos safe = safeSpot(m.world, slot, o);
+                m.getNavigator().clearPath();
+                m.setPositionAndUpdate(safe.getX() + 0.5, safe.getY(), safe.getZ() + 0.5);
                 Resync.later(m, 3);
-            } else {
-                m.getNavigator().tryMoveToEntityLiving(o, 1.15D);
+                return;
+            }
+            if (--repath > 0) {
+                return;
+            }
+            repath = 10;
+            double d = m.getDistance(o);
+            double speed = d > 12 ? 1.3 : d > START ? 1.15 : 1.0;
+            if (!m.getNavigator().tryMoveToXYZ(slot.x, slot.y, slot.z, speed)) {
+                // место за стеной или в воздухе — хотя бы подойти, не упираясь в хозяина
+                net.minecraft.util.math.Vec3d mid = o.getPositionVector().add(slot.subtract(o.getPositionVector()).scale(0.6));
+                if (!m.getNavigator().tryMoveToXYZ(mid.x, mid.y, mid.z, speed) && d > START) {
+                    m.getNavigator().tryMoveToEntityLiving(o, speed);
+                }
             }
         }
+
+        /** Место в строю: полукруг за спиной хозяина. Пересчёт — когда хозяин ушёл от прошлой точки дальше 2.5 блока. */
+        private void updateSlot(EntityPlayer o, boolean force) {
+            net.minecraft.util.math.Vec3d at = o.getPositionVector();
+            if (!force && slot != null && anchor != null && anchor.squareDistanceTo(at) < 2.5 * 2.5) {
+                return;
+            }
+            anchor = at;
+            slot = slotFor(m, o);
+        }
+    }
+
+    /** Место слуги в строю за спиной хозяина. */
+    static net.minecraft.util.math.Vec3d slotFor(EntityCreature m, EntityPlayer o) {
+        List<EntityCreature> crew = m.world.getEntitiesWithinAABB(EntityCreature.class, o.getEntityBoundingBox().grow(32),
+                e -> e.isEntityAlive() && isServantOf(e, o.getUniqueID()) && isFollower(e));
+        crew.sort(java.util.Comparator.comparingInt(Entity::getEntityId));
+        int i = Math.max(0, crew.indexOf(m));
+        int n = Math.max(1, crew.size());
+        int ring = i < 5 ? 0 : 1;
+        int inRing = ring == 0 ? Math.min(5, n) : Math.min(7, n - 5);
+        int j = ring == 0 ? i : i - 5;
+        double radius = ring == 0 ? 2.8 : 4.4;
+        double step = ring == 0 ? 36 : 28;
+        double ang = Math.toRadians(o.renderYawOffset + 180 + (j - (inRing - 1) / 2.0) * step);
+        // в Minecraft «вперёд» по yaw — это (-sin, cos)
+        return new net.minecraft.util.math.Vec3d(o.posX - Math.sin(ang) * radius, o.posY, o.posZ + Math.cos(ang) * radius);
+    }
+
+    /** Свободная точка рядом с желаемым местом: твёрдый пол, два блока воздуха, не жидкость. Иначе — рядом с хозяином. */
+    static BlockPos safeSpot(World w, net.minecraft.util.math.Vec3d want, EntityPlayer o) {
+        BlockPos base = new BlockPos(want);
+        for (int r = 0; r <= 2; r++) {
+            for (int dx = -r; dx <= r; dx++) {
+                for (int dz = -r; dz <= r; dz++) {
+                    if (Math.max(Math.abs(dx), Math.abs(dz)) != r) {
+                        continue;
+                    }
+                    for (int dy = 2; dy >= -3; dy--) {
+                        BlockPos q = base.add(dx, dy, dz);
+                        if (standable(w, q) && q.distanceSq(o.getPosition()) > 1.5) {
+                            return q;
+                        }
+                    }
+                }
+            }
+        }
+        return o.getPosition();
+    }
+
+    static boolean standable(World w, BlockPos q) {
+        net.minecraft.block.state.IBlockState floor = w.getBlockState(q.down());
+        return floor.getMaterial().blocksMovement() && !floor.getMaterial().isLiquid()
+                && !w.getBlockState(q).getMaterial().blocksMovement() && !w.getBlockState(q).getMaterial().isLiquid()
+                && !w.getBlockState(q.up()).getMaterial().blocksMovement();
     }
 
     /** Бить того, кто напал на владельца или на кого напал владелец. */
@@ -385,56 +503,7 @@ public class Servants {
         }
     }
 
-    // ------------------------------------------------------------------ переходы между мирами
-
-    /** Игрок → мир, из которого он ушёл. Слуги переходят на следующем тике. */
-    private static final java.util.Map<UUID, Integer> MOVED = new java.util.HashMap<>();
-
-    @SubscribeEvent
-    public void onChangedDimension(net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerChangedDimensionEvent event) {
-        if (!event.player.world.isRemote) {
-            MOVED.put(event.player.getUniqueID(), event.fromDim);
-        }
-    }
-
-    /** Свита, что ходит за мной (не стережёт место и не закреплена за сундуком), переходит со мной в другой мир. */
-    @SubscribeEvent
-    public void onServerTick(net.minecraftforge.fml.common.gameevent.TickEvent.ServerTickEvent event) {
-        if (event.phase != net.minecraftforge.fml.common.gameevent.TickEvent.Phase.END || MOVED.isEmpty()) {
-            return;
-        }
-        java.util.Map<UUID, Integer> moved = new java.util.HashMap<>(MOVED);
-        MOVED.clear();
-        net.minecraft.server.MinecraftServer server = net.minecraftforge.fml.common.FMLCommonHandler.instance().getMinecraftServerInstance();
-        for (java.util.Map.Entry<UUID, Integer> me : moved.entrySet()) {
-            EntityPlayerMP p = server.getPlayerList().getPlayerByUUID(me.getKey());
-            WorldServer from = net.minecraftforge.common.DimensionManager.getWorld(me.getValue());
-            if (p == null || from == null || p.dimension == me.getValue()) {
-                continue;
-            }
-            // в Испытания свита не ходит — ждёт у входа
-            if (ru.death.chaosshard.trial.TrialDimension.is(p.world) && !ru.death.chaosshard.challenge.ChallengeManager.inArena(p)) {
-                continue;
-            }
-            List<Entity> list = new java.util.ArrayList<>(from.loadedEntityList);
-            int n = 0;
-            for (Entity e : list) {
-                if (!e.isEntityAlive() || !isServantOf(e, p.getUniqueID()) || e.getEntityData().hasKey(TAG_GUARD)
-                        || e.getEntityData().hasKey(TAG_CHEST) || e.getEntityData().hasKey(TAG_ANCHOR) || e.isRiding() || e.isBeingRidden()) {
-                    continue;
-                }
-                final double ox = (n % 3 - 1) * 1.2, oz = (n / 3 % 3 - 1) * 1.2;
-                n++;
-                e.changeDimension(p.dimension, (world, entity, yaw) -> {
-                    entity.setLocationAndAngles(p.posX + ox, p.posY, p.posZ + oz, p.rotationYaw, 0);
-                    entity.motionX = entity.motionY = entity.motionZ = 0;
-                });
-            }
-            if (n > 0) {
-                ((WorldServer) p.world).spawnParticle(EnumParticleTypes.PORTAL, p.posX, p.posY + 1, p.posZ, 40, 1.0, 0.8, 1.0, 0.5);
-            }
-        }
-    }
+    // ------------------------------------------------------------------ переходы между мирами — ServantTravel
 
     // ------------------------------------------------------------------ верность
 
@@ -564,6 +633,6 @@ public class Servants {
 
     /** Сервер остановлен (в одиночной игре — выход из мира): ничего не тянется в следующий мир. */
     public static void clearState() {
-        MOVED.clear();
+        ServantTravel.clearState();
     }
 }

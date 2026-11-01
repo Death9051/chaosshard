@@ -453,6 +453,60 @@ public final class AutoTest {
         });
         step("отойти — свита идёт следом", () -> me.setPosition(base.getX() + 20.5, base.getY() + 1, base.getZ() + 0.5));
         until("Хаск догнал хозяина", () -> servants.get(Servants.Kind.HUSK) != null && servants.get(Servants.Kind.HUSK).getDistance(me) < 8, 400);
+        until("свита встала строем, никто не стоит вплотную", () -> {
+            List<EntityLiving> near = ow.getEntitiesWithinAABB(EntityLiving.class, me.getEntityBoundingBox().grow(12),
+                    e -> e.isEntityAlive() && Servants.isServantOf(e, me.getUniqueID()));
+            if (near.size() < 3) return false;
+            for (EntityLiving e : near) {
+                if (e.getDistance(me) < 1.3) return false;
+            }
+            return true;
+        }, 400);
+        step("строй: у слуг разные места", () -> {
+            List<EntityLiving> near = ow.getEntitiesWithinAABB(EntityLiving.class, me.getEntityBoundingBox().grow(12),
+                    e -> e.isEntityAlive() && Servants.isServantOf(e, me.getUniqueID()));
+            double min = 99, close = 99;
+            for (int i = 0; i < near.size(); i++) {
+                close = Math.min(close, near.get(i).getDistance(me));
+                for (int j = i + 1; j < near.size(); j++) min = Math.min(min, near.get(i).getDistance(near.get(j)));
+            }
+            check(close >= 1.3, "ближе всех к хозяину: " + String.format("%.1f", close) + " блока, рядом слуг " + near.size());
+            check(min > 0.4, "слуги не стоят друг в друге: минимум " + String.format("%.2f", min));
+        });
+        step("свита из другого мира переходит ко мне (после смены мира и подстраховкой)", () -> {
+            WorldServer other = server.getWorld(ru.death.chaosshard.trial.TrialDimension.id());
+            BlockPos at = new BlockPos(30000, 100, 30000);
+            net.minecraft.entity.Entity[] made = new net.minecraft.entity.Entity[2];
+            for (int i = 0; i < 2; i++) {
+                other.getChunk(at.add(i * 3, 0, 0));
+                other.setBlockState(at.add(i * 3, -1, 0), Blocks.STONE.getDefaultState());
+                net.minecraft.entity.Entity e = net.minecraft.entity.EntityList.createEntityByIDFromName(new ResourceLocation(Servants.Kind.HUSK.id), other);
+                e.setLocationAndAngles(at.getX() + i * 3 + 0.5, at.getY(), at.getZ() + 0.5, 0, 0);
+                e.getEntityData().setUniqueId(Servants.TAG_OWNER, me.getUniqueID());
+                e.getEntityData().setString(Servants.TAG_KIND, Servants.Kind.HUSK.name());
+                ((EntityLiving) e).enablePersistence();
+                other.spawnEntity(e);
+                made[i] = e;
+            }
+            UUID a = made[0].getUniqueID(), b = made[1].getUniqueID();
+            // первый — как при смене мира: записан и перенесён в конце тика
+            made[1].getEntityData().setLong(Servants.TAG_GUARD, at.toLong());
+            int q = ru.death.chaosshard.servant.ServantTravel.queue(me, other.provider.getDimension());
+            ru.death.chaosshard.servant.ServantTravel.process(server);
+            net.minecraft.entity.Entity ea = ow.getEntityFromUuid(a);
+            check(q == 1, "записан один попутчик (сторож остался): " + q);
+            check(ea != null && ea.getDistance(me) < 6 && ea.getDistance(me) > 1.0, "попутчик рядом со мной, не вплотную: "
+                    + (ea == null ? "нет" : String.format("%.1f", ea.getDistance(me))));
+            check(other.getEntityFromUuid(b) != null, "сторож остался на месте");
+            // второй — подстраховкой: перестал сторожить, перенос без смены мира
+            net.minecraft.entity.Entity eb0 = other.getEntityFromUuid(b);
+            if (eb0 != null) eb0.getEntityData().removeTag(Servants.TAG_GUARD);
+            int s = ru.death.chaosshard.servant.ServantTravel.sweep(me);
+            net.minecraft.entity.Entity eb = ow.getEntityFromUuid(b);
+            check(s >= 1 && eb != null && eb.getDistance(me) < 7, "подстраховка перенесла оставшегося: " + s);
+            if (ea != null) ea.setDead();
+            if (eb != null) eb.setDead();
+        });
         step("опыт и уровень зайца", () -> {
             Beasts.debug(me, BeastData.Beast.HARE, "xp", 400);
             BeastData.Entry e = Beasts.entry(ow, me.getUniqueID(), BeastData.Beast.HARE);
