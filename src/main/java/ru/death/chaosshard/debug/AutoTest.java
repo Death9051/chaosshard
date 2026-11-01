@@ -888,7 +888,10 @@ public final class AutoTest {
             TileAnchor wt = specT(specA[0]);
             String diag = wt == null ? "" : " [захвачен " + wt.isCaptured() + ", земля " + wt.getLand() + ", сила Дозора " + wt.net(ru.death.chaosshard.anchor.AnchorSpec.WATCH)
                     + ", путь " + wt.getSpec() + ", радиус " + wt.radius() + ", в земле " + (z != null && ru.death.chaosshard.anchor.AnchorSpecs.inLand(wt, z))
-                    + ", загружен " + ow.isBlockLoaded(specA[0]) + "]";
+                    + ", загружен " + ow.isBlockLoaded(specA[0])
+                    + ", в мире " + (z != null && ow.loadedEntityList.contains(z)) + ", по id " + (z != null && ow.getEntityByID(z.getEntityId()) == z)
+                    + ", замечен " + (z == null ? -1 : z.getEntityData().getLong(ru.death.chaosshard.anchor.AnchorSpecs.TAG_SEEN)) + ", время " + ow.getTotalWorldTime()
+                    + ", эффекты " + (z == null ? "" : z.getActivePotionEffects()) + "]";
             check(z != null && z.isPotionActive(net.minecraft.init.MobEffects.GLOWING), "зомби светится" + (z == null ? "" : " (жив: " + z.isEntityAlive() + ")") + diag);
             if (z != null) z.setDead();
         });
