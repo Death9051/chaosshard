@@ -881,7 +881,8 @@ public final class AutoTest {
             net.minecraft.nbt.NBTTagCompound sc = ru.death.chaosshard.anchor.AnchorView.scry(ow, anchorPos, me.getUniqueID());
             check(sc.getByteArray("c").length == 96 * 96, "взгляд: вид сверху 96×96");
         });
-        sleep(45);
+        // Дозор обновляет силу сети раз в секунду и смотрит раз в 2 секунды — ждём по факту, а не фиксированные 45 тиков
+        until("Дозор успел посмотреть", () -> specMob[0] != null && specMob[0].isPotionActive(net.minecraft.init.MobEffects.GLOWING), 120);
         step("Дозор подсветил", () -> {
             net.minecraft.entity.EntityLiving z = specMob[0];
             check(z != null && z.isPotionActive(net.minecraft.init.MobEffects.GLOWING), "зомби светится" + (z == null ? "" : " (жив: " + z.isEntityAlive() + ")"));
