@@ -79,6 +79,10 @@ public class Work {
     /** Добавить слугу к выбору (можно выбрать несколько подряд, выбор живёт 30 секунд с последнего щелчка). Возвращает, сколько выбрано. */
     public static int select(EntityPlayer p, Entity servant) {
         long now = p.world.getTotalWorldTime();
+        if (Servants.isNest(servant)) {
+            java.util.Set<UUID> cur = SELECTED.get(p.getUniqueID());
+            return cur == null ? 0 : cur.size();
+        }
         java.util.LinkedHashSet<UUID> set = SELECTED.get(p.getUniqueID());
         if (set == null || now - SELECTED_AT.getOrDefault(p.getUniqueID(), 0L) > 600) {
             set = new java.util.LinkedHashSet<>();
@@ -216,6 +220,9 @@ public class Work {
     // ------------------------------------------------------------------ бойцы: гарнизон Якоря или «стереги здесь»
 
     private static void fighter(EntityPlayer p, EntityCreature m, World w, BlockPos clicked) {
+        if (Servants.isNest(m)) {
+            return;   // твари Гнезда не переходят в гарнизон и не стерегут чужие места
+        }
         BlockPos anchorPos = clicked;
         if (w.getBlockState(clicked).getBlock() instanceof ru.death.chaosshard.anchor.BlockAnchorPart) {
             anchorPos = ru.death.chaosshard.anchor.BlockAnchorPart.base(w, clicked);

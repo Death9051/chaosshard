@@ -2132,3 +2132,4 @@ chaosshard.loot_bag.empty=Мешочек был пуст.
 chaosshard.mobsample.box=Годится вместо яйца призыва: образец Жатвы, спавнер (ПКМ по нему)
 chaosshard.beast.cat.pet=Кошка жмурится и мурчит.
 chaosshard.beast.cat.pet_again=Кошка мурчит. Опыта за ласку не больше раза в минуту.
+chaosshard.servant.nest_only=Тварь Гнезда служит только своему Гнезду: в свиту, гарнизон или стражу её не взять.

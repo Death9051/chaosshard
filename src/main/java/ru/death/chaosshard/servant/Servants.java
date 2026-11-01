@@ -161,6 +161,11 @@ public class Servants {
         return false;
     }
 
+    /** Тварь Гнезда (защитник или сопровождающая) — принадлежит Гнезду, а не свите. */
+    public static boolean isNest(Entity e) {
+        return e != null && e.getEntityData().hasKey(ru.death.chaosshard.anchor.AnchorSpecs.TAG_NEST);
+    }
+
     public static boolean isServant(Entity e) {
         return e != null && e.getEntityData().hasUniqueId(TAG_OWNER);
     }
@@ -248,6 +253,13 @@ public class Servants {
             return;
         }
         EntityCreature m = (EntityCreature) e;
+        NBTTagCompound nd = m.getEntityData();
+        if (isNest(m) && !nd.getBoolean(ru.death.chaosshard.anchor.AnchorSpecs.TAG_ESCORT)) {
+            long nest = nd.getLong(ru.death.chaosshard.anchor.AnchorSpecs.TAG_NEST);
+            nd.removeTag(TAG_GUARD);
+            nd.removeTag(TAG_CHEST);
+            nd.setLong(TAG_ANCHOR, nest);
+        }
         Kind kind = kindOf(m);
         if (kind != null && !kind.unique() && !kind.id.equals(String.valueOf(EntityList.getKey(m)))) {
             migrate(m, kind);
@@ -699,6 +711,12 @@ public class Servants {
         Kind kind = kindOf(e);
         if (held.getItem() == ModItems.GRIMOIRE && !ru.death.chaosshard.spell.SpellCaster.bindMode(held)) {
             return;   // указания — только в режиме Привязки
+        }
+        // твари Гнезда служат только своему Гнезду: в выбор, свиту, гарнизон и стражу их не взять
+        if (held.getItem() == ModItems.GRIMOIRE && isNest(e)) {
+            p.sendStatusMessage(Breach.grimoire("chaosshard.servant.nest_only"), true);
+            event.setCanceled(true);
+            return;
         }
         if (held.getItem() == ModItems.GRIMOIRE && kind != null && kind.gatherer()) {
             if (p.isSneaking()) {

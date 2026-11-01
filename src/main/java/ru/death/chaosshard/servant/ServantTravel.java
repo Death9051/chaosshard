@@ -55,8 +55,9 @@ public final class ServantTravel {
     private int ticks;
 
     /** Слуга-попутчик хозяина (не стережёт, не у сундука, не в гарнизоне, ни на ком не едет). */
-    static boolean travels(Entity e, UUID owner) {
-        return e.isEntityAlive() && Servants.isServantOf(e, owner) && Servants.isFollower(e) && !e.isRiding() && !e.isBeingRidden();
+    public static boolean travels(Entity e, UUID owner) {
+        return e.isEntityAlive() && Servants.isServantOf(e, owner) && Servants.isFollower(e) && !Servants.isNest(e)
+                && !e.isRiding() && !e.isBeingRidden();
     }
 
     /** Пускают ли свиту туда, где я сейчас. В Испытания свита не ходит — ждёт у входа (кроме арены Вызова). */

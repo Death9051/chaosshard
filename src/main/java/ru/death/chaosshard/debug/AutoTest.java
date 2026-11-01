@@ -859,6 +859,17 @@ public final class AutoTest {
             check(!g.isEmpty(), "тварь Гнезда пришла");
             check(!ru.death.chaosshard.anchor.AnchorSpecs.nestOf(t, true).isEmpty(), "сопровождающая пришла");
             check(Servants.count(me) == before, "в лимит свиты не идут");
+            net.minecraft.entity.EntityLiving guard = g.get(0);
+            int sel0 = ru.death.chaosshard.servant.work.Work.select(me, servants.get(Servants.Kind.HUSK));
+            int sel1 = ru.death.chaosshard.servant.work.Work.select(me, guard);
+            check(sel1 == sel0, "тварь Гнезда не добавить к выбору слуг: " + sel0 + " → " + sel1);
+            List<net.minecraft.entity.EntityLiving> esc = ru.death.chaosshard.anchor.AnchorSpecs.nestOf(t, true);
+            check(!esc.isEmpty() && !ru.death.chaosshard.servant.ServantTravel.travels(esc.get(0), me.getUniqueID()),
+                    "сопровождающая Гнезда не уходит со мной в другие миры");
+            // тварь, выведенная из Гнезда старой версией, при загрузке снова стережёт своё Гнездо
+            guard.getEntityData().removeTag(Servants.TAG_ANCHOR);
+            new Servants().onJoin(new net.minecraftforge.event.entity.EntityJoinWorldEvent(guard, ow));
+            check(guard.getEntityData().getLong(Servants.TAG_ANCHOR) == specA[0].toLong(), "отбившаяся тварь вернулась к Гнезду");
             t.resetSpec();
             check(ru.death.chaosshard.anchor.AnchorSpecs.nestOf(t, false).isEmpty(), "Гнездо распущено — твари ушли");
         });

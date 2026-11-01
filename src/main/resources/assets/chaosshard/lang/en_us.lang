@@ -2108,3 +2108,4 @@ chaosshard.loot_bag.empty=The pouch was empty.
 chaosshard.mobsample.box=Works as a spawn egg: Harvest sample, spawner (right-click it)
 chaosshard.beast.cat.pet=The Cat squints and purrs.
 chaosshard.beast.cat.pet_again=The Cat purrs. Petting gives XP at most once a minute.
+chaosshard.servant.nest_only=A Nest creature serves only its Nest: it cannot join the retinue, a garrison or guard duty.
