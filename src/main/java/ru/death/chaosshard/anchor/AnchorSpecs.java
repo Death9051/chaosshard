@@ -236,7 +236,7 @@ public final class AnchorSpecs {
             // подсветка — при входе; ушёл с земли больше чем на полминуты и вернулся — снова
             long now = a.getWorld().getTotalWorldTime();
             long last = e.getEntityData().getLong(TAG_SEEN);
-            if (now - last > 600) {
+            if (!e.getEntityData().hasKey(TAG_SEEN) || now - last > 600) {
                 e.addPotionEffect(new PotionEffect(MobEffects.GLOWING, 200, 0, true, false));
             }
             e.getEntityData().setLong(TAG_SEEN, now);
