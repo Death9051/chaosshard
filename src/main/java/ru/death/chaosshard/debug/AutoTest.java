@@ -473,6 +473,10 @@ public final class AutoTest {
             check(close >= 1.3, "ближе всех к хозяину: " + String.format("%.1f", close) + " блока, рядом слуг " + near.size());
             check(min > 0.4, "слуги не стоят друг в друге: минимум " + String.format("%.2f", min));
         });
+        step("Кошка подаёт голос реже обычного моба", () -> {
+            EntityLiving cat = servants.get(Servants.Kind.CAT);
+            check(cat != null && cat.getTalkInterval() == 180, "пауза между звуками Кошки: " + (cat == null ? -1 : cat.getTalkInterval()) + " тиков");
+        });
         step("свита из другого мира переходит ко мне (после смены мира и подстраховкой)", () -> {
             WorldServer other = server.getWorld(ru.death.chaosshard.trial.TrialDimension.id());
             BlockPos at = new BlockPos(30000, 100, 30000);

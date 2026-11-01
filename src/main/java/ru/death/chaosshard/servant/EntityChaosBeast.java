@@ -507,7 +507,19 @@ public abstract class EntityChaosBeast extends EntityCreature {
         }
 
         @Override
-        protected SoundEvent getAmbientSound() { return SoundEvents.ENTITY_CAT_AMBIENT; }
+        protected SoundEvent getAmbientSound() {
+            // рядом враг — шипит; иначе мяукает, мурлычет или мурчит-мяукает
+            if (!world.isRemote && !world.getEntitiesWithinAABB(EntityLiving.class, getEntityBoundingBox().grow(8),
+                    x -> x instanceof net.minecraft.entity.monster.IMob && x.isEntityAlive() && !Servants.isServant(x)).isEmpty()) {
+                return SoundEvents.ENTITY_CAT_HISS;
+            }
+            int r = rand.nextInt(100);
+            return r < 45 ? SoundEvents.ENTITY_CAT_AMBIENT : r < 75 ? SoundEvents.ENTITY_CAT_PURR : SoundEvents.ENTITY_CAT_PURREOW;
+        }
+
+        /** Голос реже, чем у обычного моба (80 тиков): около 9 секунд между звуками. */
+        @Override
+        public int getTalkInterval() { return 180; }
         @Override
         protected SoundEvent getHurtSound(DamageSource s) { return SoundEvents.ENTITY_CAT_HURT; }
         @Override
