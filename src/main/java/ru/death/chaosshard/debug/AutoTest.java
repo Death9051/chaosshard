@@ -870,6 +870,8 @@ public final class AutoTest {
             BlockPos zp = ow.getHeight(specA[0].add(6, 0, 2));
             z.setLocationAndAngles(zp.getX() + 0.5, zp.getY(), zp.getZ() + 0.5, 0, 0);
             z.enablePersistence();
+            // неуязвим: свита рядом не должна убить его раньше, чем Дозор подсветит
+            z.addPotionEffect(new net.minecraft.potion.PotionEffect(net.minecraft.init.MobEffects.RESISTANCE, 2000, 4, false, false));
             ow.spawnEntity(z);
             specMob[0] = z;
             net.minecraft.nbt.NBTTagCompound v = ru.death.chaosshard.anchor.ContainerAnchor.view(t, me);
@@ -880,7 +882,7 @@ public final class AutoTest {
         sleep(45);
         step("Дозор подсветил", () -> {
             net.minecraft.entity.EntityLiving z = specMob[0];
-            check(z != null && z.isPotionActive(net.minecraft.init.MobEffects.GLOWING), "зомби светится");
+            check(z != null && z.isPotionActive(net.minecraft.init.MobEffects.GLOWING), "зомби светится" + (z == null ? "" : " (жив: " + z.isEntityAlive() + ")"));
             if (z != null) z.setDead();
         });
         step("Якорь специализаций убран", () -> {
