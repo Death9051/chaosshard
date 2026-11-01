@@ -261,7 +261,7 @@ public class Servants {
         if (m instanceof EntityChaosBeast.Hare || m instanceof EntityChaosBeast.Cat) {
             // заяц и кошка не дерутся: идут за хозяином, а если ранят — убегают
             m.tasks.addTask(1, new net.minecraft.entity.ai.EntityAIPanic(m, 1.4D));
-            m.tasks.addTask(4, new FollowOwner(m));
+            m.tasks.addTask(4, new FollowBeast(m));
             m.tasks.addTask(6, new EntityAIWanderAvoidWater(m, 0.8D));
             m.tasks.addTask(7, new EntityAIWatchClosest(m, EntityPlayer.class, 8.0F));
             m.tasks.addTask(8, new EntityAILookIdle(m));
@@ -284,7 +284,7 @@ public class Servants {
                 m.setHomePosAndDistance(BlockPos.fromLong(m.getEntityData().getLong(TAG_CHEST)), 32);
             }
         } else {
-            m.tasks.addTask(4, new FollowOwner(m));
+            m.tasks.addTask(4, m instanceof EntityChaosBeast ? new FollowBeast(m) : new FollowOwner(m));
             m.tasks.addTask(6, new EntityAIWanderAvoidWater(m, 0.8D));
             m.tasks.addTask(7, new EntityAIWatchClosest(m, EntityPlayer.class, 8.0F));
             m.tasks.addTask(8, new EntityAILookIdle(m));
@@ -425,10 +425,152 @@ public class Servants {
         }
     }
 
+    /**
+     * Звери не встают в строй, у каждого своя повадка.
+     * <ul>
+     * <li>Кошка гуляет сама по себе: держится в 3–9 блоках, отстав — неспешно подходит не ко мне, а куда-то рядом;
+     * время от времени сама перебирается на новое место поблизости и подолгу сидит.</li>
+     * <li>Заяц крутится вокруг: часто перескакивает с места на место в 2–6 блоках, отстав — бегом догоняет.</li>
+     * <li>Тигр идёт у правого плеча, чуть впереди, как телохранитель.</li>
+     * </ul>
+     * Вплотную не подходит никто: кто оказался ближе 1.6 блока, отходит. Отстал больше чем на 24 — переносится рядом.
+     */
+    static class FollowBeast extends EntityAIBase {
+        private final EntityCreature m;
+        private net.minecraft.util.math.Vec3d target, anchor;
+        private int idle, timeout;
+
+        FollowBeast(EntityCreature m) {
+            this.m = m;
+            setMutexBits(1);
+        }
+
+        private BeastData.Beast kind() {
+            return m instanceof EntityChaosBeast ? ((EntityChaosBeast) m).beast() : BeastData.Beast.CAT;
+        }
+
+        private EntityPlayer owner() {
+            if (!isFollower(m) || m.getAttackTarget() != null) {
+                return null;
+            }
+            EntityPlayer o = Servants.owner(m);
+            return o != null && o.world == m.world && !o.isSpectator() ? o : null;
+        }
+
+        /** Дальше этого зверь идёт догонять. */
+        private double far() {
+            switch (kind()) {
+                case HARE: return 8;
+                case TIGER: return 5;
+                default: return 10;
+            }
+        }
+
+        private double speed(double d) {
+            switch (kind()) {
+                case HARE: return d > far() ? 1.35 : 1.15;
+                case TIGER: return d > 10 ? 1.25 : 1.05;
+                default: return d > 16 ? 1.2 : 0.95;
+            }
+        }
+
+        /** Случайная точка в кольце вокруг хозяина. */
+        private net.minecraft.util.math.Vec3d around(EntityPlayer o, double r0, double r1) {
+            double a = m.getRNG().nextDouble() * Math.PI * 2;
+            double r = r0 + m.getRNG().nextDouble() * (r1 - r0);
+            return new net.minecraft.util.math.Vec3d(o.posX + Math.cos(a) * r, o.posY, o.posZ + Math.sin(a) * r);
+        }
+
+        /** Место тигра: у правого плеча, чуть впереди. */
+        private net.minecraft.util.math.Vec3d flank(EntityPlayer o) {
+            double a = Math.toRadians(o.renderYawOffset + 70);
+            return new net.minecraft.util.math.Vec3d(o.posX - Math.sin(a) * 2.5, o.posY, o.posZ + Math.cos(a) * 2.5);
+        }
+
+        @Override
+        public boolean shouldExecute() {
+            EntityPlayer o = owner();
+            if (o == null) {
+                return false;
+            }
+            double d = m.getDistance(o);
+            BeastData.Beast k = kind();
+            if (d < CROWD && !o.isPlayerSleeping()) {
+                target = around(o, 2.2, 3.2);
+                return true;
+            }
+            if (k == BeastData.Beast.TIGER) {
+                net.minecraft.util.math.Vec3d at = o.getPositionVector();
+                if (anchor == null || anchor.squareDistanceTo(at) > 2.0 * 2.0 || d > far()) {
+                    anchor = at;
+                    target = flank(o);
+                    return m.getDistanceSq(target.x, target.y, target.z) > 1.5 * 1.5;
+                }
+                return false;
+            }
+            if (d > far()) {
+                target = k == BeastData.Beast.HARE ? around(o, 2, 4) : around(o, 3, 5.5);
+                return true;
+            }
+            if (--idle <= 0) {
+                // сама решила перебраться: Кошка — редко и недалеко, Заяц — часто
+                // shouldExecute зовётся раз в 3 тика: Заяц — раз в 6–13 с, Кошка — раз в 15–37 с
+                idle = k == BeastData.Beast.HARE ? 20 + m.getRNG().nextInt(25) : 100 + m.getRNG().nextInt(150);
+                target = k == BeastData.Beast.HARE ? around(o, 2, 6) : around(o, 3, 7);
+                return true;
+            }
+            return false;
+        }
+
+        @Override
+        public void startExecuting() {
+            timeout = 200;
+            EntityPlayer o = Servants.owner(m);
+            double d = o == null ? 0 : m.getDistance(o);
+            if (!m.getNavigator().tryMoveToXYZ(target.x, target.y, target.z, speed(d)) && o != null && d > far()) {
+                m.getNavigator().tryMoveToEntityLiving(o, speed(d));
+            }
+        }
+
+        @Override
+        public boolean shouldContinueExecuting() {
+            return timeout > 0 && owner() != null && !m.getNavigator().noPath();
+        }
+
+        @Override
+        public void updateTask() {
+            timeout--;
+            EntityPlayer o = Servants.owner(m);
+            if (o == null) {
+                return;
+            }
+            double d = m.getDistance(o);
+            if (d > FollowOwner.TELEPORT) {
+                BlockPos safe = safeSpot(m.world, kind() == BeastData.Beast.TIGER ? flank(o) : around(o, 2.5, 4), o);
+                m.getNavigator().clearPath();
+                m.setPositionAndUpdate(safe.getX() + 0.5, safe.getY(), safe.getZ() + 0.5);
+                Resync.later(m, 3);
+                return;
+            }
+            // хозяин ушёл далеко от выбранной точки — выбрать новую рядом с ним
+            if (timeout % 20 == 0 && target.squareDistanceTo(o.getPositionVector()) > (far() + 2) * (far() + 2)) {
+                target = kind() == BeastData.Beast.TIGER ? flank(o) : around(o, 2.5, 5);
+                m.getNavigator().tryMoveToXYZ(target.x, target.y, target.z, speed(d));
+            }
+        }
+
+        @Override
+        public void resetTask() {
+            m.getNavigator().clearPath();
+        }
+
+        static final double CROWD = FollowOwner.CROWD;
+    }
+
     /** Место слуги в строю за спиной хозяина. */
     static net.minecraft.util.math.Vec3d slotFor(EntityCreature m, EntityPlayer o) {
         List<EntityCreature> crew = m.world.getEntitiesWithinAABB(EntityCreature.class, o.getEntityBoundingBox().grow(32),
-                e -> e.isEntityAlive() && isServantOf(e, o.getUniqueID()) && isFollower(e));
+                e -> e.isEntityAlive() && isServantOf(e, o.getUniqueID()) && isFollower(e) && !(e instanceof EntityChaosBeast));
         crew.sort(java.util.Comparator.comparingInt(Entity::getEntityId));
         int i = Math.max(0, crew.indexOf(m));
         int n = Math.max(1, crew.size());

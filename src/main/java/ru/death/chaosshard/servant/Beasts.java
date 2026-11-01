@@ -36,8 +36,10 @@ import ru.death.chaosshard.quest.Milestones;
 import ru.death.chaosshard.servant.BeastData.Beast;
 import ru.death.chaosshard.servant.BeastData.Entry;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -559,16 +561,43 @@ public class Beasts {
             if (beast.beast() == Beast.HARE && e.has(HARE_BAG)) {
                 openBag((EntityPlayerMP) p, e);
                 event.setCanceled(true);
-            } else if (beast.beast() == Beast.CAT && e.has(CAT_HOARD) && !e.stash.isEmpty()) {
-                for (ItemStack s : e.stash) {
-                    ItemHandlerHelper.giveItemToPlayer(p, s);
+            } else if (beast.beast() == Beast.CAT) {
+                if (e.has(CAT_HOARD) && !e.stash.isEmpty()) {
+                    for (ItemStack s : e.stash) {
+                        ItemHandlerHelper.giveItemToPlayer(p, s);
+                    }
+                    e.stash.clear();
+                    changed(p.world, p.getUniqueID());
+                    p.world.playSound(null, beast.getPosition(), SoundEvents.ENTITY_CAT_PURREOW, SoundCategory.NEUTRAL, 0.8F, 1.0F);
+                } else {
+                    pet(p, beast);
                 }
-                e.stash.clear();
-                changed(p.world, p.getUniqueID());
-                p.world.playSound(null, beast.getPosition(), SoundEvents.ENTITY_CAT_PURREOW, SoundCategory.NEUTRAL, 0.8F, 1.0F);
                 event.setCanceled(true);
             }
         }
+    }
+
+    /** Когда Кошку в последний раз гладили (только в памяти: после перезахода можно погладить сразу). */
+    private static final Map<UUID, Long> PETTED = new HashMap<>();
+    public static final int PET_COOLDOWN = 20 * 60, PET_XP = 3;
+
+    /** Погладить Кошку: сердечки и мурчание всегда, опыт — не чаще раза в минуту. Возвращает, дали ли опыт. */
+    public static boolean pet(EntityPlayer p, EntityChaosBeast beast) {
+        WorldServer ws = (WorldServer) beast.world;
+        beast.getNavigator().clearPath();
+        beast.getLookHelper().setLookPositionWithEntity(p, 30.0F, 30.0F);
+        ws.spawnParticle(EnumParticleTypes.HEART, beast.posX, beast.posY + 0.7, beast.posZ, 3, 0.25, 0.15, 0.25, 0.0);
+        ws.playSound(null, beast.getPosition(), beast.world.rand.nextInt(3) == 0 ? SoundEvents.ENTITY_CAT_PURREOW : SoundEvents.ENTITY_CAT_PURR,
+                SoundCategory.NEUTRAL, 0.9F, 0.9F + beast.world.rand.nextFloat() * 0.2F);
+        long now = ws.getTotalWorldTime();
+        Long last = PETTED.get(beast.getUniqueID());
+        boolean xp = last == null || now - last >= PET_COOLDOWN;
+        if (xp) {
+            PETTED.put(beast.getUniqueID(), now);
+            addXp(beast, PET_XP);
+        }
+        p.sendStatusMessage(Breach.grimoire(xp ? "chaosshard.beast.cat.pet" : "chaosshard.beast.cat.pet_again"), true);
+        return xp;
     }
 
     public static boolean isTreat(Beast b, ItemStack s) {
@@ -795,5 +824,6 @@ public class Beasts {
         DIRTY.clear();
         OPEN_BAGS.clear();
         RECALL.clear();
+        PETTED.clear();
     }
 }

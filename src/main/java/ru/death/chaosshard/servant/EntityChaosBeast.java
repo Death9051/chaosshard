@@ -403,14 +403,40 @@ public abstract class EntityChaosBeast extends EntityCreature {
                     Beasts.addXp(this, 2);
                 }
             }
-            // Ур. 3: утренний подарок
-            long day = world.getWorldTime() / 24000L;
-            long time = world.getWorldTime() % 24000L;
-            if (lvl >= 3 && close && time < 2000 && e.giftDay != day) {
-                e.giftDay = day;
-                drop(o, gift());
-                Beasts.changed(world, o.getUniqueID());
+            // Ур. 3: подарок раз в игровой день, как только я рядом, в любое время суток. Дни считаются по Верхнему миру —
+            // не по сну и не по часам книжных миров; за пропущенный день — ещё один подарок
+            if (lvl >= 3 && close) {
+                long day = overworldDay(world);
+                int n = giftsDue(e.giftDay, day);
+                if (n > 0) {
+                    e.giftDay = day;
+                    for (int i = 0; i < n; i++) {
+                        drop(o, gift());
+                    }
+                    ws().spawnParticle(EnumParticleTypes.HEART, posX, posY + 0.8, posZ, 4, 0.2, 0.2, 0.2, 0.0);
+                    world.playSound(null, getPosition(), SoundEvents.ENTITY_CAT_PURREOW, SoundCategory.NEUTRAL, 0.8F, 1.1F);
+                    Beasts.changed(world, o.getUniqueID());
+                }
             }
+        }
+
+        /** Текущий игровой день по Верхнему миру. */
+        public static long overworldDay(World w) {
+            net.minecraft.server.MinecraftServer srv = w.getMinecraftServer();
+            World ow = srv == null ? null : srv.getWorld(0);
+            return (ow != null ? ow : w).getWorldTime() / 24000L;
+        }
+
+        /** Сколько подарков положено: впервые — 1; уже был сегодня — 0; пропущен день — 2 (не больше). День «из будущего»
+         * (записан по часам другого мира в старой версии) считается вчерашним. */
+        public static int giftsDue(long lastDay, long day) {
+            if (lastDay < 0 || lastDay > day + 1) {
+                return 1;
+            }
+            if (lastDay >= day) {
+                return 0;
+            }
+            return (int) Math.min(2, day - lastDay);
         }
 
         private static void calm(EntityCreeper c) {

@@ -473,6 +473,35 @@ public final class AutoTest {
             check(close >= 1.3, "ближе всех к хозяину: " + String.format("%.1f", close) + " блока, рядом слуг " + near.size());
             check(min > 0.4, "слуги не стоят друг в друге: минимум " + String.format("%.2f", min));
         });
+        step("звери держатся рядом своей повадкой, не в строю", () -> {
+            for (Servants.Kind k : new Servants.Kind[]{Servants.Kind.CAT, Servants.Kind.HARE, Servants.Kind.TIGER}) {
+                EntityLiving b = servants.get(k);
+                if (b == null || !b.isEntityAlive()) continue;
+                boolean beastAi = false;
+                for (net.minecraft.entity.ai.EntityAITasks.EntityAITaskEntry te : b.tasks.taskEntries)
+                    beastAi |= te.action.getClass().getSimpleName().equals("FollowBeast");
+                check(beastAi, k + " следует звериной повадкой");
+                check(b.getDistance(me) < 14, k + " рядом: " + String.format("%.1f", b.getDistance(me)));
+            }
+        });
+        step("Кошку можно погладить: опыт не чаще раза в минуту", () -> {
+            ru.death.chaosshard.servant.EntityChaosBeast cat = (ru.death.chaosshard.servant.EntityChaosBeast) servants.get(Servants.Kind.CAT);
+            if (cat == null) { check(false, "Кошки нет"); return; }
+            BeastData.Entry e = Beasts.entry(ow, me.getUniqueID(), BeastData.Beast.CAT);
+            int xp0 = e.xp;
+            boolean first = Beasts.pet(me, cat);
+            int xp1 = e.xp;
+            boolean second = Beasts.pet(me, cat);
+            check(first && xp1 == Math.min(BeastData.XP[4], xp0 + Beasts.PET_XP), "погладил: опыт " + xp0 + " → " + xp1);
+            check(!second && e.xp == xp1, "сразу второй раз — без опыта");
+        });
+        step("подарок Кошки — раз в игровой день, в любое время", () -> {
+            check(ru.death.chaosshard.servant.EntityChaosBeast.Cat.giftsDue(-1, 5) == 1, "первый подарок");
+            check(ru.death.chaosshard.servant.EntityChaosBeast.Cat.giftsDue(5, 5) == 0, "в тот же день — нет");
+            check(ru.death.chaosshard.servant.EntityChaosBeast.Cat.giftsDue(4, 5) == 1, "на следующий день — один");
+            check(ru.death.chaosshard.servant.EntityChaosBeast.Cat.giftsDue(1, 5) == 2, "пропущены дни — два, не больше");
+            check(ru.death.chaosshard.servant.EntityChaosBeast.Cat.giftsDue(90, 5) == 1, "день из чужих часов — считается вчерашним");
+        });
         step("Кошка подаёт голос реже обычного моба", () -> {
             EntityLiving cat = servants.get(Servants.Kind.CAT);
             check(cat != null && cat.getTalkInterval() == 180, "пауза между звуками Кошки: " + (cat == null ? -1 : cat.getTalkInterval()) + " тиков");
