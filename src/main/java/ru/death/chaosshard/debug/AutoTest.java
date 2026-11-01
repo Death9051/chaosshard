@@ -3294,15 +3294,24 @@ public final class AutoTest {
             me.setPositionAndRotation(o.getX() + 0.5, o.getY() + 1, o.getZ() + 0.5, 0, 0);
             ru.death.chaosshard.spell.Spell CU = ru.death.chaosshard.spell.Spell.CURSE, SH = ru.death.chaosshard.spell.Spell.SHIELD;
             // Проклятие: по меченому бьют сильнее
-            net.minecraft.entity.monster.EntityZombie zc = new net.minecraft.entity.monster.EntityZombie(ow);
-            zc.setPosition(o.getX() + 0.5, o.getY() + 1, o.getZ() + 4.5);
-            ow.spawnEntity(zc);
-            ready.run();
-            check(ru.death.chaosshard.spell.SpellCaster.castAt(me, CU, null, EnumFacing.UP, zc, null), "Проклятие легло");
-            float before = zc.getHealth();
-            zc.hurtResistantTime = 0;
-            zc.attackEntityFrom(net.minecraft.util.DamageSource.causePlayerDamage(me), 4);
-            check(before - zc.getHealth() > 4.5F, "по меченому урон больше: " + (before - zc.getHealth()));
+            // зомби может стать чемпионом (мод Champions) со своей защитой — тогда берём другого, до 5 попыток
+            net.minecraft.entity.monster.EntityZombie zc = null;
+            boolean cast = false;
+            float dealt = 0;
+            for (int tryN = 0; tryN < 5 && dealt <= 4.5F; tryN++) {
+                if (zc != null) zc.setDead();
+                zc = new net.minecraft.entity.monster.EntityZombie(ow);
+                zc.setPosition(o.getX() + 0.5, o.getY() + 1, o.getZ() + 4.5);
+                ow.spawnEntity(zc);
+                ready.run();
+                cast = ru.death.chaosshard.spell.SpellCaster.castAt(me, CU, null, EnumFacing.UP, zc, null);
+                float before = zc.getHealth();
+                zc.hurtResistantTime = 0;
+                zc.attackEntityFrom(net.minecraft.util.DamageSource.causePlayerDamage(me), 4);
+                dealt = before - zc.getHealth();
+            }
+            check(cast, "Проклятие легло");
+            check(dealt > 4.5F, "по меченому урон больше: " + dealt);
             // Порча: погибнув, передаёт метку соседу
             ru.death.chaosshard.spell.SpellData.debugSet(me, CU, 1, 1);
             net.minecraft.entity.monster.EntityZombie zn = new net.minecraft.entity.monster.EntityZombie(ow);
