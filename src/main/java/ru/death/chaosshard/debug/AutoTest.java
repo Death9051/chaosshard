@@ -481,9 +481,15 @@ public final class AutoTest {
                 for (net.minecraft.entity.ai.EntityAITasks.EntityAITaskEntry te : b.tasks.taskEntries)
                     beastAi |= te.action.getClass().getSimpleName().equals("FollowBeast");
                 check(beastAi, k + " следует звериной повадкой");
-                check(b.getDistance(me) < 14, k + " рядом: " + String.format("%.1f", b.getDistance(me)));
             }
         });
+        until("звери подтянулись ко мне (Тигр у плеча, Кошка и Заяц поблизости)", () -> {
+            for (Servants.Kind k : new Servants.Kind[]{Servants.Kind.CAT, Servants.Kind.HARE, Servants.Kind.TIGER}) {
+                EntityLiving b = servants.get(k);
+                if (b != null && b.isEntityAlive() && b.getDistance(me) > (k == Servants.Kind.TIGER ? 6 : 12)) return false;
+            }
+            return true;
+        }, 400);
         step("Кошку можно погладить: опыт не чаще раза в минуту", () -> {
             ru.death.chaosshard.servant.EntityChaosBeast cat = (ru.death.chaosshard.servant.EntityChaosBeast) servants.get(Servants.Kind.CAT);
             if (cat == null) { check(false, "Кошки нет"); return; }
