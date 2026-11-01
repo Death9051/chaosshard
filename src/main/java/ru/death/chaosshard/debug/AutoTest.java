@@ -885,7 +885,11 @@ public final class AutoTest {
         until("Дозор успел посмотреть", () -> specMob[0] != null && specMob[0].isPotionActive(net.minecraft.init.MobEffects.GLOWING), 120);
         step("Дозор подсветил", () -> {
             net.minecraft.entity.EntityLiving z = specMob[0];
-            check(z != null && z.isPotionActive(net.minecraft.init.MobEffects.GLOWING), "зомби светится" + (z == null ? "" : " (жив: " + z.isEntityAlive() + ")"));
+            TileAnchor wt = specT(specA[0]);
+            String diag = wt == null ? "" : " [захвачен " + wt.isCaptured() + ", земля " + wt.getLand() + ", сила Дозора " + wt.net(ru.death.chaosshard.anchor.AnchorSpec.WATCH)
+                    + ", путь " + wt.getSpec() + ", радиус " + wt.radius() + ", в земле " + (z != null && ru.death.chaosshard.anchor.AnchorSpecs.inLand(wt, z))
+                    + ", загружен " + ow.isBlockLoaded(specA[0]) + "]";
+            check(z != null && z.isPotionActive(net.minecraft.init.MobEffects.GLOWING), "зомби светится" + (z == null ? "" : " (жив: " + z.isEntityAlive() + ")") + diag);
             if (z != null) z.setDead();
         });
         step("Якорь специализаций убран", () -> {
