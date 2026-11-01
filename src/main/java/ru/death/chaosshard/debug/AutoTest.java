@@ -2768,9 +2768,16 @@ public final class AutoTest {
                 // демоны не селятся ближе 12 блоков к игроку — подставной игрок отходит повыше, пока ищем место
                 double my = me.posY;
                 me.setPosition(me.posX, my + 48, me.posZ);
-                for (int i = 0; i < 400 && !made; i++) {
-                    made = ru.death.chaosshard.compat.world.WildChaos.populate(ow, a);
+                // подселение может сорваться (чужой мод отменил появление существа) — повторяем, пока демон не окажется на месте
+                int lost = 0;
+                for (int i = 0; i < 400; i++) {
+                    if (!ru.death.chaosshard.compat.world.WildChaos.populate(ow, a)) continue;
+                    made = true;
+                    if (!ow.getEntitiesWithinAABB(EntityLiving.class, new AxisAlignedBB(anchorPos).grow(a.radius(), 32, a.radius()),
+                            x -> x.getTags().contains(ru.death.chaosshard.compat.world.WildChaos.TAG_DEMON)).isEmpty()) break;
+                    lost++;
                 }
+                if (lost > 0) line("  демон пропал сразу после появления: " + lost + " раз");
                 me.setPosition(me.posX, my, me.posZ);
                 if (!made) {
                     int bad = 0, tries = 0;
