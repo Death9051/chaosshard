@@ -1703,6 +1703,16 @@ public final class AutoTest {
         });
         step("Кровавая луна: сфера встаёт и держит луну", () -> {
             moonPos = base.add(-24, 0, 4);
+            // место под сферу могло зарасти (Скверна Якоря рядом): расчистить и записать, что там было
+            net.minecraft.block.state.IBlockState was = ow.getBlockState(moonPos.up());
+            if (!was.getBlock().isReplaceable(ow, moonPos.up())) {
+                line("  на месте сферы было: " + was);
+                ow.setBlockToAir(moonPos.up());
+            }
+            if (!ow.getBlockState(moonPos).isSideSolid(ow, moonPos, EnumFacing.UP)) {
+                line("  под сферой было: " + ow.getBlockState(moonPos));
+                ow.setBlockState(moonPos, Blocks.GRASS.getDefaultState(), 2);
+            }
             me.setHeldItem(EnumHand.MAIN_HAND, ru.death.chaosshard.ritual.ItemRitualSphere.of(ru.death.chaosshard.ritual.Ritual.BLOOD_MOON, 0));
             me.getHeldItemMainhand().getItem().onItemUse(me, ow, moonPos, EnumHand.MAIN_HAND, EnumFacing.UP, 0.5F, 1F, 0.5F);
             check(ow.getBlockState(moonPos.up()).getBlock() == ModBlocks.RITUAL_SPHERE, "сфера луны встала");
