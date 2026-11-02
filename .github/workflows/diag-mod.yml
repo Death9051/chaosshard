@@ -24,6 +24,7 @@ jobs:
             mkdir -p "/tmp/d/$slug" && cd "/tmp/d/$slug"
             unzip -qo "/tmp/$slug.jar" 'assets/*/lang/*' || true
             unzip -l "/tmp/$slug.jar" > classes.txt
+            for c in $(cat "$GITHUB_WORKSPACE/.github/diag-classes.txt" 2>/dev/null); do unzip -qo "/tmp/$slug.jar" "$c" || true; done
             cd - >/dev/null
           done < .github/diag-mods.txt
       - name: В ci-logs

@@ -1,0 +1,6 @@
+com/xcompwiz/mystcraft/symbol/modifiers/SymbolBiome.class
+com/xcompwiz/mystcraft/symbol/modifiers/SymbolBlock.class
+com/xcompwiz/mystcraft/symbol/SymbolBase.class
+com/xcompwiz/mystcraft/data/ModSymbolsModifiers.class
+com/xcompwiz/mystcraft/data/ModSymbolsModifiers$BlockModifierContainerObject.class
+com/xcompwiz/mystcraft/symbol/modifiers/SymbolColor.class
