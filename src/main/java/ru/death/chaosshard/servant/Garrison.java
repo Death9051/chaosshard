@@ -232,6 +232,10 @@ public final class Garrison {
                 return null;
             }
             EntityLivingBase t = m.getAttackTarget();
+            if (t != null && !t.isEntityAlive()) {
+                m.setAttackTarget(null);
+                t = null;
+            }
             if (t != null && !isLuring(m) && m.getDistanceSq(t) < 10 * 10) {
                 return null;   // цель рядом — бой ведёт ближний бой
             }
@@ -356,6 +360,9 @@ public final class Garrison {
         BlockPos c = a.getPos();
         int home = homeRadius(a);
         for (EntityLiving f : crew) {
+            if (f.getAttackTarget() != null && !f.getAttackTarget().isEntityAlive()) {
+                f.setAttackTarget(null);   // цель погибла не от его руки — забыть
+            }
             if (f instanceof EntityCreature && !inRaid(f) && (((EntityCreature) f).getMaximumHomeDistance() != home
                     || !((EntityCreature) f).getHomePosition().equals(c))) {
                 ((EntityCreature) f).setHomePosAndDistance(c, home);
