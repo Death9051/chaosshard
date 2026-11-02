@@ -2112,6 +2112,7 @@ fluid.chaosshard_starlight.name=Жидкий свет звезды
 # Могила
 tile.chaosshard.grave.name=Могила Осколка
 chaosshard.grave.where=Мои вещи ждут в могиле: %s %s %s (%s). Подойти и нажать ПКМ или разбить сферу «Возврат», и они вернутся сами.
+chaosshard.grave.trial_rescued=Вещи из могилы в обломке Испытания вернулись ко мне: %s.
 chaosshard.grave.opened=Вещи из могилы снова со мной: %s.
 chaosshard.grave.not_yours=Это могила %s, не моя.
 chaosshard.dim.overworld=Верхний мир

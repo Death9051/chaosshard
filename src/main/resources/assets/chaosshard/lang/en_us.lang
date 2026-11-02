@@ -2088,6 +2088,7 @@ fluid.chaosshard_starlight.name=Molten Starlight
 # Grave
 tile.chaosshard.grave.name=Shard's Grave
 chaosshard.grave.where=My things wait in a grave: %s %s %s (%s). Walk up and right-click it — or break a Reclaiming sphere and they come back by themselves.
+chaosshard.grave.trial_rescued=Items from a grave in a Trial shard came back to me: %s.
 chaosshard.grave.opened=The grave gave my things back: %s.
 chaosshard.grave.not_yours=This is %s's grave, not mine.
 chaosshard.dim.overworld=Overworld

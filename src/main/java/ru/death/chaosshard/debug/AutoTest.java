@@ -1674,6 +1674,52 @@ public final class AutoTest {
             check(gone, "на месте гибели копий не осталось");
             check(!ru.death.chaosshard.death.DeathItems.reclaim(me), "второй раз возвращать нечего — сфера цела");
         });
+        step("Смерть в Испытании: вещи остаются при мне, старая могила из обломка возвращается", () -> {
+            WorldServer tw = server.getWorld(ru.death.chaosshard.trial.TrialDimension.id());
+            me.inventory.clear();
+            me.inventory.setInventorySlotContents(5, new net.minecraft.item.ItemStack(net.minecraft.init.Items.DIAMOND_SWORD));
+            me.inventory.setInventorySlotContents(12, new net.minecraft.item.ItemStack(net.minecraft.init.Items.EMERALD, 7));
+            me.setItemStackToSlot(net.minecraft.inventory.EntityEquipmentSlot.CHEST, new net.minecraft.item.ItemStack(net.minecraft.init.Items.IRON_CHESTPLATE));
+            me.setItemStackToSlot(net.minecraft.inventory.EntityEquipmentSlot.OFFHAND, new net.minecraft.item.ItemStack(net.minecraft.init.Items.SHIELD));
+            me.inventory.setInventorySlotContents(2, new net.minecraft.item.ItemStack(ru.death.chaosshard.init.ModItems.GRIMOIRE));
+            me.setWorld(tw);
+            me.dimension = tw.provider.getDimension();
+            try {
+                ru.death.chaosshard.death.DeathItems.onDeath(new net.minecraftforge.event.entity.living.LivingDeathEvent(me, net.minecraft.util.DamageSource.GENERIC));
+                boolean empty = true;
+                for (int i = 0; i < me.inventory.getSizeInventory(); i++) empty &= me.inventory.getStackInSlot(i).isEmpty();
+                check(empty, "при смерти в Испытании ничего не выпадает: инвентарь убран в память");
+                java.util.ArrayList<net.minecraft.entity.item.EntityItem> drops = new java.util.ArrayList<>();
+                drops.add(new net.minecraft.entity.item.EntityItem(tw, me.posX, me.posY, me.posZ, new net.minecraft.item.ItemStack(net.minecraft.init.Items.GOLD_NUGGET, 3)));
+                ru.death.chaosshard.death.DeathItems.onDrops(new net.minecraftforge.event.entity.player.PlayerDropsEvent(me, net.minecraft.util.DamageSource.GENERIC, drops, false));
+                check(drops.isEmpty(), "выпавшее помимо инвентаря тоже остаётся при мне, могилы нет");
+            } finally {
+                me.setWorld(ow);
+                me.dimension = 0;
+            }
+            ru.death.chaosshard.death.DeathItems.onRespawn(new net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerRespawnEvent(me, false));
+            check(me.inventory.getStackInSlot(5).getItem() == net.minecraft.init.Items.DIAMOND_SWORD
+                    && me.inventory.getStackInSlot(12).getCount() == 7
+                    && me.inventory.getStackInSlot(2).getItem() == ru.death.chaosshard.init.ModItems.GRIMOIRE, "после возрождения вещи на своих местах");
+            check(me.getItemStackFromSlot(net.minecraft.inventory.EntityEquipmentSlot.CHEST).getItem() == net.minecraft.init.Items.IRON_CHESTPLATE
+                    && me.getItemStackFromSlot(net.minecraft.inventory.EntityEquipmentSlot.OFFHAND).getItem() == net.minecraft.init.Items.SHIELD, "броня и щит снова надеты");
+            check(me.inventory.clearMatchingItems(net.minecraft.init.Items.GOLD_NUGGET, -1, 0, null) == 3, "и самородки вернулись");
+            me.inventory.clear();
+            // могила, оставшаяся в обломке со старой версии, — возвращается сама
+            BlockPos tg = new BlockPos(100000, 70, 0);
+            tw.getChunk(tg);
+            java.util.List<net.minecraft.item.ItemStack> st = new java.util.ArrayList<>();
+            st.add(new net.minecraft.item.ItemStack(net.minecraft.init.Items.DIAMOND, 4));
+            st.add(new net.minecraft.item.ItemStack(net.minecraft.init.Items.IRON_HELMET));
+            ru.death.chaosshard.death.DeathItems.debugGrave(me, tw, tg, st);
+            check(tw.getBlockState(tg).getBlock() == ModBlocks.GRAVE, "старая могила в обломке стоит");
+            int got = ru.death.chaosshard.death.DeathItems.rescueTrialGraves(me);
+            check(got == 5 && me.inventory.clearMatchingItems(net.minecraft.init.Items.DIAMOND, -1, 0, null) == 4
+                    && me.getItemStackFromSlot(net.minecraft.inventory.EntityEquipmentSlot.HEAD).getItem() == net.minecraft.init.Items.IRON_HELMET,
+                    "вещи из старой могилы вернулись: " + got);
+            check(tw.isAirBlock(tg) && ru.death.chaosshard.death.DeathItems.rescueTrialGraves(me) == 0, "могила ушла, второй раз возвращать нечего");
+            me.inventory.clear();
+        });
         step("Могила: открыть руками — броня сама надевается; пустота и лава", () -> {
             BlockPos fell = base.add(-30, 0, 30);
             for (BlockPos q : BlockPos.getAllInBox(fell.add(-3, -1, -3), fell.add(3, -1, 3))) ow.setBlockState(q, Blocks.STONE.getDefaultState(), 2);

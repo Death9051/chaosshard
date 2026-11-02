@@ -34,11 +34,17 @@ import java.util.UUID;
  * Смерть Осколка: Гримуар не выпадает — остаётся при нём; остальные выпавшие вещи ложатся в могилу на месте гибели
  * (а если ей негде встать — лежат и не исчезают со временем). Смерть запоминается, чтобы сфера «Возврат» перенесла вещи
  * к хозяину — без копий.
+ * <p>
+ * Смерть в Испытании: в тот же обломок после гибели не вернуться, поэтому вещи вообще не выпадают — остаются при мне
+ * (броня и вторая рука — на своих местах). Могилы, оставшиеся в обломках со старых версий, при входе в мир и при
+ * возрождении возвращаются ко мне сами.
  */
 @Mod.EventBusSubscriber(modid = Tags.MOD_ID)
 public final class DeathItems {
 
     private static final String TAG_KEPT = "chaosshard_kept_on_death";
+    /** Вещи, оставшиеся при мне после смерти в Испытании: стопка + где лежала (Part: 0 — рюкзак, 1 — вторая рука, 2 — броня). */
+    private static final String TAG_TRIAL_KEPT = "chaosshard_kept_trial";
     /** Сколько последних смертей помнить. */
     private static final int REMEMBER = 5;
 
@@ -52,6 +58,10 @@ public final class DeathItems {
         }
         EntityPlayerMP p = (EntityPlayerMP) event.getEntityLiving();
         if (p.world.isRemote || p.world.getGameRules().getBoolean("keepInventory")) {
+            return;
+        }
+        if (ru.death.chaosshard.trial.TrialDimension.is(p.world)) {
+            keepAll(p);
             return;
         }
         NBTTagList kept = persisted(p).getTagList(TAG_KEPT, 10);
@@ -73,18 +83,144 @@ public final class DeathItems {
         }
     }
 
+    /** Смерть в Испытании: всё из инвентаря — в память игрока, ничего не выпадает (кроме вещей с проклятием утраты). */
+    private static void keepAll(EntityPlayerMP p) {
+        NBTTagList kept = persisted(p).getTagList(TAG_TRIAL_KEPT, 10);
+        List<net.minecraft.util.NonNullList<ItemStack>> parts = new ArrayList<>();
+        parts.add(p.inventory.mainInventory);
+        parts.add(p.inventory.offHandInventory);
+        parts.add(p.inventory.armorInventory);
+        for (int part = 0; part < parts.size(); part++) {
+            net.minecraft.util.NonNullList<ItemStack> list = parts.get(part);
+            for (int i = 0; i < list.size(); i++) {
+                ItemStack s = list.get(i);
+                if (s.isEmpty() || net.minecraft.enchantment.EnchantmentHelper.hasVanishingCurse(s)) {
+                    continue;
+                }
+                NBTTagCompound t = s.writeToNBT(new NBTTagCompound());
+                t.setByte("Part", (byte) part);
+                t.setByte("Slot", (byte) i);
+                kept.appendTag(t);
+                list.set(i, ItemStack.EMPTY);
+            }
+        }
+        if (kept.tagCount() > 0) {
+            persisted(p).setTag(TAG_TRIAL_KEPT, kept);
+        }
+    }
+
+    /** Смерть в Испытании: то, что выпало помимо инвентаря (бижутерия и вещи других модов), тоже остаётся при мне. */
+    private static void keepDrops(EntityPlayer p, List<EntityItem> drops) {
+        NBTTagList kept = persisted(p).getTagList(TAG_TRIAL_KEPT, 10);
+        for (EntityItem e : drops) {
+            if (!e.getItem().isEmpty()) {
+                kept.appendTag(e.getItem().writeToNBT(new NBTTagCompound()));
+            }
+            e.setDead();
+        }
+        drops.clear();
+        persisted(p).setTag(TAG_TRIAL_KEPT, kept);
+    }
+
+    /** Вернуть оставшееся при мне после смерти в Испытании: по своим местам, а если место занято — в инвентарь. */
+    private static void returnTrialKept(EntityPlayerMP p) {
+        NBTTagCompound per = persisted(p);
+        if (!per.hasKey(TAG_TRIAL_KEPT)) {
+            return;
+        }
+        NBTTagList kept = per.getTagList(TAG_TRIAL_KEPT, 10);
+        per.removeTag(TAG_TRIAL_KEPT);
+        List<net.minecraft.util.NonNullList<ItemStack>> parts = new ArrayList<>();
+        parts.add(p.inventory.mainInventory);
+        parts.add(p.inventory.offHandInventory);
+        parts.add(p.inventory.armorInventory);
+        List<ItemStack> rest = new ArrayList<>();
+        for (int i = 0; i < kept.tagCount(); i++) {
+            NBTTagCompound t = kept.getCompoundTagAt(i);
+            ItemStack s = new ItemStack(t);
+            if (s.isEmpty()) {
+                continue;
+            }
+            if (t.hasKey("Part")) {
+                net.minecraft.util.NonNullList<ItemStack> list = parts.get(Math.min(2, Math.max(0, t.getByte("Part"))));
+                int slot = t.getByte("Slot");
+                if (slot >= 0 && slot < list.size() && list.get(slot).isEmpty()) {
+                    list.set(slot, s);
+                    continue;
+                }
+            }
+            rest.add(s);
+        }
+        for (ItemStack s : rest) {
+            ItemHandlerHelper.giveItemToPlayer(p, s);
+        }
+        p.inventoryContainer.detectAndSendChanges();
+    }
+
+    /** Могилы в обломках Испытаний (со старых версий): туда не вернуться — вещи ко мне, могилы пустеют. */
+    public static int rescueTrialGraves(EntityPlayerMP p) {
+        Data d = Data.get(p.world);
+        NBTTagList list = d.deaths(p.getUniqueID());
+        int trialDim = ru.death.chaosshard.trial.TrialDimension.id();
+        int items = 0;
+        for (int i = list.tagCount() - 1; i >= 0; i--) {
+            NBTTagCompound rec = list.getCompoundTagAt(i);
+            if (rec.getInteger("Dim") != trialDim) {
+                continue;
+            }
+            if (rec.hasKey("Grave")) {
+                WorldServer w = p.getServer().getWorld(trialDim);
+                if (w == null) {
+                    continue;
+                }
+                BlockPos g = BlockPos.fromLong(rec.getLong("Grave"));
+                w.getChunk(g);
+                net.minecraft.tileentity.TileEntity te = w.getTileEntity(g);
+                if (te instanceof TileGrave && !((TileGrave) te).isEmpty()) {
+                    items += ((TileGrave) te).giveTo(p);
+                    BlockGrave.open(w, g);
+                }
+            }
+            list.removeTag(i);
+            d.markDirty();
+        }
+        if (items > 0) {
+            p.sendMessage(Breach.grimoire("chaosshard.grave.trial_rescued", items));
+        }
+        return items;
+    }
+
+    /** Для автотеста: могила со старых версий в мире w (с записью о смерти). */
+    public static void debugGrave(EntityPlayerMP p, WorldServer w, BlockPos at, List<ItemStack> stacks) {
+        w.setBlockState(at, ModBlocks.GRAVE.getDefaultState(), 3);
+        net.minecraft.tileentity.TileEntity te = w.getTileEntity(at);
+        if (te instanceof TileGrave) {
+            ((TileGrave) te).fill(p, stacks);
+        }
+        NBTTagCompound rec = new NBTTagCompound();
+        rec.setInteger("Dim", w.provider.getDimension());
+        rec.setLong("Pos", at.toLong());
+        rec.setLong("Grave", at.toLong());
+        rec.setLong("Time", w.getTotalWorldTime());
+        remember(p, rec);
+    }
+
     @SubscribeEvent
     public static void onRespawn(PlayerEvent.PlayerRespawnEvent event) {
         if (event.player instanceof EntityPlayerMP) {
+            returnTrialKept((EntityPlayerMP) event.player);
             returnKept((EntityPlayerMP) event.player);
             graveNote((EntityPlayerMP) event.player);
+            rescueTrialGraves((EntityPlayerMP) event.player);
         }
     }
 
     @SubscribeEvent
     public static void onLogin(PlayerEvent.PlayerLoggedInEvent event) {
         if (event.player instanceof EntityPlayerMP && event.player.isEntityAlive()) {
+            returnTrialKept((EntityPlayerMP) event.player);
             returnKept((EntityPlayerMP) event.player);
+            rescueTrialGraves((EntityPlayerMP) event.player);
         }
     }
 
@@ -121,6 +257,10 @@ public final class DeathItems {
     public static void onDrops(PlayerDropsEvent event) {
         EntityPlayer p = event.getEntityPlayer();
         if (p.world.isRemote || event.isCanceled() || event.getDrops().isEmpty()) {
+            return;
+        }
+        if (ru.death.chaosshard.trial.TrialDimension.is(p.world)) {
+            keepDrops(p, event.getDrops());
             return;
         }
         NBTTagCompound rec = new NBTTagCompound();
