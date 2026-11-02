@@ -103,6 +103,9 @@ public final class AutoTest {
         return ok ? t : null;
     }
     private BlockPos base, anchorPos, chest, genPos, capPos;
+    private EntityLiving gH, gB, gE, gFoe;
+    private net.minecraft.entity.monster.EntityCreeper gCr;
+    private double[] gMe;
     private final Map<Servants.Kind, EntityLiving> servants = new EnumMap<>(Servants.Kind.class);
     private EntityLiving miner;
     private TrialData.Trial trial, trial2;
@@ -631,6 +634,117 @@ public final class AutoTest {
         step("отряд ушёл, Якорь окреп", () -> {
             check(tagged(ow, new AxisAlignedBB(anchorPos).grow(80), GarrotRaids.TAG_ARMY).isEmpty(), "отряд ушёл");
             check(((TileAnchor) ow.getTileEntity(anchorPos)).getCorrupted() > corrupted[0], "Якорь окреп");
+        });
+
+        section("Гарнизон Якоря");
+        step("гарнизон: Хаск, Костяной и Палач у Якоря", () -> {
+            gMe = new double[]{me.posX, me.posY, me.posZ};
+            me.setPosition(base.getX() - 30.5, base.getY() + 1, base.getZ() + 30.5);   // свита — подальше от Якоря
+            TileAnchor a = (TileAnchor) ow.getTileEntity(anchorPos);
+            gH = Servants.spawn(me, Servants.Kind.HUSK, anchorPos.add(1, 0, 2));
+            gB = Servants.spawn(me, Servants.Kind.BONE, anchorPos.add(2, 0, 1));
+            gE = Servants.spawn(me, Servants.Kind.EXECUTIONER, anchorPos.add(-2, 0, 1));
+            for (EntityLiving g : new EntityLiving[]{gH, gB, gE}) {
+                check(g != null, "в гарнизон поставлен " + (g == null ? "?" : Servants.kindOf(g)));
+                if (g != null) g.getEntityData().setLong(Servants.TAG_ANCHOR, anchorPos.toLong());
+            }
+            check(ru.death.chaosshard.servant.Garrison.role(gH) == ru.death.chaosshard.servant.Garrison.Role.PATROL
+                    && ru.death.chaosshard.servant.Garrison.role(gB) == ru.death.chaosshard.servant.Garrison.Role.POST
+                    && ru.death.chaosshard.servant.Garrison.role(gE) == ru.death.chaosshard.servant.Garrison.Role.CORE,
+                    "роли: Хаск обходит, Костяной на посту, Палач у колонны");
+            line("  радиус земли " + a.radius() + ", крипер взрывается не ближе " + ru.death.chaosshard.servant.Garrison.safeDist(a));
+            // площадка теста кончается раньше земли Якоря: дотянуть пол туда, куда могут увести крипера
+            int far = (int) ru.death.chaosshard.servant.Garrison.safeDist(a) + 10;
+            for (int x = -far; x <= far; x++) {
+                for (int z = -far; z <= far; z++) {
+                    BlockPos q = anchorPos.add(x, -1, z);
+                    if (ow.isAirBlock(q)) ow.setBlockState(q, Blocks.GRASS.getDefaultState(), 2);
+                }
+            }
+        });
+        until("гарнизон разошёлся: Палач у колонны, Костяной на посту, Хаск в обходе", () -> {
+            TileAnchor a = (TileAnchor) ow.getTileEntity(anchorPos);
+            double e = Math.sqrt(gE.getDistanceSq(anchorPos)), b = Math.sqrt(gB.getDistanceSq(anchorPos)), h = Math.sqrt(gH.getDistanceSq(anchorPos));
+            return a != null && e < 6 && b > 5 && b < 15 && h > 6 && ((net.minecraft.entity.EntityCreature) gB).getMaximumHomeDistance()
+                    == ru.death.chaosshard.servant.Garrison.homeRadius(a);
+        }, 600);
+        step("на врага на земле Якоря идёт боец, Палач остаётся у колонны", () -> {
+            TileAnchor a = (TileAnchor) ow.getTileEntity(anchorPos);
+            int d = Math.min(20, a.radius() - 3);
+            net.minecraft.entity.monster.EntityHusk foe = new net.minecraft.entity.monster.EntityHusk(ow);
+            foe.setLocationAndAngles(anchorPos.getX() + d + 0.5, anchorPos.getY(), anchorPos.getZ() + 0.5, 0, 0);
+            foe.setNoAI(true);
+            foe.enablePersistence();
+            foe.addPotionEffect(new net.minecraft.potion.PotionEffect(net.minecraft.init.MobEffects.RESISTANCE, 2000, 4, false, false));
+            ow.spawnEntity(foe);
+            gFoe = foe;
+        });
+        until("тревога: к врагу послан боец гарнизона", () -> gH.getAttackTarget() == gFoe || gB.getAttackTarget() == gFoe
+                || servants.get(Servants.Kind.BONE).getAttackTarget() == gFoe, 80);
+        step("Палач не ушёл от колонны", () -> {
+            check(gE.getAttackTarget() != gFoe, "Палач не бросился к дальнему врагу");
+            gFoe.setDead();
+        });
+        sleep(20);
+        step("крипер у Якоря", () -> {
+            net.minecraft.entity.monster.EntityCreeper cr = new net.minecraft.entity.monster.EntityCreeper(ow);
+            cr.setLocationAndAngles(anchorPos.getX() - 4.5, anchorPos.getY(), anchorPos.getZ() - 4.5, 0, 0);
+            cr.enablePersistence();
+            ow.spawnEntity(cr);
+            net.minecraft.nbt.NBTTagCompound t = new net.minecraft.nbt.NBTTagCompound();
+            cr.writeEntityToNBT(t);
+            t.setShort("Fuse", (short) 30000);          // тестовый крипер не взрывается
+            t.setByte("ExplosionRadius", (byte) 0);
+            cr.readEntityFromNBT(t);
+            cr.targetTasks.taskEntries.clear();          // и сам цель не выбирает — только за приманкой
+            gCr = cr;
+            for (EntityLiving g : new EntityLiving[]{gH, gB, gE, servants.get(Servants.Kind.BONE)}) {
+                if (g.getAttackTarget() != null) g.setAttackTarget(null);
+            }
+        });
+        until("крипера подманивают", () -> {
+            for (EntityLiving g : new EntityLiving[]{gH, gB, servants.get(Servants.Kind.BONE)}) {
+                if (gCr.getUniqueID().equals(ru.death.chaosshard.servant.Garrison.luring(g)) && gCr.getAttackTarget() == g) return true;
+            }
+            return false;
+        }, 100);
+        step("Палач и остальные крипера у колонны не бьют", () -> {
+            boolean near = false;
+            for (EntityLiving g : new EntityLiving[]{gH, gB, gE, servants.get(Servants.Kind.BONE)}) {
+                near |= g.getAttackTarget() == gCr && gCr.getDistanceSq(anchorPos) < 12 * 12;
+            }
+            check(!near, "у колонны крипера никто не бьёт");
+        });
+        final double[] gCrAt = {-1};
+        until("крипера увели от Якоря и бьют там", () -> {
+            for (EntityLiving g : new EntityLiving[]{gH, gB, servants.get(Servants.Kind.BONE)}) {
+                if (g.getAttackTarget() == gCr && gCrAt[0] < 0) gCrAt[0] = Math.sqrt(gCr.getDistanceSq(anchorPos));
+            }
+            return gCrAt[0] >= 0 || !gCr.isEntityAlive();
+        }, 1300);
+        step("крипера бьют вдали от колонны", () -> {
+            TileAnchor a = (TileAnchor) ow.getTileEntity(anchorPos);
+            check(gCrAt[0] >= ru.death.chaosshard.servant.Garrison.safeDist(a) - 8,
+                    "крипер отведён на " + Math.round(gCrAt[0]) + " блоков (нужно от " + Math.round(ru.death.chaosshard.servant.Garrison.safeDist(a) - 8) + ")");
+            gCr.setDead();
+        });
+        step("Костяной ранен", () -> gB.setHealth(gB.getMaxHealth() - 4));
+        until("в покое на своей земле боец залечился", () -> gB.getHealth() >= gB.getMaxHealth() - 0.01F, 700);
+        step("набег с запада: цепь на западной стороне, Палач у колонны", () -> {
+            TileAnchor a = (TileAnchor) ow.getTileEntity(anchorPos);
+            java.util.List<TileAnchor> c = ru.death.chaosshard.anchor.AnchorClusters.cluster(ow, a);
+            ru.death.chaosshard.servant.Garrison.deploy(ow, a, Math.PI, ru.death.chaosshard.anchor.AnchorClusters.garrison(ow, c));
+        });
+        until("цепь встала", () -> {
+            net.minecraft.util.math.Vec3d sb = ru.death.chaosshard.servant.Garrison.raidSpot(gB);
+            return sb != null && gB.getDistanceSq(sb.x, sb.y, sb.z) < 3 * 3;
+        }, 400);
+        step("цепь развёрнута к армии", () -> {
+            net.minecraft.util.math.Vec3d sb = ru.death.chaosshard.servant.Garrison.raidSpot(gB), se = ru.death.chaosshard.servant.Garrison.raidSpot(gE);
+            check(sb != null && sb.x < anchorPos.getX() - 7, "Костяной в цепи на западе: " + (sb == null ? "нет места" : Math.round(sb.x - anchorPos.getX())));
+            check(se != null && se.distanceTo(new net.minecraft.util.math.Vec3d(anchorPos)) < 5, "Палач у колонны");
+            for (EntityLiving g : new EntityLiving[]{gH, gB, gE}) g.setDead();
+            me.setPosition(gMe[0], gMe[1], gMe[2]);
         });
 
         section("Сеть Якорей");

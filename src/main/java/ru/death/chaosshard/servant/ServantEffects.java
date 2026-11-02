@@ -44,16 +44,36 @@ public class ServantEffects {
                 ServantGear.refresh(m, o);
             }
         }
-        // гарнизон: после боя — домой, к своему Якорю
-        if (sec % 10 == 0 && m.getEntityData().hasKey(Servants.TAG_ANCHOR) && m.getAttackTarget() == null) {
-            net.minecraft.util.math.BlockPos home = net.minecraft.util.math.BlockPos.fromLong(m.getEntityData().getLong(Servants.TAG_ANCHOR));
-            if (m.getDistanceSq(home) > 24 * 24 && m.world.isBlockLoaded(home)) {
-                if (ru.death.chaosshard.anchor.AnchorClusters.at(m.world, home) == null) {
-                    m.getEntityData().removeTag(Servants.TAG_ANCHOR);   // Якоря больше нет
+        // гарнизон: после боя — домой, к своему Якорю (если ушёл за пределы земли; во время набега — к Якорю, на который идёт армия)
+        if (sec % 10 == 0 && m.getEntityData().hasKey(Servants.TAG_ANCHOR) && m.getAttackTarget() == null && !Garrison.isLuring(m)) {
+            boolean nest = Servants.isNest(m);
+            net.minecraft.util.math.BlockPos home = net.minecraft.util.math.BlockPos.fromLong(nest
+                    ? m.getEntityData().getLong(Servants.TAG_ANCHOR) : Garrison.post(m));
+            ru.death.chaosshard.anchor.TileAnchor ha = m.world.isBlockLoaded(home) ? ru.death.chaosshard.anchor.AnchorClusters.at(m.world, home) : null;
+            int far = nest || ha == null ? 24 : Garrison.homeRadius(ha);
+            if (m.getDistanceSq(home) > far * far && m.world.isBlockLoaded(home)) {
+                if (ha == null) {
+                    if (Garrison.inRaid(m)) {
+                        Garrison.endRaid(m);
+                    } else {
+                        m.getEntityData().removeTag(Servants.TAG_ANCHOR);   // Якоря больше нет
+                    }
                 } else {
                     net.minecraft.util.math.BlockPos at = m.world.getHeight(home.add(2, 0, 2));
                     ws.spawnParticle(EnumParticleTypes.PORTAL, m.posX, m.posY + 1, m.posZ, 20, 0.3, 0.5, 0.3, 0.5);
                     m.setPositionAndUpdate(at.getX() + 0.5, at.getY(), at.getZ() + 0.5);
+                }
+            }
+        }
+        // гарнизон: без боя дольше 10 секунд на своей земле — понемногу лечится (0.5 здоровья в секунду)
+        if (Garrison.isGarrison(m) && m.getAttackTarget() == null && !Garrison.isLuring(m) && m.getHealth() < m.getMaxHealth()
+                && Garrison.sinceFight(m) > 200 && m.hurtTime == 0 && m.ticksExisted - m.getRevengeTimer() > 200) {
+            ru.death.chaosshard.anchor.TileAnchor ha = ru.death.chaosshard.anchor.AnchorClusters.at(m.world,
+                    net.minecraft.util.math.BlockPos.fromLong(Garrison.post(m)));
+            if (ha != null && ru.death.chaosshard.anchor.AnchorSpecs.inLand(ha, m)) {
+                m.heal(0.5F);
+                if (sec % 4 == 0) {
+                    ws.spawnParticle(EnumParticleTypes.HEART, m.posX, m.posY + m.height + 0.2, m.posZ, 1, 0.2, 0.1, 0.2, 0.0);
                 }
             }
         }
@@ -78,7 +98,7 @@ public class ServantEffects {
         // Приманка: твари вокруг бросаются на Хаска
         if (has(m, HUSK_BAIT) && sec % 10 == 0) {
             for (EntityLiving t : ws.getEntitiesWithinAABB(EntityLiving.class, m.getEntityBoundingBox().grow(12),
-                    x -> x instanceof IMob && !Servants.isServant(x))) {
+                    x -> x instanceof IMob && !Servants.isServant(x) && !Garrison.avoids(m, x))) {
                 t.setAttackTarget(m);
             }
             ws.spawnParticle(EnumParticleTypes.VILLAGER_ANGRY, m.posX, m.posY + m.height + 0.3, m.posZ, 2, 0.2, 0.1, 0.2, 0.0);

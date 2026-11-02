@@ -296,6 +296,9 @@ public class Servants {
                 m.setHomePosAndDistance(BlockPos.fromLong(m.getEntityData().getLong(TAG_CHEST)), 32);
             }
         } else {
+            if (!(m instanceof EntityChaosBeast)) {
+                m.tasks.addTask(3, new Garrison.Duty(m));   // служба в гарнизоне (молчит, пока боец не в гарнизоне)
+            }
             m.tasks.addTask(4, m instanceof EntityChaosBeast ? new FollowBeast(m) : new FollowOwner(m));
             m.tasks.addTask(6, new EntityAIWanderAvoidWater(m, 0.8D));
             m.tasks.addTask(7, new EntityAIWatchClosest(m, EntityPlayer.class, 8.0F));
@@ -303,9 +306,11 @@ public class Servants {
             m.targetTasks.addTask(1, new DefendOwner(m));
             m.targetTasks.addTask(2, new EntityAIHurtByTarget(m, false));
             m.targetTasks.addTask(3, new EntityAINearestAttackableTarget<>(m, EntityLiving.class, 10, true, false,
-                    t -> (t instanceof IMob || t.getTags().contains(ru.death.chaosshard.garrot.GarrotRaids.TAG_ARMY)) && !isServant(t)));
+                    t -> (t instanceof IMob || t.getTags().contains(ru.death.chaosshard.garrot.GarrotRaids.TAG_ARMY)) && !isServant(t)
+                            && !Garrison.avoids(m, t)));
             if (m.getEntityData().hasKey(TAG_ANCHOR)) {
-                m.setHomePosAndDistance(BlockPos.fromLong(m.getEntityData().getLong(TAG_ANCHOR)), 16);
+                BlockPos an = BlockPos.fromLong(m.getEntityData().getLong(TAG_ANCHOR));
+                m.setHomePosAndDistance(an, isNest(m) ? 16 : Garrison.homeRadius(ru.death.chaosshard.anchor.AnchorClusters.at(m.world, an)));
             } else if (m.getEntityData().hasKey(TAG_GUARD)) {
                 m.setHomePosAndDistance(BlockPos.fromLong(m.getEntityData().getLong(TAG_GUARD)), 8);
             }
@@ -794,5 +799,6 @@ public class Servants {
     /** Сервер остановлен (в одиночной игре — выход из мира): ничего не тянется в следующий мир. */
     public static void clearState() {
         ServantTravel.clearState();
+        Garrison.clearState();
     }
 }

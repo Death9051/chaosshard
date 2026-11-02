@@ -245,7 +245,7 @@ public class Work {
             }
             m.getEntityData().removeTag(Servants.TAG_GUARD);
             m.getEntityData().setLong(Servants.TAG_ANCHOR, a.getPos().toLong());
-            m.setHomePosAndDistance(a.getPos(), 16);
+            m.setHomePosAndDistance(a.getPos(), ru.death.chaosshard.servant.Garrison.homeRadius(a));
             m.setAttackTarget(null);
             ((WorldServer) w).spawnParticle(EnumParticleTypes.SPELL_WITCH, a.getPos().getX() + 0.5, a.getPos().getY() + 1.5,
                     a.getPos().getZ() + 0.5, 30, 0.4, 0.6, 0.4, 0.05);

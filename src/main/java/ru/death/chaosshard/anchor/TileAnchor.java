@@ -557,15 +557,8 @@ public class TileAnchor extends TileEntity implements ITickable {
             ru.death.chaosshard.garrot.GarrotRaids.spawn((WorldServer) world, target.pos, o, lvl, raidAngle);
         }
         target.siege = 0;
-        // гарнизон всей сети — на помощь
-        for (net.minecraft.entity.EntityLiving g : AnchorClusters.garrison((WorldServer) world, c)) {
-            if (g.getDistanceSq(target.pos) > 16 * 16) {
-                BlockPos at = world.getHeight(target.pos.add(world.rand.nextInt(7) - 3, 0, world.rand.nextInt(7) - 3));
-                ((WorldServer) world).spawnParticle(EnumParticleTypes.PORTAL, g.posX, g.posY + 1, g.posZ, 20, 0.3, 0.5, 0.3, 0.5);
-                g.setPositionAndUpdate(at.getX() + 0.5, at.getY(), at.getZ() + 0.5);
-                ((WorldServer) world).spawnParticle(EnumParticleTypes.SPELL_WITCH, g.posX, g.posY + 1, g.posZ, 20, 0.3, 0.5, 0.3, 0.05);
-            }
-        }
+        // гарнизон всей сети — цепью на сторону, откуда идёт армия; Палачи — у колонны
+        ru.death.chaosshard.servant.Garrison.deploy((WorldServer) world, target, raidAngle, AnchorClusters.garrison((WorldServer) world, c));
         raidWarned = false;
         raidTimer = (int) (ru.death.chaosshard.ChaosConfig.order.raidInterval * INTERVAL[Math.min(lvl, INTERVAL.length) - 1]
                 * (0.75 + 0.5 * world.rand.nextDouble()));
@@ -1074,6 +1067,13 @@ public class TileAnchor extends TileEntity implements ITickable {
             tickNet();
         }
         AnchorSpecs.tick(this);
+        if (wt % 20 == ((pos.toLong() >> 4) & 15)) {
+            try {
+                ru.death.chaosshard.servant.Garrison.tick(this);
+            } catch (RuntimeException e) {
+                ru.death.chaosshard.ChaosShard.LOG.warn("Гарнизон Якоря: сбой", e);
+            }
+        }
         AnchorSigns.tick(this);
         if (wt % 200 == 100) {
             growColumn();

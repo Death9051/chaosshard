@@ -539,7 +539,7 @@ public class GarrotDuel {
             v.getEntityData().setUniqueId(Servants.TAG_OWNER, owner.getUniqueID());
             v.getEntityData().setLong(Servants.TAG_ANCHOR, a.getPos().toLong());
             v.setLocationAndAngles(at.getX() + 0.5, at.getY(), at.getZ() + 0.5, w.rand.nextFloat() * 360, 0);
-            v.setHomePosAndDistance(a.getPos(), 16);
+            v.setHomePosAndDistance(a.getPos(), ru.death.chaosshard.servant.Garrison.homeRadius(a));
             w.spawnEntity(v);
             w.spawnParticle(EnumParticleTypes.SMOKE_LARGE, v.posX, v.posY + 1, v.posZ, 30, 0.3, 0.8, 0.3, 0.02);
             made++;
