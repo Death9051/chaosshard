@@ -114,7 +114,9 @@ public final class SpellEffects {
     // ================================================================== Росток
 
     /**
-     * База: ускорение времени одного блока. A «Сад»: круг 3×3 (5×5), на 3-й ступени ещё и подрастает всё в круге.
+     * База: ускорение времени одного блока (и по блоку над и под ним). A «Сад»: куб 3×3×3 (5×5×5), на 3-й ступени ещё и
+     * подрастает всё в кубе. Расширение (знак Широты, всплеск) растит куб во все стороны, и вверх-вниз тоже: машины стоят
+     * не в одной плоскости.
      * B «Петля времени»: один блок, втрое сильнее; дольше; на 3-й — петля держится две минуты и половина энергии возвращается.
      */
     static boolean sprout(EntityPlayerMP p, BlockPos pos) {
@@ -133,7 +135,8 @@ public final class SpellEffects {
         r += SpellMods.area(p, s);
         ticks = (int) (ticks * power);
         int n = 0;
-        for (BlockPos q : BlockPos.getAllInBox(pos.add(-r, -1, -r), pos.add(r, 1, r))) {
+        int h = Math.max(1, r);
+        for (BlockPos q : BlockPos.getAllInBox(pos.add(-r, -h, -r), pos.add(r, h, r))) {
             if (SpellAccel.add(p.world, q, ticks, extra, chance)) {
                 n++;
             }

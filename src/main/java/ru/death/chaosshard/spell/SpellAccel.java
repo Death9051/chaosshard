@@ -61,6 +61,11 @@ public final class SpellAccel {
         return true;
     }
 
+    /** Ускоряется ли сейчас этот блок. */
+    public static boolean isActive(World w, BlockPos pos) {
+        return ACTIVE.containsKey(w.provider.getDimension() + ":" + pos.toLong());
+    }
+
     public static int active() {
         return ACTIVE.size();
     }

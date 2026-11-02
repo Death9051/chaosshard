@@ -3260,6 +3260,18 @@ public final class AutoTest {
             int was = ru.death.chaosshard.spell.SpellAccel.active();
             check(ru.death.chaosshard.spell.SpellCaster.castAt(me, ru.death.chaosshard.spell.Spell.SPROUT, fur, EnumFacing.UP, null, null)
                     && ru.death.chaosshard.spell.SpellAccel.active() > was, "Росток ускорил печь");
+            // Сад 2-й ступени — куб 5×5×5: печи на два блока выше и ниже тоже ускоряются
+            ru.death.chaosshard.spell.SpellData.debugSet(me, ru.death.chaosshard.spell.Spell.SPROUT, 1, 2);
+            BlockPos hi = fur.add(2, 2, 0), lo = fur.add(-1, -2, 1);
+            ow.setBlockState(hi, Blocks.FURNACE.getDefaultState(), 3);
+            ow.setBlockState(lo, Blocks.FURNACE.getDefaultState(), 3);
+            ready.accept(ru.death.chaosshard.spell.Spell.SPROUT);
+            ru.death.chaosshard.spell.SpellCaster.castAt(me, ru.death.chaosshard.spell.Spell.SPROUT, fur, EnumFacing.UP, null, null);
+            check(ru.death.chaosshard.spell.SpellAccel.isActive(ow, hi) && ru.death.chaosshard.spell.SpellAccel.isActive(ow, lo),
+                    "Сад — куб: ускорены печи на 2 выше и на 2 ниже");
+            ru.death.chaosshard.spell.SpellData.debugSet(me, ru.death.chaosshard.spell.Spell.SPROUT, 0, 0);
+            ow.setBlockToAir(hi);
+            ow.setBlockToAir(lo);
             ow.setBlockToAir(fur);
             // Тропа: без ветки — дорожка вперёд по воздуху
             ru.death.chaosshard.spell.Spell T = ru.death.chaosshard.spell.Spell.BRIDGE;
