@@ -28,7 +28,7 @@ jobs:
             for c in $(cat "$GITHUB_WORKSPACE/.github/diag-classes.txt" 2>/dev/null); do unzip -qo "/tmp/$slug.jar" "$c" || true; done
             # классы биомов: строки из байткода (имена биомов задаются в коде)
             mkdir -p /tmp/bc && rm -rf /tmp/bc/* && (cd /tmp/bc && unzip -qo "/tmp/$slug.jar" '*Biome*.class' 2>/dev/null || true)
-            find /tmp/bc -name '*.class' | while read f; do echo "== $f"; javap -c -p "$f" 2>/dev/null | grep -E 'ldc.*String|BiomeProperties' ; done > biomes.txt
+            find /tmp/bc -name '*.class' | while read f; do echo "== $f"; javap -c -p "$f" 2>/dev/null | grep -E 'ldc.*String|BiomeProperties' || true; done > biomes.txt || true
             cd - >/dev/null
           done < .github/diag-mods.txt
       - name: В ci-logs
