@@ -78,6 +78,7 @@ public class ClientProxy extends CommonProxy {
     @Override
     public void postInit(FMLPostInitializationEvent event) {
         super.postInit(event);
+        MystBiomeNames.register();
         if (ChaosShard.astralLoaded && ChaosConfig.stars.enabled && ChaosConfig.stars.extraSkyPositions) {
             ru.death.chaosshard.stars.client.AstralSkyClient.addExtraSkyPositions();
         }
