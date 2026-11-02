@@ -1,0 +1,41 @@
+name: Извлечь файлы мода
+
+# Служебный: скачивает jar стороннего мода и кладёт его языковые файлы и список классов в ci-logs (diag/<slug>/).
+on:
+  push:
+    branches: ['diag-*']
+    paths: ['.github/diag-mods.txt']
+
+permissions:
+  contents: write
+
+jobs:
+  diag:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+      - name: Скачать и разобрать
+        run: |
+          mkdir -p /tmp/d
+          while read -r slug pid fid; do
+            [ -z "$slug" ] && continue
+            url="https://curse.cleanroommc.com/curse/maven/${slug}-${pid}/${fid}/${slug}-${pid}-${fid}.jar"
+            curl -sfL -o "/tmp/$slug.jar" "$url" || { echo "FAIL $slug"; continue; }
+            mkdir -p "/tmp/d/$slug" && cd "/tmp/d/$slug"
+            unzip -qo "/tmp/$slug.jar" 'assets/*/lang/*' || true
+            unzip -l "/tmp/$slug.jar" > classes.txt
+            cd - >/dev/null
+          done < .github/diag-mods.txt
+      - name: В ci-logs
+        run: |
+          git config user.name "ci-bot"
+          git config user.email "ci-bot@users.noreply.github.com"
+          for i in 1 2 3; do
+            git fetch origin ci-logs
+            git checkout -f -B ci-logs origin/ci-logs
+            mkdir -p diag && cp -r /tmp/d/* diag/
+            git add -A diag
+            git commit -m "Файлы мода ${{ github.sha }}" || true
+            git push origin ci-logs && break
+            sleep 5
+          done
