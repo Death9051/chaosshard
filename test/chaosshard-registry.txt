@@ -1,6 +1,4 @@
 === ancientwarfare
-item ancientwarfare:engineering_station
-item ancientwarfare:research_station
 item ancientwarfare:info_tool
 item ancientwarfare:research_book
 item ancientwarfare:research_note
@@ -18,6 +16,8 @@ item ancientwarfare:diamond_hammer
 item ancientwarfare:manual
 item ancientwarfare:component | 0=item.component.0 | 1=item.component.1 | 2=item.component.2 | 3=item.component.3 | 4=item.component.4 | 5=item.component.5 | 6=item.component.6 | 7=item.component.7 | 8=item.component.8
 item ancientwarfare:steel_ingot
+item ancientwarfare:engineering_station
+item ancientwarfare:research_station
 block ancientwarfare:engineering_station
 block ancientwarfare:research_station
 tile ancientwarfare:engineering_station_tile
@@ -113,7 +113,6 @@ tile ancientwarfareautomation:windmill_generator_tile
 tile ancientwarfareautomation:chunk_loader_simple_tile
 tile ancientwarfareautomation:chunk_loader_deluxe_tile
 === ancientwarfarenpc
-item ancientwarfarenpc:town_hall
 item ancientwarfarenpc:wooden_command_baton
 item ancientwarfarenpc:stone_command_baton
 item ancientwarfarenpc:iron_command_baton
@@ -172,6 +171,7 @@ item ancientwarfarenpc:iron_cleaver
 item ancientwarfarenpc:golden_cleaver
 item ancientwarfarenpc:diamond_cleaver
 item ancientwarfarenpc:obsidian_spear
+item ancientwarfarenpc:town_hall
 block ancientwarfarenpc:town_hall
 entity ancientwarfarenpc:aw_npc_combat
 entity ancientwarfarenpc:aw_npc_worker
@@ -197,6 +197,16 @@ entity ancientwarfarenpc:faction.siege_engineer
 entity ancientwarfarenpc:faction.spellcaster
 tile ancientwarfarenpc:town_hall_tile
 === ancientwarfarestructure
+item ancientwarfarestructure:structure_scanner
+item ancientwarfarestructure:structure_builder
+item ancientwarfarestructure:structure_builder_world_gen
+item ancientwarfarestructure:town_builder
+item ancientwarfarestructure:spawner_placer
+item ancientwarfarestructure:gate_spawner | 0=item.gateBasicWood | 1=item.gateBasicIron | 4=item.gateSingleWood | 5=item.gateSingleIron | 8=item.gateDoubleWood | 9=item.gateDoubleIron | 12=item.gateDrawbridge
+item ancientwarfarestructure:construction_tool
+item ancientwarfarestructure:construction_tool_lakes
+item ancientwarfarestructure:block_info_clicker
+item ancientwarfarestructure:loot_chest_placer
 item ancientwarfarestructure:advanced_spawner
 item ancientwarfarestructure:gate_proxy
 item ancientwarfarestructure:drafting_station
@@ -246,16 +256,6 @@ item ancientwarfarestructure:coin_stack_silver
 item ancientwarfarestructure:coin_stack_gold
 item ancientwarfarestructure:coin_stack_ancient
 item ancientwarfarestructure:gravestone
-item ancientwarfarestructure:structure_scanner
-item ancientwarfarestructure:structure_builder
-item ancientwarfarestructure:structure_builder_world_gen
-item ancientwarfarestructure:town_builder
-item ancientwarfarestructure:spawner_placer
-item ancientwarfarestructure:gate_spawner | 0=item.gateBasicWood | 1=item.gateBasicIron | 4=item.gateSingleWood | 5=item.gateSingleIron | 8=item.gateDoubleWood | 9=item.gateDoubleIron | 12=item.gateDrawbridge
-item ancientwarfarestructure:construction_tool
-item ancientwarfarestructure:construction_tool_lakes
-item ancientwarfarestructure:block_info_clicker
-item ancientwarfarestructure:loot_chest_placer
 block ancientwarfarestructure:advanced_spawner
 block ancientwarfarestructure:gate_proxy
 block ancientwarfarestructure:drafting_station
