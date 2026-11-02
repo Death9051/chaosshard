@@ -32,7 +32,7 @@
   снимок: ct_32_hero_kneel.png
   снимок: ct_33_hero_light.png
   снимок: ct_34_hero_dissolve.png
-  рядом лежит: chaosshard:kael_blade 24 131 -40
+  рядом лежит: chaosshard:kael_blade 24 131 -39
   рядом лежит: chaosshard:hero_echo 24 131 -40
   [OK]   Светоч растаял
   [OK]   клинок Каэля выпал, когда он растаял
