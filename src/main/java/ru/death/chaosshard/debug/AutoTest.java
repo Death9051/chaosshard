@@ -1149,6 +1149,12 @@ public final class AutoTest {
             z.setLocationAndAngles(zp.getX() + 0.5, zp.getY(), zp.getZ() + 0.5, 0, 0);
             z.enablePersistence();
             ow.spawnEntity(z);
+            // раненый зомби может позвать подкрепление, и новый встанет ближе скелета: в тесте подкреплений нет
+            net.minecraft.entity.ai.attributes.IAttributeInstance reinf = z.getAttributeMap().getAttributeInstanceByName("zombie.spawnReinforcements");
+            if (reinf != null) {
+                for (net.minecraft.entity.ai.attributes.AttributeModifier mod : new java.util.ArrayList<>(reinf.getModifiers())) reinf.removeModifier(mod);
+                reinf.setBaseValue(0);
+            }
             net.minecraft.entity.monster.EntitySkeleton sk = new net.minecraft.entity.monster.EntitySkeleton(ow);
             sk.setLocationAndAngles(zp.getX() + 2.5, zp.getY(), zp.getZ() + 0.5, 0, 0);
             sk.enablePersistence();
