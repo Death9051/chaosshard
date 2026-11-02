@@ -1,0 +1,31 @@
+== /tmp/bc/org/dimdev/dimdoors/shared/world/limbo/BiomeLimbo.class
+       1: new           #7                  // class net/minecraft/world/biome/Biome$BiomeProperties
+       5: ldc           #15                 // String Limbo
+       7: invokespecial #18                 // Method net/minecraft/world/biome/Biome$BiomeProperties."<init>":(Ljava/lang/String;)V
+      10: invokevirtual #22                 // Method net/minecraft/world/biome/Biome$BiomeProperties.func_185396_a:()Lnet/minecraft/world/biome/Biome$BiomeProperties;
+      14: invokevirtual #26                 // Method net/minecraft/world/biome/Biome$BiomeProperties.func_185395_b:(F)Lnet/minecraft/world/biome/Biome$BiomeProperties;
+      18: invokevirtual #30                 // Method net/minecraft/world/biome/Biome$BiomeProperties.func_185402_a:(I)Lnet/minecraft/world/biome/Biome$BiomeProperties;
+      21: invokespecial #33                 // Method net/minecraft/world/biome/Biome."<init>":(Lnet/minecraft/world/biome/Biome$BiomeProperties;)V
+== /tmp/bc/org/dimdev/dimdoors/shared/world/ModBiomes.class
+       7: ldc           #37                 // String dimdoors
+       9: ldc           #39                 // String limbo
+      25: ldc           #37                 // String dimdoors
+      27: ldc           #52                 // String white_void
+      43: ldc           #37                 // String dimdoors
+      45: ldc           #59                 // String black_void
+      61: ldc           #37                 // String dimdoors
+      63: ldc           #63                 // String dangerous_black_void
+== /tmp/bc/org/dimdev/dimdoors/shared/world/pocketdimension/BiomeBlank.class
+       1: new           #7                  // class net/minecraft/world/biome/Biome$BiomeProperties
+      16: ldc           #19                 // String Dangerous
+      21: ldc           #21                 // String
+      30: ldc           #29                 // String White
+      35: ldc           #31                 // String Black
+      40: ldc           #33                 // String  Void
+      48: invokespecial #40                 // Method net/minecraft/world/biome/Biome$BiomeProperties."<init>":(Ljava/lang/String;)V
+      52: invokevirtual #44                 // Method net/minecraft/world/biome/Biome$BiomeProperties.func_185398_c:(F)Lnet/minecraft/world/biome/Biome$BiomeProperties;
+      56: invokevirtual #47                 // Method net/minecraft/world/biome/Biome$BiomeProperties.func_185400_d:(F)Lnet/minecraft/world/biome/Biome$BiomeProperties;
+      59: invokevirtual #51                 // Method net/minecraft/world/biome/Biome$BiomeProperties.func_185396_a:()Lnet/minecraft/world/biome/Biome$BiomeProperties;
+      63: invokevirtual #54                 // Method net/minecraft/world/biome/Biome$BiomeProperties.func_185395_b:(F)Lnet/minecraft/world/biome/Biome$BiomeProperties;
+      77: invokevirtual #59                 // Method net/minecraft/world/biome/Biome$BiomeProperties.func_185402_a:(I)Lnet/minecraft/world/biome/Biome$BiomeProperties;
+      80: invokespecial #62                 // Method net/minecraft/world/biome/Biome."<init>":(Lnet/minecraft/world/biome/Biome$BiomeProperties;)V

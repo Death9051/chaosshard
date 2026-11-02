@@ -1,0 +1,228 @@
+== /tmp/bc/vazkii/quark/base/handler/BiomeTypeConfigHandler.class
+      34: ldc           #80                 // String Biome Type List: https://github.com/MinecraftForge/MinecraftForge/blob/1.11.x/src/main/java/net/minecraftforge/common/BiomeDictionary.java#L44-L90\nTypes per Biome: https://github.com/MinecraftForge/MinecraftForge/blob/1.11.x/src/main/java/net/minecraftforge/common/BiomeDictionary.java#L402-L463
+       3: ldc           #160                // String ### OUTPUTTING BIOME CSV DATA ###
+      11: ldc           #168                // String sep=;\nBiome
+      52: ldc           #178                // String ;
+      79: ldc           #195                // String ;Biome Type
+     188: ldc           #224                // String ;yes
+     199: ldc           #226                // String ;no
+     217: ldc           #178                // String ;
+     229: ldc           #231                // String mutation
+     234: ldc           #233                // String normal
+     257: ldc           #237                // String ### DONE ###
+== /tmp/bc/vazkii/quark/experimental/world/BiomeLocator.class
+      14: ldc           #39                 // String maxDist and sampleSpace must be positive
+== /tmp/bc/vazkii/quark/world/feature/UndergroundBiomes.class
+      11: ldc           #83                 // String Enable Firestone
+      13: ldc           #85                 // String
+      23: ldc           #93                 // String Enable Froststone
+      25: ldc           #85                 // String
+      35: ldc           #97                 // String Enable Glowcelium and Glowshrooms
+      37: ldc           #85                 // String
+      47: ldc           #101                // String Enable Big Glowshrooms
+      49: ldc           #85                 // String
+      59: ldc           #105                // String Enable Elder Prismarine
+      61: ldc           #85                 // String
+      71: ldc           #109                // String Enable Cobbedstone
+      73: ldc           #85                 // String
+      83: ldc           #113                // String Enable stairs and slabs
+      85: ldc           #85                 // String
+     109: ldc           #122                // String Enable walls
+     111: ldc           #85                 // String
+     135: ldc           #126                // String Allow crafting Elder Prismarine
+     137: ldc           #85                 // String
+     147: ldc           #130                // String Allow crafting Cobbedstone
+     149: ldc           #85                 // String
+     159: ldc           #134                // String Glowshroom Growth Rate
+     161: ldc           #136                // String The smaller, the faster glowshrooms will spread. Vanilla mushroom speed is 25.
+     175: ldc           #144                // String Lush
+     209: ldc           #163                // String Sandstone
+     243: ldc           #171                // String Slime
+     277: ldc           #179                // String Prismarine
+     315: ldc           #189                // String Spider
+     349: ldc           #197                // String Overgrown
+     383: ldc           #205                // String Icy
+     417: ldc           #213                // String Lava
+     451: ldc           #221                // String Glowshroom
+     107: ldc_w         #261                // String fire_stone_slab
+     122: ldc_w         #271                // String fire_stone_stairs
+     141: ldc_w         #288                // String fire_stone_brick_slab
+     156: ldc_w         #290                // String fire_stone_brick_stairs
+     181: ldc_w         #292                // String icy_stone_slab
+     196: ldc_w         #294                // String icy_stone_stairs
+     229: ldc_w         #310                // String icy_stone_brick_slab
+     244: ldc_w         #312                // String icy_stone_brick_stairs
+     283: ldc_w         #318                // String cobbed_stone_slab
+     298: ldc_w         #320                // String cobbed_stone_stairs
+     378: ldc_w         #346                // String _slab
+     418: ldc_w         #351                // String _stairs
+     458: ldc_w         #357                // String fire_stone
+     485: ldc_w         #368                // String icy_stone
+     512: ldc_w         #370                // String cobbed_stone
+     539: ldc_w         #372                // String fire_stone_brick
+     566: ldc_w         #374                // String icy_stone_brick
+     712: ldc_w         #404                // String mushroomAny
+     718: ldc_w         #404                // String mushroomAny
+      19: ldc_w         #438                // String SS
+      25: ldc_w         #438                // String SS
+      39: ldc_w         #446                // String stoneBrimstone
+      66: ldc_w         #438                // String SS
+      72: ldc_w         #438                // String SS
+      86: ldc_w         #454                // String stonePermafrost
+     118: ldc_w         #456                // String blockPrismarineElder
+     124: ldc_w         #458                // String blockPrismarine
+     145: ldc_w         #460                // String PPP
+     151: ldc_w         #460                // String PPP
+     157: ldc_w         #460                // String PPP
+     171: ldc_w         #456                // String blockPrismarineElder
+     193: ldc_w         #460                // String PPP
+     199: ldc_w         #462                // String PBP
+     205: ldc_w         #460                // String PPP
+     219: ldc_w         #456                // String blockPrismarineElder
+     234: ldc_w         #464                // String dyeBlack
+     253: ldc_w         #456                // String blockPrismarineElder
+     296: ldc_w         #474                // String  C
+     302: ldc_w         #476                // String CSC
+     308: ldc_w         #474                // String  C
+     340: ldc_w         #481                // String cobblestone
+       6: ldc_w         #404                // String mushroomAny
+      15: ldc_w         #404                // String mushroomAny
+      24: ldc_w         #404                // String mushroomAny
+      39: ldc_w         #446                // String stoneBrimstone
+      51: ldc_w         #510                // String stoneBrimstonePolished
+      69: ldc_w         #454                // String stonePermafrost
+      83: ldc_w         #512                // String stonePermafrostPolished
+     103: ldc_w         #456                // String blockPrismarineElder
+     115: ldc_w         #458                // String blockPrismarine
+     127: ldc_w         #514                // String blockPrismarineElderBrick
+     141: ldc_w         #516                // String blockPrismarineBrick
+     155: ldc_w         #518                // String blockPrismarineElderDark
+     169: ldc_w         #520                // String blockPrismarineDark
+      14: ldc_w         #589                // String .
+== /tmp/bc/vazkii/quark/world/feature/UndergroundBiomes$UndergroundBiomeInfo.class
+       8: ldc           #47                 // String Enabled
+      12: ldc           #49                 // String
+      26: ldc           #61                 // String Allowed Biome Types
+      41: ldc           #71                 // String Rarity
+      48: ldc           #74                 // String This biome will spawn in 1 of X valid chunks
+      72: ldc           #89                 // String Minimum Y Level
+      81: ldc           #49                 // String
+      93: ldc           #93                 // String Maximum Y Level
+     102: ldc           #49                 // String
+     114: ldc           #97                 // String X Minimum
+     122: ldc           #49                 // String
+     134: ldc           #101                // String Y Minimum
+     142: ldc           #49                 // String
+     154: ldc           #105                // String Z Minimum
+     162: ldc           #49                 // String
+     174: ldc           #109                // String X Variation
+     182: ldc           #49                 // String
+     194: ldc           #113                // String Y Variation
+     202: ldc           #49                 // String
+     214: ldc           #117                // String Z Variation
+     222: ldc           #49                 // String
+== /tmp/bc/vazkii/quark/world/feature/UndergroundBiomes$1.class
+== /tmp/bc/vazkii/quark/world/block/BlockBiomeBrick.class
+       1: ldc           #15                 // String biome_brick
+== /tmp/bc/vazkii/quark/world/block/BlockBiomeBrick$Variants.class
+       4: ldc           #94                 // String FIRE_STONE_BRICK
+      22: ldc           #114                // String ICY_STONE_BRICK
+== /tmp/bc/vazkii/quark/world/block/BlockBiomeCobblestone$Variants.class
+       4: ldc           #99                 // String FIRE_STONE
+      22: ldc           #119                // String ICY_STONE
+      40: ldc           #126                // String COBBED_STONE
+== /tmp/bc/vazkii/quark/world/block/BlockBiomeCobblestone.class
+       1: ldc           #15                 // String biome_cobblestone
+== /tmp/bc/vazkii/quark/world/world/underground/UndergroundBiomeIcy.class
+       0: ldc           #108                // String Stalagmite Percentage Chance
+       3: ldc           #110                // String Stalagmite Chance
+       5: ldc           #112                // String The chance stalagmites will spawn
+      19: ldc           #128                // String Use Packed Ice
+      23: ldc           #130                // String
+== /tmp/bc/vazkii/quark/world/world/underground/UndergroundBiome.class
+       8: ldc           #130                // String Dungeon Spawn Percentage Chance
+      11: ldc           #132                // String Dungeon Spawn Chance
+      13: ldc           #134                // String The chance that dungeons will spawn any given chunk of the biome. The lower the value, the fewer dungeons will spawn.
+== /tmp/bc/vazkii/quark/world/world/underground/BasicUndergroundBiome.class
+== /tmp/bc/vazkii/quark/world/world/underground/UndergroundBiomeSlime.class
+       0: ldc           #110                // String Slime Block Percentage Chance
+       3: ldc           #112                // String Slime Block Chance
+       5: ldc           #114                // String The chance slime blocks will spawn
+      19: ldc           #130                // String Enable Water Floor
+      23: ldc           #132                // String
+== /tmp/bc/vazkii/quark/world/world/underground/UndergroundBiomeLush.class
+       0: ldc           #178                // String Grass Percentage Chance
+       3: ldc           #180                // String Grass Chance
+       5: ldc           #182                // String The chance grass will spawn
+      16: ldc           #192                // String Shrub Percentage Chance
+      19: ldc           #194                // String Shrub Chance
+      21: ldc           #196                // String The chance shrubs will spawn
+      32: ldc           #200                // String Vine Percentage Chance
+      35: ldc           #202                // String Vine Chance
+      37: ldc           #204                // String The chance vines will spawn
+== /tmp/bc/vazkii/quark/world/world/underground/UndergroundBiomeSpiderNest.class
+       0: ldc           #191                // String Floor Cobweb Percentage Chance
+       3: ldc           #193                // String Floor Cobweb Chance
+       5: ldc           #195                // String The chance cobwebs will spawn
+      16: ldc           #205                // String Ceiling Cobweb Percentage Chance
+      19: ldc           #207                // String Ceiling Cobweb Chance
+      21: ldc           #209                // String The chance ceiling cobwebs will spawn
+      32: ldc           #213                // String Cave Spider Spawner Percentage Chance
+      35: ldc           #215                // String Cave Spider Spawner Chance
+      37: ldc           #217                // String The chance for a spider spawner to be a cave spider spawner instead
+      48: ldc           #221                // String Nest Cobweb Percentage Chance
+      51: ldc           #223                // String Nest Cobweb Chance
+      53: ldc           #225                // String The chance cobwebs will spawn in nests
+      67: ldc           #235                // String Nest Cobweb Range
+      74: ldc           #238                // String The range for cobwebs to be spawned in spider nests
+      83: ldc           #248                // String Cobbedstone Chance
+      86: ldc           #250                // String The chance for cobbedstone to replace cobblestone in the floor and walls
+== /tmp/bc/vazkii/quark/world/world/underground/UndergroundBiomeSandstone$1.class
+== /tmp/bc/vazkii/quark/world/world/underground/UndergroundBiomeLava.class
+       0: ldc           #98                 // String Lava Percentage Chance
+       3: ldc           #100                // String Lava Chance
+       5: ldc           #102                // String The chance lava will spawn
+      16: ldc           #112                // String Obsidian Percentage Chance
+      19: ldc           #114                // String Obsidian Chance
+      21: ldc           #116                // String The chance obsidian will spawn
+== /tmp/bc/vazkii/quark/world/world/underground/UndergroundBiomeGlowshroom.class
+       0: ldc           #96                 // String Mushroom Percentage Chance
+       3: ldc           #98                 // String Mushroom Chance
+       5: ldc           #100                // String The chance mushrooms will spawn
+== /tmp/bc/vazkii/quark/world/world/underground/UndergroundBiome$1.class
+== /tmp/bc/vazkii/quark/world/world/underground/UndergroundBiomeOvergrown.class
+       0: ldc           #124                // String Root Percentage Chance
+       3: ldc           #126                // String Root Chance
+       5: ldc           #128                // String The chance roots will spawn
+      16: ldc           #138                // String Dirt Percentage Chance
+      19: ldc           #126                // String Root Chance
+      21: ldc           #140                // String The chance dirt will spawn
+== /tmp/bc/vazkii/quark/world/world/underground/UndergroundBiomePrismarine.class
+       0: ldc           #115                // String Sea Lantern Percentage Chance
+       3: ldc           #117                // String Sea Lantern Chance
+       5: ldc           #119                // String The chance sea lanterns will spawn
+      16: ldc           #129                // String Water Percentage Chance
+      19: ldc           #131                // String Water Chance
+      21: ldc           #133                // String The chance water will spawn
+      35: ldc           #143                // String Spawn Elder Prismarine
+      39: ldc           #145                // String Set to false to spawn regular prismarine instead of elder prismarine (even if the block is enabled)
+== /tmp/bc/vazkii/quark/world/world/underground/UndergroundBiomeSandstone.class
+     258: ldc           #250                // String spawner
+     274: ldc_w         #256                // String chest
+       0: ldc_w         #339                // String Stalactite Percentage Chance
+       4: ldc_w         #341                // String Stalactite Chance
+       7: ldc_w         #343                // String The chance stalactites will spawn
+      19: ldc_w         #353                // String Chiseled Sandstone Percentage Chance
+      23: ldc_w         #355                // String Chiseled Sandstone Chance
+      26: ldc_w         #357                // String The chance chiseled sandstone will spawn
+      38: ldc_w         #359                // String Dead Bush Percentage Chance
+      42: ldc_w         #361                // String Dead Bush Chance
+      45: ldc_w         #363                // String The chance dead bushes will spawn
+      60: ldc_w         #373                // String Enable Sand Floors
+      65: ldc_w         #375                // String
+      77: ldc_w         #383                // String Allow in Mesa biomes
+      82: ldc_w         #375                // String
+       4: ldc_w         #390                // String quark
+       7: ldc_w         #392                // String husk_grave
+== /tmp/bc/vazkii/quark/world/world/UndergroundBiomeGenerator$UndergroundBiomeGenerationContext.class
+== /tmp/bc/vazkii/quark/world/world/UndergroundBiomeGenerator.class

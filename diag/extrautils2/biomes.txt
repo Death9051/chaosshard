@@ -1,0 +1,27 @@
+== /tmp/bc/com/rwtema/extrautils2/items/ItemSnowglobe$BiomeMarker.class
+== /tmp/bc/com/rwtema/extrautils2/items/ItemBiomeMarker$ItemBiomeHandler.class
+== /tmp/bc/com/rwtema/extrautils2/items/ItemBiomeMarker$ItemBiomeHandler$1.class
+      44: ldc           #60                 // String
+== /tmp/bc/com/rwtema/extrautils2/items/ItemBiomeMarker$1.class
+== /tmp/bc/com/rwtema/extrautils2/items/ItemBiomeMarker.class
+      19: ldc           #42                 // String Biome
+      39: ldc           #42                 // String Biome
+      35: ldc           #94                 // String  is not registered
+      51: ldc           #42                 // String Biome
+       7: ldc           #174                // String biome_marker
+      12: ldc           #176                // String biome_marker_active
+      17: ldc           #178                // String biome_marker_active_0
+      22: ldc           #180                // String biome_marker_active_1
+      27: ldc           #182                // String biome_marker_active_2
+      32: ldc           #184                // String biome_marker_active_3
+      39: ldc           #42                 // String Biome
+      14: ldc           #174                // String biome_marker
+      52: ldc           #176                // String biome_marker_active
+      55: ldc           #178                // String biome_marker_active_0
+      58: ldc           #180                // String biome_marker_active_1
+      61: ldc           #182                // String biome_marker_active_2
+      64: ldc           #184                // String biome_marker_active_3
+       0: ldc           #174                // String biome_marker
+== /tmp/bc/com/rwtema/extrautils2/biome/BiomeManip.class
+== /tmp/bc/com/rwtema/extrautils2/biome/BiomeManip$PacketBiomeChange$1.class
+== /tmp/bc/com/rwtema/extrautils2/biome/BiomeManip$PacketBiomeChange.class
