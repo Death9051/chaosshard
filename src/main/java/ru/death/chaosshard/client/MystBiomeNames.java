@@ -16,9 +16,14 @@ import java.util.Collection;
 import java.util.Locale;
 
 /**
- * Страницы Mystcraft с биомом подписаны «Биом (Extreme Hills)»: в скобках Mystcraft ставит внутреннее имя биома, а оно в
- * 1.12 есть только по-английски. Здесь подпись собирается заново из нашего перевода имени биома.
- * <p>
+ * Подписи страниц Mystcraft по-русски.
+ * <ul>
+ * <li>Mystcraft переводит подпись страницы один раз и запоминает её навсегда. Если это случилось раньше, чем загрузился
+ * русский язык, страница так и остаётся с английским названием («Iron Ore Block»). Поэтому после каждой загрузки
+ * языка и при входе в мир запомненные подписи сбрасываются, и Mystcraft переводит их заново.</li>
+ * <li>Страницы с биомом подписаны «Биом (Extreme Hills)»: в скобках Mystcraft ставит внутреннее имя биома, а оно в
+ * 1.12 есть только по-английски. Такая подпись собирается из нашего перевода имени биома.</li>
+ * </ul>
  * Только клиент и только текст: страница по-прежнему опознаётся по номеру биома, сохранения не меняются. Перевод
  * берётся по ключу {@code chaosshard.biome.<мод>.<биом>} (а если такого нет — по английскому имени
  * {@code chaosshard.biome.name.<имя>}); без перевода подпись остаётся как в Mystcraft. Пересчитывается при каждой
@@ -41,12 +46,21 @@ public final class MystBiomeNames implements IResourceManagerReloadListener {
         }
         MystBiomeNames l = new MystBiomeNames();
         ((IReloadableResourceManager) Minecraft.getMinecraft().getResourceManager()).registerReloadListener(l);
+        net.minecraftforge.common.MinecraftForge.EVENT_BUS.register(l);
         apply();
     }
 
     @Override
     public void onResourceManagerReload(IResourceManager manager) {
         apply();
+    }
+
+    /** При входе в мир — ещё раз: на случай, если язык догрузился без перезагрузки ресурсов. */
+    @net.minecraftforge.fml.common.eventhandler.SubscribeEvent
+    public void onJoin(net.minecraftforge.event.entity.EntityJoinWorldEvent event) {
+        if (event.getWorld().isRemote && event.getEntity() == Minecraft.getMinecraft().player) {
+            apply();
+        }
     }
 
     /** Ключ перевода биома по имени в реестре. */
@@ -75,12 +89,17 @@ public final class MystBiomeNames implements IResourceManagerReloadListener {
             Class<?> symbolBiome = Class.forName(SYMBOL_BIOME);
             Field biomeField = symbolBiome.getDeclaredField("biome");
             biomeField.setAccessible(true);
-            Field nameField = Class.forName(SYMBOL_BASE).getDeclaredField("localizedName");
+            Field nameField = Class.forName(SYMBOL_BASE).getDeclaredField("localizedName");   // кэш подписи
             nameField.setAccessible(true);
+            Class<?> symbolBase = Class.forName(SYMBOL_BASE);
             Method all = manager.getMethod("getAgeSymbols");
             int n = 0;
             for (Object s : (Collection<?>) all.invoke(null)) {
+                if (!symbolBase.isInstance(s)) {
+                    continue;
+                }
                 if (!symbolBiome.isInstance(s)) {
+                    nameField.set(s, null);   // переведётся заново на текущем языке
                     continue;
                 }
                 Object b = biomeField.get(s);
