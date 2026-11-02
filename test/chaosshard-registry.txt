@@ -23,7 +23,6 @@ block ancientwarfare:research_station
 tile ancientwarfare:engineering_station_tile
 tile ancientwarfare:research_station_tile
 === ancientwarfareautomation
-item ancientwarfareautomation:worksite_upgrade | 0=item.worksite_upgrade.0 | 1=item.worksite_upgrade.1 | 2=item.worksite_upgrade.2 | 3=item.worksite_upgrade.3 | 4=item.worksite_upgrade.4 | 5=item.worksite_upgrade.5 | 6=item.worksite_upgrade.6 | 7=item.worksite_upgrade.7 | 8=item.worksite_upgrade.8 | 9=item.worksite_upgrade.9 | 10=item.worksite_upgrade.10
 item ancientwarfareautomation:quarry
 item ancientwarfareautomation:tree_farm
 item ancientwarfareautomation:crop_farm
@@ -50,6 +49,7 @@ item ancientwarfareautomation:windmill_blade
 item ancientwarfareautomation:windmill_generator
 item ancientwarfareautomation:chunk_loader_simple
 item ancientwarfareautomation:chunk_loader_deluxe
+item ancientwarfareautomation:worksite_upgrade | 0=item.worksite_upgrade.0 | 1=item.worksite_upgrade.1 | 2=item.worksite_upgrade.2 | 3=item.worksite_upgrade.3 | 4=item.worksite_upgrade.4 | 5=item.worksite_upgrade.5 | 6=item.worksite_upgrade.6 | 7=item.worksite_upgrade.7 | 8=item.worksite_upgrade.8 | 9=item.worksite_upgrade.9 | 10=item.worksite_upgrade.10
 block ancientwarfareautomation:quarry
 block ancientwarfareautomation:tree_farm
 block ancientwarfareautomation:crop_farm
@@ -113,6 +113,7 @@ tile ancientwarfareautomation:windmill_generator_tile
 tile ancientwarfareautomation:chunk_loader_simple_tile
 tile ancientwarfareautomation:chunk_loader_deluxe_tile
 === ancientwarfarenpc
+item ancientwarfarenpc:town_hall
 item ancientwarfarenpc:wooden_command_baton
 item ancientwarfarenpc:stone_command_baton
 item ancientwarfarenpc:iron_command_baton
@@ -171,7 +172,6 @@ item ancientwarfarenpc:iron_cleaver
 item ancientwarfarenpc:golden_cleaver
 item ancientwarfarenpc:diamond_cleaver
 item ancientwarfarenpc:obsidian_spear
-item ancientwarfarenpc:town_hall
 block ancientwarfarenpc:town_hall
 entity ancientwarfarenpc:aw_npc_combat
 entity ancientwarfarenpc:aw_npc_worker
@@ -4947,6 +4947,14 @@ item waystones:warp_stone
 block waystones:waystone
 tile waystones:waystone
 === xreliquary
+item xreliquary:altar
+item xreliquary:apothecary_cauldron
+item xreliquary:apothecary_mortar
+item xreliquary:fertile_lilypad
+item xreliquary:interdiction_torch
+item xreliquary:wraith_node
+item xreliquary:pedestal | 0=tile.pedestal | 1=tile.pedestal | 2=tile.pedestal | 3=tile.pedestal | 4=tile.pedestal | 5=tile.pedestal | 6=tile.pedestal | 7=tile.pedestal | 8=tile.pedestal | 9=tile.pedestal | 10=tile.pedestal | 11=tile.pedestal | 12=tile.pedestal | 13=tile.pedestal | 14=tile.pedestal | 15=tile.pedestal
+item xreliquary:pedestal_passive | 0=tile.pedestal_passive | 1=tile.pedestal_passive | 2=tile.pedestal_passive | 3=tile.pedestal_passive | 4=tile.pedestal_passive | 5=tile.pedestal_passive | 6=tile.pedestal_passive | 7=tile.pedestal_passive | 8=tile.pedestal_passive | 9=tile.pedestal_passive | 10=tile.pedestal_passive | 11=tile.pedestal_passive | 12=tile.pedestal_passive | 13=tile.pedestal_passive | 14=tile.pedestal_passive | 15=tile.pedestal_passive
 item xreliquary:alkahestry_tome
 item xreliquary:mob_ingredient | 0=item.mob_ingredient_0 | 1=item.mob_ingredient_1 | 2=item.mob_ingredient_2 | 3=item.mob_ingredient_3 | 4=item.mob_ingredient_4 | 5=item.mob_ingredient_5 | 6=item.mob_ingredient_6 | 7=item.mob_ingredient_7 | 8=item.mob_ingredient_8 | 9=item.mob_ingredient_9 | 10=item.mob_ingredient_10 | 11=item.mob_ingredient_11 | 12=item.mob_ingredient_12 | 13=item.mob_ingredient_13 | 14=item.mob_ingredient_14 | 15=item.mob_ingredient_15 | 16=item.mob_ingredient_16
 item xreliquary:mercy_cross
@@ -4994,14 +5002,6 @@ item xreliquary:fertile_potion
 item xreliquary:potion_essence | 0=item.potion_essence | 0=item.potion_essence | 0=item.potion_essence | 0=item.potion_essence | 0=item.potion_essence | 0=item.potion_essence | 0=item.potion_essence | 0=item.potion_essence | 0=item.potion_essence | 0=item.potion_essence | 0=item.potion_essence | 0=item.potion_essence | 0=item.potion_essence | 0=item.potion_essence | 0=item.potion_essence | 0=item.potion_essence | 0=item.potion_essence | 0=item.potion_essence | 0=item.potion_essence | 0=item.potion_essence | 0=item.potion_essence | 0=item.potion_essence | 0=item.potion_essence | 0=item.potion_essence | 0=item.potion_essence | 0=item.potion_essence | 0=item.potion_essence | 0=item.potion_essence | 0=item.potion_essence | 0=item.potion_essence | 0=item.potion_essence | 0=item.potion_essence | 0=item.potion_essence | 0=item.potion_essence | 0=item.potion_essence | 0=item.potion_essence | 0=item.potion_essence | 0=item.potion_essence | 0=item.potion_essence | 0=item.potion_essence | 0=item.potion_essence | 0=item.potion_essence | 0=item.potion_essence | 0=item.potion_essence | 0=item.potion_essence | 0=item.potion_essence | 0=item.potion_essence | 0=item.potion_essence
 item xreliquary:potion | 0=item.potion_empty | 0=item.potion | 0=item.potion | 0=item.potion | 0=item.potion | 0=item.potion | 0=item.potion | 0=item.potion | 0=item.potion | 0=item.potion | 0=item.potion | 0=item.potion | 0=item.potion | 0=item.potion | 0=item.potion | 0=item.potion | 0=item.potion | 0=item.potion | 0=item.potion | 0=item.potion | 0=item.potion | 0=item.potion | 0=item.potion | 0=item.potion | 0=item.potion | 0=item.potion | 0=item.potion | 0=item.potion | 0=item.potion | 0=item.potion | 0=item.potion | 0=item.potion | 0=item.potion | 0=item.potion | 0=item.potion | 0=item.potion | 0=item.potion | 0=item.potion | 0=item.potion | 0=item.potion | 0=item.potion | 0=item.potion | 0=item.potion | 0=item.potion | 0=item.potion | 0=item.potion | 0=item.potion | 0=item.potion | 0=item.potion | 0=item.potion_splash | 0=item.potion_splash | 0=item.potion_splash | 0=item.potion_splash | 0=item.potion_splash | 0=item.potion_splash | 0=item.potion_splash | 0=item.potion_splash | 0=item.potion_splash | 0=item.potion_splash | 0=item.potion_splash | 0=item.potion_splash | 0=item.potion_splash | 0=item.potion_splash | 0=item.potion_splash | 0=item.potion_splash | 0=item.potion_splash | 0=item.potion_splash | 0=item.potion_splash | 0=item.potion_splash | 0=item.potion_splash | 0=item.potion_splash | 0=item.potion_splash | 0=item.potion_splash | 0=item.potion_splash | 0=item.potion_splash | 0=item.potion_splash | 0=item.potion_splash | 0=item.potion_splash | 0=item.potion_splash | 0=item.potion_splash | 0=item.potion_splash | 0=item.potion_splash | 0=item.potion_splash | 0=item.potion_splash | 0=item.potion_splash | 0=item.potion_splash | 0=item.potion_splash | 0=item.potion_splash | 0=item.potion_splash | 0=item.potion_splash | 0=item.potion_splash | 0=item.potion_splash | 0=item.potion_splash | 0=item.potion_splash | 0=item.potion_splash | 0=item.potion_splash | 0=item.potion_splash | 0=item.potion_lingering | 0=item.potion_lingering | 0=item.potion_lingering | 0=item.potion_lingering | 0=item.potion_lingering | 0=item.potion_lingering | 0=item.potion_lingering | 0=item.potion_lingering | 0=item.potion_lingering | 0=item.potion_lingering | 0=item.potion_lingering | 0=item.potion_lingering | 0=item.potion_lingering | 0=item.potion_lingering | 0=item.potion_lingering | 0=item.potion_lingering | 0=item.potion_lingering | 0=item.potion_lingering | 0=item.potion_lingering | 0=item.potion_lingering | 0=item.potion_lingering | 0=item.potion_lingering | 0=item.potion_lingering | 0=item.potion_lingering | 0=item.potion_lingering | 0=item.potion_lingering | 0=item.potion_lingering | 0=item.potion_lingering | 0=item.potion_lingering | 0=item.potion_lingering | 0=item.potion_lingering | 0=item.potion_lingering | 0=item.potion_lingering | 0=item.potion_lingering | 0=item.potion_lingering | 0=item.potion_lingering | 0=item.potion_lingering | 0=item.potion_lingering | 0=item.potion_lingering | 0=item.potion_lingering | 0=item.potion_lingering | 0=item.potion_lingering | 0=item.potion_lingering | 0=item.potion_lingering | 0=item.potion_lingering | 0=item.potion_lingering | 0=item.potion_lingering | 0=item.potion_lingering
 item xreliquary:tipped_arrow
-item xreliquary:altar
-item xreliquary:apothecary_cauldron
-item xreliquary:apothecary_mortar
-item xreliquary:fertile_lilypad
-item xreliquary:interdiction_torch
-item xreliquary:wraith_node
-item xreliquary:pedestal | 0=tile.pedestal | 1=tile.pedestal | 2=tile.pedestal | 3=tile.pedestal | 4=tile.pedestal | 5=tile.pedestal | 6=tile.pedestal | 7=tile.pedestal | 8=tile.pedestal | 9=tile.pedestal | 10=tile.pedestal | 11=tile.pedestal | 12=tile.pedestal | 13=tile.pedestal | 14=tile.pedestal | 15=tile.pedestal
-item xreliquary:pedestal_passive | 0=tile.pedestal_passive | 1=tile.pedestal_passive | 2=tile.pedestal_passive | 3=tile.pedestal_passive | 4=tile.pedestal_passive | 5=tile.pedestal_passive | 6=tile.pedestal_passive | 7=tile.pedestal_passive | 8=tile.pedestal_passive | 9=tile.pedestal_passive | 10=tile.pedestal_passive | 11=tile.pedestal_passive | 12=tile.pedestal_passive | 13=tile.pedestal_passive | 14=tile.pedestal_passive | 15=tile.pedestal_passive
 block xreliquary:altar
 block xreliquary:apothecary_cauldron
 block xreliquary:apothecary_mortar
