@@ -116,6 +116,17 @@ public final class TinkersCompat {
         oreCasting("Starlight", ru.death.chaosshard.init.ModItems.STARLIGHT_INGOT, moltenStar);
         alloy(moltenBlood, "platinum", 144, "evilcraftblood", 500);
         alloy(moltenStar, "starmetal", 144, "astralsorcery.liquidstarlight", 250);
+        // детали в формы: Tinkers делает это сам только для своих металлов — для наших надо попросить
+        for (Material m : new Material[]{chaos, crystal, blood, star}) {
+            if (m != null && m.isCastable()) {
+                slimeknights.tconstruct.smeltery.TinkerSmeltery.registerToolpartMeltingCasting(m);
+            }
+        }
+    }
+
+    /** Для автотеста: материалы Хаоса, которые льются в формы. */
+    public static Material[] castable() {
+        return new Material[]{chaos, crystal, blood, star};
     }
 
     private static void oreCasting(String ore, Item ingot, net.minecraftforge.fluids.Fluid fluid) {

@@ -3540,6 +3540,19 @@ public final class AutoTest {
         });
 
         if (Loader.isModLoaded("tconstruct")) {
+            step("металлы Хаоса льются в формы деталей", () -> {
+                for (slimeknights.tconstruct.library.materials.Material m : ru.death.chaosshard.compat.tinkers.TinkersCompat.castable()) {
+                    if (m == null) continue;
+                    int n = 0;
+                    for (slimeknights.tconstruct.library.smeltery.ICastingRecipe r : slimeknights.tconstruct.library.TinkerRegistry.getAllTableCastingRecipes()) {
+                        if (r instanceof slimeknights.tconstruct.library.smeltery.CastingRecipe) {
+                            slimeknights.tconstruct.library.smeltery.CastingRecipe c = (slimeknights.tconstruct.library.smeltery.CastingRecipe) r;
+                            if (c.cast != null && c.getFluid() != null && c.getFluid().getFluid() == m.getFluid()) n++;
+                        }
+                    }
+                    check(n >= 10, m.getIdentifier() + ": отливок в формы " + n);
+                }
+            });
             step("материалы Хаоса: уровни и модификаторы заклинаний", () -> {
             ru.death.chaosshard.spell.SpellHeat.set(me, 0, 0);   // разогрев не должен вмешиваться
                 java.util.List<slimeknights.tconstruct.library.materials.Material> mats = java.util.Arrays.asList(
