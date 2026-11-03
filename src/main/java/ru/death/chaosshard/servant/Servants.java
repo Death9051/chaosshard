@@ -273,6 +273,9 @@ public class Servants {
         if (m instanceof EntityChaosBeast.Hare || m instanceof EntityChaosBeast.Cat) {
             // заяц и кошка не дерутся: идут за хозяином, а если ранят — убегают
             m.tasks.addTask(1, new net.minecraft.entity.ai.EntityAIPanic(m, 1.4D));
+            if (m instanceof EntityChaosBeast.Cat) {
+                m.tasks.addTask(3, new EntityChaosBeast.Cat.Deliver((EntityChaosBeast.Cat) m));   // несёт мне добычу
+            }
             m.tasks.addTask(4, new FollowBeast(m));
             m.tasks.addTask(6, new EntityAIWanderAvoidWater(m, 0.8D));
             m.tasks.addTask(7, new EntityAIWatchClosest(m, EntityPlayer.class, 8.0F));

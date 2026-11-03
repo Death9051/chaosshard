@@ -181,7 +181,14 @@ public class ModelChaosHusk extends ModelBiped {
     }
 
     @Override
-    public void setRotationAngles(float limbSwing, float limbSwingAmount, float age, float netHeadYaw, float headPitch, float scale, Entity entity) {
+    public void setRotationAngles(float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale, Entity entity) {
+        // у каждого Хаска свой такт: сдвиг фазы и чуть иной темп — иначе те, что появились вместе, дёргаются в унисон
+        float age = ageInTicks;
+        if (entity != null) {
+            int h = entity.getUniqueID().hashCode();
+            float u = (h & 0xFFFF) / 65536.0F, v = ((h >>> 16) & 0xFFFF) / 65536.0F;
+            age = ageInTicks * (0.85F + 0.3F * v) + u * 2000.0F;
+        }
         pose(torso, 0);
         pose(head, 1);
         pose(jaw, 2);

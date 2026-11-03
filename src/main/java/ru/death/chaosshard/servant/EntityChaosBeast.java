@@ -459,13 +459,114 @@ public abstract class EntityChaosBeast extends EntityCreature {
             return false;
         }
 
+        /** Добыча не падает сама: Кошка берёт её и несёт мне (см. {@link Deliver}). */
         private void drop(EntityPlayer o, ItemStack s) {
             if (s.isEmpty()) {
                 return;
             }
-            EntityItem it = new EntityItem(world, o.posX, o.posY + 0.3, o.posZ, s);
-            it.setPickupDelay(10);
-            world.spawnEntity(it);
+            Entry e = Beasts.entry(this);
+            if (e == null) {
+                ItemHandlerHelper.giveItemToPlayer(o, s);
+                return;
+            }
+            for (ItemStack c : e.carry) {
+                if (ItemHandlerHelper.canItemStacksStack(c, s) && c.getCount() < c.getMaxStackSize()) {
+                    int n = Math.min(s.getCount(), c.getMaxStackSize() - c.getCount());
+                    c.grow(n);
+                    s.shrink(n);
+                    if (s.isEmpty()) {
+                        break;
+                    }
+                }
+            }
+            if (!s.isEmpty()) {
+                e.carry.add(s.copy());
+            }
+            // больше 9 стопок не унести — лишнее отдаётся сразу
+            while (e.carry.size() > 9) {
+                ItemHandlerHelper.giveItemToPlayer(o, e.carry.remove(0));
+            }
+            Beasts.changed(world, o.getUniqueID());
+        }
+
+        /** Несёт ли Кошка что-нибудь. */
+        public boolean carrying() {
+            Entry e = Beasts.entry(this);
+            return e != null && !e.carry.isEmpty();
+        }
+
+        /** Отдать всё, что несёт, в руки хозяину. Сколько стопок отдано. */
+        public int handOver(EntityPlayer o) {
+            Entry e = Beasts.entry(this);
+            if (e == null || e.carry.isEmpty()) {
+                return 0;
+            }
+            int n = e.carry.size();
+            for (ItemStack s : e.carry) {
+                ItemHandlerHelper.giveItemToPlayer(o, s.copy());
+            }
+            e.carry.clear();
+            Beasts.changed(world, o.getUniqueID());
+            ws().spawnParticle(EnumParticleTypes.HEART, posX, posY + 0.8, posZ, 3, 0.2, 0.2, 0.2, 0.0);
+            world.playSound(null, getPosition(), SoundEvents.ENTITY_CAT_PURREOW, SoundCategory.NEUTRAL, 0.7F, 1.1F);
+            return n;
+        }
+
+        /**
+         * Кошка с добычей подходит ко мне и отдаёт её в руки. Не дошла за 30 секунд (застряла, я убежал) — отдаёт всё равно.
+         * Несомое хранится в записи зверя, а не в самой кошке: не теряется при переходе между мирами и не двоится.
+         */
+        static class Deliver extends net.minecraft.entity.ai.EntityAIBase {
+            private final Cat cat;
+            private int repath, time;
+
+            Deliver(Cat cat) {
+                this.cat = cat;
+                setMutexBits(3);
+            }
+
+            private EntityPlayer owner() {
+                EntityPlayer o = Servants.owner(cat);
+                return o != null && o.world == cat.world && !o.isSpectator() && cat.getDistanceSq(o) < 48 * 48 ? o : null;
+            }
+
+            @Override
+            public boolean shouldExecute() {
+                return cat.ticksExisted % 10 == 0 && cat.carrying() && owner() != null;
+            }
+
+            @Override
+            public boolean shouldContinueExecuting() {
+                return cat.carrying() && owner() != null;
+            }
+
+            @Override
+            public void startExecuting() {
+                repath = 0;
+                time = 0;
+            }
+
+            @Override
+            public void resetTask() {
+                cat.getNavigator().clearPath();
+            }
+
+            @Override
+            public void updateTask() {
+                EntityPlayer o = owner();
+                if (o == null) {
+                    return;
+                }
+                cat.getLookHelper().setLookPositionWithEntity(o, 30.0F, 30.0F);
+                if (cat.getDistanceSq(o) < 2.2 * 2.2 || ++time > 600) {
+                    cat.handOver(o);
+                    return;
+                }
+                if (--repath <= 0) {
+                    repath = 10;
+                    cat.getNavigator().tryMoveToEntityLiving(o, 1.3);
+                }
+            }
         }
 
         /** Еда по уровню: от сырой рыбы до Улова Хаоса. */

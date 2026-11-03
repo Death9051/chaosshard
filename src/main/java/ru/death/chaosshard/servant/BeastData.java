@@ -69,6 +69,8 @@ public class BeastData extends WorldSavedData {
         public String name = "";
         public final List<ItemStack> bag = new ArrayList<>();
         public final List<ItemStack> stash = new ArrayList<>();
+        /** Что Кошка несёт мне прямо сейчас (еда, улов, подарки): отдаст, когда подойдёт. */
+        public final List<ItemStack> carry = new ArrayList<>();
 
         public int level() {
             return levelOf(xp, ascended);
@@ -102,6 +104,9 @@ public class BeastData extends WorldSavedData {
             t.setString("name", name);
             t.setTag("bag", list(bag));
             t.setTag("stash", list(stash));
+            if (!carry.isEmpty()) {
+                t.setTag("carry", list(carry));
+            }
             return t;
         }
 
@@ -118,6 +123,7 @@ public class BeastData extends WorldSavedData {
             name = t.getString("name");
             unlist(t.getTagList("bag", 10), bag);
             unlist(t.getTagList("stash", 10), stash);
+            unlist(t.getTagList("carry", 10), carry);
         }
 
         /** Только то, что нужно окну Гримуара. */
