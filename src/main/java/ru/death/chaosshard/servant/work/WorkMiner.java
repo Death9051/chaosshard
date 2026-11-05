@@ -125,6 +125,7 @@ public class WorkMiner extends EntityAIBase {
         // стоять у забоя: далеко — шагнуть по Нити на предыдущий (уже чистый) шаг
         BlockPos stand = stand(mine, job);
         if (stand != null && m.getDistanceSq(stand) > 25 && w.isAirBlock(stand) && w.isAirBlock(stand.up())) {
+            bridge(w, stand);
             WorkChunks.touch(m, stand);
             m.setPositionAndUpdate(stand.getX() + 0.5, stand.getY(), stand.getZ() + 0.5);
             ru.death.chaosshard.servant.Resync.later(m, 3);
@@ -154,6 +155,7 @@ public class WorkMiner extends EntityAIBase {
         }
         BlockPos feet = col.get(0);
         if (!blocked) {
+            bridge(w, feet);
             WorkChunks.touch(m, feet);
             m.setPositionAndUpdate(feet.getX() + 0.5, feet.getY(), feet.getZ() + 0.5);
             scan(w, col);
@@ -400,6 +402,24 @@ public class WorkMiner extends EntityAIBase {
                 || i == Item.getItemFromBlock(Blocks.GRAVEL) || i == Item.getItemFromBlock(Blocks.SAND)
                 || i == Item.getItemFromBlock(Blocks.NETHERRACK) || i == Item.getItemFromBlock(Blocks.STONE)
                 || i == Item.getItemFromBlock(Blocks.SANDSTONE) || i == Item.getItemFromBlock(Blocks.STONE_STAIRS);
+    }
+
+    /**
+     * Под ногами пусто (штрек вышел в пещеру или каньон), вода или лава — настелить булыжник, как настоящий рудокоп:
+     * штрек идёт дальше мостком, а сам он не падает.
+     */
+    private static void bridge(World w, BlockPos feet) {
+        BlockPos fl = feet.down();
+        if (fl.getY() < 1) {
+            return;
+        }
+        IBlockState fs = w.getBlockState(fl);
+        if (fs.isSideSolid(w, fl, EnumFacing.UP) || fs.getBlock() == Blocks.STONE_STAIRS) {
+            return;
+        }
+        if (fs.getBlock().isAir(fs, w, fl) || fs.getMaterial().isLiquid() || fs.getMaterial().isReplaceable()) {
+            w.setBlockState(fl, Blocks.COBBLESTONE.getDefaultState(), 3);
+        }
     }
 
     private void dig(World w, BlockPos p) {

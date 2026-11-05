@@ -115,6 +115,16 @@ public class ServantEffects {
         }
     }
 
+    /** Работник у сундука (Рудокоп в шахте, Лесоруб на дереве) не разбивается при падении. */
+    @SubscribeEvent
+    public void onFall(net.minecraftforge.event.entity.living.LivingFallEvent event) {
+        EntityLivingBase e = event.getEntityLiving();
+        if (!e.world.isRemote && Servants.isServant(e) && e.getEntityData().hasKey(Servants.TAG_CHEST)) {
+            event.setDamageMultiplier(0);
+            event.setCanceled(true);
+        }
+    }
+
     @SubscribeEvent
     public void onHurt(LivingHurtEvent event) {
         Entity src = event.getSource().getTrueSource();
