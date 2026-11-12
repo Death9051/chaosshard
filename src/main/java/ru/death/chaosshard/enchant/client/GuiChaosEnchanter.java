@@ -335,13 +335,31 @@ public class GuiChaosEnchanter extends GuiContainer {
         return Math.abs(f - Math.round(f)) < 0.05 ? String.valueOf(Math.round(f)) : String.format("%.1f", f);
     }
 
+    /**
+     * Описание зачарования. Ключи по общему для модов образцу {@code enchantment.<мод>.<имя>.desc} (так их пишут
+     * Apotheosis, Cyclic, CoFH, EvilCraft, Astral и другие, а для ванильных и прочих — наш перевод), затем
+     * {@code <ключ названия>.desc}.
+     */
+    public static String description(Enchantment e) {
+        if (e.getRegistryName() != null) {
+            String k = "enchantment." + e.getRegistryName().getNamespace() + "." + e.getRegistryName().getPath() + ".desc";
+            if (I18n.hasKey(k)) {
+                return I18n.format(k);
+            }
+        }
+        String k = e.getName() + ".desc";
+        return I18n.hasKey(k) ? I18n.format(k) : null;
+    }
+
     /** Характеристики зачарования для подсказки. */
     private List<String> stats(Enchantment e) {
         List<String> t = new ArrayList<>();
         t.add((e.isCurse() ? TextFormatting.RED : TextFormatting.LIGHT_PURPLE) + name(e));
-        String desc = e.getName() + ".desc";
-        if (I18n.hasKey(desc)) {
-            t.add(TextFormatting.GRAY + I18n.format(desc));
+        String desc = description(e);
+        if (desc != null) {
+            for (String line : fontRenderer.listFormattedStringToWidth(desc, 220)) {
+                t.add(TextFormatting.GRAY + line);
+            }
         }
         t.add(I18n.format("chaosshard.enchanter.stat.rarity",
                 I18n.format("chaosshard.enchanter.rarity." + e.getRarity().name().toLowerCase(java.util.Locale.ROOT))));

@@ -87,6 +87,13 @@ public class TileChaosEnchanter extends TileEntity implements ITickable {
         markDirty();
     }
 
+    /** Для самопроверки: довести изучение до последнего тика. */
+    public void debugRush() {
+        if (!research.isEmpty() && !done) {
+            progress = Math.max(progress, total - 1);
+        }
+    }
+
     public void cancel() {
         research = "";
         progress = 0;
@@ -104,9 +111,12 @@ public class TileChaosEnchanter extends TileEntity implements ITickable {
         if (++progress >= total) {
             done = true;
             markDirty();
-            EntityPlayerMP p = owner == null ? null : world.getMinecraftServer().getPlayerList().getPlayerByUUID(owner);
-            if (p != null) {
-                claim(p);
+            net.minecraft.entity.player.EntityPlayer p = owner == null ? null : world.getPlayerEntityByUUID(owner);
+            if (p == null && owner != null) {
+                p = world.getMinecraftServer().getPlayerList().getPlayerByUUID(owner);
+            }
+            if (p instanceof EntityPlayerMP) {
+                claim((EntityPlayerMP) p);
             }
         } else if (progress % 100 == 0) {
             markDirty();

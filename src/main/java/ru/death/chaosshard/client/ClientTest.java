@@ -296,10 +296,51 @@ public class ClientTest {
                 } else {
                     shot = "1" + t + "_anchor_tab" + t;
                     wait = 5;
-                    step = step == 28 ? 40 : step + 1;
+                    step = step == 28 ? 30 : step + 1;
                 }
                 return;
             }
+            case 30:
+                mc.displayGuiScreen(null);
+                onServer(this::buildEnchanter);
+                wait = 30;
+                step++;
+                return;
+            case 31: {
+                boolean ok = mc.currentScreen instanceof ru.death.chaosshard.enchant.client.GuiChaosEnchanter;
+                check(ok, "окно Стола Хаоса открылось: " + name(mc.currentScreen));
+                check(ru.death.chaosshard.enchant.EnchantKnowledge.client.contains("minecraft:sharpness"),
+                        "клиент знает изученную Остроту: " + ru.death.chaosshard.enchant.EnchantKnowledge.client);
+                List<String> missing = new ArrayList<>();
+                int all = 0;
+                for (net.minecraft.enchantment.Enchantment en : ForgeRegistries.ENCHANTMENTS) {
+                    all++;
+                    if (ru.death.chaosshard.enchant.client.GuiChaosEnchanter.description(en) == null) {
+                        missing.add(String.valueOf(en.getRegistryName()));
+                    }
+                }
+                check(missing.isEmpty(), "описания зачарований: " + (all - missing.size()) + " из " + all
+                        + (missing.isEmpty() ? "" : ", нет у " + missing));
+                String sharp = ru.death.chaosshard.enchant.client.GuiChaosEnchanter.description(net.minecraft.init.Enchantments.SHARPNESS);
+                line("  описание Остроты: " + sharp);
+                shot = "15_enchanter";
+                wait = 5;
+                step++;
+                return;
+            }
+            case 32:
+                if (mc.currentScreen instanceof ru.death.chaosshard.enchant.client.GuiChaosEnchanter) {
+                    ReflectionHelper.findField(ru.death.chaosshard.enchant.client.GuiChaosEnchanter.class, "tab").setInt(mc.currentScreen, 1);
+                    mc.currentScreen.initGui();
+                }
+                wait = 10;
+                step++;
+                return;
+            case 33:
+                shot = "16_enchanter_research";
+                wait = 5;
+                step = 40;
+                return;
             case 40: {
                 mc.displayGuiScreen(null);
                 GuiContainerCreative gui = new GuiContainerCreative(mc.player);
@@ -514,6 +555,37 @@ public class ClientTest {
         // окно с контейнером закрывается, если игрок дальше 8 блоков — встать рядом
         p.connection.setPlayerLocation(at.getX() + 0.5, at.getY() + 1, at.getZ() - 1.5, 0F, 30F);
         p.openGui(ChaosShard.INSTANCE, id, p.world, at.getX(), at.getY(), at.getZ());
+    }
+
+    /** Стол Хаоса в кольце полок: меч и лазурит внутри, Острота изучена. */
+    private void buildEnchanter(IntegratedServer s, WorldServer w, EntityPlayerMP p) {
+        BlockPos at = origin.add(-20, 0, -30);
+        for (BlockPos q : BlockPos.getAllInBox(at.add(-3, 0, -3), at.add(3, 3, 3))) {
+            w.setBlockToAir(q);
+        }
+        for (BlockPos q : BlockPos.getAllInBox(at.add(-3, -1, -3), at.add(3, -1, 3))) {
+            w.setBlockState(q, net.minecraft.init.Blocks.STONE.getDefaultState(), 2);
+        }
+        int shelves = 0;
+        for (int x = -2; x <= 2; x++) {
+            for (int z = -2; z <= 2; z++) {
+                if ((Math.abs(x) == 2 || Math.abs(z) == 2) && shelves < 16 && !(x == 0 && z == -2)) {
+                    w.setBlockState(at.add(x, 0, z), net.minecraft.init.Blocks.BOOKSHELF.getDefaultState(), 2);
+                    shelves++;
+                }
+            }
+        }
+        w.setBlockState(at, ModBlocks.CHAOS_ENCHANTER.getDefaultState(), 2);
+        ru.death.chaosshard.enchant.TileChaosEnchanter t = (ru.death.chaosshard.enchant.TileChaosEnchanter) w.getTileEntity(at);
+        t.inventory.setStackInSlot(0, new ItemStack(net.minecraft.init.Items.IRON_SWORD));
+        t.inventory.setStackInSlot(1, new ItemStack(net.minecraft.init.Items.DYE, 32, 4));
+        ru.death.chaosshard.enchant.EnchantKnowledge.learn(p, net.minecraft.init.Enchantments.SHARPNESS);
+        ru.death.chaosshard.enchant.EnchantKnowledge.learn(p, net.minecraft.init.Enchantments.UNBREAKING);
+        ru.death.chaosshard.enchant.EnchantKnowledge.learn(p, net.minecraft.init.Enchantments.SMITE);
+        float power = ru.death.chaosshard.enchant.EnchanterLogic.shelfPower(w, at);
+        mc.addScheduledTask(() -> check(power >= 15, "сила полок у Стола Хаоса: " + power));
+        p.connection.setPlayerLocation(at.getX() + 0.5, at.getY() + 1, at.getZ() - 1.5, 0F, 30F);
+        p.openGui(ChaosShard.INSTANCE, ru.death.chaosshard.heart.HeartGuiHandler.ENCHANTER, w, at.getX(), at.getY(), at.getZ());
     }
 
     /** Все блоки мода рядами перед игроком, существа — позади. */

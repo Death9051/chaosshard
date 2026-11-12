@@ -2878,6 +2878,116 @@ public final class AutoTest {
             });
         }
 
+        section("Стол Хаоса");
+        final BlockPos[] enchAt = new BlockPos[1];
+        final ru.death.chaosshard.enchant.ContainerChaosEnchanter[] enchC = new ru.death.chaosshard.enchant.ContainerChaosEnchanter[1];
+        step("стол в кольце из 15 полок", () -> {
+            BlockPos at = base.add(30, 1, -30);
+            enchAt[0] = at;
+            for (BlockPos q : BlockPos.getAllInBox(at.add(-3, 0, -3), at.add(3, 2, 3))) ow.setBlockToAir(q);
+            for (BlockPos q : BlockPos.getAllInBox(at.add(-3, -1, -3), at.add(3, -1, 3))) ow.setBlockState(q, Blocks.STONE.getDefaultState(), 2);
+            for (int x = -2; x <= 2; x++) {
+                for (int z = -2; z <= 2; z++) {
+                    if ((Math.abs(x) == 2 || Math.abs(z) == 2) && !(x == 0 && z == -2)) {
+                        ow.setBlockState(at.add(x, 0, z), Blocks.BOOKSHELF.getDefaultState(), 2);
+                    }
+                }
+            }
+            ow.setBlockState(at, ModBlocks.CHAOS_ENCHANTER.getDefaultState(), 3);
+            check(ow.getTileEntity(at) instanceof ru.death.chaosshard.enchant.TileChaosEnchanter, "плитка Стола Хаоса на месте");
+            float pw = ru.death.chaosshard.enchant.EnchanterLogic.shelfPower(ow, at);
+            check(Math.abs(pw - 15F) < 0.01F, "сила 15 обычных полок: " + pw);
+            check(ru.death.chaosshard.enchant.EnchanterLogic.maxLevelAt(net.minecraft.init.Enchantments.SHARPNESS,
+                    ru.death.chaosshard.enchant.EnchanterLogic.tablePower(pw)) >= 5, "15 полок открывают Остроту V");
+            line("  Apotheosis: " + ru.death.chaosshard.compat.ApotheosisEnchant.active()
+                    + ", максимум Остроты " + ru.death.chaosshard.enchant.EnchanterLogic.maxLevel(net.minecraft.init.Enchantments.SHARPNESS)
+                    + ", сила для V " + ru.death.chaosshard.enchant.EnchanterLogic.powerFor(net.minecraft.init.Enchantments.SHARPNESS, 5));
+            net.minecraft.block.Block hell = net.minecraft.block.Block.getBlockFromName("apotheosis:hellshelf");
+            if (hell != null) {
+                ow.setBlockState(at.add(2, 0, 2), hell.getDefaultState(), 2);
+                float ph = ru.death.chaosshard.enchant.EnchanterLogic.shelfPower(ow, at);
+                check(ph > pw, "Адская полка Apotheosis сильнее обычной: " + pw + " → " + ph);
+                ow.setBlockState(at.add(2, 0, 2), Blocks.BOOKSHELF.getDefaultState(), 2);
+            }
+        });
+        step("списать зачарования с предмета", () -> {
+            ru.death.chaosshard.enchant.TileChaosEnchanter t = (ru.death.chaosshard.enchant.TileChaosEnchanter) ow.getTileEntity(enchAt[0]);
+            me.setPosition(enchAt[0].getX() + 0.5, enchAt[0].getY() + 1, enchAt[0].getZ() - 1.5);
+            enchC[0] = new ru.death.chaosshard.enchant.ContainerChaosEnchanter(me, t);
+            net.minecraft.item.ItemStack book = new net.minecraft.item.ItemStack(net.minecraft.init.Items.ENCHANTED_BOOK);
+            net.minecraft.item.ItemEnchantedBook.addEnchantment(book, new net.minecraft.enchantment.EnchantmentData(net.minecraft.init.Enchantments.SHARPNESS, 2));
+            net.minecraft.item.ItemEnchantedBook.addEnchantment(book, new net.minecraft.enchantment.EnchantmentData(net.minecraft.init.Enchantments.MENDING, 1));
+            t.inventory.setStackInSlot(0, book);
+            enchC[0].act(me, ru.death.chaosshard.network.PacketEnchanterAction.LEARN_ITEM, "", 0);
+            check(ru.death.chaosshard.enchant.EnchantKnowledge.knows(me, net.minecraft.init.Enchantments.SHARPNESS)
+                    && ru.death.chaosshard.enchant.EnchantKnowledge.knows(me, net.minecraft.init.Enchantments.MENDING), "с книги изучены Острота и Починка");
+            check(t.inventory.getStackInSlot(0).getItem() == net.minecraft.init.Items.ENCHANTED_BOOK, "книга осталась в столе");
+        });
+        step("изучение за лазурит: Небесная кара", () -> {
+            ru.death.chaosshard.enchant.TileChaosEnchanter t = enchC[0].tile;
+            t.inventory.setStackInSlot(1, new net.minecraft.item.ItemStack(net.minecraft.init.Items.DYE, 64, 4));
+            int cost = ru.death.chaosshard.enchant.EnchanterLogic.researchLapis(net.minecraft.init.Enchantments.SMITE);
+            enchC[0].act(me, ru.death.chaosshard.network.PacketEnchanterAction.RESEARCH, "minecraft:smite", 0);
+            check(t.busy() && enchC[0].lapis() == 64 - cost, "изучение началось, лазурита списано " + (64 - enchC[0].lapis()) + " из " + cost);
+            enchC[0].act(me, ru.death.chaosshard.network.PacketEnchanterAction.RESEARCH, "minecraft:fortune", 0);
+            check("minecraft:smite".equals(t.research()), "второе изучение, пока стол занят, не начинается");
+            t.debugRush();
+        });
+        until("изучение закончилось и Кара изучена", () ->
+                ru.death.chaosshard.enchant.EnchantKnowledge.knows(me, net.minecraft.init.Enchantments.SMITE) && !enchC[0].tile.busy(), 60);
+        step("сокровищное тоже изучается за лазурит", () -> {
+            check(ru.death.chaosshard.enchant.EnchanterLogic.researchable(net.minecraft.init.Enchantments.FROST_WALKER), "Ледоход можно изучать");
+            int before = enchC[0].lapis();
+            enchC[0].act(me, ru.death.chaosshard.network.PacketEnchanterAction.RESEARCH, "minecraft:frost_walker", 0);
+            check(enchC[0].tile.busy() && before - enchC[0].lapis() == ru.death.chaosshard.enchant.EnchanterLogic.researchLapis(net.minecraft.init.Enchantments.FROST_WALKER),
+                    "Ледоход изучается, цена " + (before - enchC[0].lapis()));
+            enchC[0].act(me, ru.death.chaosshard.network.PacketEnchanterAction.CANCEL, "", 0);
+            check(!enchC[0].tile.busy() && enchC[0].lapis() == before, "отмена вернула лазурит: " + enchC[0].lapis() + " из " + before);
+        });
+        step("зачарование выбранного уровня", () -> {
+            ru.death.chaosshard.enchant.TileChaosEnchanter t = enchC[0].tile;
+            t.inventory.setStackInSlot(0, new net.minecraft.item.ItemStack(net.minecraft.init.Items.IRON_SWORD));
+            me.experienceLevel = 100;
+            int lap = enchC[0].lapis();
+            enchC[0].act(me, ru.death.chaosshard.network.PacketEnchanterAction.ENCHANT, "minecraft:sharpness", 5);
+            net.minecraft.item.ItemStack sw = t.inventory.getStackInSlot(0);
+            int xpCost = ru.death.chaosshard.enchant.EnchanterLogic.xpCost(net.minecraft.init.Enchantments.SHARPNESS, 5, 0, 0);
+            check(net.minecraft.enchantment.EnchantmentHelper.getEnchantmentLevel(net.minecraft.init.Enchantments.SHARPNESS, sw) == 5, "меч получил Остроту V");
+            check(me.experienceLevel == 100 - xpCost && lap - enchC[0].lapis() == 5, "цена: " + (100 - me.experienceLevel) + " ур. и " + (lap - enchC[0].lapis()) + " лаз.");
+            enchC[0].act(me, ru.death.chaosshard.network.PacketEnchanterAction.ENCHANT, "minecraft:smite", 1);
+            check(net.minecraft.enchantment.EnchantmentHelper.getEnchantmentLevel(net.minecraft.init.Enchantments.SMITE, sw) == 0
+                    && net.minecraft.enchantment.EnchantmentHelper.getEnchantmentLevel(net.minecraft.init.Enchantments.SMITE, t.inventory.getStackInSlot(0)) == 0,
+                    "Кару на меч с Остротой стол не кладёт");
+            enchC[0].act(me, ru.death.chaosshard.network.PacketEnchanterAction.ENCHANT, "minecraft:fortune", 1);
+            check(net.minecraft.enchantment.EnchantmentHelper.getEnchantmentLevel(net.minecraft.init.Enchantments.FORTUNE, t.inventory.getStackInSlot(0)) == 0,
+                    "неизученную Удачу стол не кладёт");
+            t.inventory.setStackInSlot(0, new net.minecraft.item.ItemStack(net.minecraft.init.Items.BOOK));
+            enchC[0].act(me, ru.death.chaosshard.network.PacketEnchanterAction.ENCHANT, "minecraft:mending", 1);
+            net.minecraft.item.ItemStack eb = t.inventory.getStackInSlot(0);
+            check(eb.getItem() == net.minecraft.init.Items.ENCHANTED_BOOK
+                    && net.minecraft.enchantment.EnchantmentHelper.getEnchantments(eb).getOrDefault(net.minecraft.init.Enchantments.MENDING, 0) == 1,
+                    "из книги вышла книга с Починкой");
+            me.experienceLevel = 0;
+        });
+        step("знания переживают смерть (сохраняемые данные игрока)", () -> {
+            check(me.getEntityData().getCompoundTag(net.minecraft.entity.player.EntityPlayer.PERSISTED_NBT_TAG)
+                    .getTagList("chaosshard_known_ench", 8).tagCount() >= 3, "знания лежат в сохраняемых данных");
+        });
+        step("описания зачарований (английские, на сервере)", () -> {
+            List<String> none = new ArrayList<>();
+            int all = 0;
+            for (net.minecraft.enchantment.Enchantment en : ForgeRegistries.ENCHANTMENTS) {
+                all++;
+                ResourceLocation id = en.getRegistryName();
+                String k1 = id == null ? "" : "enchantment." + id.getNamespace() + "." + id.getPath() + ".desc";
+                if (!net.minecraft.util.text.translation.I18n.canTranslate(k1) && !net.minecraft.util.text.translation.I18n.canTranslate(en.getName() + ".desc")) {
+                    none.add(String.valueOf(id));
+                }
+            }
+            line("  зачарований " + all + ", без описания на сервере " + none.size() + ": " + none);
+            ow.setBlockToAir(enchAt[0]);
+        });
+
         section("Техника: Скверный генератор, Индукция, гул машин");
         step("Сердце с «Индукцией» растёт быстрее, пока есть ток", () -> {
             BlockPos hp = base.add(-26, 1, -26);
