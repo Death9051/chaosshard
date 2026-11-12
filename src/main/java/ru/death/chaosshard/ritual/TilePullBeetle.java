@@ -48,7 +48,7 @@ public class TilePullBeetle extends TileEntity implements ITickable {
         return below == null ? null : below.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.UP);
     }
 
-    /** Жучка сломали: несвёрнутый опыт рассыпается сферами. */
+    /** Клеща сломали: несвёрнутый опыт рассыпается сферами. */
     public void releaseXp() {
         int left = xp;
         xp = 0;
