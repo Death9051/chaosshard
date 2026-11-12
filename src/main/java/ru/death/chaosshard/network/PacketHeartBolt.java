@@ -1,16 +1,19 @@
 package ru.death.chaosshard.network;
 
 import io.netty.buffer.ByteBuf;
+import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import ru.death.chaosshard.ChaosShard;
 
-/** Сервер → клиент: маленькая молния-дуга от Сердца к новому наросту. */
+/** Сервер → клиент: молния-дуга. Тонкая (Сердце, Якорь) или большая (Цепь Стрелы Хаоса). */
 public class PacketHeartBolt implements IMessage {
 
     public float x1, y1, z1, x2, y2, z2;
     public int color;
+    /** Большая молния: шире разброс, толще линия, живёт дольше, две ветки. */
+    public boolean big;
 
     public PacketHeartBolt() {
     }
@@ -25,6 +28,11 @@ public class PacketHeartBolt implements IMessage {
         this.color = color;
     }
 
+    public PacketHeartBolt(Vec3d a, Vec3d b, int color, boolean big) {
+        this(a.x, a.y, a.z, b.x, b.y, b.z, color);
+        this.big = big;
+    }
+
     @Override
     public void fromBytes(ByteBuf buf) {
         x1 = buf.readFloat();
@@ -34,6 +42,7 @@ public class PacketHeartBolt implements IMessage {
         y2 = buf.readFloat();
         z2 = buf.readFloat();
         color = buf.readInt();
+        big = buf.readBoolean();
     }
 
     @Override
@@ -45,6 +54,7 @@ public class PacketHeartBolt implements IMessage {
         buf.writeFloat(y2);
         buf.writeFloat(z2);
         buf.writeInt(color);
+        buf.writeBoolean(big);
     }
 
     public static class Handler implements IMessageHandler<PacketHeartBolt, IMessage> {

@@ -24,15 +24,17 @@ import java.util.Random;
  */
 public class HeartBolts {
 
-    private static final int LIFE = 10;
+    private static final int LIFE = 10, BIG_LIFE = 14;
     private static final List<Bolt> BOLTS = new ArrayList<>();
     private static final Random RAND = new Random();
 
     private static final class Bolt {
         final double[] a, b;
         final float r, g, bl;
+        final boolean big;
+        final int life;
         int age;
-        double[][] main, branch;
+        double[][] main, branch, branch2;
 
         Bolt(PacketHeartBolt p) {
             a = new double[]{p.x1, p.y1, p.z1};
@@ -40,18 +42,24 @@ public class HeartBolts {
             r = ((p.color >> 16) & 255) / 255F;
             g = ((p.color >> 8) & 255) / 255F;
             bl = (p.color & 255) / 255F;
+            big = p.big;
+            life = big ? BIG_LIFE : LIFE;
             reshape();
         }
 
         void reshape() {
             double len = Math.sqrt(sq(b[0] - a[0]) + sq(b[1] - a[1]) + sq(b[2] - a[2]));
-            main = path(a, b, Math.max(4, (int) (len * 3)), 0.18);
-            // короткое ответвление из середины
-            double[] mid = main[main.length / 2];
-            double[] end = {mid[0] + (RAND.nextDouble() - 0.5) * 0.9, mid[1] + (RAND.nextDouble() - 0.5) * 0.9,
-                    mid[2] + (RAND.nextDouble() - 0.5) * 0.9};
-            branch = path(mid, end, 3, 0.12);
+            main = path(a, b, Math.max(4, (int) (len * (big ? 2.2 : 3))), big ? 0.45 : 0.18);
+            // короткое ответвление из середины (у большой — ещё одно из первой трети)
+            branch = fork(main[main.length / 2], big ? 2.2 : 0.9, big ? 5 : 3, big ? 0.3 : 0.12);
+            branch2 = big ? fork(main[main.length / 3], 1.6, 4, 0.25) : null;
         }
+    }
+
+    private static double[][] fork(double[] from, double spread, int segs, double jitter) {
+        double[] end = {from[0] + (RAND.nextDouble() - 0.5) * spread, from[1] + (RAND.nextDouble() - 0.5) * spread,
+                from[2] + (RAND.nextDouble() - 0.5) * spread};
+        return path(from, end, segs, jitter);
     }
 
     private static double sq(double v) {
@@ -88,7 +96,7 @@ public class HeartBolts {
             Iterator<Bolt> it = BOLTS.iterator();
             while (it.hasNext()) {
                 Bolt b = it.next();
-                if (++b.age >= LIFE) {
+                if (++b.age >= b.life) {
                     it.remove();
                 } else if (b.age % 2 == 0) {
                     b.reshape();
@@ -123,19 +131,26 @@ public class HeartBolts {
             OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240F, 240F);
 
             for (Bolt b : BOLTS) {
-                float fade = 1F - (b.age + pt) / LIFE;
+                float fade = 1F - (b.age + pt) / b.life;
                 if (fade <= 0) {
                     continue;
                 }
+                float w = b.big ? 2F : 1F;
                 // ореол
-                GL11.glLineWidth(5F);
+                GL11.glLineWidth(5F * w);
                 strip(b.main, b.r, b.g, b.bl, 0.35F * fade);
-                GL11.glLineWidth(3F);
+                GL11.glLineWidth(3F * w);
                 strip(b.branch, b.r, b.g, b.bl, 0.25F * fade);
+                if (b.branch2 != null) {
+                    strip(b.branch2, b.r, b.g, b.bl, 0.25F * fade);
+                }
                 // яркая сердцевина
-                GL11.glLineWidth(1.5F);
+                GL11.glLineWidth(1.5F * w);
                 strip(b.main, 1F, 0.9F + 0.1F * b.g, 1F, 0.9F * fade);
                 strip(b.branch, 1F, 0.9F, 1F, 0.6F * fade);
+                if (b.branch2 != null) {
+                    strip(b.branch2, 1F, 0.9F, 1F, 0.5F * fade);
+                }
             }
 
             GL11.glLineWidth(1F);

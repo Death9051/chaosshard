@@ -2215,3 +2215,4 @@ chaosshard.anchor.gui.borrow2=Borrowed effects (slots: %s)
 chaosshard.anchor.gui.store_empty=No storage
 chaosshard.anchor.gui.seal_note=Put a seal into an open slot.
 chaosshard.anchor.gui.seal_note_ro=Not your Anchor: seals are view-only.
+entity.chaosshard.chaos_spear.name=Chaos Spear

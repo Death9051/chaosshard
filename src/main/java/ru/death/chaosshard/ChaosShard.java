@@ -96,6 +96,9 @@ public class ChaosShard {
                 ru.death.chaosshard.act5.EntityKing.class, "chaosshard.king", eid++, this, 96, 3, true, 0xe8c050, 0x9a1a22);
         net.minecraftforge.fml.common.registry.EntityRegistry.registerModEntity(new net.minecraft.util.ResourceLocation(Tags.MOD_ID, "archon"),
                 ru.death.chaosshard.act5.EntityArchon.class, "chaosshard.archon", eid++, this, 128, 3, true, 0xf4f2fa, 0x8a5ad8);
+        // Копьё Хаоса (Стрела Хаоса, ветка «Копьё»): снаряд, позицию шлём каждый тик
+        net.minecraftforge.fml.common.registry.EntityRegistry.registerModEntity(new net.minecraft.util.ResourceLocation(Tags.MOD_ID, "chaos_spear"),
+                ru.death.chaosshard.spell.EntityChaosSpear.class, "chaosshard.chaos_spear", eid++, this, 96, 1, true);
         MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.cutscene.CutsceneManager());
         MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.servant.Resync());
         MinecraftForge.EVENT_BUS.register(STRUCTURES);

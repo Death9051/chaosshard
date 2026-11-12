@@ -709,46 +709,41 @@ public final class SpellEffects {
     // ================================================================== Стрела Хаоса (боевое)
 
     /**
-     * База: удар по первой цели; по блоку — взрыв без разрушений.
-     * A «Цепь»: перескакивает на 3 цели (5 на 2-й; на 3-й урон не слабеет).
-     * B «Копьё»: пронзает всех на линии (дальше и сильнее на 2-й; на 3-й — поджигает и иссушает).
+     * База: мгновенный удар по первой цели под взглядом; по блоку — взрыв без разрушений. Свою свиту и игроков
+     * под прицелом пропускает (луч идёт дальше, к блоку).
+     * A «Цепь»: молния Хаоса бьёт цель и перескакивает на 3 врагов рядом (5 на 2-й; на 3-й урон не слабеет).
+     * B «Копьё»: летит настоящий снаряд, пронзает всех врагов на пути (дальше и сильнее на 2-й; на 3-й — поджигает и иссушает).
      */
     static boolean bolt(EntityPlayerMP p, EntityLivingBase target, BlockPos pos, Vec3d air) {
         Spell s = Spell.BOLT;
         WorldServer ws = (WorldServer) p.world;
         Vec3d start = p.getPositionEyes(1.0F);
         float dmg = SpellCaster.boltDamage(p);
-        p.world.playSound(null, p.getPosition(), SoundEvents.EVOCATION_ILLAGER_CAST_SPELL, SoundCategory.PLAYERS, 0.8F, 1.6F);
         if (SpellData.b(p, s, 1)) {
-            double r = range(p, s);
-            Vec3d look = p.getLookVec();
-            Vec3d end = start.add(look.x * r, look.y * r, look.z * r);
-            RayTraceResult wall = p.world.rayTraceBlocks(start, end, false, true, false);
-            if (wall != null && wall.typeOfHit == RayTraceResult.Type.BLOCK) {
-                end = wall.hitVec;
-            }
-            SpellCaster.beam(ws, start, end);
             if (SpellData.b(p, s, 2)) {
                 dmg *= 1.2F;
             }
-            int n = 0;
-            for (EntityLivingBase e : p.world.getEntitiesWithinAABB(EntityLivingBase.class, new AxisAlignedBB(start.x, start.y, start.z, end.x, end.y, end.z).grow(1),
-                    x -> x != p && x.isEntityAlive() && !Servants.isServantOf(x, p.getUniqueID()) && !(x instanceof EntityPlayer))) {
-                if (e.getEntityBoundingBox().grow(0.3).calculateIntercept(start, end) == null) {
-                    continue;
-                }
-                SpellCaster.hit(p, e, dmg);
-                if (SpellData.b(p, s, 3)) {
-                    e.setFire(5);
-                    e.addPotionEffect(new PotionEffect(MobEffects.WITHER, 80, 0));
-                }
-                n++;
-            }
+            p.world.playSound(null, p.getPosition(), SoundEvents.ENTITY_WITHER_SHOOT, SoundCategory.PLAYERS, 0.6F, 1.7F);
+            ws.spawnEntity(new EntityChaosSpear(ws, p, dmg, range(p, s), SpellData.b(p, s, 3)));
             return true;
+        }
+        if (target != null && (target instanceof EntityPlayer || Servants.isServantOf(target, p.getUniqueID()))) {
+            target = null;   // своих не бьём
         }
         Vec3d stop = target != null ? target.getPositionVector().add(0, target.height / 2, 0)
                 : pos != null ? new Vec3d(pos).add(0.5, 0.5, 0.5) : air;
-        SpellCaster.beam(ws, start, stop);
+        boolean chain = SpellData.a(p, s, 1);
+        if (chain) {
+            p.world.playSound(null, p.getPosition(), SoundEvents.ENTITY_LIGHTNING_IMPACT, SoundCategory.PLAYERS, 0.5F, 1.8F);
+            if (stop != null) {
+                SpellCaster.lightning(ws, start.add(0, -0.25, 0), stop);
+            }
+        } else {
+            p.world.playSound(null, p.getPosition(), SoundEvents.EVOCATION_ILLAGER_CAST_SPELL, SoundCategory.PLAYERS, 0.8F, 1.6F);
+            if (stop != null) {
+                SpellCaster.beam(ws, start, stop);
+            }
+        }
         if (target == null) {
             if (pos != null) {
                 SpellCaster.blast(p, stop, dmg);
@@ -756,7 +751,7 @@ public final class SpellEffects {
             return true;
         }
         SpellCaster.hit(p, target, dmg);
-        if (SpellData.a(p, s, 1)) {
+        if (chain) {
             int targets = SpellData.a(p, s, 2) ? 5 : 3;
             boolean keep = SpellData.a(p, s, 3);
             Set<EntityLivingBase> done = new HashSet<>();
@@ -781,7 +776,8 @@ public final class SpellEffects {
                 if (!keep) {
                     d *= 0.75F;
                 }
-                SpellCaster.beam(ws, from.getPositionVector().add(0, from.height / 2, 0), next.getPositionVector().add(0, next.height / 2, 0));
+                SpellCaster.lightning(ws, from.getPositionVector().add(0, from.height / 2, 0), next.getPositionVector().add(0, next.height / 2, 0));
+                p.world.playSound(null, next.posX, next.posY, next.posZ, SoundEvents.ENTITY_LIGHTNING_IMPACT, SoundCategory.PLAYERS, 0.4F, 2.0F);
                 SpellCaster.hit(p, next, d);
                 done.add(next);
                 last = next;

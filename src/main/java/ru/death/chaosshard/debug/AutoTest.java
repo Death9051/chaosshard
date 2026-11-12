@@ -3397,9 +3397,29 @@ public final class AutoTest {
             ow.spawnEntity(l2);
             ready.accept(B);
             ru.death.chaosshard.spell.SpellCaster.castAt(me, B, null, EnumFacing.UP, l1, null);
-            check(l1.getHealth() < l1.getMaxHealth() && l2.getHealth() < l2.getMaxHealth(), "Копьё пронзило обоих на линии");
+            int spears = 0, flown = 0;
+            for (Entity sp : new ArrayList<>(ow.loadedEntityList)) {
+                if (sp instanceof ru.death.chaosshard.spell.EntityChaosSpear) {
+                    spears++;
+                    for (int i = 0; i < 40 && !sp.isDead; i++, flown++) sp.onUpdate();
+                }
+            }
+            check(spears == 1, "Копьё вылетело снарядом: " + spears);
+            check(l1.getHealth() < l1.getMaxHealth() && l2.getHealth() < l2.getMaxHealth(), "Копьё пронзило обоих на линии (летело " + flown + " тиков)");
             l1.setDead();
             l2.setDead();
+            // Стрела без ветки: своего слугу под прицелом не трогает
+            ru.death.chaosshard.spell.SpellData.debugSet(me, B, 0, 0);
+            net.minecraft.entity.Entity own = Servants.summon(me, Servants.Kind.HUSK, o.add(0, 1, 4));
+            if (own instanceof EntityLivingBase) {
+                EntityLivingBase ol = (EntityLivingBase) own;
+                ol.setPosition(o.getX() + 0.5, o.getY() + 1, o.getZ() + 4.5);
+                float oh = ol.getHealth();
+                ready.accept(B);
+                ru.death.chaosshard.spell.SpellCaster.castAt(me, B, null, EnumFacing.UP, ol, null);
+                check(ol.getHealth() >= oh, "Стрела не ранит своего слугу под прицелом: " + oh + " → " + ol.getHealth());
+                own.setDead();
+            }
             // Стрела без ветки: взрыв по блоку
             ru.death.chaosshard.spell.SpellData.debugSet(me, B, 0, 0);
             net.minecraft.entity.monster.EntityZombie zb = new net.minecraft.entity.monster.EntityZombie(ow);

@@ -312,6 +312,14 @@ public final class SpellCaster {
         return n;
     }
 
+    /** Молния Хаоса между двумя точками (у всех, кто рядом) и искры на конце. */
+    static void lightning(WorldServer ws, Vec3d a, Vec3d b) {
+        Vec3d mid = a.add(b).scale(0.5);
+        ru.death.chaosshard.network.ChaosNetwork.CHANNEL.sendToAllAround(new ru.death.chaosshard.network.PacketHeartBolt(a, b, 0xB070FF, true),
+                new net.minecraftforge.fml.common.network.NetworkRegistry.TargetPoint(ws.provider.getDimension(), mid.x, mid.y, mid.z, 96));
+        ws.spawnParticle(EnumParticleTypes.FIREWORKS_SPARK, b.x, b.y, b.z, 8, 0.2, 0.2, 0.2, 0.05);
+    }
+
     static void beam(WorldServer ws, Vec3d a, Vec3d b) {
         Vec3d d = b.subtract(a);
         double len = d.length();
