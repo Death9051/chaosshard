@@ -68,7 +68,7 @@ public class ClientTest {
     private int step, wait, ticks;
     /** Снять экран после ближайшего кадра. */
     private String shot;
-    private BlockPos origin, heart, anchor;
+    private BlockPos origin, heart, anchor, enchanter;
     private final List<Entity> shown = new ArrayList<>();
 
     private void line(String s) {
@@ -304,7 +304,13 @@ public class ClientTest {
                 mc.displayGuiScreen(null);
                 onServer(this::buildEnchanter);
                 wait = 30;
-                step++;
+                step = 29;
+                return;
+            case 29:
+                // стол ставится тиком раньше: окно открывается, когда клиент уже получил блок с плиткой
+                onServer(() -> open(ru.death.chaosshard.heart.HeartGuiHandler.ENCHANTER, enchanter));
+                wait = 20;
+                step = 31;
                 return;
             case 31: {
                 boolean ok = mc.currentScreen instanceof ru.death.chaosshard.enchant.client.GuiChaosEnchanter;
@@ -584,8 +590,8 @@ public class ClientTest {
         ru.death.chaosshard.enchant.EnchantKnowledge.learn(p, net.minecraft.init.Enchantments.SMITE);
         float power = ru.death.chaosshard.enchant.EnchanterLogic.shelfPower(w, at);
         mc.addScheduledTask(() -> check(power >= 15, "сила полок у Стола Хаоса: " + power));
+        enchanter = at;
         p.connection.setPlayerLocation(at.getX() + 0.5, at.getY() + 1, at.getZ() - 1.5, 0F, 30F);
-        p.openGui(ChaosShard.INSTANCE, ru.death.chaosshard.heart.HeartGuiHandler.ENCHANTER, w, at.getX(), at.getY(), at.getZ());
     }
 
     /** Все блоки мода рядами перед игроком, существа — позади. */
