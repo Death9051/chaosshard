@@ -329,6 +329,12 @@ public class ClientTest {
                         + (missing.isEmpty() ? "" : ", нет у " + missing));
                 String sharp = ru.death.chaosshard.enchant.client.GuiChaosEnchanter.description(net.minecraft.init.Enchantments.SHARPNESS);
                 line("  описание Остроты: " + sharp);
+                if (ok) {
+                    java.lang.reflect.Method pick = ru.death.chaosshard.enchant.client.GuiChaosEnchanter.class
+                            .getDeclaredMethod("pick", net.minecraft.enchantment.Enchantment.class);
+                    pick.setAccessible(true);
+                    pick.invoke(mc.currentScreen, net.minecraft.init.Enchantments.SHARPNESS);
+                }
                 shot = "15_enchanter";
                 wait = 5;
                 step++;
@@ -338,6 +344,10 @@ public class ClientTest {
                 if (mc.currentScreen instanceof ru.death.chaosshard.enchant.client.GuiChaosEnchanter) {
                     ReflectionHelper.findField(ru.death.chaosshard.enchant.client.GuiChaosEnchanter.class, "tab").setInt(mc.currentScreen, 1);
                     mc.currentScreen.initGui();
+                    java.lang.reflect.Method pick = ru.death.chaosshard.enchant.client.GuiChaosEnchanter.class
+                            .getDeclaredMethod("pick", net.minecraft.enchantment.Enchantment.class);
+                    pick.setAccessible(true);
+                    pick.invoke(mc.currentScreen, net.minecraft.init.Enchantments.FORTUNE);
                 }
                 wait = 10;
                 step++;

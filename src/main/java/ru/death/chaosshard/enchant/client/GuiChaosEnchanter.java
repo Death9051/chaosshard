@@ -1,14 +1,19 @@
 package ru.death.chaosshard.enchant.client;
 
-import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.audio.PositionedSoundRecord;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.enchantment.Enchantment;
-import net.minecraft.inventory.Slot;
+import net.minecraft.init.Items;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
 import org.lwjgl.input.Mouse;
+import ru.death.chaosshard.Tags;
 import ru.death.chaosshard.enchant.ContainerChaosEnchanter;
 import ru.death.chaosshard.enchant.EnchantKnowledge;
 import ru.death.chaosshard.enchant.EnchanterLogic;
@@ -22,19 +27,41 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-/** Окно Стола Хаоса: вкладки «Зачарование» и «Изучение». */
+/**
+ * Окно Стола Хаоса в духе Гримуара: серебряная рамка, тёмный фиолет, золото для выбранного.
+ * <ul>
+ * <li>Вкладки сверху: активная сливается с окном, у неактивной — тёмный фон.</li>
+ * <li>Слева место предмета и лазурита, под ними шкала силы полок (золотая отметка — 15 обычных полок).</li>
+ * <li>Список: полоска слева — редкость, справа — что можно сделать (уровни, замок с нужной силой, цена изучения).</li>
+ * <li>Панель выбранного: название, описание, уровень стрелками, цена и кнопка. Если кнопка недоступна,
+ * на ней написано почему («Мало опыта», «Стол занят»…), а не просто серый цвет.</li>
+ * </ul>
+ * Текстуры: chaos_enchanter.png (фон) и chaos_enchanter_widgets.png (кнопки, вкладки, значки),
+ * рисует docs/sprites/stol_haosa_gui.py.
+ */
 public class GuiChaosEnchanter extends GuiContainer {
 
-    private static final int BG = 0xF0201028;
-    private static final int FRAME = 0xFF7A4FB0;
-    private static final int TEXT = 0xE0D8F0;
-    private static final int DIM = 0x8878A0;
-    private static final int ACCENT = 0xC890FF;
-    private static final int GOOD = 0x90E0A0;
-    private static final int BAD = 0xFF7070;
+    private static final ResourceLocation BG_TEX = new ResourceLocation(Tags.MOD_ID, "textures/gui/chaos_enchanter.png");
+    private static final ResourceLocation WD_TEX = new ResourceLocation(Tags.MOD_ID, "textures/gui/chaos_enchanter_widgets.png");
 
-    private static final int LIST_X = 32, LIST_Y = 18, LIST_W = 158, ROW = 11, ROWS = 8;
-    private static final int BTN_TAB0 = 0, BTN_TAB1 = 1, BTN_MINUS = 10, BTN_PLUS = 11, BTN_ACT = 12;
+    // цвета текста (контраст к фону ≥ 4.5:1)
+    private static final int TEXT = 0xECE6F8;
+    private static final int SOFT = 0xB9AED2;
+    private static final int DIM = 0x8C80A8;
+    private static final int ACCENT = 0xD7A6FF;
+    private static final int GOLD = 0xECB064;
+    private static final int GOOD = 0x8FE3A6;
+    private static final int BAD = 0xFF8080;
+    private static final int OFF = 0x6E6680;
+
+    // разметка (совпадает с текстурой)
+    private static final int LIST_X = 45, LIST_Y = 21, LIST_W = 160, ROW = 12, ROWS = 7;
+    private static final int DET_X = 45, DET_Y = 109, DET_W = 160;
+    private static final int BTN_X = 141, BTN_Y = 140, BTN_W = 62, BTN_H = 16;
+    private static final int GAUGE_X = 18, GAUGE_Y = 79, GAUGE_H = 56;
+    private static final int TAB_W = 92;
+    /** Шкала полна при силе стола 90 (30 силы полок); отметка на половине — 15 обычных полок. */
+    private static final float GAUGE_FULL = 90F;
 
     private final ContainerChaosEnchanter container;
     private int tab;
@@ -44,20 +71,16 @@ public class GuiChaosEnchanter extends GuiContainer {
     private float shelves;
     private int powerTick;
 
+    private enum Kind { READY, MAXED, LOCKED, CONFLICT, FROM_ITEM, RUNNING, RESEARCH }
+
     /** Строка списка. */
     private static final class Row {
         final Enchantment e;
-        final boolean usable;
-        final boolean fromItem;
-        final String right;
-        final int rightColor;
+        final Kind kind;
 
-        Row(Enchantment e, boolean usable, boolean fromItem, String right, int rightColor) {
+        Row(Enchantment e, Kind kind) {
             this.e = e;
-            this.usable = usable;
-            this.fromItem = fromItem;
-            this.right = right;
-            this.rightColor = rightColor;
+            this.kind = kind;
         }
     }
 
@@ -66,29 +89,15 @@ public class GuiChaosEnchanter extends GuiContainer {
     public GuiChaosEnchanter(ContainerChaosEnchanter container) {
         super(container);
         this.container = container;
-        xSize = 196;
-        ySize = 226;
+        xSize = 214;
+        ySize = 250;
     }
 
     @Override
     public void initGui() {
         super.initGui();
         buttonList.clear();
-        buttonList.add(new GuiButton(BTN_TAB0, guiLeft, guiTop - 20, 80, 18, I18n.format("chaosshard.enchanter.tab.enchant")));
-        buttonList.add(new GuiButton(BTN_TAB1, guiLeft + 82, guiTop - 20, 80, 18, I18n.format("chaosshard.enchanter.tab.research")));
-        buttonList.add(new GuiButton(BTN_MINUS, guiLeft + 32, guiTop + 121, 14, 16, "-"));
-        buttonList.add(new GuiButton(BTN_PLUS, guiLeft + 76, guiTop + 121, 14, 16, "+"));
-        buttonList.add(new GuiButton(BTN_ACT, guiLeft + 104, guiTop + 121, 86, 16, ""));
         shelves = EnchanterLogic.shelfPower(mc.world, container.tile.getPos());
-    }
-
-    private GuiButton button(int id) {
-        for (GuiButton b : buttonList) {
-            if (b.id == id) {
-                return b;
-            }
-        }
-        return null;
     }
 
     private float power() {
@@ -103,7 +112,11 @@ public class GuiChaosEnchanter extends GuiContainer {
         return sec / 60 + ":" + (sec % 60 < 10 ? "0" : "") + sec % 60;
     }
 
-    // ---- списки ----
+    private boolean creative() {
+        return mc.player.capabilities.isCreativeMode;
+    }
+
+    // ------------------------------------------------------------------ списки
 
     private void rebuild() {
         List<Row> out = new ArrayList<>();
@@ -119,22 +132,21 @@ public class GuiChaosEnchanter extends GuiContainer {
                     }
                 }
                 list.sort(byName);
+                List<Row> ready = new ArrayList<>(), rest = new ArrayList<>();
                 for (Enchantment e : list) {
                     int cur = EnchanterLogic.currentLevel(stack, e);
-                    int max = EnchanterLogic.maxLevelAt(e, power());
-                    Enchantment bad = EnchanterLogic.conflict(stack, e);
-                    if (bad != null) {
-                        out.add(new Row(e, false, false, I18n.format("chaosshard.enchanter.conflict"), DIM));
+                    if (EnchanterLogic.conflict(stack, e) != null) {
+                        rest.add(new Row(e, Kind.CONFLICT));
                     } else if (cur >= EnchanterLogic.maxLevel(e)) {
-                        out.add(new Row(e, false, false, EnchanterLogic.roman(cur) + " ✔", GOOD));
-                    } else if (max <= cur) {
-                        out.add(new Row(e, false, false, I18n.format("chaosshard.enchanter.need_power",
-                                EnchanterLogic.powerFor(e, cur + 1)), DIM));
+                        rest.add(new Row(e, Kind.MAXED));
+                    } else if (EnchanterLogic.maxLevelAt(e, power()) <= cur) {
+                        rest.add(new Row(e, Kind.LOCKED));
                     } else {
-                        String r = (cur > 0 ? EnchanterLogic.roman(cur) + "→" : "") + EnchanterLogic.roman(max);
-                        out.add(new Row(e, true, false, r, ACCENT));
+                        ready.add(new Row(e, Kind.READY));
                     }
                 }
+                out.addAll(ready);   // доступное — сверху
+                out.addAll(rest);
             }
         } else {
             String busy = researchId();
@@ -152,24 +164,21 @@ public class GuiChaosEnchanter extends GuiContainer {
             }
             fromItem.sort(byName);
             rest.sort(byName);
-            for (Enchantment e : fromItem) {
-                out.add(new Row(e, true, true, I18n.format("chaosshard.enchanter.from_item"), GOOD));
-            }
             Enchantment running = EnchanterLogic.byId(busy);
             if (running != null && !onItem.containsKey(running)) {
                 rest.remove(running);
-                out.add(new Row(running, true, false, time(container.secondsLeft), ACCENT));
+                out.add(new Row(running, Kind.RUNNING));
+            }
+            for (Enchantment e : fromItem) {
+                out.add(new Row(e, Kind.FROM_ITEM));
             }
             for (Enchantment e : rest) {
-                int lap = EnchanterLogic.researchLapis(e);
-                int sec = EnchanterLogic.researchTicks(e, shelves) / 20;
-                out.add(new Row(e, busy.isEmpty(), false, lap + " ◆ " + time(sec),
-                        container.lapis() >= lap || mc.player.capabilities.isCreativeMode ? TEXT : BAD));
+                out.add(new Row(e, Kind.RESEARCH));
             }
         }
         rows = out;
         scroll = Math.max(0, Math.min(scroll, rows.size() - ROWS));
-        if (picked != null && rows.stream().noneMatch(r -> r.e == picked)) {
+        if (picked != null && row(picked) == null) {
             picked = null;
         }
     }
@@ -191,104 +200,148 @@ public class GuiChaosEnchanter extends GuiContainer {
         return null;
     }
 
-    // ---- кнопки ----
+    // ------------------------------------------------------------------ действие кнопки
 
-    private void layout() {
-        for (GuiButton b : buttonList) {
-            if (b.id == BTN_TAB0 || b.id == BTN_TAB1) {
-                b.enabled = b.id != tab;
-            }
-        }
-        GuiButton minus = button(BTN_MINUS), plus = button(BTN_PLUS), act = button(BTN_ACT);
-        ItemStack stack = container.item();
+    /** Надпись на кнопке и можно ли нажать. Недоступная кнопка говорит, почему. */
+    private String actionLabel() {
         Row r = picked == null ? null : row(picked);
-        boolean creative = mc.player.capabilities.isCreativeMode;
-        if (tab == 0) {
-            int cur = picked == null ? 0 : EnchanterLogic.currentLevel(stack, picked);
-            int max = picked == null ? 0 : EnchanterLogic.maxLevelAt(picked, power());
-            boolean on = r != null && r.usable;
-            minus.visible = plus.visible = on;
-            minus.enabled = on && level > cur + 1;
-            plus.enabled = on && level < max;
-            act.visible = true;
-            act.displayString = I18n.format("chaosshard.enchanter.do_enchant");
-            if (on) {
-                int xp = EnchanterLogic.xpCost(picked, level, cur, EnchanterLogic.others(stack, picked));
-                int lap = EnchanterLogic.lapisCost(level, cur);
-                act.enabled = creative || mc.player.experienceLevel >= xp && container.lapis() >= lap;
-            } else {
-                act.enabled = false;
-            }
-        } else {
-            minus.visible = plus.visible = false;
-            act.visible = true;
-            String busy = researchId();
-            if (r != null && r.fromItem) {
-                act.displayString = I18n.format("chaosshard.enchanter.do_learn_item");
-                act.enabled = true;
-            } else if (r != null && !busy.isEmpty() && EnchanterLogic.id(picked).equals(busy)) {
-                act.displayString = I18n.format("chaosshard.enchanter.do_cancel");
-                act.enabled = !container.researchDone;
-            } else if (!busy.isEmpty()) {
-                act.displayString = I18n.format("chaosshard.enchanter.busy");
-                act.enabled = false;
-            } else {
-                act.displayString = I18n.format("chaosshard.enchanter.do_research");
-                act.enabled = r != null && (creative || container.lapis() >= EnchanterLogic.researchLapis(picked));
-            }
+        if (r == null) {
+            return null;
         }
+        ItemStack stack = container.item();
+        if (tab == 0) {
+            switch (r.kind) {
+                case CONFLICT:
+                    return "!" + I18n.format("chaosshard.enchanter.btn.conflict");
+                case MAXED:
+                    return "!" + I18n.format("chaosshard.enchanter.btn.maxed");
+                case LOCKED:
+                    return "!" + I18n.format("chaosshard.enchanter.btn.locked");
+                default:
+                    break;
+            }
+            int cur = EnchanterLogic.currentLevel(stack, picked);
+            int xp = EnchanterLogic.xpCost(picked, level, cur, EnchanterLogic.others(stack, picked));
+            int lap = EnchanterLogic.lapisCost(level, cur);
+            if (!creative() && mc.player.experienceLevel < xp) {
+                return "!" + I18n.format("chaosshard.enchanter.btn.no_xp");
+            }
+            if (!creative() && container.lapis() < lap) {
+                return "!" + I18n.format("chaosshard.enchanter.btn.no_lapis");
+            }
+            return I18n.format("chaosshard.enchanter.do_enchant");
+        }
+        String busy = researchId();
+        if (r.kind == Kind.FROM_ITEM) {
+            return I18n.format("chaosshard.enchanter.do_learn_item");
+        }
+        if (r.kind == Kind.RUNNING) {
+            return container.researchDone ? "!" + I18n.format("chaosshard.enchanter.btn.done") : I18n.format("chaosshard.enchanter.do_cancel");
+        }
+        if (!busy.isEmpty()) {
+            return "!" + I18n.format("chaosshard.enchanter.busy");
+        }
+        if (!creative() && container.lapis() < EnchanterLogic.researchLapis(picked)) {
+            return "!" + I18n.format("chaosshard.enchanter.btn.no_lapis");
+        }
+        return I18n.format("chaosshard.enchanter.do_research");
     }
 
-    @Override
-    protected void actionPerformed(GuiButton b) throws IOException {
-        if (b.id == BTN_TAB0 || b.id == BTN_TAB1) {
-            tab = b.id;
-            picked = null;
-            scroll = 0;
-        } else if (b.id == BTN_MINUS) {
-            level--;
-        } else if (b.id == BTN_PLUS) {
-            level++;
-        } else if (b.id == BTN_ACT && picked != null) {
-            String id = EnchanterLogic.id(picked);
-            if (tab == 0) {
-                send(PacketEnchanterAction.ENCHANT, id, level);
-            } else {
-                Row r = row(picked);
-                if (r != null && r.fromItem) {
-                    send(PacketEnchanterAction.LEARN_ITEM, id, 0);
-                } else if (id.equals(researchId())) {
-                    send(PacketEnchanterAction.CANCEL, id, 0);
-                } else {
-                    send(PacketEnchanterAction.RESEARCH, id, 0);
-                }
-            }
+    private void act() {
+        String label = actionLabel();
+        if (label == null || label.startsWith("!")) {
+            return;
         }
+        String id = EnchanterLogic.id(picked);
+        Row r = row(picked);
+        if (tab == 0) {
+            send(PacketEnchanterAction.ENCHANT, id, level);
+        } else if (r != null && r.kind == Kind.FROM_ITEM) {
+            send(PacketEnchanterAction.LEARN_ITEM, id, 0);
+        } else if (r != null && r.kind == Kind.RUNNING) {
+            send(PacketEnchanterAction.CANCEL, id, 0);
+        } else {
+            send(PacketEnchanterAction.RESEARCH, id, 0);
+        }
+        click();
     }
 
     private static void send(int action, String id, int level) {
         ChaosNetwork.CHANNEL.sendToServer(new PacketEnchanterAction(action, id, level));
     }
 
+    private void click() {
+        mc.getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(SoundEvents.UI_BUTTON_CLICK, 1.0F));
+    }
+
     private void pick(Enchantment e) {
         picked = e;
         if (tab == 0 && e != null) {
-            ItemStack stack = container.item();
-            int cur = EnchanterLogic.currentLevel(stack, e);
+            int cur = EnchanterLogic.currentLevel(container.item(), e);
             level = Math.max(cur + 1, EnchanterLogic.maxLevelAt(e, power()));
         }
     }
 
+    private int curLevel() {
+        return picked == null ? 0 : EnchanterLogic.currentLevel(container.item(), picked);
+    }
+
+    private int maxLevel() {
+        return picked == null ? 0 : EnchanterLogic.maxLevelAt(picked, power());
+    }
+
+    private boolean levelArrows() {
+        Row r = picked == null ? null : row(picked);
+        return tab == 0 && r != null && r.kind == Kind.READY;
+    }
+
+    // ------------------------------------------------------------------ мышь
+
+    private static boolean in(int mx, int my, int x, int y, int w, int h) {
+        return mx >= x && mx < x + w && my >= y && my < y + h;
+    }
+
     @Override
     protected void mouseClicked(int mouseX, int mouseY, int button) throws IOException {
-        super.mouseClicked(mouseX, mouseY, button);
         int mx = mouseX - guiLeft, my = mouseY - guiTop;
-        if (mx >= LIST_X && mx < LIST_X + LIST_W && my >= LIST_Y && my < LIST_Y + ROWS * ROW) {
-            int i = scroll + (my - LIST_Y) / ROW;
-            if (i < rows.size()) {
-                pick(rows.get(i).e);
+        for (int t = 0; t < 2; t++) {
+            if (in(mx, my, 6 + t * (TAB_W + 2), -19, TAB_W, 19)) {
+                if (tab != t) {
+                    tab = t;
+                    picked = null;
+                    scroll = 0;
+                    click();
+                }
+                return;
             }
         }
+        if (button == 0) {
+            if (in(mx, my, LIST_X, LIST_Y, LIST_W, ROWS * ROW)) {
+                int i = scroll + (my - LIST_Y) / ROW;
+                if (i < rows.size()) {
+                    pick(rows.get(i).e);
+                    click();
+                }
+                return;
+            }
+            if (picked != null && in(mx, my, BTN_X, BTN_Y, BTN_W, BTN_H)) {
+                act();
+                return;
+            }
+            if (levelArrows()) {
+                if (in(mx, my, 160, 110, 11, 11) && level > curLevel() + 1) {
+                    level--;
+                    click();
+                    return;
+                }
+                if (in(mx, my, 194, 110, 11, 11) && level < maxLevel()) {
+                    level++;
+                    click();
+                    return;
+                }
+            }
+        }
+        super.mouseClicked(mouseX, mouseY, button);
     }
 
     @Override
@@ -300,7 +353,7 @@ public class GuiChaosEnchanter extends GuiContainer {
         }
     }
 
-    // ---- рисование ----
+    // ------------------------------------------------------------------ кадр
 
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
@@ -309,24 +362,23 @@ public class GuiChaosEnchanter extends GuiContainer {
         }
         rebuild();
         if (picked != null && tab == 0) {
-            int cur = EnchanterLogic.currentLevel(container.item(), picked);
-            int max = EnchanterLogic.maxLevelAt(picked, power());
-            level = Math.max(cur + 1, Math.min(level, Math.max(cur + 1, max)));
+            int cur = curLevel();
+            level = Math.max(cur + 1, Math.min(level, Math.max(cur + 1, maxLevel())));
         }
-        layout();
         drawDefaultBackground();
         super.drawScreen(mouseX, mouseY, partialTicks);
         renderHoveredToolTip(mouseX, mouseY);
         int mx = mouseX - guiLeft, my = mouseY - guiTop;
-        if (mx >= LIST_X && mx < LIST_X + LIST_W && my >= LIST_Y && my < LIST_Y + ROWS * ROW) {
+        if (in(mx, my, LIST_X, LIST_Y, LIST_W, ROWS * ROW)) {
             int i = scroll + (my - LIST_Y) / ROW;
             if (i < rows.size()) {
                 drawHoveringText(stats(rows.get(i).e), mouseX, mouseY);
             }
-        } else if (mx >= 4 && mx < 30 && my >= 68 && my < 92) {
+        } else if (in(mx, my, 12, 76, 22, 82)) {
             List<String> t = new ArrayList<>();
-            t.add(I18n.format("chaosshard.enchanter.power.tip1", fmt(shelves)));
+            t.add(TextFormatting.LIGHT_PURPLE + I18n.format("chaosshard.enchanter.power.tip1", fmt(shelves)));
             t.add(TextFormatting.GRAY + I18n.format("chaosshard.enchanter.power.tip2", fmt(power())));
+            t.add(TextFormatting.GOLD + I18n.format("chaosshard.enchanter.power.tip3"));
             drawHoveringText(t, mouseX, mouseY);
         }
     }
@@ -351,6 +403,30 @@ public class GuiChaosEnchanter extends GuiContainer {
         return I18n.hasKey(k) ? I18n.format(k) : null;
     }
 
+    private static String rarityKey(Enchantment e) {
+        return e.getRarity().name().toLowerCase(java.util.Locale.ROOT);
+    }
+
+    /** Цвет полоски редкости: обычное — серое, необычное — зелёное, редкое — синее, очень редкое — фиолетовое. */
+    private static int rarityColor(Enchantment e) {
+        if (e.isCurse()) {
+            return 0xFFE05A5A;
+        }
+        if (e.isTreasureEnchantment()) {
+            return 0xFFECB064;
+        }
+        switch (e.getRarity()) {
+            case COMMON:
+                return 0xFF9A96A8;
+            case UNCOMMON:
+                return 0xFF6FD08C;
+            case RARE:
+                return 0xFF6FA8FF;
+            default:
+                return 0xFFC77DFF;
+        }
+    }
+
     /** Характеристики зачарования для подсказки. */
     private List<String> stats(Enchantment e) {
         List<String> t = new ArrayList<>();
@@ -361,8 +437,7 @@ public class GuiChaosEnchanter extends GuiContainer {
                 t.add(TextFormatting.GRAY + line);
             }
         }
-        t.add(I18n.format("chaosshard.enchanter.stat.rarity",
-                I18n.format("chaosshard.enchanter.rarity." + e.getRarity().name().toLowerCase(java.util.Locale.ROOT))));
+        t.add(I18n.format("chaosshard.enchanter.stat.rarity", I18n.format("chaosshard.enchanter.rarity." + rarityKey(e))));
         int max = EnchanterLogic.maxLevel(e);
         t.add(I18n.format("chaosshard.enchanter.stat.max", EnchanterLogic.roman(max)));
         StringBuilder sb = new StringBuilder();
@@ -386,77 +461,275 @@ public class GuiChaosEnchanter extends GuiContainer {
         return t;
     }
 
+    // ------------------------------------------------------------------ фон
+
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         int x = guiLeft, y = guiTop;
-        drawRect(x - 1, y - 1, x + xSize + 1, y + ySize + 1, FRAME);
-        drawRect(x, y, x + xSize, y + ySize, BG);
-        for (Slot s : container.inventorySlots) {
-            drawRect(x + s.xPos - 1, y + s.yPos - 1, x + s.xPos + 17, y + s.yPos + 17, 0xFF4A3A60);
-            drawRect(x + s.xPos, y + s.yPos, x + s.xPos + 16, y + s.yPos + 16, 0xFF100A18);
-        }
-        drawRect(x + LIST_X - 1, y + LIST_Y - 1, x + LIST_X + LIST_W + 1, y + LIST_Y + ROWS * ROW + 1, 0xFF4A3A60);
-        drawRect(x + LIST_X, y + LIST_Y, x + LIST_X + LIST_W, y + LIST_Y + ROWS * ROW, 0xFF120C1A);
+        int mx = mouseX - x, my = mouseY - y;
         GlStateManager.color(1, 1, 1, 1);
+        // неактивная вкладка — под окном, активная — поверх, сливается с ним
+        mc.getTextureManager().bindTexture(WD_TEX);
+        int other = 1 - tab;
+        drawTexturedModalRect(x + 6 + other * (TAB_W + 2), y - 17, 0, 80, TAB_W, 20);
+        if (in(mx, my, 6 + other * (TAB_W + 2), -17, TAB_W, 17)) {
+            drawRect(x + 8 + other * (TAB_W + 2), y - 15, x + 4 + other * (TAB_W + 2) + TAB_W, y, 0x22FFFFFF);
+        }
+        mc.getTextureManager().bindTexture(BG_TEX);
+        drawTexturedModalRect(x, y, 0, 0, xSize, ySize);
+        mc.getTextureManager().bindTexture(WD_TEX);
+        drawTexturedModalRect(x + 6 + tab * (TAB_W + 2), y - 20, 0, 54, TAB_W, 24);
+        // призраки пустых мест
+        if (container.item().isEmpty()) {
+            drawTexturedModalRect(x + ContainerChaosEnchanter.ITEM_X, y + ContainerChaosEnchanter.ITEM_Y, 0, 160, 16, 16);
+        }
+        if (container.lapis() == 0) {
+            drawTexturedModalRect(x + ContainerChaosEnchanter.LAPIS_X, y + ContainerChaosEnchanter.LAPIS_Y, 16, 160, 16, 16);
+        }
+        // шкала силы
+        int h = Math.round(GAUGE_H * Math.min(1F, power() / GAUGE_FULL));
+        if (h > 0) {
+            drawTexturedModalRect(x + GAUGE_X, y + GAUGE_Y + GAUGE_H - h, 100, 54 + GAUGE_H - h, 10, h);
+            int shine = (int) ((mc.world.getTotalWorldTime() + partialTicks) * 0.7F) % (h + 8);
+            if (shine < h) {
+                drawRect(x + GAUGE_X + 1, y + GAUGE_Y + GAUGE_H - 1 - shine, x + GAUGE_X + 9, y + GAUGE_Y + GAUGE_H - shine, 0x66FFFFFF);
+            }
+        }
+        // значки вкладок
+        RenderHelper.enableGUIStandardItemLighting();
+        itemRender.renderItemAndEffectIntoGUI(new ItemStack(Items.ENCHANTED_BOOK), x + 10, y - 16 + (tab == 0 ? -1 : 1));
+        itemRender.renderItemAndEffectIntoGUI(new ItemStack(Items.WRITABLE_BOOK), x + 10 + TAB_W + 2, y - 16 + (tab == 1 ? -1 : 1));
+        RenderHelper.disableStandardItemLighting();
+        GlStateManager.color(1, 1, 1, 1);
+    }
+
+    // ------------------------------------------------------------------ передний план
+
+    private void icon(int x, int y, int idx) {
+        mc.getTextureManager().bindTexture(WD_TEX);
+        GlStateManager.color(1, 1, 1, 1);
+        GlStateManager.enableBlend();
+        drawTexturedModalRect(x, y, idx * 10, 140, 9, 9);
+    }
+
+    private static final int I_LAPIS = 0, I_XP = 1, I_CLOCK = 2, I_LOCK = 3, I_CHECK = 4, I_LEFT = 5, I_RIGHT = 6, I_STAR = 7;
+
+    /** Текст справа налево от x1 со значком; возвращает левый край. */
+    private int rightText(int x1, int y, String s, int color, int iconIdx) {
+        int w = fontRenderer.getStringWidth(s);
+        fontRenderer.drawString(s, x1 - w, y, color);
+        if (iconIdx >= 0) {
+            icon(x1 - w - 11, y - 1, iconIdx);
+            return x1 - w - 11;
+        }
+        return x1 - w;
     }
 
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
-        fontRenderer.drawString(I18n.format("tile.chaosshard.chaos_enchanter.name"), 6, 6, TEXT);
+        int mx = mouseX - guiLeft, my = mouseY - guiTop;
+        String title = I18n.format("tile.chaosshard.chaos_enchanter.name");
+        fontRenderer.drawString(title, (xSize - fontRenderer.getStringWidth(title)) / 2, 7, TEXT);
+        // вкладки
+        String[] tabs = {I18n.format("chaosshard.enchanter.tab.enchant"), I18n.format("chaosshard.enchanter.tab.research")};
+        for (int t = 0; t < 2; t++) {
+            boolean on = t == tab;
+            boolean hover = !on && in(mx, my, 6 + t * (TAB_W + 2), -17, TAB_W, 17);
+            fontRenderer.drawString(tabs[t], 6 + t * (TAB_W + 2) + 24, on ? -11 : -9, on ? TEXT : (hover ? SOFT : DIM));
+        }
         // сила
-        fontRenderer.drawString(I18n.format("chaosshard.enchanter.power"), 4, 70, DIM);
-        fontRenderer.drawString(fmt(power()), 4, 80, ACCENT);
-        // список
+        String pw = fmt(power());
+        String lbl = I18n.format("chaosshard.enchanter.power");
+        fontRenderer.drawString(lbl, 23 - fontRenderer.getStringWidth(lbl) / 2, 139, DIM);
+        fontRenderer.drawString(pw, 23 - fontRenderer.getStringWidth(pw) / 2, 149, ACCENT);
+        drawList(mx, my);
+        drawDetail(mx, my);
+        GlStateManager.color(1, 1, 1, 1);
+    }
+
+    private void drawList(int mx, int my) {
         if (rows.isEmpty()) {
             String hint = tab == 0
                     ? I18n.format(container.item().isEmpty() ? "chaosshard.enchanter.hint.put" : "chaosshard.enchanter.hint.none")
                     : I18n.format("chaosshard.enchanter.hint.all_known");
-            fontRenderer.drawSplitString(hint, LIST_X + 4, LIST_Y + 4, LIST_W - 8, DIM);
+            List<String> lines = fontRenderer.listFormattedStringToWidth(hint, LIST_W - 20);
+            int y0 = LIST_Y + (ROWS * ROW - lines.size() * 10) / 2;
+            for (int i = 0; i < lines.size(); i++) {
+                String s = lines.get(i);
+                fontRenderer.drawString(s, LIST_X + (LIST_W - fontRenderer.getStringWidth(s)) / 2, y0 + i * 10, DIM);
+            }
+            return;
         }
+        boolean scrollable = rows.size() > ROWS;
+        int right = LIST_X + LIST_W - (scrollable ? 6 : 3);
         for (int i = 0; i < ROWS && scroll + i < rows.size(); i++) {
             Row r = rows.get(scroll + i);
             int ry = LIST_Y + i * ROW;
-            if (r.e == picked) {
-                drawRect(LIST_X, ry, LIST_X + LIST_W, ry + ROW, 0xFF3A2858);
+            boolean sel = r.e == picked;
+            boolean hover = in(mx, my, LIST_X, ry, LIST_W, ROW);
+            int bg = sel ? 0xFF35245A : hover ? 0xFF241938 : ((scroll + i) % 2 == 0 ? 0xFF15101F : 0xFF110C1A);
+            drawRect(LIST_X, ry, LIST_X + LIST_W, ry + ROW, bg);
+            if (sel) {
+                drawRect(LIST_X, ry, LIST_X + LIST_W, ry + 1, 0xFF6A55A0);
+                drawRect(LIST_X, ry + ROW - 1, LIST_X + LIST_W, ry + ROW, 0xFF6A55A0);
             }
-            int rw = fontRenderer.getStringWidth(r.right);
-            String n = fontRenderer.trimStringToWidth(name(r.e), LIST_W - rw - 10);
-            fontRenderer.drawString(n, LIST_X + 3, ry + 2, r.usable ? (r.e.isCurse() ? BAD : TEXT) : DIM);
-            fontRenderer.drawString(r.right, LIST_X + LIST_W - rw - 3, ry + 2, r.rightColor);
+            drawRect(LIST_X, ry + 1, LIST_X + 2, ry + ROW - 1, rarityColor(r.e));
+            if (sel) {
+                drawRect(LIST_X + 3, ry + 5, LIST_X + 5, ry + 7, 0xFFECB064);
+            }
+            boolean active = r.kind == Kind.READY || r.kind == Kind.FROM_ITEM || r.kind == Kind.RUNNING
+                    || (r.kind == Kind.RESEARCH && researchId().isEmpty());
+            int nameColor = r.e.isCurse() ? 0xFF9090 : (active ? TEXT : DIM);
+            int left;
+            ItemStack stack = container.item();
+            switch (r.kind) {
+                case READY: {
+                    int cur = EnchanterLogic.currentLevel(stack, r.e);
+                    int max = EnchanterLogic.maxLevelAt(r.e, power());
+                    String s = (cur > 0 ? EnchanterLogic.roman(cur) + " › " : "")
+                            + (max > 1 && cur == 0 ? "I–" : "") + EnchanterLogic.roman(max);
+                    left = rightText(right, ry + 2, s, ACCENT, -1);
+                    break;
+                }
+                case MAXED:
+                    left = rightText(right, ry + 2, EnchanterLogic.roman(EnchanterLogic.currentLevel(stack, r.e)), GOOD, I_CHECK);
+                    break;
+                case LOCKED:
+                    left = rightText(right, ry + 2, String.valueOf(EnchanterLogic.powerFor(r.e, EnchanterLogic.currentLevel(stack, r.e) + 1)), DIM, I_LOCK);
+                    break;
+                case CONFLICT:
+                    left = rightText(right, ry + 2, I18n.format("chaosshard.enchanter.conflict"), 0xC88A9A, -1);
+                    break;
+                case FROM_ITEM:
+                    left = rightText(right, ry + 2, I18n.format("chaosshard.enchanter.from_item"), GOOD, I_STAR);
+                    break;
+                case RUNNING:
+                    left = rightText(right, ry + 2, time(container.secondsLeft), GOLD, I_CLOCK);
+                    break;
+                default: {
+                    int lap = EnchanterLogic.researchLapis(r.e);
+                    int sec = EnchanterLogic.researchTicks(r.e, shelves) / 20;
+                    int l1 = rightText(right, ry + 2, time(sec), DIM, I_CLOCK);
+                    left = rightText(l1 - 4, ry + 2, String.valueOf(lap), creative() || container.lapis() >= lap ? SOFT : BAD, I_LAPIS);
+                    break;
+                }
+            }
+            String n = fontRenderer.trimStringToWidth(name(r.e), left - (LIST_X + 8) - 4);
+            fontRenderer.drawString(n, LIST_X + 8, ry + 2, nameColor);
         }
-        if (rows.size() > ROWS) {
-            int h = ROWS * ROW, bar = Math.max(8, h * ROWS / rows.size());
+        if (scrollable) {
+            int h = ROWS * ROW;
+            int bar = Math.max(10, h * ROWS / rows.size());
             int by = LIST_Y + (h - bar) * scroll / Math.max(1, rows.size() - ROWS);
-            drawRect(LIST_X + LIST_W - 2, by, LIST_X + LIST_W, by + bar, 0xFF7A4FB0);
+            drawRect(LIST_X + LIST_W - 3, LIST_Y, LIST_X + LIST_W, LIST_Y + h, 0xFF0B0812);
+            drawRect(LIST_X + LIST_W - 3, by, LIST_X + LIST_W, by + bar, 0xFFAAAEBC);
+            drawRect(LIST_X + LIST_W - 3, by, LIST_X + LIST_W - 2, by + bar, 0xFFE1E4EE);
         }
-        // низ
+    }
+
+    private void drawDetail(int mx, int my) {
+        Row r = picked == null ? null : row(picked);
+        if (r == null) {
+            String s = I18n.format(rows.isEmpty() ? "chaosshard.enchanter.hint.empty" : "chaosshard.enchanter.hint.pick");
+            List<String> lines = fontRenderer.listFormattedStringToWidth(s, DET_W - 16);
+            for (int i = 0; i < lines.size() && i < 3; i++) {
+                String l = lines.get(i);
+                fontRenderer.drawString(l, DET_X + (DET_W - fontRenderer.getStringWidth(l)) / 2, DET_Y + 14 + i * 10 - lines.size() * 4, DIM);
+            }
+            return;
+        }
         ItemStack stack = container.item();
-        if (tab == 0) {
-            if (picked != null && row(picked) != null && row(picked).usable) {
-                int cur = EnchanterLogic.currentLevel(stack, picked);
-                fontRenderer.drawString(EnchanterLogic.roman(level), 61 - fontRenderer.getStringWidth(EnchanterLogic.roman(level)) / 2, 125, ACCENT);
-                int xp = EnchanterLogic.xpCost(picked, level, cur, EnchanterLogic.others(stack, picked));
-                int lap = EnchanterLogic.lapisCost(level, cur);
-                boolean creative = mc.player.capabilities.isCreativeMode;
-                String a = I18n.format("chaosshard.enchanter.cost_xp", xp);
-                String b = I18n.format("chaosshard.enchanter.cost_lapis", lap);
-                fontRenderer.drawString(fontRenderer.trimStringToWidth(name(picked), 70), LIST_X, 110, TEXT);
-                int ax = 104;
-                fontRenderer.drawString(a, ax, 110, creative || mc.player.experienceLevel >= xp ? GOOD : BAD);
-                fontRenderer.drawString(b, ax + fontRenderer.getStringWidth(a) + 6, 110, creative || container.lapis() >= lap ? GOOD : BAD);
+        // название и уровень
+        int nameRight = DET_X + DET_W - 4;
+        if (levelArrows()) {
+            int cur = curLevel(), max = maxLevel();
+            boolean canDown = level > cur + 1, canUp = level < max;
+            String lv = EnchanterLogic.roman(level);
+            if (in(mx, my, 160, 110, 11, 11) && canDown) {
+                drawRect(160, 110, 171, 121, 0x33FFFFFF);
             }
+            if (in(mx, my, 194, 110, 11, 11) && canUp) {
+                drawRect(194, 110, 205, 121, 0x33FFFFFF);
+            }
+            GlStateManager.color(1, 1, 1, canDown ? 1F : 0.3F);
+            mc.getTextureManager().bindTexture(WD_TEX);
+            GlStateManager.enableBlend();
+            drawTexturedModalRect(161, 111, I_LEFT * 10, 140, 9, 9);
+            GlStateManager.color(1, 1, 1, canUp ? 1F : 0.3F);
+            drawTexturedModalRect(195, 111, I_RIGHT * 10, 140, 9, 9);
+            GlStateManager.color(1, 1, 1, 1);
+            fontRenderer.drawString(lv, 183 - fontRenderer.getStringWidth(lv) / 2, 112, GOLD);
+            nameRight = 158;
         } else {
-            Enchantment running = EnchanterLogic.byId(researchId());
-            if (running != null) {
-                String s = container.researchDone ? I18n.format("chaosshard.enchanter.research_done", name(running))
-                        : I18n.format("chaosshard.enchanter.researching", name(running));
-                fontRenderer.drawString(fontRenderer.trimStringToWidth(s, 158), LIST_X, 109, ACCENT);
-                int w = 68;
-                drawRect(LIST_X, 125, LIST_X + w, 130, 0xFF100A18);
-                drawRect(LIST_X, 125, LIST_X + w * Math.max(0, Math.min(1000, container.partPermille)) / 1000, 130, 0xFFC890FF);
-            } else if (picked != null) {
-                fontRenderer.drawString(fontRenderer.trimStringToWidth(name(picked), 158), LIST_X, 109, TEXT);
+            String rar = I18n.format("chaosshard.enchanter.rarity." + rarityKey(picked));
+            nameRight = rightText(DET_X + DET_W - 4, 112, rar, rarityColor(picked) & 0xFFFFFF, -1) - 4;
+        }
+        drawRect(DET_X + 2, 111, DET_X + 4, 120, rarityColor(picked));
+        fontRenderer.drawString(fontRenderer.trimStringToWidth(name(picked), nameRight - (DET_X + 7)), DET_X + 7, 112,
+                picked.isCurse() ? 0xFF9090 : TEXT);
+        // описание
+        String desc = description(picked);
+        if (desc != null) {
+            List<String> lines = fontRenderer.listFormattedStringToWidth(desc, DET_W - 10);
+            for (int i = 0; i < lines.size() && i < 2; i++) {
+                String l = lines.get(i);
+                if (i == 1 && lines.size() > 2) {
+                    l = fontRenderer.trimStringToWidth(l, DET_W - 18) + "…";
+                }
+                fontRenderer.drawString(l, DET_X + 4, 123 + i * 9, SOFT);
             }
+        }
+        // цена / ход изучения
+        int cy = 145;
+        if (tab == 0 && r.kind == Kind.READY) {
+            int cur = curLevel();
+            int xp = EnchanterLogic.xpCost(picked, level, cur, EnchanterLogic.others(stack, picked));
+            int lap = EnchanterLogic.lapisCost(level, cur);
+            boolean okXp = creative() || mc.player.experienceLevel >= xp, okLap = creative() || container.lapis() >= lap;
+            icon(DET_X + 4, cy - 1, I_XP);
+            String a = I18n.format("chaosshard.enchanter.cost_xp", xp);
+            fontRenderer.drawString(a, DET_X + 15, cy, okXp ? GOOD : BAD);
+            int lx = DET_X + 15 + fontRenderer.getStringWidth(a) + 6;
+            icon(lx, cy - 1, I_LAPIS);
+            fontRenderer.drawString(String.valueOf(lap), lx + 11, cy, okLap ? GOOD : BAD);
+        } else if (tab == 1) {
+            if (r.kind == Kind.RUNNING) {
+                int w = 70;
+                drawRect(DET_X + 4, cy + 1, DET_X + 4 + w, cy + 7, 0xFF0B0812);
+                int fill = w * Math.max(0, Math.min(1000, container.partPermille)) / 1000;
+                mc.getTextureManager().bindTexture(WD_TEX);
+                GlStateManager.color(1, 1, 1, 1);
+                drawTexturedModalRect(DET_X + 4, cy + 1, 112, 54, fill, 5);
+                fontRenderer.drawString(time(container.secondsLeft), DET_X + 8 + w, cy, GOLD);
+            } else if (r.kind == Kind.FROM_ITEM) {
+                icon(DET_X + 4, cy - 1, I_STAR);
+                fontRenderer.drawString(I18n.format("chaosshard.enchanter.free"), DET_X + 15, cy, GOOD);
+            } else {
+                int lap = EnchanterLogic.researchLapis(picked);
+                boolean ok = creative() || container.lapis() >= lap;
+                icon(DET_X + 4, cy - 1, I_LAPIS);
+                String a = String.valueOf(lap);
+                fontRenderer.drawString(a, DET_X + 15, cy, ok ? GOOD : BAD);
+                int cx = DET_X + 15 + fontRenderer.getStringWidth(a) + 6;
+                icon(cx, cy - 1, I_CLOCK);
+                fontRenderer.drawString(time(EnchanterLogic.researchTicks(picked, shelves) / 20), cx + 11, cy, SOFT);
+            }
+        }
+        // кнопка
+        String label = actionLabel();
+        if (label != null) {
+            boolean off = label.startsWith("!");
+            String text = off ? label.substring(1) : label;
+            boolean hover = !off && in(mx, my, BTN_X, BTN_Y, BTN_W, BTN_H);
+            mc.getTextureManager().bindTexture(WD_TEX);
+            GlStateManager.color(1, 1, 1, 1);
+            int v = off ? 32 : (hover ? 16 : 0);
+            drawTexturedModalRect(BTN_X, BTN_Y, 0, v, BTN_W / 2, BTN_H);
+            drawTexturedModalRect(BTN_X + BTN_W / 2, BTN_Y, 100 - BTN_W / 2, v, BTN_W / 2, BTN_H);
+            text = fontRenderer.trimStringToWidth(text, BTN_W - 6);
+            fontRenderer.drawString(text, BTN_X + (BTN_W - fontRenderer.getStringWidth(text)) / 2, BTN_Y + 4,
+                    off ? (label.contains(I18n.format("chaosshard.enchanter.btn.no_xp")) || label.contains(I18n.format("chaosshard.enchanter.btn.no_lapis")) ? 0xD08080 : OFF)
+                            : (hover ? 0xFFFFFF : TEXT));
         }
     }
 }

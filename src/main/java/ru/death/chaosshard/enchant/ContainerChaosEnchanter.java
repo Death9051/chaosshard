@@ -27,8 +27,8 @@ import java.util.Map;
 /** Окно Стола Хаоса: предмет, лазурит, инвентарь. Действия приходят пакетом {@link PacketEnchanterAction}. */
 public class ContainerChaosEnchanter extends Container {
 
-    public static final int ITEM_X = 10, ITEM_Y = 24, LAPIS_X = 10, LAPIS_Y = 48;
-    public static final int INV_Y = 144;
+    public static final int ITEM_X = 16, ITEM_Y = 26, LAPIS_X = 16, LAPIS_Y = 53;
+    public static final int INV_X = 26, INV_Y = 167;
 
     public final TileChaosEnchanter tile;
 
@@ -47,11 +47,11 @@ public class ContainerChaosEnchanter extends Container {
         addSlotToContainer(new SlotItemHandler(tile.inventory, TileChaosEnchanter.SLOT_LAPIS, LAPIS_X, LAPIS_Y));
         for (int row = 0; row < 3; row++) {
             for (int col = 0; col < 9; col++) {
-                addSlotToContainer(new Slot(inv, col + row * 9 + 9, 18 + col * 18, INV_Y + row * 18));
+                addSlotToContainer(new Slot(inv, col + row * 9 + 9, INV_X + col * 18, INV_Y + row * 18));
             }
         }
         for (int col = 0; col < 9; col++) {
-            addSlotToContainer(new Slot(inv, col, 18 + col * 18, INV_Y + 58));
+            addSlotToContainer(new Slot(inv, col, INV_X + col * 18, INV_Y + 58));
         }
         if (player instanceof EntityPlayerMP) {
             tile.claim((EntityPlayerMP) player);
