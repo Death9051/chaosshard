@@ -6,6 +6,9 @@ import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.network.play.server.SPacketUpdateTileEntity;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
@@ -36,7 +39,7 @@ public class TilePullBeetle extends TileEntity implements ITickable {
         int was = xp;
         xp = ItemXpPouch.pack(inv, xp);
         if (xp != was) {
-            markDirty();
+            changed();
         }
     }
 
@@ -54,6 +57,28 @@ public class TilePullBeetle extends TileEntity implements ITickable {
             left -= part;
             world.spawnEntity(new EntityXPOrb(world, pos.getX() + 0.5, pos.getY() + 0.3, pos.getZ() + 0.5, part));
         }
+    }
+
+    /** Опыт изменился: сохранить и показать клиенту (брюшко раздувается). */
+    private void changed() {
+        markDirty();
+        IBlockState st = world.getBlockState(pos);
+        world.notifyBlockUpdate(pos, st, st, 2);
+    }
+
+    @Override
+    public NBTTagCompound getUpdateTag() {
+        return writeToNBT(new NBTTagCompound());
+    }
+
+    @Override
+    public SPacketUpdateTileEntity getUpdatePacket() {
+        return new SPacketUpdateTileEntity(pos, 0, getUpdateTag());
+    }
+
+    @Override
+    public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
+        readFromNBT(pkt.getNbtCompound());
     }
 
     @Override
@@ -92,7 +117,7 @@ public class TilePullBeetle extends TileEntity implements ITickable {
             if (d < 1.3 && e instanceof EntityXPOrb) {
                 xp += ((EntityXPOrb) e).getXpValue();
                 e.setDead();
-                markDirty();
+                changed();
                 continue;
             }
             if (d < 1.3 && e instanceof EntityItem) {
