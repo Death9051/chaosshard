@@ -27,6 +27,7 @@ BLUE = ((40, 70, 150), (92, 142, 230), (190, 216, 255))
 SILVER = ((92, 90, 112), (172, 176, 190), (236, 238, 246))
 PAPER = ((168, 146, 120), (224, 208, 184), (252, 246, 232))
 BROWN = ((78, 48, 20), (146, 96, 44), (200, 150, 84))
+PINK = ((120, 20, 90), (220, 70, 180), (255, 170, 230))
 WHITE = (255, 255, 255)
 
 
@@ -199,16 +200,76 @@ def bolt():
     return ic.done()
 
 
+def smooth(pts, n=8):
+    """Плавная кривая через точки (Катмулл — Ром)."""
+    out = []
+    for i in range(len(pts) - 1):
+        p0, p1, p2, p3 = pts[max(0, i - 1)], pts[i], pts[i + 1], pts[min(len(pts) - 1, i + 2)]
+        for k in range(n):
+            t = k / n
+            t2, t3 = t * t, t * t * t
+            out.append(tuple(0.5 * ((2 * p1[j]) + (-p0[j] + p2[j]) * t + (2 * p0[j] - 5 * p1[j] + 4 * p2[j] - p3[j]) * t2
+                                    + (-p0[j] + 3 * p1[j] - 3 * p2[j] + p3[j]) * t3) for j in (0, 1)))
+    out.append(pts[-1])
+    return out
+
+
+def tube(pts, w0, w1):
+    """Трубка по кривой: толщина от w0 к w1."""
+    def draw(d):
+        n = len(pts)
+        for i in range(n - 1):
+            w = w0 + (w1 - w0) * i / max(1, n - 2)
+            d.line([pts[i], pts[i + 1]], fill=255, width=max(1, round(w)))
+            r = w / 2
+            d.ellipse((pts[i][0] - r, pts[i][1] - r, pts[i][0] + r, pts[i][1] + r), fill=255)
+    return draw
+
+
+def part_outlined(ic, draw, rmp):
+    """Часть с обводкой поверх уже нарисованного (чтобы витки и голова отделялись)."""
+    from PIL import ImageFilter
+    m = Image.new('L', (N, N), 0)
+    draw(ImageDraw.Draw(m))
+    dil = m.filter(ImageFilter.MaxFilter(3))
+    px, dp, mp = ic.img.load(), dil.load(), m.load()
+    for y in range(N):
+        for x in range(N):
+            if dp[x, y] > 127 and mp[x, y] <= 127:
+                px[x, y] = OUTLINE
+    ic.part(draw, rmp)
+
+
+def scales(ic, pts, step, color):
+    """Ромбики-чешуя по хребту."""
+    for i in range(step // 2, len(pts) - 2, step):
+        x, y = pts[i]
+        dx, dy = pts[i + 1][0] - x, pts[i + 1][1] - y
+        L = math.hypot(dx, dy) or 1
+        nx, ny = -dy / L, dx / L
+        ic.ink(lambda d, x=x, y=y, nx=nx, ny=ny, dx=dx, dy=dy, L=L: d.polygon(
+            [(x + nx * 1.6, y + ny * 1.6), (x + dx / L * 1.6, y + dy / L * 1.6),
+             (x - nx * 1.6, y - ny * 1.6), (x - dx / L * 1.6, y - dy / L * 1.6)], fill=255), color)
+
+
 def form():
+    """Форма Хаоса — змей Хаоса: виток внизу, шея с головой поверх."""
     ic = Icon()
-    ic.part(lambda d: d.ellipse((12, 3, 20, 11), fill=255), VIOLET)
-    ic.part(lambda d: d.polygon([(11, 12), (21, 12), (20, 21), (12, 21)], fill=255), VIOLET)
-    ic.part(lambda d: d.line([(11, 13), (5, 8), (3, 4)], fill=255, width=3), VIOLET)
-    ic.part(lambda d: d.line([(21, 13), (27, 8), (29, 4)], fill=255, width=3), VIOLET)
-    ic.part(lambda d: d.line([(14, 21), (11, 29)], fill=255, width=3), DVIOLET)
-    ic.part(lambda d: d.line([(18, 21), (21, 29)], fill=255, width=3), DVIOLET)
-    for (x, y, r) in [(4, 15, 2), (28, 15, 2), (6, 27, 1), (26, 27, 1), (16, 1, 1)]:
-        sparkle(ic, x, y, r, GOLD[1], GOLD[2])
+    coil = smooth([(3, 23), (6, 28), (14, 30), (22, 29), (28, 25), (28, 20), (23, 17)])
+    neck = smooth([(23, 17), (15, 19), (9, 16), (8, 11), (12, 8), (17, 8)])
+    ic.part(tube(coil, 2, 6), VIOLET)
+    scales(ic, coil, 6, VIOLET[0])
+    part_outlined(ic, tube(neck, 6, 5), VIOLET)
+    scales(ic, neck, 6, VIOLET[0])
+    part_outlined(ic, lambda d: d.polygon([(15, 6), (22, 3), (28, 5), (30, 9), (27, 12), (21, 12), (16, 11)], fill=255), VIOLET)
+    ic.ink(lambda d: d.line([(18, 10), (27, 11)], fill=255), DVIOLET[1])
+    ic.ink(lambda d: d.rectangle((22, 6, 23, 7), fill=255), GOLD[2])
+    ic.ink(lambda d: d.point((23, 7), fill=255), OUTLINE)
+    ic.ink(lambda d: d.line([(30, 10), (31, 10)], fill=255), PINK[1])
+    ic.ink(lambda d: d.point((31, 9), fill=255), PINK[1])
+    ic.ink(lambda d: d.point((31, 11), fill=255), PINK[1])
+    sparkle(ic, 4, 5, 2, VIOLET[2])
+    sparkle(ic, 30, 30, 1, VIOLET[2])
     return ic.done()
 
 

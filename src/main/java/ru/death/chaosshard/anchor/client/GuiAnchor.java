@@ -348,28 +348,6 @@ public class GuiAnchor extends GuiContainer {
         }
     }
 
-    private static final ItemStack[] TAB_ICONS = new ItemStack[4];
-
-    private static ItemStack tabIcon(int t) {
-        if (TAB_ICONS[t] == null) {
-            switch (t) {
-                case TAB_ANCHOR:
-                    TAB_ICONS[t] = new ItemStack(ru.death.chaosshard.init.ModBlocks.CHAOS_ANCHOR);
-                    break;
-                case TAB_NET:
-                    TAB_ICONS[t] = new ItemStack(Items.ENDER_EYE);
-                    break;
-                case TAB_PATH:
-                    TAB_ICONS[t] = new ItemStack(Items.COMPASS);
-                    break;
-                default:
-                    TAB_ICONS[t] = new ItemStack(Blocks.CHEST);
-                    break;
-            }
-        }
-        return TAB_ICONS[t];
-    }
-
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         int x = guiLeft, y = guiTop;
@@ -388,7 +366,7 @@ public class GuiAnchor extends GuiContainer {
         drawTexturedModalRect(x, y, 0, 0, xSize, ySize);
         ChaosUi.smallTab(x + TAB_X + tab * TAB_STEP, y, true);
         for (int t = 0; t < 4; t++) {
-            ChaosUi.item(tabIcon(t), x + TAB_X + t * TAB_STEP + 3, y - 16 + (t == tab ? -1 : 1));
+            ChaosUi.bigIcon(ChaosUi.BIG_TAB_ANCHOR + t, x + TAB_X + t * TAB_STEP + 3, y - 16 + (t == tab ? -1 : 1), 16);
         }
         // места
         int open = view.getInteger("slots");
@@ -510,7 +488,7 @@ public class GuiAnchor extends GuiContainer {
         NBTTagCompound v = view;
         title(I18n.format("chaosshard.anchor.gui.net_title", v.getInteger("size")), ACCENT, null, 0);
         if (!v.getBoolean("net")) {
-            ChaosUi.empty(fontRenderer, new ItemStack(Items.ENDER_EYE), I18n.format("chaosshard.anchor.gui.net_empty"),
+            ChaosUi.empty(fontRenderer, ChaosUi.BIG_TAB_NET, I18n.format("chaosshard.anchor.gui.net_empty"),
                     I18n.format("chaosshard.anchor.gui.net_none"), xSize / 2, 70, 170);
             return;
         }
@@ -850,7 +828,7 @@ public class GuiAnchor extends GuiContainer {
         int storage = v.getInteger("storage");
         title(I18n.format("chaosshard.anchor.gui.store_title"), ACCENT, null, 0);
         if (storage <= 0) {
-            ChaosUi.empty(fontRenderer, new ItemStack(Blocks.CHEST), I18n.format("chaosshard.anchor.gui.store_empty"),
+            ChaosUi.empty(fontRenderer, ChaosUi.BIG_TAB_STORE, I18n.format("chaosshard.anchor.gui.store_empty"),
                     I18n.format("chaosshard.anchor.gui.store_none"), xSize / 2, 70, 170);
             return;
         }

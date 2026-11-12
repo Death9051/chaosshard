@@ -496,10 +496,8 @@ public class GuiChaosEnchanter extends GuiContainer {
             }
         }
         // значки вкладок
-        RenderHelper.enableGUIStandardItemLighting();
-        itemRender.renderItemAndEffectIntoGUI(new ItemStack(Items.ENCHANTED_BOOK), x + 10, y - 16 + (tab == 0 ? -1 : 1));
-        itemRender.renderItemAndEffectIntoGUI(new ItemStack(Items.WRITABLE_BOOK), x + 10 + TAB_W + 2, y - 16 + (tab == 1 ? -1 : 1));
-        RenderHelper.disableStandardItemLighting();
+        ru.death.chaosshard.client.ChaosUi.bigIcon(ru.death.chaosshard.client.ChaosUi.BIG_TAB_ENCHANT, x + 10, y - 16 + (tab == 0 ? -1 : 1), 16);
+        ru.death.chaosshard.client.ChaosUi.bigIcon(ru.death.chaosshard.client.ChaosUi.BIG_TAB_RESEARCH, x + 10 + TAB_W + 2, y - 16 + (tab == 1 ? -1 : 1), 16);
         GlStateManager.color(1, 1, 1, 1);
     }
 

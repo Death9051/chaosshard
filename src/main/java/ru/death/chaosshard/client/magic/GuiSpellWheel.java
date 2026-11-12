@@ -111,10 +111,8 @@ public class GuiSpellWheel extends GuiScreen {
             double ang = i * seg;
             double r = (r0 + r1) / 2 + (i == hovered ? 3 : 0);
             int ix = (int) (cx + Math.sin(ang) * r) - 8, iy = (int) (cy - Math.cos(ang) * r) - 8;
-            if (!MagicUi.unlocked(s)) {
-                GlStateManager.color(0.4F, 0.4F, 0.4F);
-            }
-            itemRender.renderItemAndEffectIntoGUI(MagicUi.icon(s), ix, iy);
+            float k = MagicUi.unlocked(s) ? 1F : 0.4F;
+            ru.death.chaosshard.client.ChaosUi.bigIcon(s.ordinal(), ix, iy, 16, k, k, k, 1F);
         }
         RenderHelper.disableStandardItemLighting();
 

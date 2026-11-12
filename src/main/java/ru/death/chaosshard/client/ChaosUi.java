@@ -37,6 +37,11 @@ public final class ChaosUi {
 
     public static final int SLOT_OPEN = 0, SLOT_LOCKED = 1, SLOT_RO = 2;
 
+    /** Атлас своих значков 32x32 (docs/sprites/znachki.py): 0..11 — заклинания по порядку Spell, дальше вкладки. */
+    public static final ResourceLocation ICONS = new ResourceLocation(Tags.MOD_ID, "textures/gui/icons.png");
+    public static final int BIG_TAB_ANCHOR = 12, BIG_TAB_NET = 13, BIG_TAB_PATH = 14, BIG_TAB_STORE = 15,
+            BIG_TAB_ENCHANT = 16, BIG_TAB_RESEARCH = 17;
+
     private ChaosUi() {
     }
 
@@ -63,6 +68,24 @@ public final class ChaosUi {
         bind();
         GlStateManager.color(1, 1, 1, alpha);
         blit(x, y, (idx % 10) * 10, idx < 10 ? 140 : 150, 9, 9);
+        GlStateManager.color(1, 1, 1, 1);
+    }
+
+    /** Свой значок 32x32 в квадрат size x size (16 — как предмет; при масштабе интерфейса 2 видны все 32 пикселя). */
+    public static void bigIcon(int idx, float x, float y, float size) {
+        bigIcon(idx, x, y, size, 1F, 1F, 1F, 1F);
+    }
+
+    public static void bigIcon(int idx, float x, float y, float size, float r, float g, float b, float a) {
+        mc().getTextureManager().bindTexture(ICONS);
+        GlStateManager.enableBlend();
+        GlStateManager.disableLighting();
+        GlStateManager.color(r, g, b, a);
+        GlStateManager.pushMatrix();
+        GlStateManager.translate(x, y, 0);
+        GlStateManager.scale(size / 32F, size / 32F, 1F);
+        Gui.drawModalRectWithCustomSizedTexture(0, 0, (idx % 16) * 32, (idx / 16) * 32, 32, 32, 512, 512);
+        GlStateManager.popMatrix();
         GlStateManager.color(1, 1, 1, 1);
     }
 
@@ -122,9 +145,12 @@ public final class ChaosUi {
     }
 
     /** Пустое состояние: значок, заголовок и пояснение по центру области. */
-    public static void empty(FontRenderer font, ItemStack icon, String title, String text, int cx, int y, int w) {
-        if (icon != null) {
-            item(icon, cx - 8, y);
+    public static void empty(FontRenderer font, Object icon, String title, String text, int cx, int y, int w) {
+        if (icon instanceof Integer) {
+            bigIcon((Integer) icon, cx - 12, y - 4, 24);
+            y += 26;
+        } else if (icon instanceof ItemStack) {
+            item((ItemStack) icon, cx - 8, y);
             y += 22;
         }
         if (title != null) {

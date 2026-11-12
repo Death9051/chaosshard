@@ -301,6 +301,11 @@ public class GuiGrimoireMagic extends GuiScreen {
 
     /** Строка оглавления: значок, название, отточие, номер страницы; у выбранной — ленточка на полях. */
     void drawRow(int idx, ItemStack icon, String name, int color, boolean selected, int mx, int my) {
+        drawRow(idx, (Object) icon, name, color, selected, mx, my);
+    }
+
+    /** icon — предмет или номер своего значка (Integer, атлас ChaosUi.ICONS). */
+    void drawRow(int idx, Object icon, String name, int color, boolean selected, int mx, int my) {
         int y = rowY(idx);
         if (y == Integer.MIN_VALUE) {
             return;
@@ -314,13 +319,17 @@ public class GuiGrimoireMagic extends GuiScreen {
             Gui.drawRect(x0 - 3, y, x1 + 2, y + ROW - 1, 0x22ECB064);
             BookArt.marker(x0 - 15, y + 2);
         }
-        RenderHelper.enableGUIStandardItemLighting();
-        GlStateManager.pushMatrix();
-        GlStateManager.translate(x0, y + 1.5F, 0);
-        GlStateManager.scale(0.95F, 0.95F, 1F);
-        itemRender.renderItemAndEffectIntoGUI(icon, 0, 0);
-        GlStateManager.popMatrix();
-        RenderHelper.disableStandardItemLighting();
+        if (icon instanceof Integer) {
+            ru.death.chaosshard.client.ChaosUi.bigIcon((Integer) icon, x0, y + 1.5F, 15.2F);
+        } else {
+            RenderHelper.enableGUIStandardItemLighting();
+            GlStateManager.pushMatrix();
+            GlStateManager.translate(x0, y + 1.5F, 0);
+            GlStateManager.scale(0.95F, 0.95F, 1F);
+            itemRender.renderItemAndEffectIntoGUI((ItemStack) icon, 0, 0);
+            GlStateManager.popMatrix();
+            RenderHelper.disableStandardItemLighting();
+        }
         String num = String.valueOf(3 + idx * 2);
         int nw = font.getStringWidth(num);
         String shown = font.trimStringToWidth(name, x1 - x0 - 24 - nw - 8);
@@ -555,7 +564,7 @@ public class GuiGrimoireMagic extends GuiScreen {
                 continue;
             }
             boolean open = MagicUi.unlocked(s);
-            drawRow(i, MagicUi.icon(s), I18n.format(s.key()), !open ? BookArt.DIM : s == current ? BookArt.VIOLET : BookArt.INK,
+            drawRow(i, (Object) Integer.valueOf(s.ordinal()), I18n.format(s.key()), !open ? BookArt.DIM : s == current ? BookArt.VIOLET : BookArt.INK,
                     spells.indexOf(s) == selSpell, mx, my);
         }
         updateButton();
