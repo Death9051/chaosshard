@@ -22,6 +22,7 @@ public class RenderPullBeetle extends Render<EntityPullBeetle> {
     private static final float[] SHELL = {0.52F, 0.28F, 0.90F};
     private static final float[] SHELL_DARK = {0.30F, 0.14F, 0.55F};
     private static final float[] BODY = {0.16F, 0.10F, 0.24F};
+    private static final float[] LEG = {0.36F, 0.24F, 0.52F};
     private static final float[] GLOW = {1.0F, 0.55F, 0.95F};
     private static final float[] EYE = {1.0F, 0.85F, 0.40F};
 
@@ -40,7 +41,7 @@ public class RenderPullBeetle extends Render<EntityPullBeetle> {
         GlStateManager.pushMatrix();
         GlStateManager.translate(x, y + 0.02 + Math.sin(t * 0.25) * 0.004, z);
         GlStateManager.rotate(-ry, 0, 1, 0);
-        GlStateManager.scale(1 / 16F, 1 / 16F, 1 / 16F);
+        GlStateManager.scale(0.8F / 16F, 0.8F / 16F, 0.8F / 16F);
         GlStateManager.disableTexture2D();
         GlStateManager.disableLighting();
         GlStateManager.enableBlend();
@@ -55,14 +56,19 @@ public class RenderPullBeetle extends Render<EntityPullBeetle> {
                 GlStateManager.translate(side * 2.6, 1.4, -2 + i * 2);
                 GlStateManager.rotate(ph, 0, 1, 0);
                 GlStateManager.rotate(side * 35F, 0, 0, 1);
-                box(side > 0 ? 0 : -3.2, -0.4, -0.4, side > 0 ? 3.2 : 0, 0.4, 0.4, BODY, 1F);
+                box(side > 0 ? 0 : -3.4, -0.45, -0.45, side > 0 ? 3.4 : 0, 0.45, 0.45, LEG, 1F);
                 GlStateManager.popMatrix();
             }
         }
         // брюшко и панцирь
         box(-2.6, 0.6, -3.6, 2.6, 2.2, 3.0, BODY, 1F);
-        box(-3.0, 1.6, -4.0, 3.0, 4.0, 2.6, SHELL, 1F);
-        box(-0.25, 3.98, -4.0, 0.25, 4.05, 2.6, SHELL_DARK, 1F);   // шов надкрылий
+        // панцирь округлый: нижний широкий ярус, верхний уже, «нос» и «хвост» скошены ступеньками
+        box(-3.0, 1.6, -3.4, 3.0, 3.0, 2.2, SHELL, 1F);
+        box(-2.4, 1.6, -4.2, 2.4, 2.8, -3.4, SHELL, 1F);
+        box(-2.4, 1.6, 2.2, 2.4, 2.8, 2.9, SHELL, 1F);
+        box(-2.4, 3.0, -3.0, 2.4, 3.8, 1.8, SHELL, 1F);
+        box(-1.6, 3.8, -2.2, 1.6, 4.3, 1.0, SHELL, 1F);
+        box(-0.2, 3.0, -4.2, 0.2, 4.35, 2.9, SHELL_DARK, 1F);   // шов надкрылий
         // голова, глаза, жвалы
         box(-1.8, 1.0, 2.6, 1.8, 3.0, 4.6, BODY, 1F);
         // усики шевелятся
@@ -71,16 +77,16 @@ public class RenderPullBeetle extends Render<EntityPullBeetle> {
             GlStateManager.translate(side * 0.9, 2.8, 4.4);
             GlStateManager.rotate(-30F + (float) Math.sin(t * 0.3F + side) * 12F, 1, 0, 0);
             GlStateManager.rotate(side * (15F + (float) Math.sin(t * 0.21F) * 8F), 0, 1, 0);
-            box(-0.2, -0.2, 0, 0.2, 0.2, 3.2, BODY, 1F);
+            box(-0.25, -0.25, 0, 0.25, 0.25, 3.4, LEG, 1F);
             GlStateManager.popMatrix();
         }
         // светящиеся пятна и глаза — полная яркость
         float pulse = 0.75F + 0.25F * (float) Math.sin(t * 0.15F);
         OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240F, 240F);
-        box(-2.2, 4.0, -2.6, -1.0, 4.2, -1.4, GLOW, pulse);
-        box(1.0, 4.0, -0.6, 2.2, 4.2, 0.6, GLOW, pulse);
-        box(-1.8, 4.0, 1.0, -0.8, 4.2, 2.0, GLOW, pulse);
-        box(1.2, 4.0, -3.2, 2.0, 4.2, -2.4, GLOW, pulse);
+        box(-1.4, 4.3, -1.8, -0.5, 4.45, -0.9, GLOW, pulse);
+        box(0.5, 4.3, -0.4, 1.4, 4.45, 0.5, GLOW, pulse);
+        box(-2.3, 3.8, 0.6, -1.4, 3.95, 1.5, GLOW, pulse);
+        box(1.4, 3.8, -2.6, 2.3, 3.95, -1.7, GLOW, pulse);
         box(-1.4, 2.0, 4.6, -0.6, 2.7, 4.75, EYE, 1F);
         box(0.6, 2.0, 4.6, 1.4, 2.7, 4.75, EYE, 1F);
 
