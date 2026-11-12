@@ -35,14 +35,14 @@ Using cached decompiled jar from /home/runner/.gradle/caches/retro_futura_gradle
 
 > Task :cleanupDecompSrgJar
 Fixup stage 1 - applying FF patches
-  Stage 1 took 227 ms
+  Stage 1 took 268 ms
 Fixup stage 2 - applying MCP patches
-  Stage 2 took 102 ms
+  Stage 2 took 106 ms
 Fixup stage 3 - applying MCP cleanup
-  Stage 3 took 3334 ms
+  Stage 3 took 4687 ms
 Fixup stage 4 - injecting package-info
   Injected 119 package-infos
-  Stage 4 took 4 ms
+  Stage 4 took 5 ms
 Saving the fixed-up jar
 
 > Task :patchDecompiledJar
