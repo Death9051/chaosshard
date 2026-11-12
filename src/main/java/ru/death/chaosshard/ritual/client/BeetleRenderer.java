@@ -62,9 +62,9 @@ public class BeetleRenderer extends TileEntitySpecialRenderer<TilePullBeetle> {
             for (int i = 0; i < 3; i++) {
                 float ph = (float) Math.sin(t * 0.9F + i * 2.1F + (side > 0 ? Math.PI : 0)) * 25F * walk;
                 GlStateManager.pushMatrix();
-                GlStateManager.translate(side * 2.6, 1.4, -2 + i * 2);
+                GlStateManager.translate(side * 2.6, 1.6, -2 + i * 2);
                 GlStateManager.rotate(ph, 0, 1, 0);
-                GlStateManager.rotate(side * 35F, 0, 0, 1);
+                GlStateManager.rotate(-side * 25F, 0, 0, 1);   // кончиком вниз, на крышку
                 box(side > 0 ? 0 : -3.4, -0.45, -0.45, side > 0 ? 3.4 : 0, 0.45, 0.45, LEG, 1F);
                 GlStateManager.popMatrix();
             }
