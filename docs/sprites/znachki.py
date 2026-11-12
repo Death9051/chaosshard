@@ -1,392 +1,334 @@
-"""Свои значки 16x16: заклинания Гримуара, вкладки окна Якоря и Стола Хаоса.
+"""Свои значки 32x32: заклинания Гримуара, вкладки окна Якоря и Стола Хаоса.
 
 python3 znachki.py <папка textures/gui> [<превью.png>]
-Рисует icons.png (атлас 256x256, по 16 значков в ряд) — порядок в ICONS ниже, его же знает ChaosUi.
-Стиль: цветной знак с тёмной обводкой в 1 пиксель и бликом, без подложки — читается и на тёмном окне, и на
-светлой бумаге книги.
+Рисует icons.png (атлас 512x512, 16 значков в ряд, по 32 px) — порядок в ICONS ниже, его же знает ChaosUi.
+В окнах значок рисуется в 16 единиц интерфейса: при масштабе интерфейса 2 и выше видны все 32 пикселя.
+
+Как рисуется: каждая часть — заливка фигуры; свет сверху-слева и тень снизу-справа ставятся сами по краю фигуры,
+вокруг всего значка — тёмная обводка в 1 пиксель. Без подложки: читается и на тёмном окне, и на светлой бумаге.
+(Первый черновик 16x16 — znachki16.py.)
 """
+import math
 import sys
 
-from PIL import Image
+from PIL import Image, ImageDraw
 
 OUT = sys.argv[1]
 PREVIEW = sys.argv[2] if len(sys.argv) > 2 else None
+N = 32
+OUTLINE = (22, 12, 30, 255)
 
-O = (22, 12, 30)        # обводка
-W = (255, 255, 255)
+VIOLET = ((88, 38, 150), (160, 92, 236), (226, 192, 255))
+DVIOLET = ((46, 20, 80), (90, 44, 150), (150, 92, 220))
+GREEN = ((36, 100, 46), (92, 186, 78), (186, 244, 146))
+GOLD = ((150, 96, 30), (236, 176, 100), (255, 230, 168))
+RED = ((120, 20, 36), (206, 56, 74), (255, 150, 150))
+BLUE = ((40, 70, 150), (92, 142, 230), (190, 216, 255))
+SILVER = ((92, 90, 112), (172, 176, 190), (236, 238, 246))
+PAPER = ((168, 146, 120), (224, 208, 184), (252, 246, 232))
+BROWN = ((78, 48, 20), (146, 96, 44), (200, 150, 84))
+WHITE = (255, 255, 255)
 
 
-def ramp(d, m, l):
-    return {'d': d, 'm': m, 'l': l}
+class Icon:
+    def __init__(self):
+        self.img = Image.new('RGBA', (N, N), (0, 0, 0, 0))
+
+    def part(self, draw, rmp, bevel=True):
+        """Фигура одной заливкой; свет и тень по краю — сами."""
+        m = Image.new('L', (N, N), 0)
+        draw(ImageDraw.Draw(m))
+        mp = m.load()
+        px = self.img.load()
+
+        def inside(x, y):
+            return 0 <= x < N and 0 <= y < N and mp[x, y] > 127
+        for y in range(N):
+            for x in range(N):
+                if not inside(x, y):
+                    continue
+                c = rmp[1]
+                if bevel:
+                    if not inside(x + 1, y) or not inside(x, y + 1):
+                        c = rmp[0]
+                    elif not inside(x - 1, y) or not inside(x, y - 1):
+                        c = rmp[2]
+                px[x, y] = tuple(c) + (255,)
+        return self
+
+    def ink(self, draw, color):
+        """Детали прямым цветом поверх (линии, точки)."""
+        m = Image.new('L', (N, N), 0)
+        draw(ImageDraw.Draw(m))
+        mp = m.load()
+        px = self.img.load()
+        for y in range(N):
+            for x in range(N):
+                if mp[x, y] > 127:
+                    px[x, y] = tuple(color[:3]) + (255,)
+        return self
+
+    def done(self):
+        px = self.img.load()
+        a = [[px[x, y][3] > 0 for x in range(N)] for y in range(N)]
+        for y in range(N):
+            for x in range(N):
+                if a[y][x]:
+                    continue
+                for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+                    xx, yy = x + dx, y + dy
+                    if 0 <= xx < N and 0 <= yy < N and a[yy][xx]:
+                        px[x, y] = OUTLINE
+                        break
+        return self.img
 
 
-VIOLET = ramp((88, 38, 150), (160, 92, 236), (222, 186, 255))
-GREEN = ramp((40, 110, 50), (96, 190, 80), (180, 240, 140))
-GOLD = ramp((150, 96, 30), (236, 176, 100), (255, 226, 160))
-RED = ramp((120, 20, 36), (210, 50, 70), (255, 140, 140))
-BLUE = ramp((40, 70, 150), (90, 140, 230), (180, 210, 255))
-SILVER = ramp((90, 88, 110), (170, 174, 188), (230, 232, 242))
-PAPER = ramp((150, 130, 110), (220, 204, 180), (250, 242, 226))
-BROWN = ramp((80, 50, 20), (150, 100, 45), (200, 150, 80))
-TEAL = ramp((20, 100, 110), (60, 190, 190), (170, 250, 240))
+def sparkle(ic, x, y, r=2, color=WHITE, core=WHITE):
+    ic.ink(lambda d: (d.line([(x - r, y), (x + r, y)], fill=255), d.line([(x, y - r), (x, y + r)], fill=255)), color)
+    ic.ink(lambda d: d.point((x, y), fill=255), core)
 
-# Каждый значок: имя, строки 16x16, словарь цветов. Буквы: O обводка, d/m/l тона основного цвета,
-# D/M/L тона второго цвета, w белый блик, . пусто.
+
+# ------------------------------------------------------------------ заклинания
+
+def book():
+    ic = Icon()
+    ic.part(lambda d: d.polygon([(2, 24), (15, 27), (17, 27), (30, 24), (30, 27), (17, 30), (15, 30), (2, 27)], fill=255), VIOLET)
+    ic.part(lambda d: d.polygon([(3, 7), (15, 10), (15, 26), (3, 23)], fill=255), PAPER)
+    ic.part(lambda d: d.polygon([(17, 10), (29, 7), (29, 23), (17, 26)], fill=255), PAPER)
+    for i, w in enumerate([9, 7, 9, 5, 8]):
+        y = 12 + i * 2.6
+        ic.ink(lambda d, y=y, w=w: d.line([(5, y), (5 + w, y + 2)], fill=255), PAPER[0])
+        ic.ink(lambda d, y=y, w=w: d.line([(19, y + 2.5), (19 + w, y + 0.5)], fill=255), PAPER[0])
+    ic.ink(lambda d: d.line([(16, 10), (16, 28)], fill=255), VIOLET[0])
+    return ic.done()
+
+
+def sprout():
+    ic = Icon()
+    ic.part(lambda d: d.ellipse((6, 23, 26, 31), fill=255), DVIOLET)
+    ic.part(lambda d: d.line([(16, 26), (16, 13)], fill=255, width=3), GREEN)
+    ic.part(lambda d: d.polygon([(15, 17), (10, 15), (5, 11), (3, 6), (9, 6), (13, 9), (15, 14)], fill=255), GREEN)
+    ic.part(lambda d: d.polygon([(17, 14), (19, 8), (24, 4), (30, 3), (29, 9), (25, 13), (18, 16)], fill=255), GREEN)
+    ic.ink(lambda d: d.line([(6, 8), (13, 13)], fill=255), GREEN[0])
+    ic.ink(lambda d: d.line([(27, 5), (20, 12)], fill=255), GREEN[0])
+    sparkle(ic, 26, 20, 2, VIOLET[2])
+    sparkle(ic, 6, 19, 1, VIOLET[2])
+    return ic.done()
+
+
+def bridge():
+    ic = Icon()
+    for (x, y) in [(2, 23), (11, 15), (20, 7)]:
+        ic.part(lambda d, x=x, y=y: d.rectangle((x, y + 2, x + 9, y + 5), fill=255), DVIOLET)
+        ic.part(lambda d, x=x, y=y: d.rectangle((x, y, x + 9, y + 2), fill=255), VIOLET)
+    for (x, y) in [(5, 30), (14, 23), (23, 15), (9, 27), (18, 19)]:
+        ic.ink(lambda d, x=x, y=y: d.point((x, y), fill=255), VIOLET[2])
+    sparkle(ic, 28, 3, 2, VIOLET[2])
+    return ic.done()
+
+
+def spring():
+    ic = Icon()
+
+    def spiral(d):
+        pts = []
+        for i in range(0, 420, 6):
+            a = math.radians(i)
+            r = 13 - i / 420 * 10
+            pts.append((16 + r * math.cos(a), 16 + r * math.sin(a)))
+        d.line(pts, fill=255, width=3)
+    ic.part(spiral, VIOLET)
+    ic.part(lambda d: d.ellipse((13, 13, 19, 19), fill=255), DVIOLET)
+    ic.ink(lambda d: d.ellipse((15, 15, 17, 17), fill=255), RED[1])
+    ic.part(lambda d: d.rectangle((24, 2, 29, 7), fill=255), SILVER)
+    for (x, y) in [(22, 9), (20, 11)]:
+        ic.ink(lambda d, x=x, y=y: d.point((x, y), fill=255), SILVER[2])
+    return ic.done()
+
+
+def rift():
+    ic = Icon()
+    ic.part(lambda d: d.polygon([(16, 3), (29, 9), (16, 15), (3, 9)], fill=255), (SILVER[1], SILVER[2], WHITE))
+    ic.part(lambda d: d.polygon([(3, 9), (16, 15), (16, 30), (3, 23)], fill=255), SILVER)
+    ic.part(lambda d: d.polygon([(16, 15), (29, 9), (29, 23), (16, 30)], fill=255), (SILVER[0], (120, 118, 140), SILVER[1]))
+    ic.ink(lambda d: d.line([(18, 4), (14, 9), (19, 12), (13, 18), (18, 22), (14, 29)], fill=255, width=2), OUTLINE)
+    ic.ink(lambda d: d.line([(19, 12), (24, 15)], fill=255), OUTLINE)
+    ic.ink(lambda d: d.line([(13, 18), (8, 17)], fill=255), OUTLINE)
+    ic.ink(lambda d: d.point((15, 20), fill=255), VIOLET[1])
+    return ic.done()
+
+
+def starsight():
+    ic = Icon()
+    ic.part(lambda d: d.polygon([(1, 16), (6, 10), (12, 7), (20, 7), (26, 10), (31, 16), (26, 22), (20, 25), (12, 25), (6, 22)], fill=255),
+            (BLUE[1], BLUE[2], WHITE))
+    ic.part(lambda d: d.ellipse((9, 9, 23, 23), fill=255), BLUE)
+    ic.part(lambda d: d.ellipse((12, 12, 20, 20), fill=255), DVIOLET, bevel=False)
+    ic.ink(lambda d: d.polygon([(16, 11), (17, 15), (21, 16), (17, 17), (16, 21), (15, 17), (11, 16), (15, 15)], fill=255), WHITE)
+    sparkle(ic, 27, 4, 2, BLUE[2])
+    return ic.done()
+
+
+def recall():
+    ic = Icon()
+    ic.part(lambda d: d.arc((4, 3, 28, 27), 200, 500, fill=255, width=3), GOLD)
+    ic.part(lambda d: d.polygon([(4, 10), (11, 11), (6, 17)], fill=255), GOLD)
+    ic.part(lambda d: d.ellipse((12, 23, 20, 31), fill=255), VIOLET)
+    ic.ink(lambda d: d.line([(16, 26), (16, 18)], fill=255), GOLD[2])
+    sparkle(ic, 16, 15, 1, GOLD[2])
+    return ic.done()
+
+
+def dash():
+    ic = Icon()
+    ic.part(lambda d: d.polygon([(12, 4), (18, 4), (30, 16), (18, 28), (12, 28), (24, 16)], fill=255), SILVER)
+    ic.part(lambda d: d.polygon([(4, 9), (9, 9), (16, 16), (9, 23), (4, 23), (11, 16)], fill=255), VIOLET)
+    for (x0, y) in [(0, 12), (0, 20)]:
+        ic.ink(lambda d, x0=x0, y=y: d.line([(x0, y), (x0 + 3, y)], fill=255), VIOLET[2])
+    return ic.done()
+
+
+def bolt():
+    ic = Icon()
+    ic.part(lambda d: d.line([(5, 27), (22, 10)], fill=255, width=3), VIOLET)
+    ic.part(lambda d: d.polygon([(30, 2), (27, 15), (23, 12), (20, 9), (17, 5)], fill=255), (VIOLET[1], VIOLET[2], WHITE))
+    ic.part(lambda d: d.polygon([(3, 22), (8, 24), (9, 29), (5, 30), (2, 27)], fill=255), DVIOLET)
+    sparkle(ic, 9, 9, 2, VIOLET[2])
+    sparkle(ic, 23, 24, 2, VIOLET[2])
+    sparkle(ic, 15, 25, 1, VIOLET[2])
+    return ic.done()
+
+
+def form():
+    ic = Icon()
+    ic.part(lambda d: d.ellipse((12, 3, 20, 11), fill=255), VIOLET)
+    ic.part(lambda d: d.polygon([(11, 12), (21, 12), (20, 21), (12, 21)], fill=255), VIOLET)
+    ic.part(lambda d: d.line([(11, 13), (5, 8), (3, 4)], fill=255, width=3), VIOLET)
+    ic.part(lambda d: d.line([(21, 13), (27, 8), (29, 4)], fill=255, width=3), VIOLET)
+    ic.part(lambda d: d.line([(14, 21), (11, 29)], fill=255, width=3), DVIOLET)
+    ic.part(lambda d: d.line([(18, 21), (21, 29)], fill=255, width=3), DVIOLET)
+    for (x, y, r) in [(4, 15, 2), (28, 15, 2), (6, 27, 1), (26, 27, 1), (16, 1, 1)]:
+        sparkle(ic, x, y, r, GOLD[1], GOLD[2])
+    return ic.done()
+
+
+def curse():
+    ic = Icon()
+    ic.part(lambda d: d.ellipse((5, 3, 27, 23), fill=255), RED)
+    ic.part(lambda d: d.rectangle((10, 18, 22, 27), fill=255), RED)
+    ic.ink(lambda d: d.ellipse((9, 10, 15, 16), fill=255), DVIOLET[0])
+    ic.ink(lambda d: d.ellipse((17, 10, 23, 16), fill=255), DVIOLET[0])
+    ic.ink(lambda d: d.point((12, 13), fill=255), VIOLET[2])
+    ic.ink(lambda d: d.point((20, 13), fill=255), VIOLET[2])
+    ic.ink(lambda d: d.polygon([(16, 17), (14, 20), (18, 20)], fill=255), RED[0])
+    for x in (12, 15, 18, 21):
+        ic.ink(lambda d, x=x: d.line([(x, 23), (x, 27)], fill=255), RED[0])
+    return ic.done()
+
+
+def shield():
+    ic = Icon()
+    ic.part(lambda d: d.polygon([(4, 4), (28, 4), (28, 16), (24, 24), (16, 30), (8, 24), (4, 16)], fill=255), SILVER)
+    ic.part(lambda d: d.polygon([(7, 7), (25, 7), (25, 16), (22, 22), (16, 27), (10, 22), (7, 16)], fill=255), DVIOLET)
+    ic.part(lambda d: d.polygon([(16, 9), (21, 15), (16, 21), (11, 15)], fill=255), VIOLET)
+    ic.ink(lambda d: d.point((16, 15), fill=255), WHITE)
+    return ic.done()
+
+
+# ------------------------------------------------------------------ вкладки
+
+def tab_anchor():
+    ic = Icon()
+    ic.part(lambda d: d.polygon([(4, 30), (6, 25), (26, 25), (28, 30)], fill=255), SILVER)
+    ic.part(lambda d: d.rectangle((10, 22, 22, 25), fill=255), SILVER)
+    ic.part(lambda d: d.polygon([(16, 1), (22, 8), (21, 18), (16, 23), (11, 18), (10, 8)], fill=255), VIOLET)
+    ic.ink(lambda d: d.line([(16, 3), (16, 21)], fill=255), VIOLET[0])
+    ic.ink(lambda d: d.line([(13, 7), (13, 15)], fill=255), VIOLET[2])
+    sparkle(ic, 26, 6, 2, VIOLET[2])
+    return ic.done()
+
+
+def tab_net():
+    ic = Icon()
+    ic.ink(lambda d: d.line([(16, 7), (6, 24), (26, 24), (16, 7)], fill=255, width=2), GOLD[1])
+    for (x, y) in [(16, 7), (6, 24), (26, 24)]:
+        ic.part(lambda d, x=x, y=y: d.ellipse((x - 5, y - 5, x + 5, y + 5), fill=255), VIOLET)
+        ic.ink(lambda d, x=x, y=y: d.point((x - 2, y - 2), fill=255), WHITE)
+    return ic.done()
+
+
+def tab_path():
+    ic = Icon()
+    ic.part(lambda d: d.rectangle((14, 4, 18, 30), fill=255), BROWN)
+    ic.part(lambda d: d.polygon([(5, 6), (25, 6), (29, 10), (25, 14), (5, 14)], fill=255), GOLD)
+    ic.part(lambda d: d.polygon([(27, 16), (7, 16), (3, 20), (7, 24), (27, 24)], fill=255), GOLD)
+    ic.ink(lambda d: d.line([(8, 10), (22, 10)], fill=255), GOLD[0])
+    ic.ink(lambda d: d.line([(10, 20), (24, 20)], fill=255), GOLD[0])
+    ic.part(lambda d: d.ellipse((10, 27, 22, 31), fill=255), DVIOLET)
+    return ic.done()
+
+
+def tab_store():
+    ic = Icon()
+    ic.part(lambda d: d.rectangle((3, 13, 28, 28), fill=255), BROWN)
+    ic.part(lambda d: d.polygon([(3, 13), (5, 6), (26, 6), (28, 13)], fill=255), BROWN)
+    ic.ink(lambda d: d.line([(3, 13), (28, 13)], fill=255, width=2), BROWN[0])
+    for x in (8, 23):
+        ic.ink(lambda d, x=x: d.line([(x, 7), (x, 27)], fill=255), BROWN[0])
+    ic.part(lambda d: d.rectangle((13, 11, 18, 18), fill=255), GOLD)
+    ic.ink(lambda d: d.point((15, 15), fill=255), OUTLINE)
+    return ic.done()
+
+
+def tab_enchant():
+    ic = Icon()
+    ic.part(lambda d: d.polygon([(4, 6), (21, 4), (23, 26), (6, 28)], fill=255), VIOLET)
+    ic.part(lambda d: d.polygon([(7, 8), (20, 6), (21, 24), (8, 26)], fill=255), PAPER)
+    for i in range(5):
+        y = 10 + i * 3
+        ic.ink(lambda d, y=y, i=i: d.line([(10, y + 1), (17 - (i % 2) * 3, y)], fill=255), PAPER[0])
+    sparkle(ic, 26, 6, 3, VIOLET[2])
+    sparkle(ic, 28, 22, 2, VIOLET[2])
+    return ic.done()
+
+
+def tab_research():
+    ic = Icon()
+    ic.part(lambda d: d.polygon([(3, 3), (19, 2), (20, 23), (4, 25)], fill=255), VIOLET)
+    ic.part(lambda d: d.polygon([(6, 5), (17, 4), (18, 21), (7, 22)], fill=255), PAPER)
+    for i in range(4):
+        y = 8 + i * 3
+        ic.ink(lambda d, y=y: d.line([(9, y + 1), (15, y)], fill=255), PAPER[0])
+    ic.part(lambda d: d.line([(24, 24), (30, 30)], fill=255, width=3), BROWN)
+    ic.part(lambda d: d.ellipse((13, 13, 27, 27), fill=255), SILVER)
+    ic.part(lambda d: d.ellipse((15, 15, 25, 25), fill=255), (BLUE[1], BLUE[2], WHITE))
+    ic.ink(lambda d: d.line([(17, 18), (19, 16)], fill=255), WHITE)
+    return ic.done()
+
+
 ICONS = [
-    # ---------------- заклинания (порядок как в Spell)
-    ('book', [
-        "................",
-        "................",
-        "...OOOO..OOOO...",
-        "..OLLLLOOLLLLO..",
-        ".OLLDDLLOLDDLLO.",
-        ".OLLLLLLOLLLLLO.",
-        ".OLDDDLLOLDDDLO.",
-        ".OLLLLLLOLLLLLO.",
-        ".OLDDLLLOLLDDLO.",
-        ".OLLLLLLOLLLLLO.",
-        ".OmmLLLLOLLLLmmO",
-        ".OdmmmmLOLmmmmdO",
-        "..OddddmOmddddO.",
-        "...OOOOOOOOOOO..",
-        "................",
-        "................",
-    ], {'O': O, **VIOLET, 'D': PAPER['d'], 'L': PAPER['l']}),
-    ('sprout', [
-        "................",
-        "..........OOO...",
-        ".........OlllO..",
-        "..OOO...OlmmmO..",
-        ".OlllO..OmmmdO..",
-        ".OmmmlO.OmmdO...",
-        ".OdmmmmOOmdO....",
-        "..OddmmOmdO.....",
-        "...OOOdmdO......",
-        "......OmO.......",
-        "......OmO...w...",
-        ".....OOmOO.wMw..",
-        "....OMMMMMO.w...",
-        "...OMDDDDDMO....",
-        "...OOOOOOOOO....",
-        "................",
-    ], {'O': O, **GREEN, 'D': VIOLET['d'], 'M': VIOLET['m'], 'w': VIOLET['l']}),
-    ('bridge', [
-        "................",
-        "................",
-        "..........OOOOO.",
-        ".........OllllmO",
-        ".........OmmmmdO",
-        "..........OOOOO.",
-        "......OOOOO.....",
-        ".....OllllmO....",
-        ".....OmmmmdO....",
-        "......OOOOO.....",
-        "..OOOOO.........",
-        ".OllllmO........",
-        ".OmmmmdO........",
-        "..OOOOO.........",
-        "................",
-        "................",
-    ], {'O': O, **VIOLET, 'w': VIOLET['l']}),
-    ('spring', [
-        "................",
-        ".....OOOOOO.....",
-        "...OOmmmmmmOO...",
-        "..OmmOOOOOOmmO..",
-        ".OmlO......OmmO.",
-        ".OmO..OOOO..OmO.",
-        "OmlO.OllllO.OmmO",
-        "OmO.OlOOOmO..OmO",
-        "OmO.OmODOmO..OmO",
-        "OmO.OmmOOO..OmO.",
-        "OmlO.OmmmO..OmO.",
-        ".OmO..OOO..OmO..",
-        ".OmlO.....OmlO..",
-        "..OmmOOOOOmmO...",
-        "...OOmmmmmOO....",
-        ".....OOOOO......",
-    ], {'O': O, **VIOLET, 'D': RED['m']}),
-    ('rift', [     # Разлом: треснувший куб
-        "................",
-        "......OOOO......",
-        "....OOllllOO....",
-        "..OOllllOlllOO..",
-        ".OlllllOOllllmO.",
-        ".OmmllOOmllmmdO.",
-        ".OmmmmOmmmmmddO.",
-        ".OmmmOOdmmmdddO.",
-        ".OdmmmOOdmdddDO.",
-        ".OddmmmOOddddDO.",
-        ".OdddmOOddddDDO.",
-        "..OOddOddDDDOO..",
-        "....OOdOdDOO....",
-        "......OOOO......",
-        "................",
-        "................",
-    ], {'O': O, **SILVER, 'D': SILVER['d']}),
-    ('starsight', [
-        "................",
-        "................",
-        "................",
-        ".....OOOOOO.....",
-        "...OOllllllOO...",
-        "..OllOOOOOOllO..",
-        ".OllOddwddOdllO.",
-        "OllOdddwwddOdllO",
-        ".OllOwwwwwwdllO.",
-        "..OllOddwdOllO..",
-        "...OOllwllOO....",
-        ".....OOOOOO.....",
-        "................",
-        "................",
-        "................",
-        "................",
-    ], {'O': O, **BLUE}),
-    ('recall', [   # Зов Нити: петля нити, возвращающаяся к точке
-        "................",
-        "......OOOO......",
-        "....OOllllOO....",
-        "...OlmOOOOmlO...",
-        "..OlmO....OmlO..",
-        "..OmO......OmO..",
-        ".OlmO......OmlO.",
-        ".OmO........OO..",
-        ".OmO....O.......",
-        ".OmmO..OmO......",
-        "..OmmOOmmmO.....",
-        "...OmmmmmmmO....",
-        "....OOmmmmO.....",
-        "......OmmO......",
-        ".......OO.......",
-        "................",
-    ], {'O': O, **GOLD}),
-    ('dash', [
-        "................",
-        "................",
-        "........OOO.....",
-        "........OlmO....",
-        "..OOOO...OlmO...",
-        "..OddO....OlmO..",
-        "...........OlmO.",
-        ".OOOOOOOOOOOllmO",
-        ".OdddmmmmmmmlmO.",
-        ".OOOOOOOOOOOlmO.",
-        "...........OmO..",
-        "..OOOO....OmO...",
-        "..OddO...OmO....",
-        "........OmO.....",
-        "........OO......",
-        "................",
-    ], {'O': O, **SILVER}),
-    ('bolt', [
-        "................",
-        "...........OOOO.",
-        "..........OlwlO.",
-        ".........OllllO.",
-        "..........OlllO.",
-        "..w......OmOlO..",
-        ".wMw....OmO.O...",
-        "..w....OmO......",
-        "......OmO.......",
-        ".....OmO........",
-        "..O.OmO.........",
-        ".OMOmO.....w....",
-        "..OMMO....wMw...",
-        ".OMMMMO....w....",
-        "..OO.OO.........",
-        "................",
-    ], {'O': O, **VIOLET, 'M': VIOLET['d'], 'w': VIOLET['l']}),
-    ('form', [     # Форма Хаоса: фигура в сиянии
-        "................",
-        ".w....OOO.....w.",
-        "wMw..OlllO...wMw",
-        ".w...OlmlO....w.",
-        "......OOO.......",
-        "...OOOOmOOOO....",
-        "..OlmmmmmmmlO...",
-        ".OlO.OmmmO.OlO..",
-        ".OO..OmmmO..OO..",
-        ".....OmdmO......",
-        "....OmdOdmO.....",
-        "....OmO.OmO.....",
-        "...OmdO.OdmO....",
-        "...OOO...OOO....",
-        "..w.........w...",
-        ".wMw.......wMw..",
-    ], {'O': O, **VIOLET, 'M': GOLD['m'], 'w': GOLD['l']}),
-    ('curse', [
-        "................",
-        "................",
-        "....OOOOOOO.....",
-        "...OllllllmO....",
-        "..OllllllllmO...",
-        "..OlOOOlOOOmO...",
-        "..OlOddlOddmO...",
-        "..OlOOOlOOOmO...",
-        "..OlllllllmmO...",
-        "...OlllOllmO....",
-        "....OmlOlmO.....",
-        "....OlOlOlO.....",
-        ".....OOOOO......",
-        "................",
-        "................",
-        "................",
-    ], {'O': O, **RED}),
-    ('shield', [
-        "................",
-        "..OOOOOOOOOOOO..",
-        ".OlllllllllllmO.",
-        ".OlLLLLLLLLLLmO.",
-        ".OlLLLLMMLLLLmO.",
-        ".OlLLLMwwMLLLmO.",
-        ".OlLLMwwwwMLLmO.",
-        ".OlLLLMwwMLLLmO.",
-        "..OlLLLMMLLLmO..",
-        "..OlLLLLLLLLmO..",
-        "...OlLLLLLLmO...",
-        "....OlLLLLmO....",
-        ".....OlLLmO.....",
-        "......OmmO......",
-        ".......OO.......",
-        "................",
-    ], {'O': O, **SILVER, 'L': VIOLET['d'], 'M': VIOLET['m'], 'w': VIOLET['l']}),
-    # ---------------- вкладки окна Якоря
-    ('tab_anchor', [   # кристалл Якоря на постаменте
-        "................",
-        ".......OO.......",
-        "......OlwO......",
-        ".....OlllmO.....",
-        ".....OllmmO.....",
-        "....OllmmmdO....",
-        "....OlmmmddO....",
-        "....OlmmmddO....",
-        ".....OmmddO.....",
-        ".....OmmddO.....",
-        "......OmdO......",
-        "....OOOOOOOO....",
-        "...OLLLLLLLMO...",
-        "..OLLMMMMMMMDO..",
-        "..OOOOOOOOOOOO..",
-        "................",
-    ], {'O': O, **VIOLET, 'L': SILVER['l'], 'M': SILVER['m'], 'D': SILVER['d']}),
-    ('tab_net', [      # три связанных узла
-        "................",
-        "......OOOO......",
-        ".....OlwlmO.....",
-        ".....OlmmdO.....",
-        "......OmdO......",
-        ".....O.OO.O.....",
-        "....OMO..OMO....",
-        "...OMO....OMO...",
-        "..OMO......OMO..",
-        ".OOOO......OOOO.",
-        "OlwlmO....OlwlmO",
-        "OlmmdOOOOOOlmmdO",
-        "OmmddMMMMMMOmddO",
-        ".OddO.OOOO..OddO",
-        "..OO.........OO.",
-        "................",
-    ], {'O': O, **VIOLET, 'M': GOLD['m']}),
-    ('tab_path', [     # развилка-указатель
-        "................",
-        ".......OO.......",
-        "......OmmO......",
-        ".OOOOOOmmOOOOO..",
-        ".OlllllllllllmO.",
-        ".OmmmmmmmmmmmmdO",
-        ".OOOOOOmmOOOOOO.",
-        "...OOOOmmOOOOOO.",
-        "..OLLLLLLLLLLLO.",
-        ".OMMMMMMMMMMMLO.",
-        "..OOOOOmmOOOOOO.",
-        "......OmmO......",
-        "......OmmO......",
-        ".....OddddO.....",
-        ".....OOOOOO.....",
-        "................",
-    ], {'O': O, **BROWN, 'L': GOLD['l'], 'M': GOLD['m']}),
-    ('tab_store', [    # сундук
-        "................",
-        "................",
-        "................",
-        "..OOOOOOOOOOOO..",
-        ".OllllllllllllO.",
-        ".OlmmmmmmmmmmdO.",
-        ".OmmmmmmmmmmmdO.",
-        ".OOOOOOMMOOOOOO.",
-        ".OmmmmOLLOmmmdO.",
-        ".OmmmmmOOmmmmdO.",
-        ".OmmmmmmmmmmmdO.",
-        ".OddddddddddddO.",
-        ".OOOOOOOOOOOOOO.",
-        "................",
-        "................",
-        "................",
-    ], {'O': O, **BROWN, 'L': GOLD['l'], 'M': GOLD['m']}),
-    # ---------------- вкладки Стола Хаоса
-    ('tab_enchant', [  # книга с искрой
-        "...........w....",
-        "..........wWw...",
-        "...........w....",
-        "..OOOOOOOOO.....",
-        ".OmmmmmmmmlO....",
-        ".OmLLLLLLLmO....",
-        ".OmLDDDDDLmO....",
-        ".OmLLLLLLLmO....",
-        ".OmLDDDDLLmO....",
-        ".OmLLLLLLLmO....",
-        ".OmLDDDLLLmO..w.",
-        ".OmLLLLLLLmO.wWw",
-        ".OdmmmmmmmmO..w.",
-        "..OOOOOOOOO.....",
-        "................",
-        "................",
-    ], {'O': O, **VIOLET, 'L': PAPER['l'], 'D': PAPER['d'], 'w': VIOLET['l'], 'W': W}),
-    ('tab_research', [  # книга и лупа
-        "................",
-        "..OOOOOOOOO.....",
-        ".OmmmmmmmmlO....",
-        ".OmLLLLLLLmO....",
-        ".OmLDDDDDLmO....",
-        ".OmLLLLLLLmO....",
-        ".OmLDDDDLLmO....",
-        ".OmLLLLLOOOO....",
-        ".OmLDDDOSSSSO...",
-        ".OmLLLOSwBBBSO..",
-        ".OdmmmOSBBBBSO..",
-        "..OOOOOSBBBBSO..",
-        "......OOSSSSOO..",
-        "...........OSO..",
-        "............OSO.",
-        ".............OO.",
-    ], {'O': O, **VIOLET, 'L': PAPER['l'], 'D': PAPER['d'], 'S': SILVER['m'], 'B': BLUE['l'], 'w': W}),
+    ('book', book), ('sprout', sprout), ('bridge', bridge), ('spring', spring), ('rift', rift), ('starsight', starsight),
+    ('recall', recall), ('dash', dash), ('bolt', bolt), ('form', form), ('curse', curse), ('shield', shield),
+    ('tab_anchor', tab_anchor), ('tab_net', tab_net), ('tab_path', tab_path), ('tab_store', tab_store),
+    ('tab_enchant', tab_enchant), ('tab_research', tab_research),
 ]
 
-atlas = Image.new('RGBA', (256, 256), (0, 0, 0, 0))
-for i, (name, rows, pal) in enumerate(ICONS):
-    assert len(rows) == 16, (name, len(rows))
-    for y, row in enumerate(rows):
-        assert len(row) == 16, (name, y, len(row), row)
-        for x, ch in enumerate(row):
-            if ch == '.':
-                continue
-            c = pal.get(ch, W if ch in 'wW' else None)
-            if c is None:
-                raise SystemExit(f'{name}: нет цвета для «{ch}»')
-            atlas.putpixel(((i % 16) * 16 + x, (i // 16) * 16 + y), tuple(c) + (255,))
+atlas = Image.new('RGBA', (512, 512), (0, 0, 0, 0))
+for i, (name, fn) in enumerate(ICONS):
+    atlas.paste(fn(), ((i % 16) * N, (i // 16) * N))
 atlas.save(OUT + '/icons.png')
 
 if PREVIEW:
-    S = 6
+    S = 4
     n = len(ICONS)
-    pv = Image.new('RGBA', (n * (16 * S + 8) + 8, 2 * (16 * S + 8) + 8), (0, 0, 0, 255))
+    cell = N * S
+    pv = Image.new('RGBA', (n * (cell + 8) + 8, 2 * (cell + 8) + 8), (0, 0, 0, 255))
     for row, bg in enumerate([(22, 17, 31, 255), (236, 222, 196, 255)]):
-        y0 = 8 + row * (16 * S + 8)
+        y0 = 8 + row * (cell + 8)
         for i in range(n):
-            x0 = 8 + i * (16 * S + 8)
-            tile = Image.new('RGBA', (16 * S, 16 * S), bg)
-            ic = atlas.crop(((i % 16) * 16, (i // 16) * 16, (i % 16) * 16 + 16, (i // 16) * 16 + 16)).resize((16 * S, 16 * S), 0)
+            tile = Image.new('RGBA', (cell, cell), bg)
+            ic = atlas.crop(((i % 16) * N, (i // 16) * N, (i % 16) * N + N, (i // 16) * N + N)).resize((cell, cell), 0)
             tile.paste(ic, (0, 0), ic)
-            pv.paste(tile, (x0, y0))
+            pv.paste(tile, (8 + i * (cell + 8), y0))
     pv.save(PREVIEW)
 print('ok', len(ICONS))
