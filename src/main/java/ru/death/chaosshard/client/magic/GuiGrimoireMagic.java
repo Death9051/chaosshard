@@ -320,7 +320,9 @@ public class GuiGrimoireMagic extends GuiScreen {
             BookArt.marker(x0 - 15, y + 2);
         }
         if (icon instanceof Integer) {
-            ru.death.chaosshard.client.ChaosUi.bigIcon((Integer) icon, x0, y + 1.5F, 15.2F);
+            // закрытое (цвет строки — тусклый) — и значок приглушён
+            float t = color == BookArt.DIM || color == 0x7A6F8C ? 0.45F : 1F;
+            ru.death.chaosshard.client.ChaosUi.bigIcon((Integer) icon, x0, y + 1.5F, 15.2F, t, t, t, 1F);
         } else {
             RenderHelper.enableGUIStandardItemLighting();
             GlStateManager.pushMatrix();
