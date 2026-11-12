@@ -2220,3 +2220,7 @@ chaosshard.servant.gui.block_summon=Summoning
 chaosshard.servant.gui.block_strength=Power from the Thread
 chaosshard.servant.gui.block_upgrades=Upgrades
 chaosshard.servant.gui.upgrades_how=Bowl ritual, up to 3 each
+chaosshard.ritual.pull.beetle_placed=A Pull Beetle settled on the storage: it gathers items within %s blocks. Sneak + right-click to take it.
+chaosshard.ritual.pull.beetle_there=A Pull Beetle already sits on this storage.
+chaosshard.ritual.pull.beetle_taken=The Pull Beetle curled back into a sphere.
+entity.chaosshard.pull_beetle.name=Pull Beetle

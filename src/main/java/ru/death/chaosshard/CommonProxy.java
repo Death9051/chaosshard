@@ -48,6 +48,11 @@ public class CommonProxy {
     public void showCredits() {
     }
 
+    /** Свой игрок на клиенте крадётся (для выбора Жучка Тяги лучом). На сервере — всегда false. */
+    public boolean localSneaking() {
+        return false;
+    }
+
     public void handleHeartBolt(ru.death.chaosshard.network.PacketHeartBolt bolt) {
     }
 

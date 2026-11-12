@@ -1557,13 +1557,16 @@ public final class AutoTest {
             check(useSphere(ru.death.chaosshard.ritual.Ritual.BREED, pen), "сфера разбита у загона");
             check(cows.stream().allMatch(net.minecraft.entity.passive.EntityAnimal::isInLove), "все три коровы готовы к приплоду");
         });
-        step("Сфера тяги: вещи плывут в сундук под ней", () -> {
+        step("Сфера тяги на сундук: садится Жучок Тяги", () -> {
             pullChest = base.add(-20, 1, 14);
             ow.setBlockState(pullChest, Blocks.CHEST.getDefaultState(), 3);
             me.setHeldItem(EnumHand.MAIN_HAND, ru.death.chaosshard.ritual.ItemRitualSphere.of(ru.death.chaosshard.ritual.Ritual.PULL, 0));
             me.getHeldItemMainhand().getItem().onItemUse(me, ow, pullChest, EnumHand.MAIN_HAND, EnumFacing.UP, 0.5F, 1F, 0.5F);
-            check(ow.getBlockState(pullChest.up()).getBlock() == ModBlocks.RITUAL_SPHERE, "сфера тяги встала на сундук");
-            net.minecraft.entity.item.EntityItem ei = new net.minecraft.entity.item.EntityItem(ow, pullChest.getX() + 7.5, pullChest.getY() + 0.5,
+            List<ru.death.chaosshard.ritual.EntityPullBeetle> bugs = ow.getEntitiesWithinAABB(ru.death.chaosshard.ritual.EntityPullBeetle.class,
+                    new AxisAlignedBB(pullChest).grow(1));
+            check(bugs.size() == 1 && bugs.get(0).home().equals(pullChest), "на сундуке сидит Жучок Тяги: " + bugs.size());
+            check(ow.getBlockState(pullChest.up()).getBlock() != ModBlocks.RITUAL_SPHERE, "сфера не встала блоком (сундук открывается)");
+            net.minecraft.entity.item.EntityItem ei = new net.minecraft.entity.item.EntityItem(ow, pullChest.getX() + 14.5, pullChest.getY() + 0.5,
                     pullChest.getZ() + 0.5, new net.minecraft.item.ItemStack(Blocks.DIRT, 5));
             ei.setPickupDelay(1000);
             ow.spawnEntity(ei);
@@ -1578,8 +1581,11 @@ public final class AutoTest {
                     if (st.getItem() == net.minecraft.item.Item.getItemFromBlock(Blocks.DIRT)) dirt += st.getCount();
                 }
             }
-            check(dirt == 5, "в сундуке земли: " + dirt + " из 5");
-            ow.setBlockToAir(pullChest.up());
+            check(dirt == 5, "в сундуке земли (вещь была за 14 блоков): " + dirt + " из 5");
+            for (ru.death.chaosshard.ritual.EntityPullBeetle b : ow.getEntitiesWithinAABB(ru.death.chaosshard.ritual.EntityPullBeetle.class,
+                    new AxisAlignedBB(pullChest).grow(1))) {
+                b.setDead();
+            }
         });
 
         section("Старшие ритуалы: Алтарь Прорыва");
