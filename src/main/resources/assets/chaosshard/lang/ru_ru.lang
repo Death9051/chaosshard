@@ -2213,3 +2213,36 @@ chaosshard.biome.evilcraft.biome_degraded=Выродившаяся земля
 # по английскому имени — если имя в реестре неизвестно
 chaosshard.biome.name.storage_cell=Ячейка хранения
 chaosshard.biome.name.degraded=Выродившаяся земля
+
+# Стол Хаоса
+tile.chaosshard.chaos_enchanter.name=Стол Хаоса
+chaosshard.enchanter.tab.enchant=Зачарование
+chaosshard.enchanter.tab.research=Изучение
+chaosshard.enchanter.power=Сила
+chaosshard.enchanter.power.tip1=Сила полок: %s
+chaosshard.enchanter.power.tip2=Сила стола: %s (три силы за каждую единицу полок)
+chaosshard.enchanter.conflict=несовместимо
+chaosshard.enchanter.need_power=сила %s
+chaosshard.enchanter.from_item=с предмета
+chaosshard.enchanter.do_enchant=Зачаровать
+chaosshard.enchanter.do_research=Изучить
+chaosshard.enchanter.do_learn_item=Списать с предмета
+chaosshard.enchanter.do_cancel=Отменить
+chaosshard.enchanter.busy=Стол занят
+chaosshard.enchanter.cost_xp=%s ур.
+chaosshard.enchanter.cost_lapis=%s лаз.
+chaosshard.enchanter.researching=Изучается: %s
+chaosshard.enchanter.research_done=Изучено: %s
+chaosshard.enchanter.learned=Стол Хаоса раскрыл зачарование «%s». Теперь его можно накладывать.
+chaosshard.enchanter.hint.put=Положи предмет или книгу. Слева внизу лазурит.
+chaosshard.enchanter.hint.none=Для этого предмета нет изученных зачарований. Их открывает вкладка «Изучение».
+chaosshard.enchanter.hint.all_known=Изучено всё, что знает этот мир.
+chaosshard.enchanter.stat.rarity=Редкость: %s
+chaosshard.enchanter.stat.max=Наибольший уровень: %s
+chaosshard.enchanter.stat.power=Сила стола для уровней:
+chaosshard.enchanter.stat.treasure=Сокровищное
+chaosshard.enchanter.stat.research=Изучение: %s лазурита, %s
+chaosshard.enchanter.rarity.common=обычное
+chaosshard.enchanter.rarity.uncommon=необычное
+chaosshard.enchanter.rarity.rare=редкое
+chaosshard.enchanter.rarity.very_rare=очень редкое

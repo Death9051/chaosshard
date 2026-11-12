@@ -29,6 +29,8 @@ public final class ChaosNetwork {
         CHANNEL.registerMessage(PacketAnchorView.Handler.class, PacketAnchorView.class, 15, Side.CLIENT);
         CHANNEL.registerMessage(PacketAnchorAction.Handler.class, PacketAnchorAction.class, 16, Side.SERVER);
         CHANNEL.registerMessage(PacketRitualFill.Handler.class, PacketRitualFill.class, 17, Side.SERVER);
+        CHANNEL.registerMessage(PacketEnchanterAction.Handler.class, PacketEnchanterAction.class, 18, Side.SERVER);
+        CHANNEL.registerMessage(PacketEnchantKnown.Handler.class, PacketEnchantKnown.class, 19, Side.CLIENT);
     }
 
     private ChaosNetwork() {

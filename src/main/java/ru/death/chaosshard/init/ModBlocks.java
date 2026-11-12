@@ -54,6 +54,8 @@ public final class ModBlocks {
     public static Block VEIL_VEIN;
     public static Block ORDER_BEACON;
     public static Block RITUAL_SPHERE;
+    /** Стол Хаоса — зачарования без случайности. */
+    public static Block CHAOS_ENCHANTER;
 
     /** Тестовые блоки-структуры (только творческий режим). */
     public static final List<Block> SEEDS = new ArrayList<>();
@@ -100,6 +102,9 @@ public final class ModBlocks {
         TRIAL_EXIT = add(new ru.death.chaosshard.trial.TrialBlocks.Exit(), "trial_exit");
         LAIR = add(new ru.death.chaosshard.lair.BlockLair(), "lair_core");
         ORDER_BEACON = add(new ru.death.chaosshard.structure.BlockOrderBeacon(), "order_beacon");
+        CHAOS_ENCHANTER = add(new ru.death.chaosshard.enchant.BlockChaosEnchanter(), "chaos_enchanter");
+        net.minecraftforge.fml.common.registry.GameRegistry.registerTileEntity(ru.death.chaosshard.enchant.TileChaosEnchanter.class,
+                new net.minecraft.util.ResourceLocation(Tags.MOD_ID, "chaos_enchanter"));
         CHAOS_TRAIL = add(new ru.death.chaosshard.spell.BlockChaosTrail(), "chaos_trail");
         CHAOS_TRAIL.setCreativeTab(null);
         net.minecraftforge.fml.common.registry.GameRegistry.registerTileEntity(ru.death.chaosshard.structure.TileOrderBeacon.class,
