@@ -357,6 +357,26 @@ public class ClientTest {
             case 33:
                 shot = "16_enchanter_research";
                 wait = 5;
+                step = 34;
+                return;
+            case 34:
+                mc.displayGuiScreen(null);
+                onServer((s2, w, p) -> {
+                    BlockPos c = origin.add(-28, 0, -30);
+                    for (BlockPos q : BlockPos.getAllInBox(c.add(-2, 0, -2), c.add(2, 3, 2))) {
+                        w.setBlockToAir(q);
+                    }
+                    w.setBlockState(c.down(), net.minecraft.init.Blocks.STONE.getDefaultState(), 2);
+                    w.setBlockState(c, net.minecraft.init.Blocks.CHEST.getDefaultState(), 2);
+                    w.spawnEntity(new ru.death.chaosshard.ritual.EntityPullBeetle(w, c, c.getY() + 0.875));
+                    p.connection.setPlayerLocation(c.getX() + 0.5, c.getY() + 0.4, c.getZ() - 1.1, 0F, 38F);
+                });
+                wait = 60;
+                step++;
+                return;
+            case 35:
+                shot = "17_pull_beetle";
+                wait = 5;
                 step = 40;
                 return;
             case 40: {
