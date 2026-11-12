@@ -607,10 +607,9 @@ public class GuiChaosEnchanter extends GuiContainer {
                     left = rightText(right, ry + 2, time(container.secondsLeft), GOLD, I_CLOCK);
                     break;
                 default: {
+                    // в строке — только цена; время изучения — в панели ниже и в подсказке (меньше шума в списке)
                     int lap = EnchanterLogic.researchLapis(r.e);
-                    int sec = EnchanterLogic.researchTicks(r.e, shelves) / 20;
-                    int l1 = rightText(right, ry + 2, time(sec), DIM, I_CLOCK);
-                    left = rightText(l1 - 4, ry + 2, String.valueOf(lap), creative() || container.lapis() >= lap ? SOFT : BAD, I_LAPIS);
+                    left = rightText(right, ry + 2, String.valueOf(lap), creative() || container.lapis() >= lap ? SOFT : BAD, I_LAPIS);
                     break;
                 }
             }
