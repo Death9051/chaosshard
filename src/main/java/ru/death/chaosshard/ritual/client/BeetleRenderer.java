@@ -4,20 +4,19 @@ import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.entity.Render;
-import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
 import org.lwjgl.opengl.GL11;
-import ru.death.chaosshard.ritual.EntityPullBeetle;
-
-import javax.annotation.Nullable;
+import ru.death.chaosshard.ritual.TilePullBeetle;
 
 /**
- * Жучок Тяги без текстуры: цветные брусочки (панцирь, голова, шесть лапок, усики) со светящимися пятнами.
- * Лапки перебирают, пока жучок ползёт, и чуть подрагивают на месте; усики шевелятся.
+ * Жучок Тяги (блок) без текстуры: цветные брусочки (панцирь, голова, шесть лапок, усики) со светящимися пятнами.
+ * Сам по себе неспешно ползает по крышке хранилища (путь — плавная петля, скорость то растёт, то падает почти до
+ * остановки), разворачивается по ходу; лапки перебирают в такт, усики шевелятся. Всё считается от времени мира,
+ * на сервере жучок стоит на месте блока.
  */
-public class RenderPullBeetle extends Render<EntityPullBeetle> {
+public class BeetleRenderer extends TileEntitySpecialRenderer<TilePullBeetle> {
 
     private static final float[] SHELL = {0.52F, 0.28F, 0.90F};
     private static final float[] SHELL_DARK = {0.30F, 0.14F, 0.55F};
@@ -26,21 +25,31 @@ public class RenderPullBeetle extends Render<EntityPullBeetle> {
     private static final float[] GLOW = {1.0F, 0.55F, 0.95F};
     private static final float[] EYE = {1.0F, 0.85F, 0.40F};
 
-    public RenderPullBeetle(RenderManager rm) {
-        super(rm);
-        shadowSize = 0.15F;
+    /** Смещение по крышке в момент t (у каждого жучка свой сдвиг по фазе). */
+    private static double[] at(double t, double seed) {
+        double u = t * 0.010 + seed + 0.9 * Math.sin(t * 0.0035 + seed * 2);
+        return new double[]{0.14 * Math.sin(u), 0.14 * Math.sin(1.6 * u + seed)};
     }
 
     @Override
-    public void doRender(EntityPullBeetle e, double x, double y, double z, float yaw, float pt) {
-        float t = e.ticksExisted + pt;
-        double moved = Math.sqrt((e.posX - e.prevPosX) * (e.posX - e.prevPosX) + (e.posZ - e.prevPosZ) * (e.posZ - e.prevPosZ));
-        float walk = moved > 0.002 ? 1F : 0.15F;
-        float ry = e.prevRotationYaw + (e.rotationYaw - e.prevRotationYaw) * pt;
+    public void render(TilePullBeetle te, double x, double y, double z, float pt, int destroyStage, float alpha) {
+        BlockPos pos = te.getPos();
+        double seed = (pos.getX() * 31 + pos.getZ() * 17 + pos.getY() * 7) % 100 / 10.0;
+        double t = (te.getWorld() == null ? 0 : te.getWorld().getTotalWorldTime()) + pt;
+        double[] p0 = at(t, seed), p1 = at(t + 2, seed);
+        double vx = p1[0] - p0[0], vz = p1[1] - p0[1];
+        double speed = Math.sqrt(vx * vx + vz * vz);
+        float walk = (float) Math.min(1.0, speed * 300) * 0.9F + 0.1F;
+        float ry = (float) Math.toDegrees(Math.atan2(vx, vz));
+        // посадка на крышку: у сундука она ниже границы блока
+        double lid = 1.0;
+        if (te.getWorld() != null) {
+            lid = te.getWorld().getBlockState(pos.down()).getBoundingBox(te.getWorld(), pos.down()).maxY;
+        }
 
         GlStateManager.pushMatrix();
-        GlStateManager.translate(x, y + 0.02 + Math.sin(t * 0.25) * 0.004, z);
-        GlStateManager.rotate(-ry, 0, 1, 0);
+        GlStateManager.translate(x + 0.5 + p0[0], y + (lid - 1.0) + 0.01 + Math.sin(t * 0.25) * 0.004, z + 0.5 + p0[1]);
+        GlStateManager.rotate(ry, 0, 1, 0);
         GlStateManager.scale(0.8F / 16F, 0.8F / 16F, 0.8F / 16F);
         GlStateManager.disableTexture2D();
         GlStateManager.disableLighting();
@@ -94,7 +103,6 @@ public class RenderPullBeetle extends Render<EntityPullBeetle> {
         GlStateManager.enableLighting();
         GlStateManager.enableTexture2D();
         GlStateManager.popMatrix();
-        super.doRender(e, x, y, z, yaw, pt);
     }
 
     /** Брусок с простым светом граней: верх ярче, бока темнее, низ темнее всего. */
@@ -117,9 +125,4 @@ public class RenderPullBeetle extends Render<EntityPullBeetle> {
         }
     }
 
-    @Nullable
-    @Override
-    protected ResourceLocation getEntityTexture(EntityPullBeetle e) {
-        return null;
-    }
 }

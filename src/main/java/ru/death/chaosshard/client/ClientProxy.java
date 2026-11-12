@@ -26,8 +26,8 @@ public class ClientProxy extends CommonProxy {
                 ru.death.chaosshard.anchor.TileAnchor.class, new ru.death.chaosshard.anchor.client.AnchorRenderer());
         net.minecraftforge.fml.client.registry.RenderingRegistry.registerEntityRenderingHandler(ru.death.chaosshard.spell.EntityChaosSpear.class,
                 ru.death.chaosshard.spell.client.RenderChaosSpear::new);
-        net.minecraftforge.fml.client.registry.RenderingRegistry.registerEntityRenderingHandler(ru.death.chaosshard.ritual.EntityPullBeetle.class,
-                ru.death.chaosshard.ritual.client.RenderPullBeetle::new);
+        net.minecraftforge.fml.client.registry.ClientRegistry.bindTileEntitySpecialRenderer(
+                ru.death.chaosshard.ritual.TilePullBeetle.class, new ru.death.chaosshard.ritual.client.BeetleRenderer());
         net.minecraftforge.fml.client.registry.RenderingRegistry.registerEntityRenderingHandler(ru.death.chaosshard.servant.EntityChaosBeast.Hare.class,
                 rm -> new ru.death.chaosshard.servant.client.RenderChaosBeast<>(rm, new ru.death.chaosshard.servant.client.ModelHare(), 0.3F, "hare"));
         net.minecraftforge.fml.client.registry.RenderingRegistry.registerEntityRenderingHandler(ru.death.chaosshard.servant.EntityChaosBeast.Tiger.class,
@@ -116,11 +116,6 @@ public class ClientProxy extends CommonProxy {
     @Override
     public void handleCutscene(ru.death.chaosshard.network.PacketCutscene m) {
         net.minecraft.client.Minecraft.getMinecraft().addScheduledTask(() -> ru.death.chaosshard.cutscene.client.CutsceneClient.receive(m.scene));
-    }
-
-    @Override
-    public boolean localSneaking() {
-        return Minecraft.getMinecraft().player != null && Minecraft.getMinecraft().player.isSneaking();
     }
 
     @Override

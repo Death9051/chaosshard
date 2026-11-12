@@ -368,7 +368,7 @@ public class ClientTest {
                     }
                     w.setBlockState(c.down(), net.minecraft.init.Blocks.STONE.getDefaultState(), 2);
                     w.setBlockState(c, net.minecraft.init.Blocks.CHEST.getDefaultState(), 2);
-                    w.spawnEntity(new ru.death.chaosshard.ritual.EntityPullBeetle(w, c, c.getY() + 0.875));
+                    w.setBlockState(c.up(), ModBlocks.PULL_BEETLE.getDefaultState(), 2);
                     p.connection.setPlayerLocation(c.getX() + 0.5, c.getY() + 0.4, c.getZ() - 1.1, 0F, 38F);
                 });
                 wait = 60;

@@ -92,7 +92,7 @@ public class ItemRitualSphere extends Item {
             }
             return EnumActionResult.SUCCESS;
         }
-        if (r == Ritual.PULL && placeBeetle(player, world, pos, stack)) {
+        if (r == Ritual.PULL && placeBeetle(player, world, pos, facing, stack)) {
             return EnumActionResult.SUCCESS;
         }
         BlockPos at = world.getBlockState(pos).getBlock().isReplaceable(world, pos) ? pos : pos.offset(facing);
@@ -116,24 +116,25 @@ public class ItemRitualSphere extends Item {
 
     /**
      * Сфера Тяги по хранилищу (сундук, бочка, ящик — всё, во что можно положить сверху): на крышке садится
-     * Жучок Тяги, который собирает вещи без срока. true — жучок посажен (или уже сидит), сфера обработана.
+     * Жучок Тяги — блок, который собирает вещи без срока. true — жучок посажен (или уже сидит), сфера обработана.
      */
-    private static boolean placeBeetle(EntityPlayer player, World world, BlockPos pos, ItemStack stack) {
-        TileEntity te = world.getTileEntity(pos);
-        if (te == null || !te.hasCapability(net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.UP)) {
+    private static boolean placeBeetle(EntityPlayer player, World world, BlockPos pos, EnumFacing facing, ItemStack stack) {
+        if (!BlockPullBeetle.hasInventory(world, pos)) {
             return false;
         }
-        if (!world.getEntitiesWithinAABB(EntityPullBeetle.class, new net.minecraft.util.math.AxisAlignedBB(pos).grow(0.5, 1, 0.5),
-                b -> b.home().equals(pos)).isEmpty()) {
+        BlockPos at = pos.up();
+        if (world.getBlockState(at).getBlock() == ModBlocks.PULL_BEETLE) {
             player.sendStatusMessage(Breach.grimoire("chaosshard.ritual.pull.beetle_there"), true);
             return true;
         }
-        net.minecraft.util.math.AxisAlignedBB bb = world.getBlockState(pos).getBoundingBox(world, pos);
-        EntityPullBeetle beetle = new EntityPullBeetle(world, pos, pos.getY() + bb.maxY);
-        world.spawnEntity(beetle);
-        ((WorldServer) world).spawnParticle(EnumParticleTypes.PORTAL, beetle.posX, beetle.posY + 0.2, beetle.posZ, 40, 0.2, 0.2, 0.2, 0.4);
-        world.playSound(null, pos, SoundEvents.BLOCK_END_PORTAL_FRAME_FILL, SoundCategory.BLOCKS, 0.8F, 1.6F);
-        player.sendStatusMessage(Breach.grimoire("chaosshard.ritual.pull.beetle_placed", EntityPullBeetle.RADIUS), true);
+        if (!world.getBlockState(at).getBlock().isReplaceable(world, at) || !player.canPlayerEdit(at, facing, stack)) {
+            player.sendStatusMessage(Breach.grimoire("chaosshard.ritual.pull.beetle_no_room"), true);
+            return true;
+        }
+        world.setBlockState(at, ModBlocks.PULL_BEETLE.getDefaultState(), 3);
+        ((WorldServer) world).spawnParticle(EnumParticleTypes.PORTAL, at.getX() + 0.5, at.getY() + 0.2, at.getZ() + 0.5, 40, 0.2, 0.2, 0.2, 0.4);
+        world.playSound(null, at, SoundEvents.BLOCK_END_PORTAL_FRAME_FILL, SoundCategory.BLOCKS, 0.8F, 1.6F);
+        player.sendStatusMessage(Breach.grimoire("chaosshard.ritual.pull.beetle_placed", TilePullBeetle.RADIUS), true);
         if (!player.isCreative()) {
             stack.shrink(1);
         }

@@ -99,9 +99,6 @@ public class ChaosShard {
         // Копьё Хаоса (Стрела Хаоса, ветка «Копьё»): снаряд, позицию шлём каждый тик
         net.minecraftforge.fml.common.registry.EntityRegistry.registerModEntity(new net.minecraft.util.ResourceLocation(Tags.MOD_ID, "chaos_spear"),
                 ru.death.chaosshard.spell.EntityChaosSpear.class, "chaosshard.chaos_spear", eid++, this, 96, 1, true);
-        // Жучок Тяги: сидит на хранилище и стягивает вещи
-        net.minecraftforge.fml.common.registry.EntityRegistry.registerModEntity(new net.minecraft.util.ResourceLocation(Tags.MOD_ID, "pull_beetle"),
-                ru.death.chaosshard.ritual.EntityPullBeetle.class, "chaosshard.pull_beetle", eid++, this, 64, 2, false);
         MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.cutscene.CutsceneManager());
         MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.servant.Resync());
         MinecraftForge.EVENT_BUS.register(STRUCTURES);

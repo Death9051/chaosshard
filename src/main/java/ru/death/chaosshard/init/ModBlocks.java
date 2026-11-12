@@ -54,6 +54,8 @@ public final class ModBlocks {
     public static Block VEIL_VEIN;
     public static Block ORDER_BEACON;
     public static Block RITUAL_SPHERE;
+    /** Жучок Тяги — сфера Тяги, поставленная на хранилище (без своего предмета, ломается в сферу). */
+    public static Block PULL_BEETLE;
     /** Стол Хаоса — зачарования без случайности. */
     public static Block CHAOS_ENCHANTER;
 
@@ -142,6 +144,12 @@ public final class ModBlocks {
         event.getRegistry().register(TROPHY);
         net.minecraftforge.fml.common.registry.GameRegistry.registerTileEntity(ru.death.chaosshard.hero.TileTrophy.class,
                 new net.minecraft.util.ResourceLocation(Tags.MOD_ID, "hero_trophy"));
+        PULL_BEETLE = new ru.death.chaosshard.ritual.BlockPullBeetle();
+        PULL_BEETLE.setRegistryName(Tags.MOD_ID, "pull_beetle");
+        PULL_BEETLE.setTranslationKey(Tags.MOD_ID + ".pull_beetle");
+        event.getRegistry().register(PULL_BEETLE);
+        net.minecraftforge.fml.common.registry.GameRegistry.registerTileEntity(ru.death.chaosshard.ritual.TilePullBeetle.class,
+                new net.minecraft.util.ResourceLocation(Tags.MOD_ID, "pull_beetle"));
         GRAVE = new ru.death.chaosshard.death.BlockGrave();
         GRAVE.setRegistryName(Tags.MOD_ID, "grave");
         GRAVE.setTranslationKey(Tags.MOD_ID + ".grave");
