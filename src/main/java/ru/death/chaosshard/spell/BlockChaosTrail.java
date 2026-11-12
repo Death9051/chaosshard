@@ -69,6 +69,14 @@ public class BlockChaosTrail extends Block {
         if (w.isRemote) {
             return;
         }
+        // на плите стоит Осколок под Поступью — держаться, пока он здесь (повторный scheduleUpdate срок не продлевает)
+        for (net.minecraft.entity.player.EntityPlayer p : w.getEntitiesWithinAABB(net.minecraft.entity.player.EntityPlayer.class,
+                new net.minecraft.util.math.AxisAlignedBB(pos.up()).grow(0.8, 0.5, 0.8))) {
+            if (p.getEntityData().getLong("chaosshard_trail_until") > w.getTotalWorldTime()) {
+                w.scheduleUpdate(pos, this, 20);
+                return;
+            }
+        }
         int o = state.getValue(ORIGIN);
         w.setBlockState(pos, o == 1 ? Blocks.WATER.getDefaultState() : o == 2 ? Blocks.LAVA.getDefaultState() : Blocks.AIR.getDefaultState(), 3);
         if (w instanceof WorldServer) {

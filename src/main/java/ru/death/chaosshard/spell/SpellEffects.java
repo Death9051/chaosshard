@@ -227,7 +227,16 @@ public final class SpellEffects {
         return placed > 0;
     }
 
-    /** Поступь: под ногами застывает Хаос, пока действует заклинание. Присев — плиты не ложатся (можно спуститься). */
+    /** Уровень Поступи: на какой высоте ложатся плиты (запоминается, пока стою на земле). */
+    static final String TAG_TRAIL_Y = "chaosshard_trail_y";
+
+    /**
+     * Поступь: под ногами застывает Хаос, пока действует заклинание. Присев — плиты не ложатся (можно спуститься).
+     * <p>
+     * Плиты кладутся на запомненном уровне — под ногами и на шаг вперёд по ходу движения, чтобы не проваливаться.
+     * Скорость игрока не трогается: сервер не знает её по горизонтали, и прежняя «подстраховка» обнуляла её каждый тик —
+     * Осколок полз, пока не присядешь.
+     */
     @SubscribeEvent
     public static void onPlayerTick(TickEvent.PlayerTickEvent e) {
         if (e.phase != TickEvent.Phase.END || e.player.world.isRemote) {
@@ -240,20 +249,40 @@ public final class SpellEffects {
         }
         if (p.world.getTotalWorldTime() > until) {
             p.getEntityData().removeTag(TAG_TRAIL);
+            p.getEntityData().removeTag(TAG_TRAIL_Y);
             return;
         }
-        if (p.isSneaking() || p.isInWater() || p.isInLava() || p.isRiding()) {
+        if (p.isRiding() || p.capabilities.isFlying) {
             return;
         }
-        BlockPos under = new BlockPos(p.posX, p.posY - 0.5, p.posZ);
-        IBlockState st = p.world.getBlockState(under);
-        if (st.getBlock() == ru.death.chaosshard.init.ModBlocks.CHAOS_TRAIL || p.world.isAirBlock(under) || st.getMaterial().isLiquid()) {
-            BlockChaosTrail.place(p.world, under, 40);
-            if (!p.onGround && p.motionY < 0) {
-                p.motionY = 0;
-                p.fallDistance = 0;
-                p.velocityChanged = true;
+        int feetY = MathHelper.floor(p.posY - 0.5);
+        if (p.onGround || p.isInWater() || p.isInLava() || !p.getEntityData().hasKey(TAG_TRAIL_Y)) {
+            p.getEntityData().setInteger(TAG_TRAIL_Y, feetY);
+        }
+        if (p.isSneaking() || p.isInWater() || p.isInLava()) {
+            return;
+        }
+        int y = p.getEntityData().getInteger(TAG_TRAIL_Y);
+        if (y > feetY) {
+            y = feetY;     // упал ниже уровня (присел и спустился) — новый уровень
+            p.getEntityData().setInteger(TAG_TRAIL_Y, y);
+        }
+        double dx = p.posX - p.lastTickPosX, dz = p.posZ - p.lastTickPosZ;
+        boolean any = false;
+        // под ногами и на 1–2 шага вперёд по ходу
+        for (int i = 0; i <= 2; i++) {
+            BlockPos q = new BlockPos(p.posX + dx * i * 3, y, p.posZ + dz * i * 3);
+            IBlockState st = p.world.getBlockState(q);
+            if (st.getBlock() == ru.death.chaosshard.init.ModBlocks.CHAOS_TRAIL || p.world.isAirBlock(q) || st.getMaterial().isLiquid()
+                    || st.getBlock().isReplaceable(p.world, q)) {
+                any |= BlockChaosTrail.place(p.world, q, 40);
             }
+            if (dx * dx + dz * dz < 1e-4) {
+                break;
+            }
+        }
+        if (any) {
+            p.fallDistance = 0;
         }
     }
 

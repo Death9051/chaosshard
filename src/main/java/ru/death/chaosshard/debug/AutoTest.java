@@ -3360,6 +3360,7 @@ public final class AutoTest {
             check(ow.getBlockState(under).getBlock() == TRAIL, "Поступь: под ногами застыл Хаос");
             ow.setBlockToAir(under);
             me.getEntityData().removeTag("chaosshard_trail_until");
+            me.getEntityData().removeTag("chaosshard_trail_y");
             ru.death.chaosshard.spell.SpellData.debugSet(me, T, 0, 0);
             me.setPositionAndRotation(o.getX() + 0.5, o.getY() + 1, o.getZ() + 0.5, 0, 0);
             // Пожирание: без ветки — куб исчезает без следа
