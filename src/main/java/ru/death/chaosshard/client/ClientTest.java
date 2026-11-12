@@ -247,6 +247,7 @@ public class ClientTest {
                 return;
             case 16:
                 onServer((s, w, p) -> w.setBlockToAir(new net.minecraft.util.math.BlockPos(p).add(2, 0, 0)));
+                ru.death.chaosshard.client.magic.GuiSpellWheel.testHold = true;
                 mc.displayGuiScreen(new ru.death.chaosshard.client.magic.GuiSpellWheel(mc.player.getHeldItemMainhand()));
                 wait = 15;
                 step++;
@@ -257,6 +258,7 @@ public class ClientTest {
                 step++;
                 return;
             case 18:
+                ru.death.chaosshard.client.magic.GuiSpellWheel.testHold = false;
                 mc.displayGuiScreen(null);
                 onServer(() -> open(ru.death.chaosshard.heart.HeartGuiHandler.HEART, heart));
                 wait = 20;

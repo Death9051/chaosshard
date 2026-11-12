@@ -25,6 +25,8 @@ public class GuiSpellWheel extends GuiScreen {
     private final List<Spell> spells = new ArrayList<>();
     private int hovered = -1;
     private int age;
+    /** Клиентский тест: держать колесо открытым без нажатой клавиши (для снимка). */
+    public static boolean testHold;
 
     public GuiSpellWheel(ItemStack grimoire) {
         this.grimoire = grimoire;
@@ -44,7 +46,7 @@ public class GuiSpellWheel extends GuiScreen {
     public void updateScreen() {
         age++;
         int code = MagicKeys.WHEEL.getKeyCode();
-        boolean down = code > 0 ? Keyboard.isKeyDown(code) : true;
+        boolean down = testHold || (code > 0 ? Keyboard.isKeyDown(code) : true);
         if (!down && age > 2) {
             choose();
         }
