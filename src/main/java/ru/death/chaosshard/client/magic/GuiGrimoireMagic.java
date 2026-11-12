@@ -544,6 +544,16 @@ public class GuiGrimoireMagic extends GuiScreen {
         fill.y = y;
     }
     int title(String t, int x, int y, int color) { return heading(t, x, y + 4, pageW(), color); }
+
+    /** Заголовок блока на странице: слева курсивом (фиолетовым), справа пояснение, под ним тонкая черта. Возвращает y под ним. */
+    int block(String left, String right, int rightColor, int x, int y, int w) {
+        font.drawString("§o" + left, x, y, BookArt.VIOLET, false);
+        if (right != null && !right.isEmpty()) {
+            font.drawString(right, x + w - font.getStringWidth(right), y, rightColor, false);
+        }
+        Gui.drawRect(x, y + 10, x + w, y + 11, 0x507A6894);
+        return y + 14;
+    }
     /** Подношения ритуала в ряд; возвращает x после ряда. */
     int offerRow(Ritual r, int x, int y, int mx, int my, List<String>[] hover) { return drawOfferRow(r, x, y, mx, my, hover); }
 

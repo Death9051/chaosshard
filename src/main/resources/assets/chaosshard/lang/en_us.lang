@@ -2216,3 +2216,7 @@ chaosshard.anchor.gui.store_empty=No storage
 chaosshard.anchor.gui.seal_note=Put a seal into an open slot.
 chaosshard.anchor.gui.seal_note_ro=Not your Anchor: seals are view-only.
 entity.chaosshard.chaos_spear.name=Chaos Spear
+chaosshard.servant.gui.block_summon=Summoning
+chaosshard.servant.gui.block_strength=Power from the Thread
+chaosshard.servant.gui.block_upgrades=Upgrades
+chaosshard.servant.gui.upgrades_how=Bowl ritual, up to 3 each

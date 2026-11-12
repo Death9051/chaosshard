@@ -2319,3 +2319,7 @@ chaosshard.anchor.gui.store_empty=Хранилища нет
 chaosshard.anchor.gui.seal_note=Положи печать в открытое место.
 chaosshard.anchor.gui.seal_note_ro=Чужой Якорь: печати только видны.
 entity.chaosshard.chaos_spear.name=Копьё Хаоса
+chaosshard.servant.gui.block_summon=Призыв
+chaosshard.servant.gui.block_strength=Сила от Нити
+chaosshard.servant.gui.block_upgrades=Улучшения
+chaosshard.servant.gui.upgrades_how=ритуал в Чаше, до 3 на слугу

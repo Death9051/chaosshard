@@ -29,7 +29,7 @@ class BeastPage {
 
     /** Строки списка: «Отголоски», 3 зверя, заголовок «Свита», 6 типов слуг. */
     static final int ROWS = 11, HEADER_ROW = 4;
-    private static final int GOLD = 0xFFD27A, OPEN = 0xC9C3D6, DIM = 0x5E566C, ACCENT = 0xD9B8FF, SOFT = 0x9A8FB0;
+    private static final int GOLD = 0xFFD27A, OPEN = 0xC9C3D6, DIM = 0x7A6F8C, ACCENT = 0xD9B8FF, SOFT = 0x9A8FB0;
 
     private final GuiGrimoireMagic gui;
     private final Map<Beast, EntityChaosBeast> models = new EnumMap<>(Beast.class);
@@ -385,27 +385,36 @@ class BeastPage {
         }
     }
 
-    /** Страница типа обычного слуги: роль, призыв, сила от Нити, 5 улучшений. */
+    /**
+     * Страница типа обычного слуги блоками: описание, «Призыв» (подношения, нужная Нить, кнопка «Сложить в Чашу»),
+     * «Сила от Нити» (сила и размер свиты), «Улучшения» (5 строк: название и подношения).
+     */
     private void drawKind(Servants.Kind k, int x, int y, int w, int mx, int my) {
         int thread = MagicUi.threadLevel();
         String role = tr(k.gatherer() ? "chaosshard.servant.gui.gatherer" : "chaosshard.servant.gui.fighter");
         int ty = gui.title(tr("chaosshard.servant.kind." + k.key()), x, y, k.minThread <= thread ? ACCENT : SOFT);
         gui.text(role, x + w - gui.font().getStringWidth(role), y, SOFT);
-        y = gui.paragraph(tr("chaosshard.servant.kind." + k.key() + ".desc"), x, ty, w, OPEN) + 4;
+        y = gui.paragraph(tr("chaosshard.servant.kind." + k.key() + ".desc"), x, ty, w, OPEN) + 3;
         // призыв
-        y = summon(ru.death.chaosshard.ritual.Ritual.summonFor(k), x, y, w, mx, my) + 2;
+        y = summon(ru.death.chaosshard.ritual.Ritual.summonFor(k), x, y, w, mx, my) + 3;
+        // сила от Нити
         int tier = Math.min(5, thread);
-        gui.text(tr("chaosshard.servant.gui.strength", thread, 15 * tier, tr("chaosshard.servant.gear." + tier)), x, y, 0xB89CFF);
-        y += 11;
-        gui.text(tr("chaosshard.servant.gui.limit", 2 + thread), x, y, 0xB0A8C0);
+        y = gui.block(tr("chaosshard.servant.gui.block_strength"), null, 0, x, y, w);
+        gui.text(tr("chaosshard.servant.gui.strength", thread, 15 * tier, tr("chaosshard.servant.gear." + tier)), x + 2, y, 0xC8B0FF);
+        y += 10;
+        gui.text(tr("chaosshard.servant.gui.limit", 2 + thread), x + 2, y, 0xB8B0C8);
         y += 13;
-        gui.text(tr("chaosshard.servant.gui.upgrades"), x, y, SOFT);
-        y += 11;
+        // улучшения
+        y = gui.block(tr("chaosshard.servant.gui.block_upgrades"), tr("chaosshard.servant.gui.upgrades_how"), SOFT, x, y, w);
         for (ru.death.chaosshard.servant.ServantUpgrade u : ru.death.chaosshard.servant.ServantUpgrade.of(k)) {
             boolean open = u.minThread <= thread;
             int iconsX = x + w - 3 * 18;
-            gui.text(gui.font().trimStringToWidth(tr(u.key()), iconsX - x - 4), x, y + 4, open ? OPEN : DIM);
-            if (mx >= x && mx < iconsX && my >= y && my < y + 17) {
+            boolean over = mx >= x && mx < iconsX && my >= y && my < y + 17;
+            if (over) {
+                net.minecraft.client.gui.Gui.drawRect(x - 2, y, iconsX - 2, y + 17, 0x16E8D8FF);
+            }
+            gui.text(gui.font().trimStringToWidth(tr(u.key()), iconsX - x - 6), x + 2, y + 4, open ? OPEN : DIM);
+            if (over) {
                 hoverLines = split("§d" + tr(u.key()) + "\n§7" + tr(u.key() + ".desc") + "\n"
                         + (open ? "§a" : "§c") + tr("chaosshard.magic.need_thread", u.minThread));
             }
@@ -416,22 +425,20 @@ class BeastPage {
     }
 
     /**
-     * Ряд призыва: «Призыв:», подношения (черта под значком — хватает ли), под ним — нужная Нить
-     * и кнопка «Сложить в Чашу». Возвращает y под блоком.
+     * Блок «Призыв»: заголовок с нужной Нитью справа, ниже — подношения в ряд (черта под значком — хватает ли)
+     * и справа от них кнопка «Сложить в Чашу». Возвращает y под блоком.
      */
     private int summon(ru.death.chaosshard.ritual.Ritual r, int x, int y, int w, int mx, int my) {
-        String label = tr("chaosshard.servant.gui.summon");
-        gui.text(label, x, y + 5, SOFT);
+        boolean ok = r.minThread <= MagicUi.threadLevel();
+        y = gui.block(tr("chaosshard.servant.gui.block_summon"), tr("chaosshard.magic.need_thread", r.minThread), ok ? 0x9AD08A : 0xE07A7A, x, y, w);
         @SuppressWarnings("unchecked")
         List<String>[] hover = new List[1];
-        gui.offerRow(r, x + gui.font().getStringWidth(label) + 6, y, mx, my, hover);
+        gui.offerRow(r, x + 2, y + 4, mx, my, hover);
         if (hover[0] != null) {
             hoverLines = hover[0];
         }
-        y += 23;
-        gui.text(tr("chaosshard.magic.need_thread", r.minThread), x, y + 8, r.minThread <= MagicUi.threadLevel() ? 0x9AD08A : 0xD07070);
         gui.setFillTarget(r, x + w, y);
-        return y + 30;
+        return y + 28;
     }
 
     /** Нарисовать стопки в ряд; наведённая — в подсказку. Возвращает x после последней. */

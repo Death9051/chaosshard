@@ -20,7 +20,7 @@ public final class BookArt {
     public static final int PL = 10, PT = 9, PR = W - 10, PB = H - 9, MID = W / 2;
 
     // чернила на тёмном пергаменте
-    public static final int INK = 0xDCCDEB, SOFT = 0x9C88B4, DIM = 0x5F536E, ACCENT = 0xECB064, RED = 0xE88E6A,
+    public static final int INK = 0xDCCDEB, SOFT = 0x9C88B4, DIM = 0x7A6D8F, ACCENT = 0xECB064, RED = 0xE88E6A,
             VIOLET = 0xC496FF, GOOD = 0x8FD07E, BAD = 0xEE7A6E, NOTE = 0xD8B66E;
 
     private BookArt() {
