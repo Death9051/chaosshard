@@ -92,6 +92,7 @@ public class BlockRitualSphere extends Block implements ITileEntityProvider {
         if (!world.isRemote) {
             TileEntity te = world.getTileEntity(pos);
             if (te instanceof TileRitualSphere) {
+                ((TileRitualSphere) te).releaseXp();
                 ItemHandlerHelper.giveItemToPlayer(player, ((TileRitualSphere) te).toItem());
             }
             world.removeTileEntity(pos);
@@ -103,6 +104,9 @@ public class BlockRitualSphere extends Block implements ITileEntityProvider {
     @Override
     public void breakBlock(World world, BlockPos pos, IBlockState state) {
         TileEntity te = world.getTileEntity(pos);
+        if (te instanceof TileRitualSphere && !world.isRemote) {
+            ((TileRitualSphere) te).releaseXp();
+        }
         if (te instanceof TileRitualSphere && ((TileRitualSphere) te).ticksLeft() > 0) {
             InventoryHelper.spawnItemStack(world, pos.getX(), pos.getY() + 0.3, pos.getZ(), ((TileRitualSphere) te).toItem());
         }

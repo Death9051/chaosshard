@@ -50,7 +50,7 @@ public enum Ritual {
     DUSK(0, 0, offer("chaosshard:chaos_essence", 0, 1), offer("minecraft:coal", -1, 4)),
     /** Приплод: звери в 12 блоках от Чаши готовы к приплоду. */
     BREED(1, 0, offer("chaosshard:chaos_essence", 0, 1), offer("minecraft:wheat", 0, 8), offer("minecraft:carrot", 0, 8)),
-    /** Тяга (сфера): 5 минут вещи и опыт в 12 блоках стягиваются к сфере, а под ней — в сундук. */
+    /** Тяга (сфера): без срока вещи и опыт в 12 блоках стягиваются к сфере, а под ней — в сундук (опыт — Мешочками). */
     PULL(1, 20 * 60 * 5, offer("chaosshard:chaos_essence", 0, 2), offer("minecraft:ender_pearl", 0, 1), offer("minecraft:iron_ingot", 0, 2)),
 
     // ---------------------------------------------------------------- старшие (Алтарь Прорыва и 4 шпиля)
@@ -152,6 +152,11 @@ public enum Ritual {
     }
 
 
+
+    /** Поставленная сфера не выгорает (Тяга). duration у неё остаётся только как признак «ставится, а не разбивается». */
+    public boolean endless() {
+        return this == PULL;
+    }
 
     /** Ритуалы с эффектом на месте: запечатываются в сферу, которую ставят, где нужно. */
     public static final Ritual[] SPHERES = {GROWTH, WARD, STORM, CORRUPTION, PULL,

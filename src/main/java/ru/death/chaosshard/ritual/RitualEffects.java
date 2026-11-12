@@ -44,10 +44,7 @@ public final class RitualEffects {
                 }
                 break;
             case PULL:
-                if (age % 4 == 0) {
-                    pull(world, pos);
-                }
-                break;
+                break;  // тянет сама TileRitualSphere: ей нужен счётчик опыта
             case BLOOD_MOON:
                 if (age % 20 == 0) {
                     AltarRituals.keepMoon(world, pos, world.getTotalWorldTime() + 60);
@@ -90,8 +87,12 @@ public final class RitualEffects {
 
     public static final int PULL_RADIUS = 12;
 
-    /** Тяга: вещи и сферы опыта плывут к сфере; дошедшие вещи падают в сундук под ней, если он есть. */
-    static void pull(World world, BlockPos pos) {
+    /**
+     * Тяга: вещи и сферы опыта плывут к сфере; дошедшие вещи падают в сундук под ней, если он есть.
+     * Если сундук есть, дошедший опыт сфера забирает себе — возвращается сколько (потом свернётся в Мешочек опыта).
+     */
+    static int pull(World world, BlockPos pos) {
+        int got = 0;
         double cx = pos.getX() + 0.5, cy = pos.getY() + 0.5, cz = pos.getZ() + 0.5;
         AxisAlignedBB box = new AxisAlignedBB(pos).grow(PULL_RADIUS);
         TileEntity below = world.getTileEntity(pos.down());
@@ -101,6 +102,11 @@ public final class RitualEffects {
                 x -> x instanceof net.minecraft.entity.item.EntityItem || x instanceof net.minecraft.entity.item.EntityXPOrb)) {
             double dx = cx - e.posX, dy = cy - e.posY, dz = cz - e.posZ;
             double d = Math.sqrt(dx * dx + dy * dy + dz * dz);
+            if (d < 1.2 && e instanceof net.minecraft.entity.item.EntityXPOrb && inv != null) {
+                got += ((net.minecraft.entity.item.EntityXPOrb) e).getXpValue();
+                e.setDead();
+                continue;
+            }
             if (d < 1.2 && e instanceof net.minecraft.entity.item.EntityItem && inv != null) {
                 net.minecraft.entity.item.EntityItem ei = (net.minecraft.entity.item.EntityItem) e;
                 net.minecraft.item.ItemStack rest = net.minecraftforge.items.ItemHandlerHelper.insertItemStacked(inv, ei.getItem().copy(), false);
@@ -119,6 +125,7 @@ public final class RitualEffects {
                 e.velocityChanged = true;
             }
         }
+        return got;
     }
 
     /**

@@ -929,7 +929,7 @@ public class GuiGrimoireMagic extends GuiScreen {
         List<String>[] hover = new List[1];
         y = offerList(r, x, y, pw, mx, my, hover) + 3;
         font.drawString(I18n.format("chaosshard.magic.need_thread", r.minThread), x, y, open ? BookArt.GOOD : BookArt.BAD, false);
-        String dur = r.duration <= 0 ? I18n.format("chaosshard.magic.instant") : cooldown(r.duration);
+        String dur = r.endless() ? I18n.format("chaosshard.magic.endless") : r.duration <= 0 ? I18n.format("chaosshard.magic.instant") : cooldown(r.duration);
         String ds = I18n.format("chaosshard.magic.duration", dur);
         font.drawString(ds, x + pw - font.getStringWidth(ds), y, BookArt.SOFT, false);
         y += 13;

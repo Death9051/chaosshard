@@ -24,7 +24,7 @@ import javax.annotation.Nullable;
 /**
  * Жучок Тяги — блок на крышке хранилища (сундук, бочка, ящик): сфера Тяги, поставленная на хранилище.
  * Без срока стягивает вещи и сферы опыта в {@link TilePullBeetle#RADIUS} блоках и складывает вещи в хранилище под собой.
- * Открывать сундук не мешает. Сломать — вернётся сфера Тяги; без хранилища под собой жучок сам становится сферой.
+ * Опыт копит и раз в минуту кладёт в хранилище Мешочекм опыта. Открывать сундук не мешает. Сломать — вернётся сфера Тяги; без хранилища под собой жучок сам становится сферой.
  * Рисуется {@code BeetleRenderer}: ползает по крышке и перебирает лапками.
  */
 public class BlockPullBeetle extends Block {
@@ -95,6 +95,15 @@ public class BlockPullBeetle extends Block {
     @Override
     public boolean doesSideBlockChestOpening(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side) {
         return false;
+    }
+
+    @Override
+    public void breakBlock(World world, BlockPos pos, IBlockState state) {
+        TileEntity te = world.getTileEntity(pos);
+        if (!world.isRemote && te instanceof TilePullBeetle) {
+            ((TilePullBeetle) te).releaseXp();
+        }
+        super.breakBlock(world, pos, state);
     }
 
     @Override

@@ -1569,6 +1569,7 @@ public final class AutoTest {
                     pullChest.getZ() + 0.5, new net.minecraft.item.ItemStack(Blocks.DIRT, 5));
             ei.setPickupDelay(1000);
             ow.spawnEntity(ei);
+            ow.spawnEntity(new net.minecraft.entity.item.EntityXPOrb(ow, pullChest.getX() + 4.5, pullChest.getY() + 0.5, pullChest.getZ() + 0.5, 7));
         });
         sleep(200);
         step("вещь доехала до сундука", () -> {
@@ -1581,6 +1582,18 @@ public final class AutoTest {
                 }
             }
             check(dirt == 5, "в сундуке земли (вещь была за 14 блоков): " + dirt + " из 5");
+            net.minecraft.tileentity.TileEntity bt = ow.getTileEntity(pullChest.up());
+            if (bt instanceof ru.death.chaosshard.ritual.TilePullBeetle) {
+                ((ru.death.chaosshard.ritual.TilePullBeetle) bt).packNow();
+            }
+            int pouchXp = 0;
+            if (te instanceof net.minecraft.tileentity.TileEntityChest) {
+                for (int i = 0; i < ((net.minecraft.tileentity.TileEntityChest) te).getSizeInventory(); i++) {
+                    net.minecraft.item.ItemStack st = ((net.minecraft.tileentity.TileEntityChest) te).getStackInSlot(i);
+                    if (st.getItem() == ru.death.chaosshard.init.ModItems.XP_POUCH) pouchXp += ru.death.chaosshard.ritual.ItemXpPouch.xp(st) * st.getCount();
+                }
+            }
+            check(pouchXp == 7, "опыт свёрнут в Мешочек опыта в сундуке: " + pouchXp + " из 7");
             ow.setBlockToAir(pullChest.up());
         });
 

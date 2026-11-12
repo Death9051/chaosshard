@@ -57,6 +57,8 @@ public final class ModItems {
     public static Item CHALLENGE_SPHERE;
     /** Мешочек с добычей Вызова. */
     public static Item LOOT_BAG;
+    /** Мешочек опыта — опыт, собранный Тягой. */
+    public static Item XP_POUCH;
     /** Глиф Хаоса — модификатор заклинания (метаданные — вид). */
     public static Item SPELL_GLYPH;
 
@@ -105,6 +107,7 @@ public final class ModItems {
         CHALLENGE_SPHERE = add(new ru.death.chaosshard.challenge.ItemChallengeSphere(), "challenge_sphere");
         CHALLENGE_SPHERE.setCreativeTab(ru.death.chaosshard.ChaosTab.TAB);
         LOOT_BAG = add(new ru.death.chaosshard.challenge.ItemLootBag(), "loot_bag");
+        XP_POUCH = add(new ru.death.chaosshard.ritual.ItemXpPouch(), "xp_pouch");
         SPELL_GLYPH = add(new ru.death.chaosshard.spell.ItemSpellGlyph(), "spell_glyph");
         KAEL_BLADE = add(new ru.death.chaosshard.hero.ItemKaelBlade(), "kael_blade");
         KAEL_BLADE.setCreativeTab(ru.death.chaosshard.ChaosTab.TAB);

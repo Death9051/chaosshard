@@ -5,6 +5,7 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
@@ -14,20 +15,71 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 
-/** Жучок Тяги: раз в 4 тика тянет вещи и опыт в {@link #RADIUS} блоках, вещи кладёт в хранилище под собой. */
+/**
+ * Жучок Тяги: раз в 4 тика тянет вещи и опыт в {@link #RADIUS} блоках, вещи кладёт в хранилище под собой.
+ * Опыт копит в себе и раз в {@link ItemXpPouch#PACK_TICKS} сворачивает всё накопленное в Мешочек опыта.
+ */
 public class TilePullBeetle extends TileEntity implements ITickable {
 
     public static final int RADIUS = 16;
+
+    private int xp;
+
+    /** Накопленный, ещё не свёрнутый опыт. */
+    public int storedXp() {
+        return xp;
+    }
+
+    /** Свернуть накопленное сейчас (для теста и при смене соседей). */
+    public void packNow() {
+        IItemHandler inv = inventory();
+        int was = xp;
+        xp = ItemXpPouch.pack(inv, xp);
+        if (xp != was) {
+            markDirty();
+        }
+    }
+
+    private IItemHandler inventory() {
+        TileEntity below = world.getTileEntity(pos.down());
+        return below == null ? null : below.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.UP);
+    }
+
+    /** Жучка сломали: несвёрнутый опыт рассыпается сферами. */
+    public void releaseXp() {
+        int left = xp;
+        xp = 0;
+        while (left > 0) {
+            int part = EntityXPOrb.getXPSplit(left);
+            left -= part;
+            world.spawnEntity(new EntityXPOrb(world, pos.getX() + 0.5, pos.getY() + 0.3, pos.getZ() + 0.5, part));
+        }
+    }
+
+    @Override
+    public NBTTagCompound writeToNBT(NBTTagCompound tag) {
+        super.writeToNBT(tag);
+        tag.setInteger("Xp", xp);
+        return tag;
+    }
+
+    @Override
+    public void readFromNBT(NBTTagCompound tag) {
+        super.readFromNBT(tag);
+        xp = tag.getInteger("Xp");
+    }
 
     @Override
     public void update() {
         if (world == null || world.isRemote || world.getTotalWorldTime() % 4 != (pos.toLong() & 3)) {
             return;
         }
-        TileEntity below = world.getTileEntity(pos.down());
-        IItemHandler inv = below == null ? null : below.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.UP);
+        IItemHandler inv = inventory();
         if (inv == null) {
             return;
+        }
+        if (xp > 0 && world.getTotalWorldTime() % ItemXpPouch.PACK_TICKS < 4) {
+            packNow();
         }
         double cx = pos.getX() + 0.5, cy = pos.getY() + 0.3, cz = pos.getZ() + 0.5;
         AxisAlignedBB box = new AxisAlignedBB(pos).grow(RADIUS);
@@ -37,6 +89,12 @@ public class TilePullBeetle extends TileEntity implements ITickable {
             }
             double dx = cx - e.posX, dy = cy - e.posY, dz = cz - e.posZ;
             double d = Math.sqrt(dx * dx + dy * dy + dz * dz);
+            if (d < 1.3 && e instanceof EntityXPOrb) {
+                xp += ((EntityXPOrb) e).getXpValue();
+                e.setDead();
+                markDirty();
+                continue;
+            }
             if (d < 1.3 && e instanceof EntityItem) {
                 EntityItem ei = (EntityItem) e;
                 ItemStack rest = ItemHandlerHelper.insertItemStacked(inv, ei.getItem().copy(), false);
