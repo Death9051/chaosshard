@@ -19,7 +19,7 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 
 /**
- * Жучок Тяги: раз в 4 тика тянет вещи и опыт в {@link #RADIUS} блоках, вещи кладёт в хранилище под собой.
+ * Клещ Тяги: раз в 4 тика тянет вещи и опыт в {@link #RADIUS} блоках, вещи кладёт в хранилище под собой.
  * Опыт копит в себе и раз в {@link ItemXpPouch#PACK_TICKS} сворачивает всё накопленное в Мешочек опыта.
  */
 public class TilePullBeetle extends TileEntity implements ITickable {

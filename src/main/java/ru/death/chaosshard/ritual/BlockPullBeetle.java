@@ -22,9 +22,9 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import javax.annotation.Nullable;
 
 /**
- * Жучок Тяги — блок на крышке хранилища (сундук, бочка, ящик): сфера Тяги, поставленная на хранилище.
+ * Клещ Тяги — блок на крышке хранилища (сундук, бочка, ящик): сфера Тяги, поставленная на хранилище.
  * Без срока стягивает вещи и сферы опыта в {@link TilePullBeetle#RADIUS} блоках и складывает вещи в хранилище под собой.
- * Опыт копит и раз в минуту кладёт в хранилище Мешочекм опыта. Открывать сундук не мешает. Сломать — вернётся сфера Тяги; без хранилища под собой жучок сам становится сферой.
+ * Опыт копит и раз в минуту кладёт в хранилище Мешочекм опыта. Открывать сундук не мешает. Сломать — вернётся сфера Тяги; без хранилища под собой клещ сам становится сферой.
  * Рисуется {@code BeetleRenderer}: ползает по крышке и перебирает лапками.
  */
 public class BlockPullBeetle extends Block {
@@ -91,7 +91,7 @@ public class BlockPullBeetle extends Block {
         return BlockFaceShape.UNDEFINED;
     }
 
-    /** Крышку сундука жучок не держит. */
+    /** Крышку сундука клещ не держит. */
     @Override
     public boolean doesSideBlockChestOpening(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side) {
         return false;

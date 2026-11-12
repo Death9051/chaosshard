@@ -54,7 +54,7 @@ public final class ModBlocks {
     public static Block VEIL_VEIN;
     public static Block ORDER_BEACON;
     public static Block RITUAL_SPHERE;
-    /** Жучок Тяги — сфера Тяги, поставленная на хранилище (без своего предмета, ломается в сферу). */
+    /** Клещ Тяги — сфера Тяги, поставленная на хранилище (без своего предмета, ломается в сферу). */
     public static Block PULL_BEETLE;
     /** Стол Хаоса — зачарования без случайности. */
     public static Block CHAOS_ENCHANTER;

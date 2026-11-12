@@ -1557,14 +1557,14 @@ public final class AutoTest {
             check(useSphere(ru.death.chaosshard.ritual.Ritual.BREED, pen), "сфера разбита у загона");
             check(cows.stream().allMatch(net.minecraft.entity.passive.EntityAnimal::isInLove), "все три коровы готовы к приплоду");
         });
-        step("Сфера тяги на сундук: садится Жучок Тяги", () -> {
+        step("Сфера тяги на сундук: садится Клещ Тяги", () -> {
             pullChest = base.add(-20, 1, 14);
             ow.setBlockState(pullChest, Blocks.CHEST.getDefaultState(), 3);
             me.setHeldItem(EnumHand.MAIN_HAND, ru.death.chaosshard.ritual.ItemRitualSphere.of(ru.death.chaosshard.ritual.Ritual.PULL, 0));
             me.getHeldItemMainhand().getItem().onItemUse(me, ow, pullChest, EnumHand.MAIN_HAND, EnumFacing.UP, 0.5F, 1F, 0.5F);
-            check(ow.getBlockState(pullChest.up()).getBlock() == ModBlocks.PULL_BEETLE, "на сундуке сидит Жучок Тяги (блок)");
+            check(ow.getBlockState(pullChest.up()).getBlock() == ModBlocks.PULL_BEETLE, "на сундуке сидит Клещ Тяги (блок)");
             check(!ModBlocks.PULL_BEETLE.doesSideBlockChestOpening(ow.getBlockState(pullChest.up()), ow, pullChest.up(), EnumFacing.DOWN),
-                    "жучок не мешает открыть сундук");
+                    "клещ не мешает открыть сундук");
             net.minecraft.entity.item.EntityItem ei = new net.minecraft.entity.item.EntityItem(ow, pullChest.getX() + 14.5, pullChest.getY() + 0.5,
                     pullChest.getZ() + 0.5, new net.minecraft.item.ItemStack(Blocks.DIRT, 5));
             ei.setPickupDelay(1000);

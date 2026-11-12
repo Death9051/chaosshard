@@ -116,7 +116,7 @@ public class ItemRitualSphere extends Item {
 
     /**
      * Сфера Тяги по хранилищу (сундук, бочка, ящик — всё, во что можно положить сверху): на крышке садится
-     * Жучок Тяги — блок, который собирает вещи без срока. true — жучок посажен (или уже сидит), сфера обработана.
+     * Клещ Тяги — блок, который собирает вещи без срока. true — клещ посажен (или уже сидит), сфера обработана.
      */
     private static boolean placeBeetle(EntityPlayer player, World world, BlockPos pos, EnumFacing facing, ItemStack stack) {
         if (!BlockPullBeetle.hasInventory(world, pos)) {
