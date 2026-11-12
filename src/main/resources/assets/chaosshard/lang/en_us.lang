@@ -2192,3 +2192,26 @@ enchantment.xu.zoomerang.desc=The Magical Boomerang flies faster.
 enchantment.xu.burnerang.desc=The Magical Boomerang sets targets on fire.
 enchantment.xu.bladerang.desc=The Magical Boomerang deals more damage.
 enchantment.xu.boomereaperang.desc=The Magical Boomerang cuts plants along its path.
+
+# Окно Якоря (новый вид)
+chaosshard.anchor.gui.btn.level=From level %s
+chaosshard.anchor.gui.btn.not_owner=Not your Anchor
+chaosshard.anchor.gui.btn.pick=Pick a path
+chaosshard.anchor.gui.btn.no_xp=No experience
+chaosshard.anchor.gui.tip.travel=Travel to this Anchor
+chaosshard.anchor.gui.tip.scry=Gaze: show this Anchor's land
+chaosshard.anchor.gui.tip.seal_locked=Locked: opens as the Anchor grows
+chaosshard.anchor.gui.tip.seal_ro=Only the Anchor's owner can set seals
+chaosshard.anchor.gui.net_empty=No network
+chaosshard.anchor.gui.here=Here:
+chaosshard.anchor.gui.hint_both2=The eye shows an Anchor's land, the gate takes you there.
+chaosshard.anchor.gui.hint_path2=The gate in a row takes you to that Anchor.
+chaosshard.anchor.gui.hint_scry2=The eye in a row shows that Anchor's land.
+chaosshard.anchor.gui.legend_anchor=Anchors
+chaosshard.anchor.gui.legend_army=squads
+chaosshard.anchor.gui.legend_foe=intruders
+chaosshard.anchor.gui.path_hint=Pick a path above to see what it gives.
+chaosshard.anchor.gui.borrow2=Borrowed effects (slots: %s)
+chaosshard.anchor.gui.store_empty=No storage
+chaosshard.anchor.gui.seal_note=Put a seal into an open slot.
+chaosshard.anchor.gui.seal_note_ro=Not your Anchor: seals are view-only.

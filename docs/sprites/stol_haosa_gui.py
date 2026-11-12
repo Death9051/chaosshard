@@ -1,8 +1,8 @@
-"""Текстуры окна Стола Хаоса (в духе окна Гримуара: серебряная рамка, звёздочки в углах, тёмный фиолет).
+"""Текстуры окон Стола Хаоса и Якоря (в духе окна Гримуара: серебряная рамка, звёздочки в углах, тёмный фиолет).
 
 python3 stol_haosa_gui.py <папка textures/gui>
-Рисует chaos_enchanter.png (фон 214x246) и chaos_enchanter_widgets.png (кнопки, вкладки, значки).
-Разметка совпадает с GuiChaosEnchanter / ContainerChaosEnchanter.
+Рисует chaos_enchanter.png (фон Стола 214x250), anchor_gui.png (пустое окно Якоря 214x236) и
+chaos_widgets.png (общие кнопки, вкладки, места, значки). Разметка совпадает с GuiChaosEnchanter и GuiAnchor.
 """
 import random
 import sys
@@ -348,5 +348,84 @@ for x0, rows in ((0, book), (16, gem)):
         for xx, ch in enumerate(row):
             if ch == 'G':
                 put(wd, x0 + xx, 160 + yy, GHOST)
-wd.save(OUT + '/chaos_enchanter_widgets.png')
+# узкие вкладки 52x24 / 52x20 (окно Якоря: четыре вкладки)
+def small_tab(x0, y, h, active):
+    w = 52
+    rect(wd, x0, y, x0 + w, y + h, EDGE)
+    hi = SILVER_HI if active else SILVER_LO
+    rect(wd, x0 + 1, y + 1, x0 + w - 1, y + (3 if active else 2), hi)
+    rect(wd, x0 + 1, y + 1, x0 + (3 if active else 2), y + h, hi)
+    rect(wd, x0 + w - (3 if active else 2), y + 1, x0 + w - 1, y + h, SILVER if active else SILVER_LO)
+    a, b = (3, w - 3) if active else (2, w - 2)
+    rect(wd, x0 + a, y + (3 if active else 2), x0 + b, y + h, FILL if active else (12, 9, 17))
+    if active:
+        rect(wd, x0 + a, y + 3, x0 + b, y + 4, EDGE)
+        rect(wd, x0 + a + 1, y + 4, x0 + b - 1, y + 5, VIOLET)
+    else:
+        rect(wd, x0 + 1, y + h - 1, x0 + w - 1, y + h, SILVER_LO)
+
+
+small_tab(0, 180, 24, True)
+small_tab(52, 180, 20, False)
+
+# места 18x18 (y 160): обычное, закрытое (замок), только для чтения
+def slot_sprite(x0, kind):
+    y = 160
+    rect(wd, x0, y, x0 + 18, y + 1, WELL_DARK)
+    rect(wd, x0, y, x0 + 1, y + 18, WELL_DARK)
+    rect(wd, x0, y + 17, x0 + 18, y + 18, WELL_LIGHT if kind != 'locked' else (40, 32, 54))
+    rect(wd, x0 + 17, y, x0 + 18, y + 18, WELL_LIGHT if kind != 'locked' else (40, 32, 54))
+    rect(wd, x0 + 1, y + 1, x0 + 17, y + 17, (11, 8, 16) if kind == 'open' else (17, 13, 23))
+    if kind == 'locked':
+        for (lx, ly) in [(7, 4), (8, 4), (9, 4), (10, 4), (6, 5), (11, 5), (6, 6), (11, 6), (6, 7), (11, 7)]:
+            put(wd, x0 + lx, y + ly, (92, 84, 112))
+        rect(wd, x0 + 5, y + 8, x0 + 13, y + 14, (70, 62, 88))
+        put(wd, x0 + 9, y + 10, (20, 15, 28))
+        put(wd, x0 + 9, y + 11, (20, 15, 28))
+    if kind == 'ro':
+        for i in range(1, 17, 3):
+            put(wd, x0 + i, y + 16 - i + 1, (26, 20, 34))
+
+
+slot_sprite(40, 'open')
+slot_sprite(58, 'locked')
+slot_sprite(76, 'ro')
+
+# ещё значки 9x9 (y 150)
+ICONS2 = {
+    'drop': (0, ["....r....", "....r....", "...rRr...", "..rRRRr..", ".rRRwRRr.", ".rRRRRRr.", ".rRRRRRr.", "..rRRRr..", "...rrr..."],
+             {'r': (110, 10, 25), 'R': (200, 30, 50), 'w': (255, 170, 170)}),
+    'sword': (10, ["........s", ".......sS", "......sS.", ".g...sS..", "..g.sS...", "...gS....", "..bgg....", ".b..g....", "b........"],
+              {'s': SILVER_HI, 'S': SILVER, 'g': GOLD, 'b': (110, 70, 40)}),
+    'eye': (20, [".........", "...sss...", ".ss...ss.", "s..vvv..s", "s.vVWv..s", "s..vvv..s", ".ss...ss.", "...sss...", "........."],
+            {'s': SILVER_HI, 'v': (150, 90, 230), 'V': (60, 20, 110), 'W': (255, 255, 255)}),
+    'portal': (30, ["..vvvvv..", ".v.....v.", "v..p....v", "v...p...v", "vppppp..v", "v...p...v", "v..p....v", ".v.....v.", "..vvvvv.."],
+               {'v': (150, 90, 230), 'p': (236, 176, 100)}),
+    'land': (40, [".........", ".........", "vvvvvvvvv", "VvVvvVvVv", "ddddddddd", "dDddDdddD", "ddddddDdd", "dDdddDddd", "ddddddddd"],
+             {'v': (170, 80, 220), 'V': (110, 40, 160), 'd': (70, 45, 50), 'D': (50, 30, 36)}),
+    'map': (50, ["sssssssss", "spppppps.", "spGpppps.", "sppppGps.", "spppppps.", "spGpppps.", "spppppps.", "sssssssss", "........."],
+            {'s': (150, 120, 80), 'p': (220, 200, 150), 'G': (90, 140, 70)}),
+    'chest': (60, [".........", "bbbbbbbbb", "bBBBBBBBb", "bBBBBBBBb", "kkkkgkkkk", "bBBBgBBBb", "bBBBBBBBb", "bbbbbbbbb", "........."],
+              {'b': (80, 50, 20), 'B': (150, 100, 45), 'k': (50, 30, 10), 'g': GOLD}),
+    'bolt': (70, ["....gg...", "...gg....", "..gg.....", ".ggggg...", "...gg....", "..gg.....", ".gg......", "gg.......", "........."],
+             {'g': (255, 220, 90)}),
+    'shield': (80, ["sssssssss", "svvvvvvvs", "svvvGvvvs", "svvGGGvvs", "svvvGvvvs", ".svvvvvs.", "..svvvs..", "...sss...", "........."],
+               {'s': SILVER_HI, 'v': (90, 50, 140), 'G': GOLD}),
+    'seal': (90, ["...ggg...", "..g...g..", ".g.vvv.g.", "g.vVVVv.g", "g.vVWVv.g", "g.vVVVv.g", ".g.vvv.g.", "..g...g..", "...ggg..."],
+             {'g': GOLD, 'v': (150, 90, 230), 'V': (90, 40, 150), 'W': (255, 230, 255)}),
+}
+for name, (x0, rows, pal) in ICONS2.items():
+    for yy, row in enumerate(rows):
+        for xx, ch in enumerate(row):
+            c = pal.get(ch) if ch != '.' else None
+            if c:
+                put(wd, x0 + xx, 150 + yy, c)
+wd.save(OUT + '/chaos_widgets.png')
+
+# пустое окно Якоря 214x236 (места рисуются по вкладке из chaos_widgets.png)
+an = img(256, 256)
+panel(an, 0, 0, 214, 236)
+hline_ornament(an, 12, 52, 10)
+hline_ornament(an, 162, 202, 10)
+an.save(OUT + '/anchor_gui.png')
 print('ok')

@@ -22,9 +22,12 @@ import java.util.List;
  */
 public class ContainerAnchor extends Container {
 
-    public static final int SEAL_X = 8;
-    public static final int SEAL_Y = 98;
-    public static final int INV_Y = 140;
+    public static final int SEAL_X = 26;
+    public static final int SEAL_Y = 106;
+    public static final int INV_X = 26;
+    public static final int INV_Y = 154;
+    public static final int STORE_Y = 22;
+    public static final int SAMPLE_X = 26, SAMPLE_Y = 112;
 
     public static final int STORAGE_FIRST = TileAnchor.MAX_SEALS;
     public static final int SAMPLE_SLOT = STORAGE_FIRST + 27;
@@ -60,7 +63,7 @@ public class ContainerAnchor extends Container {
             });
         }
         for (int i = 0; i < 27; i++) {
-            addSlotToContainer(new SlotItemHandler(tile.storage, i, 8 + (i % 9) * 18, 18 + (i / 9) * 18) {
+            addSlotToContainer(new SlotItemHandler(tile.storage, i, INV_X + (i % 9) * 18, STORE_Y + (i / 9) * 18) {
                 @Override
                 public boolean isItemValid(ItemStack stack) {
                     return false;
@@ -72,7 +75,7 @@ public class ContainerAnchor extends Container {
                 }
             });
         }
-        addSlotToContainer(new SlotItemHandler(tile.sample, 0, 8, 104) {
+        addSlotToContainer(new SlotItemHandler(tile.sample, 0, SAMPLE_X, SAMPLE_Y) {
             @Override
             public boolean isItemValid(ItemStack stack) {
                 return mine && super.isItemValid(stack);
@@ -85,11 +88,11 @@ public class ContainerAnchor extends Container {
         });
         for (int row = 0; row < 3; row++) {
             for (int col = 0; col < 9; col++) {
-                addSlotToContainer(new Slot(player.inventory, col + row * 9 + 9, 8 + col * 18, INV_Y + row * 18));
+                addSlotToContainer(new Slot(player.inventory, col + row * 9 + 9, INV_X + col * 18, INV_Y + row * 18));
             }
         }
         for (int col = 0; col < 9; col++) {
-            addSlotToContainer(new Slot(player.inventory, col, 8 + col * 18, INV_Y + 58));
+            addSlotToContainer(new Slot(player.inventory, col, INV_X + col * 18, INV_Y + 58));
         }
     }
 

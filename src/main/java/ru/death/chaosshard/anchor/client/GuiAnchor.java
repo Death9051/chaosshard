@@ -1,42 +1,67 @@
 package ru.death.chaosshard.anchor.client;
 
 import net.minecraft.block.material.MapColor;
-import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.audio.PositionedSoundRecord;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.Slot;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import org.lwjgl.input.Mouse;
+import ru.death.chaosshard.Tags;
 import ru.death.chaosshard.anchor.AnchorSpec;
 import ru.death.chaosshard.anchor.AnchorView;
 import ru.death.chaosshard.anchor.ContainerAnchor;
 import ru.death.chaosshard.anchor.TileAnchor;
+import ru.death.chaosshard.client.ChaosUi;
 import ru.death.chaosshard.network.ChaosNetwork;
 import ru.death.chaosshard.network.PacketAnchorAction;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
-/** Окно Якоря: вкладки «Якорь», «Сеть», «Путь» (специализация) и «Склад». Рисуется без текстур. */
+import static ru.death.chaosshard.client.ChaosUi.ACCENT;
+import static ru.death.chaosshard.client.ChaosUi.BAD;
+import static ru.death.chaosshard.client.ChaosUi.DIM;
+import static ru.death.chaosshard.client.ChaosUi.GOLD;
+import static ru.death.chaosshard.client.ChaosUi.GOOD;
+import static ru.death.chaosshard.client.ChaosUi.OFF;
+import static ru.death.chaosshard.client.ChaosUi.SOFT;
+import static ru.death.chaosshard.client.ChaosUi.TEXT;
+import static ru.death.chaosshard.client.ChaosUi.in;
+
+/**
+ * Окно Якоря: вкладки «Якорь», «Сеть», «Путь» (специализация) и «Склад», в духе Гримуара и Стола Хаоса.
+ * <ul>
+ * <li>Вкладки со значками; открытая светлая и сливается с окном.</li>
+ * <li>«Якорь» разбит на блоки со значками (рост, земля, кровь, набеги, печати); закрытые места печатей — с замком.</li>
+ * <li>«Сеть»: в строке Якоря явные кнопки «Взгляд» и «Перенос»; на карте отряды и чужаки различаются формой.</li>
+ * <li>Пустые вкладки объясняют, почему пусто; недоступные кнопки пишут причину.</li>
+ * </ul>
+ */
 public class GuiAnchor extends GuiContainer {
 
     /** Последние сведения от сервера. */
     public static NBTTagCompound view = new NBTTagCompound();
 
-    private static final int BG = 0xF0201028;
-    private static final int FRAME = 0xFF7A4FB0;
-    private static final int TEXT = 0xE0D8F0;
-    private static final int DIM = 0x9888B0;
-    private static final int ACCENT = 0xC890FF;
-    private static final int LIST_ROWS = 12;
-    private static final int LIST_Y = 58;
+    private static final ResourceLocation BG = new ResourceLocation(Tags.MOD_ID, "textures/gui/anchor_gui.png");
+
+    private static final int X0 = 10, X1 = 204, W = X1 - X0;
+    private static final int TAB_X = 2, TAB_STEP = 53;
+    private static final int LIST_Y = 54, ROW = 11, LIST_ROWS = 13;
+    private static final int BORROW_Y = 184;
 
     private static final int TAB_ANCHOR = 0, TAB_NET = 1, TAB_PATH = 2, TAB_STORE = 3;
-    private static final int BTN_CHOOSE = 10, BTN_MAP = 11, BTN_BACK = 12, BTN_XP = 13;
 
     private final ContainerAnchor container;
     private int tab;
@@ -51,8 +76,8 @@ public class GuiAnchor extends GuiContainer {
     public GuiAnchor(ContainerAnchor container) {
         super(container);
         this.container = container;
-        xSize = 176;
-        ySize = 222;
+        xSize = 214;
+        ySize = 236;
         view = new NBTTagCompound();
         slotX = new int[container.inventorySlots.size()];
         for (int i = 0; i < slotX.length; i++) {
@@ -64,27 +89,10 @@ public class GuiAnchor extends GuiContainer {
     public void initGui() {
         super.initGui();
         buttonList.clear();
-        String[] tabs = {"tab_anchor", "tab_net", "tab_path", "tab_store"};
-        for (int i = 0; i < tabs.length; i++) {
-            buttonList.add(new GuiButton(i, guiLeft + i * 44, guiTop - 20, 43, 18, I18n.format("chaosshard.anchor.gui." + tabs[i])));
-        }
-        buttonList.add(new GuiButton(BTN_CHOOSE, guiLeft + 98, guiTop + 196, 70, 18, I18n.format("chaosshard.anchor.gui.choose")));
-        buttonList.add(new GuiButton(BTN_MAP, guiLeft + 120, guiTop + 2, 52, 14, I18n.format("chaosshard.anchor.gui.map")));
-        buttonList.add(new GuiButton(BTN_BACK, guiLeft + 120, guiTop + 2, 52, 14, I18n.format("chaosshard.anchor.gui.back")));
-        buttonList.add(new GuiButton(BTN_XP, guiLeft + 110, guiTop + 74, 58, 16, I18n.format("chaosshard.anchor.gui.take_xp")));
         layout();
     }
 
-    private GuiButton button(int id) {
-        for (GuiButton b : buttonList) {
-            if (b.id == id) {
-                return b;
-            }
-        }
-        return null;
-    }
-
-    /** Видимость мест и кнопок по вкладке. */
+    /** Видимость мест по вкладке. */
     private void layout() {
         int storage = view.getInteger("storage");
         boolean edit = view.getBoolean("edit");
@@ -92,59 +100,20 @@ public class GuiAnchor extends GuiContainer {
             Slot s = container.inventorySlots.get(i);
             boolean show;
             if (i < ContainerAnchor.STORAGE_FIRST) {
-                show = tab == TAB_ANCHOR && (edit || s.getHasStack());
+                show = tab == TAB_ANCHOR;
             } else if (i < ContainerAnchor.SAMPLE_SLOT) {
                 show = tab == TAB_STORE && i - ContainerAnchor.STORAGE_FIRST < storage;
             } else if (i == ContainerAnchor.SAMPLE_SLOT) {
                 show = tab == TAB_STORE && view.getInteger("spec") == AnchorSpec.HARVEST.ordinal() && view.getBoolean("stage");
             } else {
-                show = tab == TAB_ANCHOR || tab == TAB_STORE;
+                show = tab == TAB_ANCHOR || (tab == TAB_STORE && storage > 0);
             }
             s.xPos = show ? slotX[i] : -10000;
         }
-        for (GuiButton b : buttonList) {
-            if (b.id < 4) {
-                b.enabled = b.id != tab;
-            }
-        }
-        GuiButton choose = button(BTN_CHOOSE);
-        if (choose != null) {
-            choose.visible = tab == TAB_PATH && view.getInteger("spec") < 0 && !view.getBoolean("alpha");
-            choose.enabled = edit && picked >= 0 && view.getInteger("level") >= AnchorSpec.CHOOSE_LEVEL;
-        }
-        GuiButton mapB = button(BTN_MAP);
-        if (mapB != null) {
-            mapB.visible = tab == TAB_NET && view.getBoolean("watch") && scry == null;
-            mapB.displayString = I18n.format(map ? "chaosshard.anchor.gui.list" : "chaosshard.anchor.gui.map");
-        }
-        GuiButton back = button(BTN_BACK);
-        if (back != null) {
-            back.visible = tab == TAB_NET && scry != null;
-        }
-        GuiButton xp = button(BTN_XP);
-        if (xp != null) {
-            xp.visible = tab == TAB_STORE && view.getInteger("spec") == AnchorSpec.HARVEST.ordinal();
-            xp.enabled = edit && view.getInteger("fieldXp") > 0;
-        }
     }
 
-    @Override
-    protected void actionPerformed(GuiButton b) throws IOException {
-        if (b.id < 4) {
-            tab = b.id;
-            if (tab != TAB_NET && scry != null) {
-                setScry(null);
-            }
-        } else if (b.id == BTN_CHOOSE && picked >= 0) {
-            ChaosNetwork.CHANNEL.sendToServer(new PacketAnchorAction(PacketAnchorAction.SELECT, picked, null));
-        } else if (b.id == BTN_MAP) {
-            map = !map;
-        } else if (b.id == BTN_BACK) {
-            setScry(null);
-        } else if (b.id == BTN_XP) {
-            ChaosNetwork.CHANNEL.sendToServer(new PacketAnchorAction(PacketAnchorAction.TAKE_XP, 0, null));
-        }
-        layout();
+    private void click() {
+        mc.getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(SoundEvents.UI_BUTTON_CLICK, 1.0F));
     }
 
     private void setScry(BlockPos p) {
@@ -152,43 +121,166 @@ public class GuiAnchor extends GuiContainer {
         ChaosNetwork.CHANNEL.sendToServer(new PacketAnchorAction(PacketAnchorAction.SCRY, p == null ? -1 : 0, p));
     }
 
+    // ------------------------------------------------------------------ кнопки (свои, без ванильных)
+
+    /** Кнопка «Выбрать» на «Пути»: надпись или причина ("!…"), null — кнопки нет. */
+    private String chooseLabel() {
+        if (tab != TAB_PATH || view.getInteger("spec") >= 0 || view.getBoolean("alpha")) {
+            return null;
+        }
+        if (view.getInteger("level") < AnchorSpec.CHOOSE_LEVEL) {
+            return "!" + I18n.format("chaosshard.anchor.gui.btn.level", AnchorSpec.CHOOSE_LEVEL);
+        }
+        if (!view.getBoolean("edit")) {
+            return "!" + I18n.format("chaosshard.anchor.gui.btn.not_owner");
+        }
+        if (picked < 0) {
+            return "!" + I18n.format("chaosshard.anchor.gui.btn.pick");
+        }
+        return I18n.format("chaosshard.anchor.gui.choose");
+    }
+
+    /** Кнопка «Забрать» опыт поля на «Складе». */
+    private String xpLabel() {
+        if (tab != TAB_STORE || view.getInteger("storage") <= 0 || view.getInteger("spec") != AnchorSpec.HARVEST.ordinal()) {
+            return null;
+        }
+        if (!view.getBoolean("edit")) {
+            return "!" + I18n.format("chaosshard.anchor.gui.btn.not_owner");
+        }
+        if (view.getInteger("fieldXp") <= 0) {
+            return "!" + I18n.format("chaosshard.anchor.gui.btn.no_xp");
+        }
+        return I18n.format("chaosshard.anchor.gui.take_xp");
+    }
+
+    /** Кнопка сверху справа на «Сети»: «Карта»/«Список» или «Назад» из Взгляда. */
+    private String netTopLabel() {
+        if (tab != TAB_NET || !view.getBoolean("net")) {
+            return null;
+        }
+        if (scry != null) {
+            return I18n.format("chaosshard.anchor.gui.back");
+        }
+        if (!view.getBoolean("watch")) {
+            return null;
+        }
+        return I18n.format(map ? "chaosshard.anchor.gui.list" : "chaosshard.anchor.gui.map");
+    }
+
+    private static final int CHOOSE_X = 134, CHOOSE_Y = 212, XP_X = 134, XP_Y = 82, TOP_X = 158, TOP_Y = 3, BTN_W = 70;
+
+    private void drawButton(String label, int x, int y, int w, int mx, int my) {
+        if (label == null) {
+            return;
+        }
+        boolean off = label.startsWith("!");
+        ChaosUi.button(fontRenderer, x, y, w, off ? label.substring(1) : label, off ? 2 : in(mx, my, x, y, w, 16) ? 1 : 0, OFF);
+    }
+
+    // ------------------------------------------------------------------ мышь
+
     @Override
     protected void mouseClicked(int mouseX, int mouseY, int button) throws IOException {
-        super.mouseClicked(mouseX, mouseY, button);
         int mx = mouseX - guiLeft, my = mouseY - guiTop;
-        if (tab == TAB_PATH && view.getInteger("borrowSlots") > 0 && !view.getBoolean("alpha")) {
-            int slots = Math.min(3, view.getInteger("borrowSlots"));
-            int row = (my - BORROW_Y + 1) / 10;
-            if (my >= BORROW_Y - 1 && row >= 0 && row < slots && mx >= 8 && mx < 168) {
-                int[] b = borrowArr();
-                int cur = row < b.length ? b[row] : -1;
-                int nx = nextBorrow(cur);
-                ChaosNetwork.CHANNEL.sendToServer(new PacketAnchorAction(PacketAnchorAction.BORROW, (row << 8) | (nx + 1), null));
+        for (int t = 0; t < 4; t++) {
+            if (in(mx, my, TAB_X + t * TAB_STEP, -19, 52, 19)) {
+                if (tab != t) {
+                    tab = t;
+                    scroll = 0;
+                    if (tab != TAB_NET && scry != null) {
+                        setScry(null);
+                    }
+                    click();
+                    layout();
+                }
                 return;
             }
         }
+        if (button == 0 && clickContent(mx, my)) {
+            click();
+            layout();
+            return;
+        }
+        super.mouseClicked(mouseX, mouseY, button);
+    }
+
+    private boolean clickContent(int mx, int my) {
+        String l = chooseLabel();
+        if (l != null && !l.startsWith("!") && in(mx, my, CHOOSE_X, CHOOSE_Y, BTN_W, 16)) {
+            ChaosNetwork.CHANNEL.sendToServer(new PacketAnchorAction(PacketAnchorAction.SELECT, picked, null));
+            return true;
+        }
+        l = xpLabel();
+        if (l != null && !l.startsWith("!") && in(mx, my, XP_X, XP_Y, BTN_W, 16)) {
+            ChaosNetwork.CHANNEL.sendToServer(new PacketAnchorAction(PacketAnchorAction.TAKE_XP, 0, null));
+            return true;
+        }
+        l = netTopLabel();
+        if (l != null && in(mx, my, TOP_X, TOP_Y, 46, 16)) {
+            if (scry != null) {
+                setScry(null);
+            } else {
+                map = !map;
+            }
+            return true;
+        }
         if (tab == TAB_PATH && !view.getBoolean("alpha")) {
-            for (AnchorSpec s : AnchorSpec.values()) {
-                int[] r = specRow(s);
-                if (mx >= r[0] && mx < r[0] + 78 && my >= r[1] - 1 && my < r[1] + 10) {
-                    picked = s.ordinal();
+            if (view.getInteger("borrowSlots") > 0) {
+                int slots = Math.min(3, view.getInteger("borrowSlots"));
+                for (int row = 0; row < slots; row++) {
+                    int y = BORROW_Y + row * 12;
+                    int[] b = view.getIntArray("borrow");
+                    int cur = row < b.length ? b[row] : -1;
+                    int nx = -2;
+                    if (in(mx, my, X1 - 22, y - 1, 11, 11)) {
+                        nx = prevBorrow(cur);
+                    } else if (in(mx, my, X1 - 11, y - 1, 11, 11) || in(mx, my, X0, y - 1, W - 24, 11)) {
+                        nx = nextBorrow(cur);
+                    }
+                    if (nx != -2) {
+                        ChaosNetwork.CHANNEL.sendToServer(new PacketAnchorAction(PacketAnchorAction.BORROW, (row << 8) | (nx + 1), null));
+                        return true;
+                    }
                 }
             }
-            layout();
-        } else if (tab == TAB_NET && !map && scry == null) {
+            if (view.getInteger("spec") < 0) {
+                for (AnchorSpec s : AnchorSpec.values()) {
+                    int[] r = specRow(s);
+                    if (in(mx, my, r[0], r[1], 94, 12)) {
+                        picked = s.ordinal();
+                        return true;
+                    }
+                }
+            }
+        } else if (tab == TAB_NET && !map && scry == null && view.getBoolean("net")) {
             NBTTagList list = view.getTagList("list", 10);
-            int row = (my - LIST_Y) / 11;
+            int row = (my - LIST_Y) / ROW;
             if (my >= LIST_Y && row >= 0 && row < LIST_ROWS && scroll + row < list.tagCount()) {
                 NBTTagCompound e = list.getCompoundTagAt(scroll + row);
                 BlockPos p = new BlockPos(e.getInteger("x"), e.getInteger("y"), e.getInteger("z"));
-                if (mx >= 150 && view.getBoolean("path") && !e.getBoolean("here")) {
+                int y = LIST_Y + row * ROW;
+                if (canTravel(e) && in(mx, my, rowIconX(0) - 1, y, 11, ROW)) {
                     ChaosNetwork.CHANNEL.sendToServer(new PacketAnchorAction(PacketAnchorAction.TRAVEL, 0, p));
-                } else if (mx < 120 && view.getBoolean("watchStage")) {
+                    return true;
+                }
+                if (view.getBoolean("watchStage") && in(mx, my, rowIconX(1) - 1, y, 11, ROW)) {
                     setScry(p);
-                    layout();
+                    return true;
                 }
             }
         }
+        return false;
+    }
+
+    /** Левый край значка-кнопки в строке сети: 0 — Перенос, 1 — Взгляд. */
+    private int rowIconX(int which) {
+        boolean scrollable = view.getTagList("list", 10).tagCount() > LIST_ROWS;
+        return X1 - (scrollable ? 4 : 0) - 12 * (which + 1);
+    }
+
+    private boolean canTravel(NBTTagCompound e) {
+        return view.getBoolean("path") && !e.getBoolean("here");
     }
 
     @Override
@@ -201,12 +293,51 @@ public class GuiAnchor extends GuiContainer {
         }
     }
 
+    // ------------------------------------------------------------------ кадр
+
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         layout();
         drawDefaultBackground();
         super.drawScreen(mouseX, mouseY, partialTicks);
         renderHoveredToolTip(mouseX, mouseY);
+        int mx = mouseX - guiLeft, my = mouseY - guiTop;
+        List<String> tip = tooltip(mx, my);
+        if (tip != null) {
+            drawHoveringText(tip, mouseX, mouseY);
+        }
+    }
+
+    /** Подсказки к значкам-кнопкам и закрытым местам. */
+    private List<String> tooltip(int mx, int my) {
+        List<String> t = new ArrayList<>();
+        if (tab == TAB_NET && !map && scry == null && view.getBoolean("net")) {
+            NBTTagList list = view.getTagList("list", 10);
+            int row = (my - LIST_Y) / ROW;
+            if (my >= LIST_Y && row >= 0 && row < LIST_ROWS && scroll + row < list.tagCount()) {
+                NBTTagCompound e = list.getCompoundTagAt(scroll + row);
+                int y = LIST_Y + row * ROW;
+                if (canTravel(e) && in(mx, my, rowIconX(0) - 1, y, 11, ROW)) {
+                    t.add(I18n.format("chaosshard.anchor.gui.tip.travel"));
+                } else if (view.getBoolean("watchStage") && in(mx, my, rowIconX(1) - 1, y, 11, ROW)) {
+                    t.add(I18n.format("chaosshard.anchor.gui.tip.scry"));
+                }
+            }
+        }
+        if (tab == TAB_ANCHOR && mc.player.inventory.getItemStack().isEmpty()) {
+            int open = view.getInteger("slots");
+            for (int i = 0; i < TileAnchor.MAX_SEALS; i++) {
+                int sx = ContainerAnchor.SEAL_X + (i % 6) * 18, sy = ContainerAnchor.SEAL_Y + (i / 6) * 18;
+                if (in(mx, my, sx - 1, sy - 1, 18, 18) && !container.inventorySlots.get(i).getHasStack()) {
+                    if (i >= open) {
+                        t.add(I18n.format("chaosshard.anchor.gui.tip.seal_locked"));
+                    } else if (!view.getBoolean("edit")) {
+                        t.add(I18n.format("chaosshard.anchor.gui.tip.seal_ro"));
+                    }
+                }
+            }
+        }
+        return t.isEmpty() ? null : t;
     }
 
     @Override
@@ -217,11 +348,49 @@ public class GuiAnchor extends GuiContainer {
         }
     }
 
+    private static final ItemStack[] TAB_ICONS = new ItemStack[4];
+
+    private static ItemStack tabIcon(int t) {
+        if (TAB_ICONS[t] == null) {
+            switch (t) {
+                case TAB_ANCHOR:
+                    TAB_ICONS[t] = new ItemStack(ru.death.chaosshard.init.ModBlocks.CHAOS_ANCHOR);
+                    break;
+                case TAB_NET:
+                    TAB_ICONS[t] = new ItemStack(Items.ENDER_EYE);
+                    break;
+                case TAB_PATH:
+                    TAB_ICONS[t] = new ItemStack(Items.COMPASS);
+                    break;
+                default:
+                    TAB_ICONS[t] = new ItemStack(Blocks.CHEST);
+                    break;
+            }
+        }
+        return TAB_ICONS[t];
+    }
+
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         int x = guiLeft, y = guiTop;
-        drawRect(x - 1, y - 1, x + xSize + 1, y + ySize + 1, FRAME);
-        drawRect(x, y, x + xSize, y + ySize, BG);
+        int mx = mouseX - x, my = mouseY - y;
+        GlStateManager.color(1, 1, 1, 1);
+        for (int t = 0; t < 4; t++) {
+            if (t != tab) {
+                ChaosUi.smallTab(x + TAB_X + t * TAB_STEP, y, false);
+                if (in(mx, my, TAB_X + t * TAB_STEP, -17, 52, 17)) {
+                    drawRect(x + TAB_X + t * TAB_STEP + 2, y - 15, x + TAB_X + t * TAB_STEP + 50, y, 0x22FFFFFF);
+                }
+            }
+        }
+        mc.getTextureManager().bindTexture(BG);
+        GlStateManager.color(1, 1, 1, 1);
+        drawTexturedModalRect(x, y, 0, 0, xSize, ySize);
+        ChaosUi.smallTab(x + TAB_X + tab * TAB_STEP, y, true);
+        for (int t = 0; t < 4; t++) {
+            ChaosUi.item(tabIcon(t), x + TAB_X + t * TAB_STEP + 3, y - 16 + (t == tab ? -1 : 1));
+        }
+        // места
         int open = view.getInteger("slots");
         boolean edit = view.getBoolean("edit");
         for (int i = 0; i < container.inventorySlots.size(); i++) {
@@ -229,9 +398,11 @@ public class GuiAnchor extends GuiContainer {
             if (s.xPos < 0) {
                 continue;
             }
-            boolean locked = i < ContainerAnchor.STORAGE_FIRST && (i >= open || !edit);
-            drawRect(x + s.xPos - 1, y + s.yPos - 1, x + s.xPos + 17, y + s.yPos + 17, locked ? 0xFF2A2030 : 0xFF4A3A60);
-            drawRect(x + s.xPos, y + s.yPos, x + s.xPos + 16, y + s.yPos + 16, locked ? 0xFF15101A : 0xFF100A18);
+            int kind = ChaosUi.SLOT_OPEN;
+            if (i < ContainerAnchor.STORAGE_FIRST) {
+                kind = i >= open ? ChaosUi.SLOT_LOCKED : !edit ? ChaosUi.SLOT_RO : ChaosUi.SLOT_OPEN;
+            }
+            ChaosUi.slot(x + s.xPos - 1, y + s.yPos - 1, kind);
         }
         if (tab == TAB_NET && scry != null) {
             drawScry(x, y);
@@ -239,27 +410,39 @@ public class GuiAnchor extends GuiContainer {
         GlStateManager.color(1, 1, 1, 1);
     }
 
-    private void bar(int x, int y, int w, double part, int color) {
-        drawRect(x, y, x + w, y + 5, 0xFF100A18);
-        drawRect(x, y, x + (int) Math.round(w * Math.max(0, Math.min(1, part))), y + 5, color);
-    }
-
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
+        int mx = mouseX - guiLeft, my = mouseY - guiTop;
+        String[] tabs = {"tab_anchor", "tab_net", "tab_path", "tab_store"};
+        for (int t = 0; t < 4; t++) {
+            boolean on = t == tab;
+            boolean hover = !on && in(mx, my, TAB_X + t * TAB_STEP, -17, 52, 17);
+            String s = fontRenderer.trimStringToWidth(I18n.format("chaosshard.anchor.gui." + tabs[t]), 30);
+            fontRenderer.drawString(s, TAB_X + t * TAB_STEP + 20, on ? -11 : -9, on ? TEXT : hover ? SOFT : DIM);
+        }
         switch (tab) {
             case TAB_NET:
-                drawNetTab();
+                drawNetTab(mx, my);
                 break;
             case TAB_PATH:
-                drawPathTab(mouseX - guiLeft, mouseY - guiTop);
+                drawPathTab(mx, my);
                 break;
             case TAB_STORE:
-                drawStoreTab();
+                drawStoreTab(mx, my);
                 break;
             default:
                 drawAnchorTab();
                 break;
         }
+        GlStateManager.color(1, 1, 1, 1);
+    }
+
+    private void title(String left, int leftColor, String right, int rightColor) {
+        int rw = right == null ? 0 : fontRenderer.getStringWidth(right);
+        if (right != null) {
+            fontRenderer.drawString(right, X1 - rw, 7, rightColor);
+        }
+        fontRenderer.drawString(fontRenderer.trimStringToWidth(left, W - rw - 6), X0, 7, leftColor);
     }
 
     private String specName(int i) {
@@ -267,96 +450,134 @@ public class GuiAnchor extends GuiContainer {
         return s == null ? "" : I18n.format("chaosshard.anchor.spec." + s.key());
     }
 
+    /** Строка со значком слева. */
+    private void line(int icon, String s, int y, int color) {
+        if (icon >= 0) {
+            ChaosUi.icon(X0, y - 1, icon);
+        }
+        fontRenderer.drawString(fontRenderer.trimStringToWidth(s, W - 12), X0 + 12, y, color);
+    }
+
+    // ------------------------------------------------------------------ Якорь
+
     private void drawAnchorTab() {
         NBTTagCompound v = view;
-        fontRenderer.drawString(I18n.format("chaosshard.anchor.gui.title", v.getString("owner")), 8, 6, ACCENT);
+        int spec = v.getInteger("spec");
+        title(I18n.format("chaosshard.anchor.gui.title", v.getString("owner")), ACCENT, spec >= 0 ? specName(spec) : null, GOLD);
         if (!v.hasKey("level")) {
             return;
         }
-        int spec = v.getInteger("spec");
-        if (spec >= 0) {
-            String s = specName(spec);
-            fontRenderer.drawString(s, 168 - fontRenderer.getStringWidth(s), 6, 0xFFD060);
-        }
         int lvl = v.getInteger("level"), xp = v.getInteger("xp"), from = v.getInteger("from"), next = v.getInteger("next");
-        fontRenderer.drawString(I18n.format("chaosshard.anchor.gui.level", lvl, v.getInteger("max")), 8, 20, TEXT);
+        line(ChaosUi.I_STAR, I18n.format("chaosshard.anchor.gui.level", lvl, v.getInteger("max")), 20, TEXT);
         String xs = next < 0 ? I18n.format("chaosshard.anchor.gui.xp_max", xp) : I18n.format("chaosshard.anchor.gui.xp", xp, next);
-        fontRenderer.drawString(xs, 168 - fontRenderer.getStringWidth(xs), 20, DIM);
-        bar(8, 30, 160, next < 0 ? 1 : (double) (xp - from) / Math.max(1, next - from), 0xFF9A5AE0);
-        fontRenderer.drawString(I18n.format("chaosshard.anchor.gui.radius", v.getInteger("radius"), v.getInteger("cap")), 8, 39, TEXT);
+        fontRenderer.drawString(xs, X1 - fontRenderer.getStringWidth(xs), 20, DIM);
+        ChaosUi.bar(X0, 30, W, next < 0 ? 1 : (double) (xp - from) / Math.max(1, next - from), 0xFF9A5AE0);
+
+        line(ChaosUi.I_LAND, I18n.format("chaosshard.anchor.gui.radius", v.getInteger("radius"), v.getInteger("cap")), 41, TEXT);
         int land = v.getInteger("land");
-        fontRenderer.drawString(v.getBoolean("captured") ? I18n.format("chaosshard.anchor.gui.captured", land)
-                : I18n.format("chaosshard.anchor.gui.capturing", land, v.getInteger("capture")), 8, 50, TEXT);
+        boolean captured = v.getBoolean("captured");
+        fontRenderer.drawString(captured ? I18n.format("chaosshard.anchor.gui.captured", land)
+                : I18n.format("chaosshard.anchor.gui.capturing", land, v.getInteger("capture")), X0 + 12, 51, captured ? GOOD : SOFT);
+
         int blood = v.getInteger("blood"), cap = Math.max(1, v.getInteger("bloodCap"));
-        fontRenderer.drawString(I18n.format("chaosshard.anchor.gui.blood", blood / 1000.0 < 10 ? String.format("%.1f", blood / 1000.0)
-                : String.valueOf(blood / 1000), cap / 1000), 8, 61, TEXT);
-        bar(8, 71, 160, (double) blood / cap, 0xFFB01020);
+        line(ChaosUi.I_DROP, I18n.format("chaosshard.anchor.gui.blood", blood / 1000.0 < 10 ? String.format("%.1f", blood / 1000.0)
+                : String.valueOf(blood / 1000), cap / 1000), 62, TEXT);
+        ChaosUi.bar(X0, 72, W, (double) blood / cap, 0xFFB01020);
+
         int raid = v.getInteger("raid");
-        fontRenderer.drawString(raid < 0 ? I18n.format("chaosshard.anchor.gui.raid_none")
-                : I18n.format("chaosshard.anchor.gui.raid", Math.max(1, (raid + 1199) / 1200)), 8, 78, DIM);
+        line(ChaosUi.I_SWORD, raid < 0 ? I18n.format("chaosshard.anchor.gui.raid_none")
+                : I18n.format("chaosshard.anchor.gui.raid", Math.max(1, (raid + 1199) / 1200)), 83, raid < 0 ? DIM : 0xFFB070);
+
         int open = v.getInteger("slots");
-        fontRenderer.drawString(I18n.format(v.getBoolean("edit") ? "chaosshard.anchor.gui.seals" : "chaosshard.anchor.gui.seals_ro",
-                open, TileAnchor.MAX_SEALS), 8, 88, ACCENT);
+        boolean edit = v.getBoolean("edit");
+        line(ChaosUi.I_SEAL, I18n.format(edit ? "chaosshard.anchor.gui.seals" : "chaosshard.anchor.gui.seals_ro", open, TileAnchor.MAX_SEALS), 94, ACCENT);
+        // справа от печатей — пояснение
+        int rx = ContainerAnchor.SEAL_X + 6 * 18 + 6;
+        List<String> note = new ArrayList<>();
         int hum = v.getInteger("hum");
         if (hum > 0) {
-            String h = I18n.format("chaosshard.anchor.gui.hum", hum);
-            fontRenderer.drawString(h, 168 - fontRenderer.getStringWidth(h), 102, DIM);
+            note.add(I18n.format("chaosshard.anchor.gui.hum", hum));
         }
-        fontRenderer.drawString(I18n.format("container.inventory"), 8, ContainerAnchor.INV_Y - 10, DIM);
+        note.addAll(fontRenderer.listFormattedStringToWidth(I18n.format(edit ? "chaosshard.anchor.gui.seal_note" : "chaosshard.anchor.gui.seal_note_ro"), X1 - rx));
+        for (int i = 0; i < note.size() && i < 4; i++) {
+            fontRenderer.drawString(note.get(i), rx, 108 + i * 9, DIM);
+        }
     }
 
     // ------------------------------------------------------------------ Сеть
 
-    private void drawNetTab() {
+    private void drawNetTab(int mx, int my) {
         NBTTagCompound v = view;
-        fontRenderer.drawString(I18n.format("chaosshard.anchor.gui.net_title", v.getInteger("size")), 8, 6, ACCENT);
+        title(I18n.format("chaosshard.anchor.gui.net_title", v.getInteger("size")), ACCENT, null, 0);
         if (!v.getBoolean("net")) {
-            fontRenderer.drawSplitString(I18n.format("chaosshard.anchor.gui.net_none"), 8, 20, 160, TEXT);
+            ChaosUi.empty(fontRenderer, new ItemStack(Items.ENDER_EYE), I18n.format("chaosshard.anchor.gui.net_empty"),
+                    I18n.format("chaosshard.anchor.gui.net_none"), xSize / 2, 70, 170);
             return;
         }
+        drawButton(netTopLabel(), TOP_X, TOP_Y, 46, mx, my);
         if (scry != null) {
-            fontRenderer.drawString(I18n.format("chaosshard.anchor.gui.scry", scry.getX(), scry.getZ()), 8, 20, TEXT);
+            line(ChaosUi.I_EYE, I18n.format("chaosshard.anchor.gui.scry", scry.getX(), scry.getZ()), 20, TEXT);
             return;
         }
-        fontRenderer.drawString(I18n.format("chaosshard.anchor.gui.energy", fmt(v.getDouble("eLand")), fmt(v.getDouble("eOut"))), 8, 20, TEXT);
-        fontRenderer.drawString(I18n.format("chaosshard.anchor.gui.reserve", v.getInteger("reserve")), 8, 31, TEXT);
-        fontRenderer.drawString(I18n.format("chaosshard.anchor.gui.garrison", v.getInteger("garrison"), v.getInteger("garrisonMax")), 8, 42, TEXT);
+        line(ChaosUi.I_BOLT, I18n.format("chaosshard.anchor.gui.energy", fmt(v.getDouble("eLand")), fmt(v.getDouble("eOut"))), 20, TEXT);
+        line(ChaosUi.I_STAR, I18n.format("chaosshard.anchor.gui.reserve", v.getInteger("reserve")), 30, TEXT);
+        line(ChaosUi.I_SHIELD, I18n.format("chaosshard.anchor.gui.garrison", v.getInteger("garrison"), v.getInteger("garrisonMax")), 40, TEXT);
         if (map) {
             drawNetMap();
             return;
         }
         NBTTagList list = v.getTagList("list", 10);
-        int y = LIST_Y;
-        drawRect(6, y - 3, 170, y - 2, 0xFF4A3A60);
-        boolean path = v.getBoolean("path");
-        for (int i = scroll; i < Math.min(list.tagCount(), scroll + LIST_ROWS); i++) {
-            NBTTagCompound e = list.getCompoundTagAt(i);
-            int s = e.getInteger("s");
-            String line = I18n.format("chaosshard.anchor.gui.row", e.getInteger("x"), e.getInteger("z"), e.getInteger("l"));
-            int sp = e.getInteger("sp");
-            String st = sp >= 0 ? specName(sp) : I18n.format("chaosshard.anchor.gui.state" + s);
-            int col = e.getBoolean("here") ? ACCENT : TEXT;
-            fontRenderer.drawString(line, 8, y, col);
-            fontRenderer.drawString(st, 146 - fontRenderer.getStringWidth(st), y, s == 2 ? 0xFFD060 : s == 1 ? 0x90E090 : DIM);
-            if (path && !e.getBoolean("here")) {
-                fontRenderer.drawString("»", 158, y, ACCENT);
+        ChaosUi.well(X0 - 1, LIST_Y - 1, W + 2, LIST_ROWS * ROW + 2);
+        boolean watch = v.getBoolean("watchStage");
+        for (int r = 0; r < LIST_ROWS && scroll + r < list.tagCount(); r++) {
+            NBTTagCompound e = list.getCompoundTagAt(scroll + r);
+            int y = LIST_Y + r * ROW;
+            boolean hover = in(mx, my, X0, y, W, ROW);
+            drawRect(X0, y, X1, y + ROW, hover ? 0xFF241938 : ((scroll + r) % 2 == 0 ? 0xFF15101F : 0xFF110C1A));
+            boolean here = e.getBoolean("here");
+            if (here) {
+                drawRect(X0, y + 1, X0 + 2, y + ROW - 1, 0xFFECB064);
             }
-            y += 11;
+            int s = e.getInteger("s");
+            int sp = e.getInteger("sp");
+            int x;
+            // кнопки-значки: Перенос и Взгляд
+            int bx = rowIconX(0);
+            if (canTravel(e)) {
+                if (in(mx, my, bx - 1, y, 11, ROW)) {
+                    drawRect(bx - 1, y, bx + 10, y + ROW, 0x40FFFFFF);
+                }
+                ChaosUi.icon(bx, y + 1, ChaosUi.I_PORTAL);
+            }
+            if (watch) {
+                bx = rowIconX(1);
+                if (in(mx, my, bx - 1, y, 11, ROW)) {
+                    drawRect(bx - 1, y, bx + 10, y + ROW, 0x40FFFFFF);
+                }
+                ChaosUi.icon(bx, y + 1, ChaosUi.I_EYE);
+            }
+            x = bx - 4;
+            String st = sp >= 0 ? specName(sp) : I18n.format("chaosshard.anchor.gui.state" + s);
+            int stw = fontRenderer.getStringWidth(st);
+            fontRenderer.drawString(st, x - stw, y + 2, s == 2 ? GOLD : s == 1 ? GOOD : DIM);
+            String row = (here ? I18n.format("chaosshard.anchor.gui.here") + " " : "")
+                    + I18n.format("chaosshard.anchor.gui.row", e.getInteger("x"), e.getInteger("z"), e.getInteger("l"));
+            fontRenderer.drawString(fontRenderer.trimStringToWidth(row, x - stw - X0 - 8), X0 + 4, y + 2, here ? ACCENT : TEXT);
         }
-        if (list.tagCount() > LIST_ROWS) {
-            fontRenderer.drawString(I18n.format("chaosshard.anchor.gui.scroll", scroll + 1,
-                    Math.min(list.tagCount(), scroll + LIST_ROWS), list.tagCount()), 8, y + 2, DIM);
-        }
-        if (path || v.getBoolean("watchStage")) {
-            fontRenderer.drawSplitString(I18n.format(path && v.getBoolean("watchStage") ? "chaosshard.anchor.gui.hint_both"
-                    : path ? "chaosshard.anchor.gui.hint_path" : "chaosshard.anchor.gui.hint_scry"), 8, 200, 160, DIM);
+        ChaosUi.scrollbar(X1 - 3, LIST_Y, LIST_ROWS * ROW, scroll, LIST_ROWS, list.tagCount());
+        if (v.getBoolean("path") || watch) {
+            String hint = I18n.format(v.getBoolean("path") && watch ? "chaosshard.anchor.gui.hint_both2"
+                    : v.getBoolean("path") ? "chaosshard.anchor.gui.hint_path2" : "chaosshard.anchor.gui.hint_scry2");
+            fontRenderer.drawSplitString(hint, X0, LIST_Y + LIST_ROWS * ROW + 5, W, DIM);
         }
     }
 
-    /** Карта сети (Дозор): Якоря и отряды. */
+    /** Карта сети (Дозор): Якоря — квадраты, отряды — крестики, чужаки — ромбы. */
     private void drawNetMap() {
         NBTTagList list = view.getTagList("list", 10);
         NBTTagList dots = view.getTagList("dots", 10);
+        int ax = X0, ay = LIST_Y, aw = W, ah = 144;
+        ChaosUi.well(ax - 1, ay - 1, aw + 2, ah + 2);
         if (list.tagCount() == 0) {
             return;
         }
@@ -372,26 +593,58 @@ public class GuiAnchor extends GuiContainer {
         maxX += 64;
         minZ -= 64;
         maxZ += 64;
-        int ax = 8, ay = 56, aw = 160, ah = 150;
         double k = Math.min((double) aw / (maxX - minX), (double) ah / (maxZ - minZ));
-        drawRect(ax, ay, ax + aw, ay + ah, 0xFF120C1A);
         for (int i = 0; i < list.tagCount(); i++) {
             NBTTagCompound e = list.getCompoundTagAt(i);
             int px = ax + (int) ((e.getInteger("x") - minX) * k), pz = ay + (int) ((e.getInteger("z") - minZ) * k);
-            int c = e.getBoolean("here") ? 0xFFE0A0FF : 0xFF9A5AE0;
+            int c = e.getBoolean("here") ? 0xFFECB064 : 0xFF9A5AE0;
             drawRect(px - 2, pz - 2, px + 3, pz + 3, c);
         }
         for (int i = 0; i < dots.tagCount(); i++) {
             NBTTagCompound e = dots.getCompoundTagAt(i);
             int px = ax + (int) ((e.getInteger("x") - minX) * k), pz = ay + (int) ((e.getInteger("z") - minZ) * k);
-            drawRect(px - 1, pz - 1, px + 2, pz + 2, e.getByte("t") == 1 ? 0xFFFF4040 : 0xFFFFE040);
+            if (e.getByte("t") == 1) {
+                cross(px, pz, 0xFFFF5050);
+            } else {
+                diamond(px, pz, 0xFFFFE040);
+            }
         }
-        fontRenderer.drawString(I18n.format("chaosshard.anchor.gui.map_legend"), 8, ay + ah + 3, DIM);
+        // легенда: формы, а не только цвет
+        int ly = ay + ah + 5, lx = X0;
+        drawRect(lx, ly + 2, lx + 5, ly + 7, 0xFF9A5AE0);
+        lx += 8;
+        String a = I18n.format("chaosshard.anchor.gui.legend_anchor");
+        fontRenderer.drawString(a, lx, ly + 1, SOFT);
+        lx += fontRenderer.getStringWidth(a) + 10;
+        cross(lx + 2, ly + 4, 0xFFFF5050);
+        lx += 8;
+        String b = I18n.format("chaosshard.anchor.gui.legend_army");
+        fontRenderer.drawString(b, lx, ly + 1, SOFT);
+        lx += fontRenderer.getStringWidth(b) + 10;
+        diamond(lx + 2, ly + 4, 0xFFFFE040);
+        lx += 8;
+        fontRenderer.drawString(I18n.format("chaosshard.anchor.gui.legend_foe"), lx, ly + 1, SOFT);
+    }
+
+    private static void cross(int x, int y, int c) {
+        Gui.drawRect(x - 2, y - 2, x - 1, y - 1, c);
+        Gui.drawRect(x - 1, y - 1, x + 2, y + 2, c);
+        Gui.drawRect(x + 2, y - 2, x + 3, y - 1, c);
+        Gui.drawRect(x - 2, y + 2, x - 1, y + 3, c);
+        Gui.drawRect(x + 2, y + 2, x + 3, y + 3, c);
+    }
+
+    private static void diamond(int x, int y, int c) {
+        Gui.drawRect(x, y - 2, x + 1, y + 3, c);
+        Gui.drawRect(x - 1, y - 1, x + 2, y + 2, c);
+        Gui.drawRect(x - 2, y, x + 3, y + 1, c);
     }
 
     /** Взгляд Дозора: вид сверху на землю Якоря. */
     private void drawScry(int gx, int gy) {
         NBTTagCompound s = view.getCompoundTag("scry");
+        int size = 144, ox = gx + (xSize - size) / 2, oy = gy + 34;
+        ChaosUi.well(ox - 1, oy - 1, size + 2, size + 2);
         if (!s.hasKey("c")) {
             return;
         }
@@ -411,7 +664,6 @@ public class GuiAnchor extends GuiContainer {
             }
             scryTex.updateDynamicTexture();
         }
-        int size = 144, ox = gx + 16, oy = gy + 34;
         GlStateManager.color(1, 1, 1, 1);
         GlStateManager.bindTexture(scryTex.getGlTextureId());
         drawModalRectWithCustomSizedTexture(ox, oy, 0, 0, size, size, size, size);
@@ -434,10 +686,8 @@ public class GuiAnchor extends GuiContainer {
         int i = s.ordinal();
         boolean net = s.network;
         int idx = net ? i : i - 5;
-        return new int[]{net ? 8 : 92, 30 + idx * 12};
+        return new int[]{net ? X0 : X0 + 100, 31 + idx * 12};
     }
-
-    private static final int BORROW_Y = 164;
 
     private void drawPathTab(int mx, int my) {
         NBTTagCompound v = view;
@@ -447,114 +697,147 @@ public class GuiAnchor extends GuiContainer {
             drawAlpha();
             return;
         }
-        drawBorrow(mx, my);
         if (spec >= 0) {
             AnchorSpec s = AnchorSpec.of(spec);
-            fontRenderer.drawString(specName(spec), 8, 6, 0xFFD060);
-            String kind = I18n.format(s.network ? "chaosshard.anchor.gui.kind_net" : "chaosshard.anchor.gui.kind_local");
-            fontRenderer.drawString(kind, 168 - fontRenderer.getStringWidth(kind), 6, DIM);
-            int y = drawSpecText(s, 22, v.getBoolean("stage"));
+            title(specName(spec), GOLD, I18n.format(s.network ? "chaosshard.anchor.gui.kind_net" : "chaosshard.anchor.gui.kind_local"), DIM);
+            int y = drawSpecText(s, X0, 22, W, v.getBoolean("stage"));
             if (s == AnchorSpec.FORGE) {
-                fontRenderer.drawString(I18n.format("chaosshard.anchor.gui.forge", v.getInteger("forgeRate"), v.getInteger("forgeEnergy")), 8, y + 4, TEXT);
+                line(ChaosUi.I_BOLT, I18n.format("chaosshard.anchor.gui.forge", v.getInteger("forgeRate"), v.getInteger("forgeEnergy")), y + 4, TEXT);
                 y += 14;
             }
-            fontRenderer.drawSplitString(I18n.format("chaosshard.anchor.gui.reshape"), 8, Math.max(y + 8, 186), 160, DIM);
+            List<String> rs = fontRenderer.listFormattedStringToWidth(I18n.format("chaosshard.anchor.gui.reshape"), W);
+            for (int i = 0; i < rs.size(); i++) {
+                fontRenderer.drawString(rs.get(i), X0, y + 6 + i * 9, DIM);
+            }
+            drawBorrow(mx, my);
             return;
         }
-        fontRenderer.drawString(I18n.format(lvl >= AnchorSpec.CHOOSE_LEVEL ? "chaosshard.anchor.gui.path_choose" : "chaosshard.anchor.gui.path_locked",
-                AnchorSpec.CHOOSE_LEVEL), 8, 6, ACCENT);
-        fontRenderer.drawString(I18n.format("chaosshard.anchor.gui.kind_net"), 8, 18, DIM);
-        fontRenderer.drawString(I18n.format("chaosshard.anchor.gui.kind_local"), 92, 18, DIM);
+        boolean can = lvl >= AnchorSpec.CHOOSE_LEVEL;
+        title(I18n.format(can ? "chaosshard.anchor.gui.path_choose" : "chaosshard.anchor.gui.path_locked", AnchorSpec.CHOOSE_LEVEL),
+                can ? ACCENT : SOFT, null, 0);
+        fontRenderer.drawString(I18n.format("chaosshard.anchor.gui.kind_net"), X0 + 3, 20, DIM);
+        fontRenderer.drawString(I18n.format("chaosshard.anchor.gui.kind_local"), X0 + 103, 20, DIM);
         NBTTagList counts = v.getTagList("specs", 10);
         for (AnchorSpec s : AnchorSpec.values()) {
             int[] r = specRow(s);
-            boolean hover = mx >= r[0] && mx < r[0] + 78 && my >= r[1] - 1 && my < r[1] + 10;
-            int col = s.ordinal() == picked ? 0xFFD060 : hover ? ACCENT : TEXT;
+            boolean sel = s.ordinal() == picked;
+            boolean hover = in(mx, my, r[0], r[1], 94, 12);
+            drawRect(r[0], r[1], r[0] + 94, r[1] + 11, sel ? 0xFF35245A : hover ? 0xFF241938 : 0xFF15101F);
+            if (sel) {
+                drawRect(r[0], r[1], r[0] + 2, r[1] + 11, 0xFFECB064);
+            }
             String name = specName(s.ordinal());
             int n = s.ordinal() < counts.tagCount() ? counts.getCompoundTagAt(s.ordinal()).getInteger("n") : 0;
-            fontRenderer.drawString(name + (n > 0 ? " §7×" + n : ""), r[0], r[1], col);
+            fontRenderer.drawString(name, r[0] + 5, r[1] + 2, sel ? GOLD : TEXT);
+            if (n > 0) {
+                String c = "×" + n;
+                fontRenderer.drawString(c, r[0] + 91 - fontRenderer.getStringWidth(c), r[1] + 2, DIM);
+            }
         }
+        ChaosUi.well(X0 - 1, 94, W + 2, 112);
         if (picked >= 0) {
-            drawSpecText(AnchorSpec.of(picked), 92, false);
+            drawSpecText(AnchorSpec.of(picked), X0 + 3, 98, W - 6, false);
+        } else {
+            ChaosUi.empty(fontRenderer, null, null, I18n.format("chaosshard.anchor.gui.path_hint"), xSize / 2, 140, W - 20);
         }
+        drawButton(chooseLabel(), CHOOSE_X, CHOOSE_Y, BTN_W, mx, my);
     }
 
     private void drawAlpha() {
         NBTTagCompound v = view;
         int al = v.getInteger("alphaLvl");
-        fontRenderer.drawString(I18n.format("chaosshard.anchor.gui.alpha_title", al), 8, 6, 0xFFD060);
-        String st = I18n.format(v.getBoolean("alphaAwake") ? "chaosshard.anchor.gui.alpha_awake" : "chaosshard.anchor.gui.alpha_asleep");
-        fontRenderer.drawString(st, 168 - fontRenderer.getStringWidth(st), 6, v.getBoolean("alphaAwake") ? 0x90E090 : 0xFF6060);
+        boolean awake = v.getBoolean("alphaAwake");
+        title(I18n.format("chaosshard.anchor.gui.alpha_title", al), GOLD,
+                I18n.format(awake ? "chaosshard.anchor.gui.alpha_awake" : "chaosshard.anchor.gui.alpha_asleep"), awake ? GOOD : BAD);
         int xp = v.getInteger("alphaXp"), from = v.getInteger("alphaFrom"), next = v.getInteger("alphaNext");
         String xs = next < 0 ? String.valueOf(xp) : xp + " / " + next;
-        fontRenderer.drawString(xs, 8, 18, DIM);
-        bar(8, 28, 160, next < 0 ? 1 : (double) (xp - from) / Math.max(1, next - from), 0xFFE0A0FF);
-        int y = 38;
+        fontRenderer.drawString(xs, X1 - fontRenderer.getStringWidth(xs), 19, DIM);
+        ChaosUi.bar(X0, 29, W, next < 0 ? 1 : (double) (xp - from) / Math.max(1, next - from), 0xFFE0A0FF);
+        int y = 42;
         String[] rows = {"odd", "2", "4", "6", "8", "10"};
         int[] need = {1, 2, 4, 6, 8, 10};
         for (int i = 0; i < rows.length; i++) {
-            for (String p : fontRenderer.listFormattedStringToWidth(I18n.format("chaosshard.anchor.gui.alpha_" + rows[i]), 160)) {
-                fontRenderer.drawString(p, 8, y, al >= need[i] ? TEXT : DIM);
+            boolean got = al >= need[i];
+            ChaosUi.icon(X0, y - 1, got ? ChaosUi.I_CHECK : ChaosUi.I_LOCK);
+            for (String p : fontRenderer.listFormattedStringToWidth(I18n.format("chaosshard.anchor.gui.alpha_" + rows[i]), W - 12)) {
+                fontRenderer.drawString(p, X0 + 12, y, got ? TEXT : DIM);
                 y += 10;
             }
+            y += 2;
         }
-        fontRenderer.drawSplitString(I18n.format("chaosshard.anchor.gui.alpha_note"), 8, y + 6, 160, DIM);
+        fontRenderer.drawSplitString(I18n.format("chaosshard.anchor.gui.alpha_note"), X0, y + 6, W, DIM);
     }
 
-    private int[] borrowArr() {
-        return view.getIntArray("borrow");
-    }
-
-    /** Заимствования: строки внизу вкладки «Путь»; щелчок — следующий доступный эффект. */
+    /** Заимствования: строки внизу «Пути»; стрелки листают доступные эффекты. */
     private void drawBorrow(int mx, int my) {
         int slots = view.getInteger("borrowSlots");
         if (slots <= 0) {
             return;
         }
-        int[] b = borrowArr();
-        fontRenderer.drawString(I18n.format("chaosshard.anchor.gui.borrow", slots), 8, BORROW_Y - 11, ACCENT);
+        int[] b = view.getIntArray("borrow");
+        fontRenderer.drawString(I18n.format("chaosshard.anchor.gui.borrow2", slots), X0, BORROW_Y - 12, ACCENT);
         for (int i = 0; i < Math.min(slots, 3); i++) {
             int fx = i < b.length ? b[i] : -1;
             String name = fx < 0 ? I18n.format("chaosshard.anchor.gui.borrow_empty")
                     : I18n.format("chaosshard.anchor.fx." + ru.death.chaosshard.anchor.AnchorFx.of(fx).key());
-            int y = BORROW_Y + i * 10;
-            boolean hover = mx >= 8 && mx < 168 && my >= y - 1 && my < y + 9;
-            fontRenderer.drawString((i + 1) + ". " + name, 8, y, hover ? ACCENT : fx < 0 ? DIM : TEXT);
+            int y = BORROW_Y + i * 12;
+            boolean hover = in(mx, my, X0, y - 1, W, 11);
+            drawRect(X0, y - 1, X1, y + 10, hover ? 0xFF241938 : 0xFF15101F);
+            fontRenderer.drawString(fontRenderer.trimStringToWidth((i + 1) + ". " + name, W - 30), X0 + 3, y + 1, fx < 0 ? DIM : TEXT);
+            boolean hl = in(mx, my, X1 - 22, y - 1, 11, 11), hr = in(mx, my, X1 - 11, y - 1, 11, 11);
+            if (hl) {
+                drawRect(X1 - 22, y - 1, X1 - 12, y + 10, 0x40FFFFFF);
+            }
+            if (hr) {
+                drawRect(X1 - 11, y - 1, X1 - 1, y + 10, 0x40FFFFFF);
+            }
+            ChaosUi.icon(X1 - 21, y, ChaosUi.I_LEFT);
+            ChaosUi.icon(X1 - 10, y, ChaosUi.I_RIGHT);
         }
     }
 
     /** Следующий эффект для места заимствования. */
     private int nextBorrow(int cur) {
+        return stepBorrow(cur, 1);
+    }
+
+    private int prevBorrow(int cur) {
+        return stepBorrow(cur, -1);
+    }
+
+    /** Ближайший доступный эффект в сторону dir; -1 — «пусто» (по кругу). */
+    private int stepBorrow(int cur, int dir) {
         int own = view.getInteger("spec");
         int[] free = view.getIntArray("borrowFree");
         ru.death.chaosshard.anchor.AnchorFx[] all = ru.death.chaosshard.anchor.AnchorFx.values();
-        for (int k = 1; k <= all.length + 1; k++) {
-            int idx = cur + k;
-            if (idx >= all.length) {
+        int n = all.length + 1;   // + «пусто»
+        int pos = cur + 1;        // 0 — пусто, 1..n-1 — эффекты
+        for (int k = 1; k <= n; k++) {
+            int p = ((pos + dir * k) % n + n) % n;
+            if (p == 0) {
                 return -1;
             }
-            ru.death.chaosshard.anchor.AnchorFx fx = all[idx];
+            ru.death.chaosshard.anchor.AnchorFx fx = all[p - 1];
             int sp = fx.spec.ordinal();
             if (sp != own && sp < free.length && free[sp] > 0) {
-                return idx;
+                return p - 1;
             }
         }
         return -1;
     }
 
     /** Эффекты специализации, по строкам. Возвращает y после текста. */
-    private int drawSpecText(AnchorSpec s, int y, boolean stage) {
+    private int drawSpecText(AnchorSpec s, int x, int y, int w, boolean stage) {
         for (int i = 1; i <= 3; i++) {
             String line = "• " + I18n.format("chaosshard.anchor.spec." + s.key() + ".e" + i);
-            List<String> parts = fontRenderer.listFormattedStringToWidth(line, 160);
-            for (String p : parts) {
-                fontRenderer.drawString(p, 8, y, TEXT);
+            for (String p : fontRenderer.listFormattedStringToWidth(line, w)) {
+                fontRenderer.drawString(p, x, y, TEXT);
                 y += 10;
             }
         }
         String st = I18n.format("chaosshard.anchor.gui.stage") + " " + I18n.format("chaosshard.anchor.spec." + s.key() + ".stage");
-        for (String p : fontRenderer.listFormattedStringToWidth(st, 160)) {
-            fontRenderer.drawString(p, 8, y, stage ? 0xFFD060 : DIM);
+        for (String p : fontRenderer.listFormattedStringToWidth(st, w)) {
+            fontRenderer.drawString(p, x, y, stage ? GOLD : DIM);
             y += 10;
         }
         return y;
@@ -562,21 +845,22 @@ public class GuiAnchor extends GuiContainer {
 
     // ------------------------------------------------------------------ Склад
 
-    private void drawStoreTab() {
+    private void drawStoreTab(int mx, int my) {
         NBTTagCompound v = view;
         int storage = v.getInteger("storage");
-        fontRenderer.drawString(I18n.format("chaosshard.anchor.gui.store_title"), 8, 6, ACCENT);
+        title(I18n.format("chaosshard.anchor.gui.store_title"), ACCENT, null, 0);
         if (storage <= 0) {
-            fontRenderer.drawSplitString(I18n.format("chaosshard.anchor.gui.store_none"), 8, 20, 160, TEXT);
+            ChaosUi.empty(fontRenderer, new ItemStack(Blocks.CHEST), I18n.format("chaosshard.anchor.gui.store_empty"),
+                    I18n.format("chaosshard.anchor.gui.store_none"), xSize / 2, 70, 170);
             return;
         }
         if (v.getInteger("spec") == AnchorSpec.HARVEST.ordinal()) {
-            fontRenderer.drawString(I18n.format("chaosshard.anchor.gui.field_xp", v.getInteger("fieldXp")), 8, 78, TEXT);
+            line(ChaosUi.I_XP, I18n.format("chaosshard.anchor.gui.field_xp", v.getInteger("fieldXp")), 86, TEXT);
+            drawButton(xpLabel(), XP_X, XP_Y, BTN_W, mx, my);
             if (v.getBoolean("stage")) {
-                fontRenderer.drawString(I18n.format("chaosshard.anchor.gui.sample"), 28, 108, DIM);
+                fontRenderer.drawString(I18n.format("chaosshard.anchor.gui.sample"), ContainerAnchor.SAMPLE_X + 22, ContainerAnchor.SAMPLE_Y + 5, DIM);
             }
         }
-        fontRenderer.drawString(I18n.format("container.inventory"), 8, ContainerAnchor.INV_Y - 10, DIM);
     }
 
     private static String fmt(double d) {

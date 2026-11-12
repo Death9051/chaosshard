@@ -2295,3 +2295,26 @@ enchantment.xu.zoomerang.desc=Магический бумеранг летит �
 enchantment.xu.burnerang.desc=Магический бумеранг поджигает цели.
 enchantment.xu.bladerang.desc=Магический бумеранг наносит больше урона.
 enchantment.xu.boomereaperang.desc=Магический бумеранг срезает растения на своём пути.
+
+# Окно Якоря (новый вид)
+chaosshard.anchor.gui.btn.level=С %s-го уровня
+chaosshard.anchor.gui.btn.not_owner=Не твой Якорь
+chaosshard.anchor.gui.btn.pick=Выбери путь
+chaosshard.anchor.gui.btn.no_xp=Опыта нет
+chaosshard.anchor.gui.tip.travel=Перенос к этому Якорю
+chaosshard.anchor.gui.tip.scry=Взгляд: показать землю этого Якоря
+chaosshard.anchor.gui.tip.seal_locked=Место закрыто: открывается с ростом Якоря
+chaosshard.anchor.gui.tip.seal_ro=Печати ставит и снимает только хозяин Якоря
+chaosshard.anchor.gui.net_empty=Сети нет
+chaosshard.anchor.gui.here=Здесь:
+chaosshard.anchor.gui.hint_both2=Глаз в строке показывает землю Якоря, врата переносят к нему.
+chaosshard.anchor.gui.hint_path2=Врата в строке переносят к Якорю.
+chaosshard.anchor.gui.hint_scry2=Глаз в строке показывает землю Якоря.
+chaosshard.anchor.gui.legend_anchor=Якоря
+chaosshard.anchor.gui.legend_army=отряды
+chaosshard.anchor.gui.legend_foe=чужаки
+chaosshard.anchor.gui.path_hint=Выбери путь в списке выше: здесь появится, что он даёт.
+chaosshard.anchor.gui.borrow2=Заимствования (мест: %s)
+chaosshard.anchor.gui.store_empty=Хранилища нет
+chaosshard.anchor.gui.seal_note=Положи печать в открытое место.
+chaosshard.anchor.gui.seal_note_ro=Чужой Якорь: печати только видны.

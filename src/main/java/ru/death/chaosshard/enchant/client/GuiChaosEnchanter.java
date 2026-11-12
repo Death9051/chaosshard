@@ -42,7 +42,7 @@ import java.util.Set;
 public class GuiChaosEnchanter extends GuiContainer {
 
     private static final ResourceLocation BG_TEX = new ResourceLocation(Tags.MOD_ID, "textures/gui/chaos_enchanter.png");
-    private static final ResourceLocation WD_TEX = new ResourceLocation(Tags.MOD_ID, "textures/gui/chaos_enchanter_widgets.png");
+    private static final ResourceLocation WD_TEX = new ResourceLocation(Tags.MOD_ID, "textures/gui/chaos_widgets.png");
 
     // цвета текста (контраст к фону ≥ 4.5:1)
     private static final int TEXT = 0xECE6F8;
