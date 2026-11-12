@@ -1,6 +1,1 @@
-{
- "parent": "item/generated",
- "textures": {
-  "layer0": "chaosshard:items/distorted_starmetal"
- }
-}
+{"parent": "item/generated", "textures": {"layer0": "minecraft:items/iron_ingot"}}

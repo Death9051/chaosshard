@@ -73,6 +73,27 @@ public class ClientProxy extends CommonProxy {
     public void init(FMLInitializationEvent event) {
         super.init(event);
         ClientTest.init();
+        ingotColors();
+    }
+
+    /**
+     * Слитки Хаоса — ванильный железный слиток из самой игры, перекрашенный в цвет металла (в моде своей картинки нет).
+     * Железный слиток серый, поэтому цвет ложится чисто: светлые места — сам цвет, тени — его темнее.
+     */
+    private static void ingotColors() {
+        net.minecraft.client.renderer.color.ItemColors c = net.minecraft.client.Minecraft.getMinecraft().getItemColors();
+        Object[][] list = {
+                {ru.death.chaosshard.init.ModItems.CRYSTAL_CHAOS_INGOT, 0xD4B2FF},
+                {ru.death.chaosshard.init.ModItems.BLOOD_PLATINUM_INGOT, 0xF0505E},
+                {ru.death.chaosshard.init.ModItems.STARLIGHT_INGOT, 0xA6CAFF},
+                {ru.death.chaosshard.init.ModItems.DISTORTED_STARMETAL, 0xA77BE6},
+        };
+        for (Object[] e : list) {
+            if (e[0] != null) {
+                int color = (Integer) e[1];
+                c.registerItemColorHandler((stack, tint) -> tint == 0 ? color : -1, (net.minecraft.item.Item) e[0]);
+            }
+        }
     }
 
     @Override
