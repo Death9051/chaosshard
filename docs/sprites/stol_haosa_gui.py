@@ -425,7 +425,8 @@ wd.save(OUT + '/chaos_widgets.png')
 # пустое окно Якоря 214x236 (места рисуются по вкладке из chaos_widgets.png)
 an = img(256, 256)
 panel(an, 0, 0, 214, 236)
-hline_ornament(an, 12, 52, 10)
-hline_ornament(an, 162, 202, 10)
+# заголовок вкладки идёт строкой сверху, поэтому без орнамента; под ним — тонкая черта
+for x in range(12, 202):
+    put(an, x, 17, (40, 30, 58))
 an.save(OUT + '/anchor_gui.png')
 print('ok')

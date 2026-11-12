@@ -56,7 +56,7 @@ public class GuiAnchor extends GuiContainer {
 
     private static final ResourceLocation BG = new ResourceLocation(Tags.MOD_ID, "textures/gui/anchor_gui.png");
 
-    private static final int X0 = 10, X1 = 204, W = X1 - X0;
+    private static final int X0 = 13, X1 = 202, W = X1 - X0;
     private static final int TAB_X = 2, TAB_STEP = 53;
     private static final int LIST_Y = 54, ROW = 11, LIST_ROWS = 13;
     private static final int BORROW_Y = 184;
@@ -168,7 +168,7 @@ public class GuiAnchor extends GuiContainer {
         return I18n.format(map ? "chaosshard.anchor.gui.list" : "chaosshard.anchor.gui.map");
     }
 
-    private static final int CHOOSE_X = 134, CHOOSE_Y = 212, XP_X = 134, XP_Y = 82, TOP_X = 158, TOP_Y = 3, BTN_W = 70;
+    private static final int CHOOSE_X = 132, CHOOSE_Y = 212, XP_X = 132, XP_Y = 82, TOP_X = 156, TOP_Y = 2, BTN_W = 70;
 
     private void drawButton(String label, int x, int y, int w, int mx, int my) {
         if (label == null) {
