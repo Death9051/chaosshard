@@ -60,6 +60,10 @@ public final class SpellEffects {
     static final String TAG_FORM_KIND = "chaosshard_form_kind";
     static final String TAG_FORM_TIER = "chaosshard_form_tier";
     static final String TAG_DASH_RESET = "chaosshard_dash_reset";
+    /** До какого тика Осколок неуязвим после Рывка. */
+    static final String TAG_DASH_SAFE = "chaosshard_dash_safe";
+    /** Неуязвимость после Рывка: 1 секунда. */
+    static final int DASH_SAFE = 20;
 
     private SpellEffects() {
     }
@@ -227,6 +231,26 @@ public final class SpellEffects {
         return placed > 0;
     }
 
+    /** После Рывка — секунда неуязвимости: удар в ответ не достаёт (кроме пустоты и /kill). */
+    @SubscribeEvent
+    public static void onDashSafe(net.minecraftforge.event.entity.living.LivingAttackEvent e) {
+        if (!(e.getEntityLiving() instanceof EntityPlayer) || e.getEntityLiving().world.isRemote) {
+            return;
+        }
+        EntityPlayer p = (EntityPlayer) e.getEntityLiving();
+        long until = p.getEntityData().getLong(TAG_DASH_SAFE);
+        if (until <= 0) {
+            return;
+        }
+        if (p.world.getTotalWorldTime() > until) {
+            p.getEntityData().removeTag(TAG_DASH_SAFE);
+            return;
+        }
+        if (!e.getSource().canHarmInCreative()) {
+            e.setCanceled(true);
+        }
+    }
+
     /** Уровень Поступи: на какой высоте ложатся плиты (запоминается, пока стою на земле). */
     static final String TAG_TRAIL_Y = "chaosshard_trail_y";
 
@@ -234,6 +258,7 @@ public final class SpellEffects {
      * Поступь: под ногами застывает Хаос, пока действует заклинание. Присев — плиты не ложатся (можно спуститься).
      * <p>
      * Плиты кладутся на запомненном уровне — под ногами и на шаг вперёд по ходу движения, чтобы не проваливаться.
+     * Прыжок поднимает уровень (ступенька вверх), спуститься — присесть.
      * Скорость игрока не трогается: сервер не знает её по горизонтали, и прежняя «подстраховка» обнуляла её каждый тик —
      * Осколок полз, пока не присядешь.
      */
@@ -263,8 +288,8 @@ public final class SpellEffects {
             return;
         }
         int y = p.getEntityData().getInteger(TAG_TRAIL_Y);
-        if (y > feetY) {
-            y = feetY;     // упал ниже уровня (присел и спустился) — новый уровень
+        if (feetY > y) {
+            y = feetY;     // прыжок: плита ложится выше — так поднимаются ступенькой
             p.getEntityData().setInteger(TAG_TRAIL_Y, y);
         }
         double dx = p.posX - p.lastTickPosX, dz = p.posZ - p.lastTickPosZ;
@@ -675,6 +700,7 @@ public final class SpellEffects {
             p.attackTargetEntityWithCurrentItem(t);
         }
         p.fallDistance = 0;
+        p.getEntityData().setLong(TAG_DASH_SAFE, p.world.getTotalWorldTime() + DASH_SAFE);
         ws.spawnParticle(EnumParticleTypes.SWEEP_ATTACK, t.posX, t.posY + t.height / 2, t.posZ, 1, 0.0, 0.0, 0.0, 0.0);
         p.world.playSound(null, p.getPosition(), SoundEvents.ENTITY_PLAYER_ATTACK_STRONG, SoundCategory.PLAYERS, 1.0F, 0.9F);
         return true;

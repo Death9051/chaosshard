@@ -256,7 +256,7 @@ key.chaosshard.spell_wheel=Колесо заклинаний
 key.chaosshard.grimoire_magic=Магия Гримуара
 # ---- Новые заклинания
 chaosshard.spell.dash=Рывок
-chaosshard.spell.dash.desc=Бросок к врагу под взглядом и удар оружием из руки (Нить 1)
+chaosshard.spell.dash.desc=Бросок к врагу под взглядом и удар оружием из руки, потом секунда неуязвимости (Нить 1)
 chaosshard.spell.bolt=Стрела Хаоса
 chaosshard.spell.bolt.desc=Удар по первой цели до 24 блоков, по блоку даёт взрыв без разрушений. Сила растёт с Нитью (Нить 1)
 chaosshard.spell.form=Форма Хаоса
