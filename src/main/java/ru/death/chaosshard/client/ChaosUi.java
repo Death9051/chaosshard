@@ -71,6 +71,37 @@ public final class ChaosUi {
         GlStateManager.color(1, 1, 1, 1);
     }
 
+    /** Значок «Круга Хаоса» (как проводить ритуалы). */
+    public static final int BIG_RITUAL_HOWTO = 18;
+
+    /** Порядок значков ритуалов в атласе с 19 (docs/sprites/znachki.py). */
+    private static final String[] RITUAL_ORDER = {"GROWTH", "SKY", "WARD", "STORM", "SUMMON", "CORRUPTION", "DUSK", "BREED", "PULL",
+            "SIGHT", "RECALL", "BLOOD_MOON", "GREAT_SURGE", "CHALLENGE", "OMEN_KAEL", "OMEN_IRENA", "OMEN_VELMOR", "OMEN_LIAN", "OMEN_ELIS",
+            "HOLY_DEFILE", "FALLEN_FEATHER", "SCENT", "OMEN_CROWN", "SPELL_RESET", "MATERIAL_TEMPER", "ANCHOR_RESHAPE", "ANCHOR_ALPHA",
+            "RECLAIM"};
+    /** Призывы с 47: слуги, потом звери. */
+    private static final String[] SUMMON_ORDER = {"HUSK", "BONE", "EXECUTIONER", "REAPER", "LUMBERJACK", "MINER", "HARE", "CAT", "TIGER"};
+
+    /** Номер значка ритуала по имени (Ritual.name()); призывы слуг — значок слуги; -1 — нет своего. */
+    public static int ritualIcon(String ritual) {
+        for (int i = 0; i < RITUAL_ORDER.length; i++) {
+            if (RITUAL_ORDER[i].equals(ritual)) {
+                return 19 + i;
+            }
+        }
+        return ritual.startsWith("SERVANT_") ? summonIcon(ritual.substring(8)) : -1;
+    }
+
+    /** Номер значка слуги или зверя по имени (Servants.Kind / BeastData.Beast); -1 — нет своего. */
+    public static int summonIcon(String kind) {
+        for (int i = 0; i < SUMMON_ORDER.length; i++) {
+            if (SUMMON_ORDER[i].equals(kind)) {
+                return 47 + i;
+            }
+        }
+        return -1;
+    }
+
     /** Свой значок 32x32 в квадрат size x size (16 — как предмет; при масштабе интерфейса 2 видны все 32 пикселя). */
     public static void bigIcon(int idx, float x, float y, float size) {
         bigIcon(idx, x, y, size, 1F, 1F, 1F, 1F);

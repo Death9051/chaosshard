@@ -61,7 +61,7 @@ class BeastPage {
                 gui.drawHeader(row, tr("chaosshard.servant.gui.retinue").replace("\u2014", "").replace("-", "").trim());
                 continue;
             }
-            ItemStack ic;
+            Object ic;
             String name;
             int col;
             if (i < 0) {
@@ -70,14 +70,16 @@ class BeastPage {
                 col = GOLD;
             } else if (i < 3) {
                 Beast b = Beast.values()[i];
-                ic = icon(b);
+                int big = ru.death.chaosshard.client.ChaosUi.summonIcon(b.name());
+                ic = big >= 0 ? (Object) Integer.valueOf(big) : icon(b);
                 boolean known = ClientBeasts.get(b).getBoolean("known");
                 String given = ClientBeasts.get(b).getString("name");
                 name = known ? (given.isEmpty() ? tr("chaosshard.beast." + b.key()) : given) + " \u00A77" + ClientBeasts.level(b) : tr("chaosshard.beast.unknown");
                 col = known ? (ClientBeasts.level(b) >= 5 ? GOLD : OPEN) : DIM;
             } else {
                 Servants.Kind k = Servants.Kind.COMMON[i - HEADER_ROW];
-                ic = kindIcon(k);
+                int big = ru.death.chaosshard.client.ChaosUi.summonIcon(k.name());
+                ic = big >= 0 ? (Object) Integer.valueOf(big) : kindIcon(k);
                 name = tr("chaosshard.servant.kind." + k.key());
                 col = k.minThread <= MagicUi.threadLevel() ? OPEN : DIM;
             }

@@ -891,10 +891,12 @@ public class GuiGrimoireMagic extends GuiScreen {
         if (selRitual >= all.length) {
             selRitual = -1;
         }
-        drawRow(0, new ItemStack(ModItems.CHALK), I18n.format("chaosshard.magic.howto"), BookArt.ACCENT, selRitual < 0, mx, my);
+        drawRow(0, (Object) Integer.valueOf(ru.death.chaosshard.client.ChaosUi.BIG_RITUAL_HOWTO), I18n.format("chaosshard.magic.howto"), BookArt.ACCENT, selRitual < 0, mx, my);
         for (int i = 0; i < all.length; i++) {
             boolean open = all[i].minThread <= MagicUi.threadLevel();
-            drawRow(i + 1, ritualIcon(all[i]), I18n.format(all[i].key()), open ? BookArt.INK : BookArt.DIM, i == selRitual, mx, my);
+            int big = ru.death.chaosshard.client.ChaosUi.ritualIcon(all[i].name());
+            drawRow(i + 1, big >= 0 ? (Object) Integer.valueOf(big) : ritualIcon(all[i]), I18n.format(all[i].key()),
+                    open ? BookArt.INK : BookArt.DIM, i == selRitual, mx, my);
         }
         int x = pageX(), pw = pageW();
         int bottom = top + BookArt.PB - 20;
