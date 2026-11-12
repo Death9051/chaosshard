@@ -227,7 +227,7 @@ public class ContainerChaosEnchanter extends Container {
             }
         }
         if (n > 0) {
-            p.world.playSound(null, tile.getPos(), SoundEvents.ITEM_BOOK_PAGE_TURN, SoundCategory.BLOCKS, 1.0F, 1.0F);
+            p.world.playSound(null, tile.getPos(), SoundEvents.ENTITY_PLAYER_LEVELUP, SoundCategory.BLOCKS, 0.6F, 1.4F);
         }
     }
 
