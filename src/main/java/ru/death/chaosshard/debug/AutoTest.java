@@ -1735,6 +1735,13 @@ public final class AutoTest {
                 boolean worn = false;
                 for (int i = 0; i < h.getSlots(); i++) worn |= h.getStackInSlot(i).getItem() == ring.getItem();
                 check(worn, "кольцо из могилы сразу надето");
+                if (!worn) {
+                    net.minecraft.item.ItemStack r2 = ring.copy();
+                    boolean cap = r2.hasCapability(baubles.api.cap.BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null);
+                    StringBuilder sb = new StringBuilder("  слотов " + h.getSlots() + ", cap " + cap + ", IBauble " + (r2.getItem() instanceof baubles.api.IBauble) + ", годится:");
+                    for (int i = 0; i < h.getSlots(); i++) sb.append(' ').append(h.isItemValidForSlot(i, r2, me) ? 1 : 0).append(h.getStackInSlot(i).isEmpty() ? "" : "*");
+                    line(sb.toString());
+                }
                 check(me.inventory.clearMatchingItems(ring.getItem(), -1, 0, null) == 0, "в инвентарь кольцо не попало");
                 for (int i = 0; i < h.getSlots(); i++) h.setStackInSlot(i, net.minecraft.item.ItemStack.EMPTY);
                 ow.setBlockToAir(g);
