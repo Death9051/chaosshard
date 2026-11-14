@@ -492,7 +492,7 @@ public final class AnchorSpecs {
         }
     }
 
-    /** Поле Жатвы работает и точка на нём (для запрета криперов). */
+    /** Поле Жатвы работает и точка на нём (там криперы не взрываются). */
     static boolean onField(TileAnchor a, double x, double z) {
         if (a == null || a.getSpec() != AnchorSpec.HARVEST || a.fieldOff) {
             return false;
@@ -575,9 +575,7 @@ public final class AnchorSpecs {
             return null;
         }
         Biome b = w.getBiome(at);
-        List<Biome.SpawnListEntry> list = new java.util.ArrayList<>(b.getSpawnableList(net.minecraft.entity.EnumCreatureType.MONSTER));
-        // криперы на поле не приходят: взрываются у колонны и рвут землю
-        list.removeIf(en -> net.minecraft.entity.monster.EntityCreeper.class.isAssignableFrom(en.entityClass));
+        List<Biome.SpawnListEntry> list = b.getSpawnableList(net.minecraft.entity.EnumCreatureType.MONSTER);
         if (list.isEmpty()) {
             return null;
         }
@@ -679,6 +677,59 @@ public final class AnchorSpecs {
         }
     }
 
+    private static java.lang.reflect.Field fuse;
+
+    /**
+     * Жатва: на работающем поле криперы не взрываются. Шипят и раздуваются, но запал каждый тик сбрасывается,
+     * и до взрыва дело не доходит; крипер остаётся добычей поля.
+     */
+    @SubscribeEvent
+    public void onCreeper(net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent event) {
+        if (!(event.getEntityLiving() instanceof net.minecraft.entity.monster.EntityCreeper) || event.getEntityLiving().world.isRemote) {
+            return;
+        }
+        net.minecraft.entity.monster.EntityCreeper c = (net.minecraft.entity.monster.EntityCreeper) event.getEntityLiving();
+        if (c.getCreeperState() <= 0 && !c.hasIgnited()) {
+            return;
+        }
+        if (!AnchorNet.isNetWorld(c.world) || !onField(at(c.world, c.getPosition()), c.posX, c.posZ)) {
+            return;
+        }
+        defuse(c);
+    }
+
+    /** Сбросить запал крипера (до взрыва не дойдёт, пока сбрасывается каждый тик). */
+    public static void defuse(net.minecraft.entity.monster.EntityCreeper c) {
+        try {
+            if (fuse == null) {
+                fuse = net.minecraftforge.fml.relauncher.ReflectionHelper.findField(net.minecraft.entity.monster.EntityCreeper.class,
+                        "timeSinceIgnited", "field_70833_d");
+            }
+            fuse.setInt(c, 0);
+        } catch (Exception ex) {
+            return;
+        }
+        c.setCreeperState(-1);
+        if (IGNITED != null) {
+            c.getDataManager().set(IGNITED, false);
+        }
+    }
+
+    private static final net.minecraft.network.datasync.DataParameter<Boolean> IGNITED;
+
+    static {
+        net.minecraft.network.datasync.DataParameter<Boolean> p = null;
+        try {
+            java.lang.reflect.Field f = net.minecraftforge.fml.relauncher.ReflectionHelper.findField(net.minecraft.entity.monster.EntityCreeper.class,
+                    "IGNITED", "field_184715_c");
+            @SuppressWarnings("unchecked")
+            net.minecraft.network.datasync.DataParameter<Boolean> v = (net.minecraft.network.datasync.DataParameter<Boolean>) f.get(null);
+            p = v;
+        } catch (Exception ignored) {
+        }
+        IGNITED = p;
+    }
+
     @SubscribeEvent
     public void onSpawn(LivingSpawnEvent.CheckSpawn event) {
         if (event.getWorld().isRemote || !(event.getEntityLiving() instanceof IMob) || !AnchorNet.isNetWorld(event.getWorld())
@@ -687,9 +738,6 @@ public final class AnchorSpecs {
         }
         TileAnchor a = at(event.getWorld(), new BlockPos(event.getX(), event.getY(), event.getZ()));
         if (a != null && a.getSpec() == AnchorSpec.CITADEL && a.stage()) {
-            event.setResult(Event.Result.DENY);
-        }
-        if (event.getEntityLiving() instanceof net.minecraft.entity.monster.EntityCreeper && onField(a, event.getX(), event.getZ())) {
             event.setResult(Event.Result.DENY);
         }
     }
