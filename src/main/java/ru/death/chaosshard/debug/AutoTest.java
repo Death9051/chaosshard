@@ -965,7 +965,7 @@ public final class AutoTest {
             net.minecraft.entity.monster.EntityCreeper cr = new net.minecraft.entity.monster.EntityCreeper(ow);
             cr.setPosition(specA[0].getX() + 6.5, specA[0].getY(), specA[0].getZ() + 0.5);
             net.minecraftforge.event.entity.living.LivingSpawnEvent.CheckSpawn cs = new net.minecraftforge.event.entity.living.LivingSpawnEvent.CheckSpawn(
-                    cr, ow, (float) cr.posX, (float) cr.posY, (float) cr.posZ, null, false);
+                    cr, ow, (float) cr.posX, (float) cr.posY, (float) cr.posZ, false);
             net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(cs);
             check(cs.getResult() == net.minecraftforge.fml.common.eventhandler.Event.Result.DENY, "крипер на поле Жатвы не появляется");
             ru.death.chaosshard.anchor.AnchorSpecs.spawnField(t, ow);
