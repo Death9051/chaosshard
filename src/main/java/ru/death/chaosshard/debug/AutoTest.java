@@ -1720,7 +1720,7 @@ public final class AutoTest {
             check(gone, "на месте гибели копий не осталось");
             check(!ru.death.chaosshard.death.DeathItems.reclaim(me), "второй раз возвращать нечего — сфера цела");
         });
-        if (Loader.isModLoaded("baubles") && net.minecraft.item.Item.getByNameOrId("bountifulbaubles:ringiron") != null) {
+        if (Loader.isModLoaded("baubles") && net.minecraft.item.Item.getByNameOrId("bountifulbaubles:amuletcross") != null) {
             step("могила надевает аксессуары обратно", () -> {
                 BlockPos g = base.add(-34, 0, 30);
                 ow.setBlockState(g, ModBlocks.GRAVE.getDefaultState(), 2);
@@ -1728,13 +1728,13 @@ public final class AutoTest {
                 if (!(te instanceof ru.death.chaosshard.death.TileGrave)) { check(false, "могила не встала"); return; }
                 baubles.api.cap.IBaublesItemHandler h = baubles.api.BaublesApi.getBaublesHandler(me);
                 for (int i = 0; i < h.getSlots(); i++) h.setStackInSlot(i, net.minecraft.item.ItemStack.EMPTY);
-                net.minecraft.item.ItemStack ring = new net.minecraft.item.ItemStack(net.minecraft.item.Item.getByNameOrId("bountifulbaubles:ringiron"));
+                net.minecraft.item.ItemStack ring = new net.minecraft.item.ItemStack(net.minecraft.item.Item.getByNameOrId("bountifulbaubles:amuletcross"));
                 ((ru.death.chaosshard.death.TileGrave) te).fill(me, java.util.Collections.singletonList(ring));
                 me.inventory.clearMatchingItems(ring.getItem(), -1, 0, null);
                 ((ru.death.chaosshard.death.TileGrave) te).giveTo(me);
                 boolean worn = false;
                 for (int i = 0; i < h.getSlots(); i++) worn |= h.getStackInSlot(i).getItem() == ring.getItem();
-                check(worn, "кольцо из могилы сразу надето");
+                check(worn, "амулет из могилы сразу надет");
                 if (!worn) {
                     net.minecraft.item.ItemStack r2 = ring.copy();
                     boolean cap = r2.hasCapability(baubles.api.cap.BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null);
@@ -1742,7 +1742,7 @@ public final class AutoTest {
                     for (int i = 0; i < h.getSlots(); i++) sb.append(' ').append(h.isItemValidForSlot(i, r2, me) ? 1 : 0).append(h.getStackInSlot(i).isEmpty() ? "" : "*");
                     line(sb.toString());
                 }
-                check(me.inventory.clearMatchingItems(ring.getItem(), -1, 0, null) == 0, "в инвентарь кольцо не попало");
+                check(me.inventory.clearMatchingItems(ring.getItem(), -1, 0, null) == 0, "в инвентарь амулет не попал");
                 for (int i = 0; i < h.getSlots(); i++) h.setStackInSlot(i, net.minecraft.item.ItemStack.EMPTY);
                 ow.setBlockToAir(g);
             });
