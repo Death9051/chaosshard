@@ -962,6 +962,17 @@ public final class AutoTest {
             int had = me.experienceTotal;
             ru.death.chaosshard.anchor.AnchorSpecs.takeXp(me, t);
             check(t.fieldXp == 0 && me.experienceTotal > had, "опыт забран");
+            net.minecraft.entity.monster.EntityCreeper cr = new net.minecraft.entity.monster.EntityCreeper(ow);
+            cr.setPosition(specA[0].getX() + 6.5, specA[0].getY(), specA[0].getZ() + 0.5);
+            net.minecraftforge.event.entity.living.LivingSpawnEvent.CheckSpawn cs = new net.minecraftforge.event.entity.living.LivingSpawnEvent.CheckSpawn(
+                    cr, ow, (float) cr.posX, (float) cr.posY, (float) cr.posZ, null, false);
+            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(cs);
+            check(cs.getResult() == net.minecraftforge.fml.common.eventhandler.Event.Result.DENY, "крипер на поле Жатвы не появляется");
+            ru.death.chaosshard.anchor.AnchorSpecs.spawnField(t, ow);
+            ru.death.chaosshard.anchor.AnchorSpecs.toggleField(t);
+            check(t.fieldOff && ru.death.chaosshard.anchor.AnchorSpecs.fieldMobs(t).isEmpty(), "поле остановлено, мобы с поля ушли");
+            ru.death.chaosshard.anchor.AnchorSpecs.toggleField(t);
+            check(!t.fieldOff, "поле снова работает");
         });
         step("Гнездо: твари у колонны вне лимита свиты", () -> {
             TileAnchor t = respec(specA[0], ru.death.chaosshard.anchor.AnchorSpec.NEST, 3);
@@ -1249,6 +1260,26 @@ public final class AutoTest {
             check(center.getBlock().isAir(center, ow, c), "в центре колодец, а не столб");
             check(solid <= stairs / 2 + 4, "лишнего камня в стволе: " + solid);
             line("  (сундук " + chest + ", центр ствола " + c + ")");
+        });
+        step("полный сундук: добыча в сумку рудокопа, а не на крышку", () -> {
+            net.minecraft.tileentity.TileEntityChest tc = (net.minecraft.tileentity.TileEntityChest) ow.getTileEntity(chest);
+            for (int i = 0; i < tc.getSizeInventory(); i++) tc.setInventorySlotContents(i, new net.minecraft.item.ItemStack(Blocks.BARRIER, 64));
+            for (net.minecraft.entity.item.EntityItem ei : ow.getEntitiesWithinAABB(net.minecraft.entity.item.EntityItem.class, new AxisAlignedBB(chest).grow(2))) ei.setDead();
+            ru.death.chaosshard.servant.work.Work.deposit((net.minecraft.entity.EntityCreature) miner, new net.minecraft.item.ItemStack(Blocks.COBBLESTONE, 5));
+            check(ru.death.chaosshard.servant.work.Work.packed(miner).size() == 1, "камень в сумке слуги");
+            check(ow.getEntitiesWithinAABB(net.minecraft.entity.item.EntityItem.class, new AxisAlignedBB(chest).grow(2), x -> x.isEntityAlive()).isEmpty(),
+                    "на сундук ничего не высыпано");
+            check(!new ru.death.chaosshard.servant.work.WorkMiner((net.minecraft.entity.EntityCreature) miner).shouldExecute(), "с полной сумкой рудокоп не копает");
+            tc.clear();
+        });
+        sleep(45);
+        step("место освободилось: сумка выложена в сундук", () -> {
+            ru.death.chaosshard.servant.work.Work.waitsForRoom((net.minecraft.entity.EntityCreature) miner);
+            check(ru.death.chaosshard.servant.work.Work.packed(miner).isEmpty(), "сумка пуста");
+            net.minecraft.tileentity.TileEntityChest tc = (net.minecraft.tileentity.TileEntityChest) ow.getTileEntity(chest);
+            int cobble = 0;
+            for (int i = 0; i < tc.getSizeInventory(); i++) if (tc.getStackInSlot(i).getItem() == net.minecraft.item.Item.getItemFromBlock(Blocks.COBBLESTONE)) cobble += tc.getStackInSlot(i).getCount();
+            check(cobble >= 5, "камень в сундуке: " + cobble);
         });
 
         section("Обломок: все комнаты и законы");
@@ -1689,6 +1720,26 @@ public final class AutoTest {
             check(gone, "на месте гибели копий не осталось");
             check(!ru.death.chaosshard.death.DeathItems.reclaim(me), "второй раз возвращать нечего — сфера цела");
         });
+        if (Loader.isModLoaded("baubles") && net.minecraft.item.Item.getByNameOrId("bountifulbaubles:ringiron") != null) {
+            step("могила надевает аксессуары обратно", () -> {
+                BlockPos g = base.add(-34, 0, 30);
+                ow.setBlockState(g, ModBlocks.GRAVE.getDefaultState(), 2);
+                net.minecraft.tileentity.TileEntity te = ow.getTileEntity(g);
+                if (!(te instanceof ru.death.chaosshard.death.TileGrave)) { check(false, "могила не встала"); return; }
+                baubles.api.cap.IBaublesItemHandler h = baubles.api.BaublesApi.getBaublesHandler(me);
+                for (int i = 0; i < h.getSlots(); i++) h.setStackInSlot(i, net.minecraft.item.ItemStack.EMPTY);
+                net.minecraft.item.ItemStack ring = new net.minecraft.item.ItemStack(net.minecraft.item.Item.getByNameOrId("bountifulbaubles:ringiron"));
+                ((ru.death.chaosshard.death.TileGrave) te).fill(me, java.util.Collections.singletonList(ring));
+                me.inventory.clearMatchingItems(ring.getItem(), -1, 0, null);
+                ((ru.death.chaosshard.death.TileGrave) te).giveTo(me);
+                boolean worn = false;
+                for (int i = 0; i < h.getSlots(); i++) worn |= h.getStackInSlot(i).getItem() == ring.getItem();
+                check(worn, "кольцо из могилы сразу надето");
+                check(me.inventory.clearMatchingItems(ring.getItem(), -1, 0, null) == 0, "в инвентарь кольцо не попало");
+                for (int i = 0; i < h.getSlots(); i++) h.setStackInSlot(i, net.minecraft.item.ItemStack.EMPTY);
+                ow.setBlockToAir(g);
+            });
+        }
         step("Смерть в Испытании: вещи остаются при мне, старая могила из обломка возвращается", () -> {
             WorldServer tw = server.getWorld(ru.death.chaosshard.trial.TrialDimension.id());
             me.inventory.clear();
@@ -3503,6 +3554,13 @@ public final class AutoTest {
                     net.minecraftforge.fml.common.gameevent.TickEvent.Phase.END, me));
             BlockPos under = new BlockPos(me.posX, me.posY - 0.5, me.posZ);
             check(ow.getBlockState(under).getBlock() == TRAIL, "Поступь: под ногами застыл Хаос");
+            // клиент без чанка тонет сквозь плиту — сервер возвращает на неё
+            double top = under.getY() + 1.0;
+            me.setPosition(me.posX, top - 0.7, me.posZ);
+            me.onGround = false;
+            ru.death.chaosshard.spell.SpellEffects.onPlayerTick(new net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent(
+                    net.minecraftforge.fml.common.gameevent.TickEvent.Phase.END, me));
+            check(Math.abs(me.posY - top) < 0.01, "Поступь: провалившегося сквозь плиту вернуло наверх (" + String.format("%.2f", me.posY) + ")");
             ow.setBlockToAir(under);
             me.getEntityData().removeTag("chaosshard_trail_until");
             me.getEntityData().removeTag("chaosshard_trail_y");
@@ -3699,6 +3757,19 @@ public final class AutoTest {
                     check(n >= 10, m.getIdentifier() + ": отливок в формы " + n);
                 }
             });
+            if (Loader.isModLoaded("evilcraft")) {
+                step("кровь Tinkers заменена кровью EvilCraft", () -> {
+                    slimeknights.tconstruct.library.smeltery.MeltingRecipe mr = slimeknights.tconstruct.library.TinkerRegistry.getMelting(
+                            new net.minecraft.item.ItemStack(net.minecraft.init.Items.ROTTEN_FLESH));
+                    check(mr != null && "evilcraftblood".equals(mr.getResult().getFluid().getName()),
+                            "гнилая плоть плавится в " + (mr == null ? "—" : mr.getResult().getFluid().getName()));
+                    net.minecraft.entity.monster.EntityZombie z = new net.minecraft.entity.monster.EntityZombie(ow);
+                    net.minecraftforge.fluids.FluidStack fz = slimeknights.tconstruct.library.TinkerRegistry.getMeltingForEntity(z);
+                    check(fz != null && "evilcraftblood".equals(fz.getFluid().getName()), "зомби в плавильне даёт " + (fz == null ? "—" : fz.getFluid().getName()));
+                    check(ru.death.chaosshard.compat.tinkers.BloodUnify.alloys > 0 && ru.death.chaosshard.compat.tinkers.BloodUnify.casts > 0,
+                            "сплавов " + ru.death.chaosshard.compat.tinkers.BloodUnify.alloys + ", отливок " + ru.death.chaosshard.compat.tinkers.BloodUnify.casts + " на крови EvilCraft");
+                });
+            }
             step("материалы Хаоса: уровни и модификаторы заклинаний", () -> {
             ru.death.chaosshard.spell.SpellHeat.set(me, 0, 0);   // разогрев не должен вмешиваться
                 java.util.List<slimeknights.tconstruct.library.materials.Material> mats = java.util.Arrays.asList(

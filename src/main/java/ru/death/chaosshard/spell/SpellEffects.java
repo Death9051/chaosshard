@@ -284,7 +284,12 @@ public final class SpellEffects {
         if (p.onGround || p.isInWater() || p.isInLava() || !p.getEntityData().hasKey(TAG_TRAIL_Y)) {
             p.getEntityData().setInteger(TAG_TRAIL_Y, feetY);
         }
-        if (p.isSneaking() || p.isInWater() || p.isInLava()) {
+        if (p.isSneaking()) {
+            // спуск: уровень плит идёт вниз вместе с игроком, отпустил — встал на этой высоте
+            p.getEntityData().setInteger(TAG_TRAIL_Y, feetY);
+            return;
+        }
+        if (p.isInWater() || p.isInLava()) {
             return;
         }
         int y = p.getEntityData().getInteger(TAG_TRAIL_Y);
@@ -307,6 +312,19 @@ public final class SpellEffects {
             }
         }
         if (any) {
+            p.fallDistance = 0;
+        }
+        // Пока клиент не получил чанк, игра сама тянет игрока вниз (-0,1 за тик) и плиты под ним не видит:
+        // он проваливается сквозь Поступь. Без приседания ниже плит не спускаются — значит, вернуть на плиту.
+        if (!p.onGround && p.posY < y + 0.5 && p instanceof net.minecraft.entity.player.EntityPlayerMP
+                && p.world.getBlockState(new BlockPos(p.posX, y, p.posZ)).getBlock() == ru.death.chaosshard.init.ModBlocks.CHAOS_TRAIL) {
+            net.minecraft.entity.player.EntityPlayerMP mp = (net.minecraft.entity.player.EntityPlayerMP) p;
+            if (mp.connection != null && !(mp instanceof net.minecraftforge.common.util.FakePlayer)) {
+                mp.connection.setPlayerLocation(p.posX, y + 1.0, p.posZ, p.rotationYaw, p.rotationPitch);
+            } else {
+                p.setPosition(p.posX, y + 1.0, p.posZ);
+            }
+            p.motionY = 0;
             p.fallDistance = 0;
         }
     }

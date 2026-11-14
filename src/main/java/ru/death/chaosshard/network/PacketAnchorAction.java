@@ -20,6 +20,7 @@ public class PacketAnchorAction implements IMessage {
     public static final int SCRY = 2;
     public static final int TAKE_XP = 3;
     public static final int BORROW = 4;
+    public static final int FIELD = 5;
 
     private int action;
     private int arg;
@@ -95,6 +96,11 @@ public class PacketAnchorAction implements IMessage {
                     if (a.setBorrow(m.arg >> 8, fx) && fx != null) {
                         ru.death.chaosshard.quest.Milestones.grant(p, ru.death.chaosshard.quest.Milestones.ANCHOR_BORROW);
                     }
+                }
+                break;
+            case FIELD:
+                if (mine && a.getSpec() == AnchorSpec.HARVEST) {
+                    AnchorSpecs.toggleField(a);
                 }
                 break;
             case TAKE_XP:

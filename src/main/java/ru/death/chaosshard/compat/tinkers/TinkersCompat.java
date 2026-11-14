@@ -106,6 +106,7 @@ public final class TinkersCompat {
      * Кристаллический Хаос из жидкостей не собирается (горный хрусталь не плавится) — только верстак.
      */
     public static void postInit() {
+        BloodUnify.run();
         if (chaos == null) {
             return;
         }

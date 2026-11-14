@@ -173,6 +173,9 @@ public class ServantEffects {
             return;
         }
         EntityLiving m = (EntityLiving) e;
+        if (m instanceof net.minecraft.entity.EntityCreature) {
+            ru.death.chaosshard.servant.work.Work.dropPack((net.minecraft.entity.EntityCreature) m);
+        }
         // Взрыв гнили: облако яда, блоки целы
         if (has(m, HUSK_BLAST)) {
             WorldServer ws = (WorldServer) m.world;

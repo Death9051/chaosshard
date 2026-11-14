@@ -123,23 +123,102 @@ public class Work {
                 ? te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null) : null;
     }
 
-    /** Положить добычу в сундук (по Нити). Не влезло — ложится на сундук. */
+    /** Заплечная сумка слуги: добыча, которой не нашлось места в сундуке. */
+    public static final String TAG_PACK = "chaosshard_pack";
+    private static final String TAG_PACK_WARN = "chaosshard_pack_warn";
+
+    /**
+     * Положить добычу в сундук (по Нити). Не влезло — в заплечную сумку слуги, а не на сундук:
+     * с непустой сумкой слуга не работает, пока в сундуке не освободится место ({@link #waitsForRoom}).
+     */
     public static void deposit(EntityCreature m, ItemStack stack) {
         if (stack.isEmpty()) {
             return;
         }
         BlockPos c = chest(m);
         IItemHandler h = handler(m.world, c);
-        ItemStack rest = h == null ? stack : ItemHandlerHelper.insertItemStacked(h, stack.copy(), false);
+        ItemStack rest = h == null ? stack.copy() : ItemHandlerHelper.insertItemStacked(h, stack.copy(), false);
         if (!rest.isEmpty()) {
-            BlockPos at = c != null ? c.up() : m.getPosition();
-            EntityItem it = new EntityItem(m.world, at.getX() + 0.5, at.getY() + 0.2, at.getZ() + 0.5, rest);
-            it.motionX = it.motionY = it.motionZ = 0;
-            m.world.spawnEntity(it);
+            pack(m, rest);
         }
         if (c != null && m.world.rand.nextInt(4) == 0) {
             ((WorldServer) m.world).spawnParticle(EnumParticleTypes.PORTAL, c.getX() + 0.5, c.getY() + 1, c.getZ() + 0.5, 6, 0.2, 0.2, 0.2, 0.3);
         }
+    }
+
+    private static void pack(EntityCreature m, ItemStack stack) {
+        net.minecraft.nbt.NBTTagList list = m.getEntityData().getTagList(TAG_PACK, 10);
+        for (int i = 0; i < list.tagCount() && !stack.isEmpty(); i++) {
+            ItemStack had = new ItemStack(list.getCompoundTagAt(i));
+            if (ItemHandlerHelper.canItemStacksStack(had, stack) && had.getCount() < had.getMaxStackSize()) {
+                int n = Math.min(stack.getCount(), had.getMaxStackSize() - had.getCount());
+                had.grow(n);
+                stack.shrink(n);
+                list.set(i, had.writeToNBT(new net.minecraft.nbt.NBTTagCompound()));
+            }
+        }
+        if (!stack.isEmpty()) {
+            list.appendTag(stack.writeToNBT(new net.minecraft.nbt.NBTTagCompound()));
+        }
+        m.getEntityData().setTag(TAG_PACK, list);
+    }
+
+    /** Что лежит в сумке слуги (копии). */
+    public static java.util.List<ItemStack> packed(Entity m) {
+        java.util.List<ItemStack> out = new java.util.ArrayList<>();
+        net.minecraft.nbt.NBTTagList list = m.getEntityData().getTagList(TAG_PACK, 10);
+        for (int i = 0; i < list.tagCount(); i++) {
+            ItemStack s = new ItemStack(list.getCompoundTagAt(i));
+            if (!s.isEmpty()) {
+                out.add(s);
+            }
+        }
+        return out;
+    }
+
+    /**
+     * Сумка не пуста и в сундук её не выложить: слуга ждёт у работы, хозяину раз в 2 минуты — напоминание.
+     * Раз в секунду пробует выложить сумку снова.
+     */
+    public static boolean waitsForRoom(EntityCreature m) {
+        if (!m.getEntityData().hasKey(TAG_PACK)) {
+            return false;
+        }
+        if (m.world.getTotalWorldTime() % 20 == Math.floorMod(m.getEntityId(), 20)) {
+            IItemHandler h = handler(m.world, chest(m));
+            java.util.List<ItemStack> items = packed(m);
+            m.getEntityData().removeTag(TAG_PACK);
+            for (ItemStack s : items) {
+                ItemStack rest = h == null ? s : ItemHandlerHelper.insertItemStacked(h, s, false);
+                if (!rest.isEmpty()) {
+                    pack(m, rest);
+                }
+            }
+            if (!m.getEntityData().hasKey(TAG_PACK)) {
+                m.getEntityData().removeTag(TAG_PACK_WARN);
+                return false;
+            }
+            long now = m.world.getTotalWorldTime();
+            if (now - m.getEntityData().getLong(TAG_PACK_WARN) > 2400) {
+                m.getEntityData().setLong(TAG_PACK_WARN, now);
+                EntityPlayer o = Servants.owner(m);
+                BlockPos c = chest(m);
+                if (o != null && c != null) {
+                    o.sendMessage(Breach.grimoire("chaosshard.work.chest_full",
+                            new TextComponentTranslation("chaosshard.servant.kind." + Servants.kindOf(m).key()), c.getX(), c.getY(), c.getZ()));
+                }
+            }
+            ((WorldServer) m.world).spawnParticle(EnumParticleTypes.VILLAGER_ANGRY, m.posX, m.posY + m.height + 0.3, m.posZ, 1, 0.2, 0.1, 0.2, 0);
+        }
+        return m.getEntityData().hasKey(TAG_PACK);
+    }
+
+    /** Слуга пал: сумка высыпается рядом с ним. */
+    public static void dropPack(EntityCreature m) {
+        for (ItemStack s : packed(m)) {
+            m.world.spawnEntity(new EntityItem(m.world, m.posX, m.posY + 0.5, m.posZ, s));
+        }
+        m.getEntityData().removeTag(TAG_PACK);
     }
 
     /** Взять из сундука первый подходящий предмет (1 шт.). */

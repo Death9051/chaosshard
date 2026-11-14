@@ -43,7 +43,7 @@ public class WorkReaper extends EntityAIBase {
 
     @Override
     public boolean shouldExecute() {
-        return Work.chest(m) != null && m.getAttackTarget() == null && Work.alive(m);
+        return Work.chest(m) != null && m.getAttackTarget() == null && Work.alive(m) && !Work.waitsForRoom(m);
     }
 
     @Override

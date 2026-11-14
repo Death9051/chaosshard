@@ -59,7 +59,7 @@ public class WorkMiner extends EntityAIBase {
 
     @Override
     public boolean shouldExecute() {
-        if (Work.chest(m) == null || m.getAttackTarget() != null || !Work.alive(m)) {
+        if (Work.chest(m) == null || m.getAttackTarget() != null || !Work.alive(m) || Work.waitsForRoom(m)) {
             return false;
         }
         Mine mine = mine();

@@ -53,7 +53,10 @@ public class TileGrave extends TileEntity {
         return items.isEmpty();
     }
 
-    /** Отдать всё игроку: броня — сразу на пустые места, остальное — в инвентарь (лишнее упадёт у ног). Сколько предметов. */
+    /**
+     * Отдать всё игроку: броня и аксессуары (Baubles) — сразу на пустые места, остальное — в инвентарь
+     * (лишнее упадёт у ног). Сколько предметов.
+     */
     public int giveTo(EntityPlayer p) {
         int n = 0;
         for (ItemStack s : items) {
@@ -61,7 +64,7 @@ public class TileGrave extends TileEntity {
             EntityEquipmentSlot slot = EntityLiving.getSlotForItemStack(s);
             if (slot.getSlotType() == EntityEquipmentSlot.Type.ARMOR && p.getItemStackFromSlot(slot).isEmpty()) {
                 p.setItemStackToSlot(slot, s);
-            } else {
+            } else if (!ru.death.chaosshard.compat.BaublesCompat.equip(p, s)) {
                 ItemHandlerHelper.giveItemToPlayer(p, s);
             }
         }

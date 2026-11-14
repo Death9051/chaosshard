@@ -69,6 +69,8 @@ public class TileAnchor extends TileEntity implements ITickable {
     };
     /** Опыт мобов, павших на поле Жатвы. */
     public int fieldXp;
+    /** Поле Жатвы остановлено владельцем: мобы не приходят, молнии не бьют. */
+    public boolean fieldOff;
     /** Запас энергии Горна (RF). */
     public int forgeEnergy;
     int specTimer;
@@ -1375,6 +1377,7 @@ public class TileAnchor extends TileEntity implements ITickable {
         tag.setTag("storage", storage.serializeNBT());
         tag.setTag("sample", sample.serializeNBT());
         tag.setInteger("fieldXp", fieldXp);
+        tag.setBoolean("fieldOff", fieldOff);
         tag.setInteger("forgeEnergy", forgeEnergy);
         tag.setInteger("veinTimer", veinTimer);
         tag.setDouble("xpCarry", xpCarry);
@@ -1412,6 +1415,7 @@ public class TileAnchor extends TileEntity implements ITickable {
             sample.deserializeNBT(tag.getCompoundTag("sample"));
         }
         fieldXp = tag.getInteger("fieldXp");
+        fieldOff = tag.getBoolean("fieldOff");
         forgeEnergy = tag.getInteger("forgeEnergy");
         veinTimer = tag.getInteger("veinTimer");
         xpCarry = tag.getDouble("xpCarry");

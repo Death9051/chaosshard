@@ -247,6 +247,7 @@ public class ContainerAnchor extends Container {
         }
         t.setIntArray("borrowFree", free);
         t.setInteger("fieldXp", a.fieldXp);
+        t.setBoolean("fieldOff", a.fieldOff);
         t.setInteger("forgeRate", sp == AnchorSpec.FORGE ? AnchorSpecs.forgeRate(a) : 0);
         t.setInteger("forgeEnergy", a.forgeEnergy);
         t.setBoolean("path", net && a.net(AnchorSpec.PATH) > 0);

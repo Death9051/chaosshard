@@ -58,7 +58,7 @@ import java.util.UUID;
 public final class AnchorSpecs {
 
     public static final int FORGE_BUFFER = 200000;
-    public static final int FIELD_RADIUS = 12;
+    public static final int FIELD_RADIUS = 16;
     public static final String TAG_FIELD = "chaosshard_field";
     public static final String TAG_NEST = "chaosshard_nest";
     public static final String TAG_ESCORT = "chaosshard_nest_escort";
@@ -151,7 +151,7 @@ public final class AnchorSpecs {
         if (a.hasFx(AnchorFx.FORGE_SPEED)) {
             machines(a, wt, s == AnchorSpec.FORGE && a.stage());
         }
-        if (s == AnchorSpec.HARVEST && wt % 20 == ph % 20) {
+        if (s == AnchorSpec.HARVEST && !a.fieldOff && wt % 20 == ph % 20) {
             field(a, wt % 40 == ph % 40);
         }
     }
@@ -479,6 +479,28 @@ public final class AnchorSpecs {
         return FakePlayerFactory.get(ws, HARVEST_PROFILE);
     }
 
+    /** Включить или остановить поле Жатвы. Остановленное отпускает своих мобов: они рассеиваются. */
+    public static void toggleField(TileAnchor a) {
+        a.fieldOff = !a.fieldOff;
+        a.markDirty();
+        if (a.fieldOff && a.getWorld() instanceof WorldServer) {
+            WorldServer w = (WorldServer) a.getWorld();
+            for (EntityLiving m : fieldMobs(a)) {
+                w.spawnParticle(EnumParticleTypes.SPELL_WITCH, m.posX, m.posY + 1, m.posZ, 12, 0.3, 0.5, 0.3, 0.02);
+                m.setDead();
+            }
+        }
+    }
+
+    /** Поле Жатвы работает и точка на нём (для запрета криперов). */
+    static boolean onField(TileAnchor a, double x, double z) {
+        if (a == null || a.getSpec() != AnchorSpec.HARVEST || a.fieldOff) {
+            return false;
+        }
+        double dx = x - a.getPos().getX() - 0.5, dz = z - a.getPos().getZ() - 0.5;
+        return dx * dx + dz * dz <= (FIELD_RADIUS + 2) * (FIELD_RADIUS + 2);
+    }
+
     private static void field(TileAnchor a, boolean pulse) {
         WorldServer w = (WorldServer) a.getWorld();
         BlockPos c = a.getPos();
@@ -553,7 +575,9 @@ public final class AnchorSpecs {
             return null;
         }
         Biome b = w.getBiome(at);
-        List<Biome.SpawnListEntry> list = b.getSpawnableList(net.minecraft.entity.EnumCreatureType.MONSTER);
+        List<Biome.SpawnListEntry> list = new java.util.ArrayList<>(b.getSpawnableList(net.minecraft.entity.EnumCreatureType.MONSTER));
+        // криперы на поле не приходят: взрываются у колонны и рвут землю
+        list.removeIf(en -> net.minecraft.entity.monster.EntityCreeper.class.isAssignableFrom(en.entityClass));
         if (list.isEmpty()) {
             return null;
         }
@@ -663,6 +687,9 @@ public final class AnchorSpecs {
         }
         TileAnchor a = at(event.getWorld(), new BlockPos(event.getX(), event.getY(), event.getZ()));
         if (a != null && a.getSpec() == AnchorSpec.CITADEL && a.stage()) {
+            event.setResult(Event.Result.DENY);
+        }
+        if (event.getEntityLiving() instanceof net.minecraft.entity.monster.EntityCreeper && onField(a, event.getX(), event.getZ())) {
             event.setResult(Event.Result.DENY);
         }
     }

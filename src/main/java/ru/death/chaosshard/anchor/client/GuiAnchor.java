@@ -154,6 +154,17 @@ public class GuiAnchor extends GuiContainer {
         return I18n.format("chaosshard.anchor.gui.take_xp");
     }
 
+    /** Кнопка «Остановить»/«Запустить» поле Жатвы на «Складе». */
+    private String fieldLabel() {
+        if (tab != TAB_STORE || view.getInteger("storage") <= 0 || view.getInteger("spec") != AnchorSpec.HARVEST.ordinal()) {
+            return null;
+        }
+        if (!view.getBoolean("edit")) {
+            return "!" + I18n.format("chaosshard.anchor.gui.btn.not_owner");
+        }
+        return I18n.format(view.getBoolean("fieldOff") ? "chaosshard.anchor.gui.field_start" : "chaosshard.anchor.gui.field_stop");
+    }
+
     /** Кнопка сверху справа на «Сети»: «Карта»/«Список» или «Назад» из Взгляда. */
     private String netTopLabel() {
         if (tab != TAB_NET || !view.getBoolean("net")) {
@@ -168,7 +179,7 @@ public class GuiAnchor extends GuiContainer {
         return I18n.format(map ? "chaosshard.anchor.gui.list" : "chaosshard.anchor.gui.map");
     }
 
-    private static final int CHOOSE_X = 132, CHOOSE_Y = 212, XP_X = 132, XP_Y = 82, TOP_X = 156, TOP_Y = 2, BTN_W = 70;
+    private static final int CHOOSE_X = 132, CHOOSE_Y = 212, XP_X = 132, XP_Y = 82, FIELD_X = 132, FIELD_Y = 130, TOP_X = 156, TOP_Y = 2, BTN_W = 70;
 
     private void drawButton(String label, int x, int y, int w, int mx, int my) {
         if (label == null) {
@@ -214,6 +225,11 @@ public class GuiAnchor extends GuiContainer {
         l = xpLabel();
         if (l != null && !l.startsWith("!") && in(mx, my, XP_X, XP_Y, BTN_W, 16)) {
             ChaosNetwork.CHANNEL.sendToServer(new PacketAnchorAction(PacketAnchorAction.TAKE_XP, 0, null));
+            return true;
+        }
+        l = fieldLabel();
+        if (l != null && !l.startsWith("!") && in(mx, my, FIELD_X, FIELD_Y, BTN_W, 16)) {
+            ChaosNetwork.CHANNEL.sendToServer(new PacketAnchorAction(PacketAnchorAction.FIELD, 0, null));
             return true;
         }
         l = netTopLabel();
@@ -835,6 +851,9 @@ public class GuiAnchor extends GuiContainer {
         if (v.getInteger("spec") == AnchorSpec.HARVEST.ordinal()) {
             line(ChaosUi.I_XP, I18n.format("chaosshard.anchor.gui.field_xp", v.getInteger("fieldXp")), 86, TEXT);
             drawButton(xpLabel(), XP_X, XP_Y, BTN_W, mx, my);
+            boolean off = v.getBoolean("fieldOff");
+            line(-1, I18n.format(off ? "chaosshard.anchor.gui.field_off" : "chaosshard.anchor.gui.field_on"), FIELD_Y + 4, off ? DIM : TEXT);
+            drawButton(fieldLabel(), FIELD_X, FIELD_Y, BTN_W, mx, my);
             if (v.getBoolean("stage")) {
                 fontRenderer.drawString(I18n.format("chaosshard.anchor.gui.sample"), ContainerAnchor.SAMPLE_X + 22, ContainerAnchor.SAMPLE_Y + 5, DIM);
             }
