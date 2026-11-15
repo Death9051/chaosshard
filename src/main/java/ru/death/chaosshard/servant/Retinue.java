@@ -378,7 +378,8 @@ public class Retinue extends WorldSavedData {
         get().markDirty();
         ((WorldServer) e.world).spawnParticle(EnumParticleTypes.DRAGON_BREATH, e.posX, e.posY + 1, e.posZ, 40, 0.3, 0.6, 0.3, 0.03);
         e.world.playSound(null, e.getPosition(), SoundEvents.ENTITY_ENDERMEN_TELEPORT, SoundCategory.NEUTRAL, 0.6F, 0.7F);
-        e.setDead();
+        // убрать сразу, а не к концу тика: иначе тот же слуга не вернётся, пока мир помнит его UUID
+        e.world.removeEntityDangerously(e);
         return true;
     }
 
