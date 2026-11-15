@@ -481,7 +481,7 @@ class BeastPage {
                 ru.death.chaosshard.client.ChaosUi.bigIcon(big, x, y + 2, 17, 1F, 1F, 1F, stashed ? 0.45F : 1F);
             }
             String nm = t.getString("name").isEmpty() ? tr("chaosshard.servant.kind." + k.key()) : t.getString("name");
-            String hp = t.hasKey("hp") ? "♥ " + Math.round(t.getFloat("hp")) + "/" + Math.round(t.getFloat("max")) : "";
+            String hp = t.hasKey("hp") ? "" + Math.round(t.getFloat("hp")) + "/" + Math.round(t.getFloat("max")) : "";
             int hpW = gui.font().getStringWidth(hp);
             gui.text(gui.font().trimStringToWidth(nm, w - 24 - hpW - 4), x + 21, y + 2, stashed ? SOFT : OPEN);
             if (!hp.isEmpty()) {
