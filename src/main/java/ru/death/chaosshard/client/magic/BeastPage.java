@@ -79,8 +79,7 @@ class BeastPage {
                 name = known ? (given.isEmpty() ? tr("chaosshard.beast." + b.key()) : given) + " \u00A77" + ClientBeasts.level(b) : tr("chaosshard.beast.unknown");
                 col = known ? (ClientBeasts.level(b) >= 5 ? GOLD : OPEN) : DIM;
             } else if (i == MANAGE) {
-                Integer big = ru.death.chaosshard.client.ChaosUi.summonIcon(Servants.Kind.HUSK.name());
-                ic = big >= 0 ? (Object) big : kindIcon(Servants.Kind.HUSK);
+                ic = new ItemStack(Items.LEAD);
                 name = tr("chaosshard.retinue.title");
                 col = GOLD;
             } else {
