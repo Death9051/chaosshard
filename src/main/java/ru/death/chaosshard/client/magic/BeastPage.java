@@ -27,8 +27,10 @@ import java.util.Map;
 /** Вкладка «Слуги» окна магии: отголоски старых знакомств — Заяц, Кошка, Тигр. */
 class BeastPage {
 
-    /** Строки списка: «Отголоски», 3 зверя, заголовок «Свита», 6 типов слуг. */
-    static final int ROWS = 11, HEADER_ROW = 4;
+    /** Строки списка: «Отголоски», 3 зверя, заголовок «Свита», «Моя свита», 6 типов слуг. */
+    static final int ROWS = 12, HEADER_ROW = 4;
+    /** Выбор «Моя свита» (индекс выбора = строка − 1). */
+    static final int MANAGE = HEADER_ROW;
     private static final int GOLD = 0xFFD27A, OPEN = 0xC9C3D6, DIM = 0x7A6F8C, ACCENT = 0xD9B8FF, SOFT = 0x9A8FB0;
 
     private final GuiGrimoireMagic gui;
@@ -76,8 +78,13 @@ class BeastPage {
                 String given = ClientBeasts.get(b).getString("name");
                 name = known ? (given.isEmpty() ? tr("chaosshard.beast." + b.key()) : given) + " \u00A77" + ClientBeasts.level(b) : tr("chaosshard.beast.unknown");
                 col = known ? (ClientBeasts.level(b) >= 5 ? GOLD : OPEN) : DIM;
+            } else if (i == MANAGE) {
+                Integer big = ru.death.chaosshard.client.ChaosUi.summonIcon(Servants.Kind.HUSK.name());
+                ic = big >= 0 ? (Object) big : kindIcon(Servants.Kind.HUSK);
+                name = tr("chaosshard.retinue.title");
+                col = GOLD;
             } else {
-                Servants.Kind k = Servants.Kind.COMMON[i - HEADER_ROW];
+                Servants.Kind k = Servants.Kind.COMMON[i - HEADER_ROW - 1];
                 int big = ru.death.chaosshard.client.ChaosUi.summonIcon(k.name());
                 ic = big >= 0 ? (Object) Integer.valueOf(big) : kindIcon(k);
                 name = tr("chaosshard.servant.kind." + k.key());
@@ -93,8 +100,12 @@ class BeastPage {
             gui.noteKey("chaosshard.note.beasts", x + 4, ty + 4, gui.pageBottom(), -2.5F);
             return;
         }
-        if (sel >= HEADER_ROW) {
-            drawKind(Servants.Kind.COMMON[sel - HEADER_ROW], x, y, w, mx, my);
+        if (sel == MANAGE) {
+            drawRetinue(x, y, w, mx, my);
+            return;
+        }
+        if (sel > HEADER_ROW) {
+            drawKind(Servants.Kind.COMMON[sel - HEADER_ROW - 1], x, y, w, mx, my);
             return;
         }
         Beast b = Beast.values()[sel];
@@ -391,6 +402,188 @@ class BeastPage {
      * Страница типа обычного слуги блоками: описание, «Призыв» (подношения, нужная Нить, кнопка «Сложить в Чашу»),
      * «Сила от Нити» (сила и размер свиты), «Улучшения» (5 строк: название и подношения).
      */
+    // ------------------------------------------------------------------ моя свита
+
+    private static java.util.UUID chosen;
+    private long asked;
+    private final ru.death.chaosshard.client.book.BookButton callBtn = new ru.death.chaosshard.client.book.BookButton(0, 0, 0, "", false),
+            stashBtn = new ru.death.chaosshard.client.book.BookButton(0, 0, 0, "", false),
+            allBtn = new ru.death.chaosshard.client.book.BookButton(0, 0, 0, "", false);
+    /** Строки свиты на экране: x, y, w, h и id. */
+    private final List<Object[]> retinueRows = new ArrayList<>();
+    private static final int R_FOLLOW = 0, R_GUARD = 1, R_CHEST = 2, R_STASHED = 3, R_FAR = 4;
+
+    /** Попросить у сервера свежий список (не чаще раза в 2 секунды). */
+    void askRetinue(boolean now) {
+        long t = System.currentTimeMillis();
+        if (now || t - asked > 2000) {
+            asked = t;
+            ChaosNetwork.CHANNEL.sendToServer(new ru.death.chaosshard.network.PacketRetinueAction(-1, null));
+        }
+    }
+
+    private String retinueStatus(NBTTagCompound t) {
+        int st = t.getInteger("state");
+        int dist = t.getInteger("dist");
+        String where = !t.hasKey("dist") ? "" : dist >= 0 ? " · " + tr("chaosshard.retinue.dist", dist) : " · " + t.getString("world");
+        switch (st) {
+            case R_STASHED:
+                return tr(t.getBoolean("follower") ? "chaosshard.retinue.state.stashed_me" : "chaosshard.retinue.state.stashed_place");
+            case R_FAR:
+                return tr(dist >= 0 ? "chaosshard.retinue.state.far" : "chaosshard.retinue.state.other", t.getString("world"))
+                        + (dist >= 0 ? " · " + tr("chaosshard.retinue.dist", dist) : "");
+            case R_GUARD:
+                return tr("chaosshard.retinue.state.guard") + where;
+            case R_CHEST:
+                return tr("chaosshard.retinue.state.chest") + where;
+            default:
+                return tr("chaosshard.retinue.state.follow") + where;
+        }
+    }
+
+    private void drawRetinue(int x, int y, int w, int mx, int my) {
+        askRetinue(false);
+        retinueRows.clear();
+        net.minecraft.nbt.NBTTagList list = ClientRetinue.list();
+        int ty = gui.title(tr("chaosshard.retinue.title"), x, y, ACCENT);
+        String cnt = tr("chaosshard.retinue.count", list.tagCount(), ClientRetinue.limit());
+        gui.text(cnt, x + w - gui.font().getStringWidth(cnt), y, list.tagCount() >= ClientRetinue.limit() ? GOLD : SOFT);
+        y = gui.paragraph(tr(list.tagCount() == 0 ? "chaosshard.retinue.empty" : "chaosshard.retinue.how"), x, ty, w, SOFT) + 4;
+        int bottom = gui.pageBottom() - 30;
+        boolean anyActive = false, anyStashed = false;
+        NBTTagCompound sel = null;
+        int shown = 0;
+        for (int i = 0; i < list.tagCount(); i++) {
+            NBTTagCompound t = list.getCompoundTagAt(i);
+            java.util.UUID id = t.getUniqueId("id");
+            boolean stashed = t.getInteger("state") == R_STASHED;
+            anyStashed |= stashed;
+            anyActive |= !stashed;
+            if (id.equals(chosen)) {
+                sel = t;
+            }
+            if (y + 22 > bottom) {
+                continue;
+            }
+            shown++;
+            boolean over = mx >= x - 2 && mx < x + w && my >= y && my < y + 22;
+            boolean picked = id.equals(chosen);
+            if (picked || over) {
+                Gui.drawRect(x - 2, y, x + w, y + 21, picked ? 0x40B070FF : 0x16E8D8FF);
+            }
+            Servants.Kind k;
+            try {
+                k = Servants.Kind.valueOf(t.getString("kind"));
+            } catch (IllegalArgumentException ex) {
+                k = Servants.Kind.HUSK;
+            }
+            int big = ru.death.chaosshard.client.ChaosUi.summonIcon(k.name());
+            if (big >= 0) {
+                ru.death.chaosshard.client.ChaosUi.bigIcon(big, x, y + 2, 17, 1F, 1F, 1F, stashed ? 0.45F : 1F);
+            }
+            String nm = t.getString("name").isEmpty() ? tr("chaosshard.servant.kind." + k.key()) : t.getString("name");
+            String hp = t.hasKey("hp") ? "♥ " + Math.round(t.getFloat("hp")) + "/" + Math.round(t.getFloat("max")) : "";
+            int hpW = gui.font().getStringWidth(hp);
+            gui.text(gui.font().trimStringToWidth(nm, w - 24 - hpW - 4), x + 21, y + 2, stashed ? SOFT : OPEN);
+            if (!hp.isEmpty()) {
+                float f = t.getFloat("hp") / Math.max(1F, t.getFloat("max"));
+                gui.text(hp, x + w - hpW, y + 2, f < 0.35F ? 0xE07A7A : 0x9AD08A);
+            }
+            gui.text(gui.font().trimStringToWidth(retinueStatus(t), w - 22), x + 21, y + 11, t.getInteger("state") == R_FAR ? GOLD : DIM);
+            retinueRows.add(new Object[]{x - 2, y, w + 2, 22, id});
+            y += 22;
+        }
+        if (shown < list.tagCount()) {
+            gui.text(tr("chaosshard.retinue.more", list.tagCount() - shown), x, y + 1, DIM);
+        }
+        if (sel == null) {
+            chosen = null;
+        }
+        // кнопки внизу
+        int by = gui.pageBottom() - 12;
+        callBtn.visible = stashBtn.visible = false;
+        if (sel != null) {
+            boolean stashed = sel.getInteger("state") == R_STASHED;
+            callBtn.setLabel(tr("chaosshard.retinue.btn.call"));
+            callBtn.enabled = !stashed;
+            callBtn.x = x;
+            callBtn.y = by;
+            callBtn.visible = true;
+            stashBtn.setLabel(tr(stashed ? "chaosshard.retinue.btn.unstash" : "chaosshard.retinue.btn.stash"));
+            stashBtn.enabled = true;
+            stashBtn.x = x + callBtn.width + 8;
+            stashBtn.y = by;
+            stashBtn.visible = true;
+            callBtn.drawButton(Minecraft.getMinecraft(), mx, my, 0);
+            stashBtn.drawButton(Minecraft.getMinecraft(), mx, my, 0);
+            if (callBtn.isMouseOver()) {
+                hoverLines = split(tr(stashed ? "chaosshard.retinue.btn.call.stashed" : "chaosshard.retinue.btn.call.desc"));
+            }
+            if (stashBtn.isMouseOver()) {
+                hoverLines = split(tr(stashed ? (sel.getBoolean("follower") ? "chaosshard.retinue.btn.unstash.me" : "chaosshard.retinue.btn.unstash.place")
+                        : "chaosshard.retinue.btn.stash.desc"));
+            }
+        }
+        allBtn.visible = anyActive || anyStashed;
+        if (allBtn.visible) {
+            allBtn.setLabel(tr(anyStashed ? "chaosshard.retinue.btn.unstash_all" : "chaosshard.retinue.btn.stash_all"));
+            allBtn.enabled = true;
+            allBtn.x = x + w - allBtn.width;
+            allBtn.y = sel != null && allBtn.x < stashBtn.x + stashBtn.width + 6 ? by - 14 : by;
+            allBtn.drawButton(Minecraft.getMinecraft(), mx, my, 0);
+            if (allBtn.isMouseOver()) {
+                hoverLines = split(tr(anyStashed ? "chaosshard.retinue.btn.unstash_all.desc" : "chaosshard.retinue.btn.stash_all.desc"));
+            }
+        }
+    }
+
+    /** Клик на странице «Моя свита». true — обработан. */
+    boolean clickRetinue(int mx, int my) {
+        java.util.UUID act = chosen;
+        NBTTagCompound sel = null;
+        net.minecraft.nbt.NBTTagList list = ClientRetinue.list();
+        boolean anyStashed = false;
+        for (int i = 0; i < list.tagCount(); i++) {
+            NBTTagCompound t = list.getCompoundTagAt(i);
+            anyStashed |= t.getInteger("state") == R_STASHED;
+            if (t.getUniqueId("id").equals(act)) {
+                sel = t;
+            }
+        }
+        if (sel != null && callBtn.visible && callBtn.enabled && hit(callBtn, mx, my)) {
+            send(0, act);
+            return true;
+        }
+        if (sel != null && stashBtn.visible && hit(stashBtn, mx, my)) {
+            send(sel.getInteger("state") == R_STASHED ? 2 : 1, act);
+            return true;
+        }
+        if (allBtn.visible && hit(allBtn, mx, my)) {
+            send(anyStashed ? 4 : 3, null);
+            return true;
+        }
+        for (Object[] r : retinueRows) {
+            int rx = (Integer) r[0], ry = (Integer) r[1], rw = (Integer) r[2], rh = (Integer) r[3];
+            if (mx >= rx && mx < rx + rw && my >= ry && my < ry + rh) {
+                java.util.UUID id = (java.util.UUID) r[4];
+                chosen = id.equals(chosen) ? null : id;
+                Minecraft.getMinecraft().player.playSound(net.minecraft.init.SoundEvents.UI_BUTTON_CLICK, 0.4F, 1.3F);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean hit(net.minecraft.client.gui.GuiButton b, int mx, int my) {
+        return mx >= b.x && mx < b.x + b.width && my >= b.y && my < b.y + b.height;
+    }
+
+    private void send(int action, java.util.UUID id) {
+        asked = System.currentTimeMillis();
+        ChaosNetwork.CHANNEL.sendToServer(new ru.death.chaosshard.network.PacketRetinueAction(action, id));
+        Minecraft.getMinecraft().player.playSound(net.minecraft.init.SoundEvents.UI_BUTTON_CLICK, 0.5F, 1.0F);
+    }
+
     private void drawKind(Servants.Kind k, int x, int y, int w, int mx, int my) {
         int thread = MagicUi.threadLevel();
         String role = tr(k.gatherer() ? "chaosshard.servant.gui.gatherer" : "chaosshard.servant.gui.fighter");

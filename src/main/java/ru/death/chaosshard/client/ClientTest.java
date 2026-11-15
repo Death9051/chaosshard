@@ -237,7 +237,7 @@ public class ClientTest {
             case 14:
                 magic(2);
                 // страница слуги: призыв, подношения и «Сложить в Чашу» (Чаша ещё рядом)
-                ru.death.chaosshard.client.magic.GuiGrimoireMagic.testState(2, -1, 0, 4);
+                ru.death.chaosshard.client.magic.GuiGrimoireMagic.testState(2, -1, 0, 5);
                 step++;
                 return;
             case 15:
@@ -376,6 +376,28 @@ public class ClientTest {
                 return;
             case 35:
                 shot = "17_pull_beetle";
+                wait = 5;
+                step = 36;
+                return;
+            case 36:
+                // «Моя свита» в Гримуаре: двое при мне, один отозван
+                onServer((s2, w, p) -> {
+                    BlockPos at = new BlockPos(p).add(2, 0, 2);
+                    ru.death.chaosshard.servant.Servants.spawn(p, ru.death.chaosshard.servant.Servants.Kind.HUSK, at);
+                    ru.death.chaosshard.servant.Servants.spawn(p, ru.death.chaosshard.servant.Servants.Kind.BONE, at.add(1, 0, 0));
+                    net.minecraft.entity.EntityLiving m = ru.death.chaosshard.servant.Servants.spawn(p, ru.death.chaosshard.servant.Servants.Kind.MINER, at.add(-1, 0, 0));
+                    ru.death.chaosshard.servant.Retinue.view(p);
+                    if (m != null) {
+                        ru.death.chaosshard.servant.Retinue.stash(p, m.getUniqueID());
+                    }
+                });
+                ru.death.chaosshard.client.magic.GuiGrimoireMagic.testState(2, -1, 0, 4);
+                mc.displayGuiScreen(new ru.death.chaosshard.client.magic.GuiGrimoireMagic(new ItemStack(ModItems.GRIMOIRE)));
+                wait = 40;
+                step++;
+                return;
+            case 37:
+                shot = "18_retinue";
                 wait = 5;
                 step = 40;
                 return;

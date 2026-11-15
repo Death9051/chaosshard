@@ -53,6 +53,8 @@ public final class ServantTravel {
     private static final Map<UUID, Integer> DEATH_DIM = new HashMap<>();
     private static final int TRIES = 6, RETRY = 20, SWEEP = 100;
     private int ticks;
+    /** Идёт перенос свиты: портальный запрет для слуг ({@link Retinue#onTravel}) на это время снят. */
+    static boolean moving;
 
     /** Слуга-попутчик хозяина (не стережёт, не у сундука, не в гарнизоне, ни на ком не едет). */
     public static boolean travels(Entity e, UUID owner) {
@@ -199,11 +201,17 @@ public final class ServantTravel {
         double ang = Math.toRadians(p.renderYawOffset + 180 + (n % 6 - 2.5) * 40);
         double r = 2.2 + (n / 6) * 1.4;
         net.minecraft.util.math.Vec3d want = new net.minecraft.util.math.Vec3d(p.posX - Math.sin(ang) * r, p.posY, p.posZ + Math.cos(ang) * r);
-        Entity moved = e.changeDimension(p.dimension, (world, entity, yaw) -> {
-            BlockPos at = Servants.safeSpot(world, want, p);
-            entity.setLocationAndAngles(at.getX() + 0.5, at.getY(), at.getZ() + 0.5, p.rotationYaw, 0);
-            entity.motionX = entity.motionY = entity.motionZ = 0;
-        });
+        Entity moved;
+        moving = true;
+        try {
+            moved = e.changeDimension(p.dimension, (world, entity, yaw) -> {
+                BlockPos at = Servants.safeSpot(world, want, p);
+                entity.setLocationAndAngles(at.getX() + 0.5, at.getY(), at.getZ() + 0.5, p.rotationYaw, 0);
+                entity.motionX = entity.motionY = entity.motionZ = 0;
+            });
+        } finally {
+            moving = false;
+        }
         if (moved != null) {
             p.getServerWorld().spawnParticle(EnumParticleTypes.PORTAL, moved.posX, moved.posY + 1, moved.posZ, 30, 0.3, 0.6, 0.3, 0.5);
         }

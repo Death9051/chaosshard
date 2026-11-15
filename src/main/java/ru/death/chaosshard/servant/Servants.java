@@ -142,7 +142,7 @@ public class Servants {
                 }
             }
         }
-        return n;
+        return n + Retinue.stashed(p.getUniqueID());
     }
 
     /** Есть ли уже у игрока такой уникальный слуга. */

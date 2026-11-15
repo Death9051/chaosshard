@@ -212,6 +212,9 @@ public class GuiGrimoireMagic extends GuiScreen {
                 && (beasts.clickTitle(ru.death.chaosshard.servant.BeastData.Beast.values()[selBeast], mx, my) || beasts.press(mx, my))) {
             return;
         }
+        if (tab == 2 && selBeast == BeastPage.MANAGE && beasts.clickRetinue(mx, my)) {
+            return;
+        }
         if (beasts.editing()) {
             beasts.finishEdit(true);
         }
@@ -252,6 +255,9 @@ public class GuiGrimoireMagic extends GuiScreen {
                 selRitual = idx - 1;
             } else if (tab == 2 && idx < BeastPage.ROWS && idx != BeastPage.HEADER_ROW) {
                 selBeast = idx - 1;
+                if (selBeast == BeastPage.MANAGE) {
+                    beasts.askRetinue(true);
+                }
             } else {
                 return;
             }

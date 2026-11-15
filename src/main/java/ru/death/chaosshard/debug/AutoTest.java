@@ -577,6 +577,39 @@ public final class AutoTest {
                 check(!fights, "заяц не нападает на мобов (нет боевого разума)");
             }
         });
+        final net.minecraft.entity.EntityLiving[] ret = new net.minecraft.entity.EntityLiving[2];
+        step("Моя свита: учёт, отзыв в Нить, возврат, зов издалека", () -> {
+            int before = Servants.count(me);
+            ret[0] = Servants.spawn(me, Servants.Kind.HUSK, me.getPosition().add(3, 0, 0));
+            ret[1] = Servants.spawn(me, Servants.Kind.BONE, me.getPosition().add(-3, 0, 0));
+            check(ret[0] != null && ret[1] != null, "двое слуг призваны");
+            if (ret[0] == null || ret[1] == null) return;
+            net.minecraft.nbt.NBTTagList v = ru.death.chaosshard.servant.Retinue.view(me);
+            int seen = 0;
+            for (int i = 0; i < v.tagCount(); i++) {
+                java.util.UUID id = v.getCompoundTagAt(i).getUniqueId("id");
+                if (id.equals(ret[0].getUniqueID()) || id.equals(ret[1].getUniqueID())) seen++;
+            }
+            check(seen == 2, "оба в списке свиты Гримуара (" + seen + ")");
+            java.util.UUID hid = ret[0].getUniqueID();
+            ret[0].getEntityData().setLong(Servants.TAG_GUARD, ret[0].getPosition().toLong());
+            check(ru.death.chaosshard.servant.Retinue.stash(me, hid), "хаск отозван");
+            check(ret[0].isDead, "хаск ушёл из мира");
+            check(Servants.count(me) == before + 2, "отозванный считается в предел: " + Servants.count(me) + " (было " + before + ")");
+            check(ru.death.chaosshard.servant.Retinue.unstash(me, hid), "хаск возвращён");
+            Entity back = ow.getEntityFromUuid(hid);
+            check(back instanceof net.minecraft.entity.EntityLiving && back.getEntityData().hasKey(Servants.TAG_GUARD),
+                    "вернулся тем же слугой и снова стережёт пост");
+            ret[0] = back instanceof net.minecraft.entity.EntityLiving ? (net.minecraft.entity.EntityLiving) back : null;
+            // зов издалека
+            ret[1].setPositionAndUpdate(me.posX + 60, me.posY, me.posZ);
+            check(ru.death.chaosshard.servant.Retinue.call(me, ret[1].getUniqueID()), "костяной страж позван");
+            check(ret[1].getDistance(me) < 6, "костяной страж рядом: " + (int) ret[1].getDistance(me) + " м");
+            // в портал сам не уходит
+            net.minecraftforge.event.entity.EntityTravelToDimensionEvent te = new net.minecraftforge.event.entity.EntityTravelToDimensionEvent(ret[1], -1);
+            check(net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(te), "слуга сам в портал не заходит");
+            for (net.minecraft.entity.EntityLiving m : ret) if (m != null) m.setDead();
+        });
 
         section("Якорь и Скверна");
         step("поставить Якорь 3-го уровня и дать Скверне расползтись", () -> {
