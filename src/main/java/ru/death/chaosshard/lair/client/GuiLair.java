@@ -38,7 +38,7 @@ public class GuiLair extends GuiContainer {
     private static final int TXT = 0xEDE7FF, LABEL = 0xA89CC8, MUTED = 0x6A6088, OK = 0x7DF0B4, BAD = 0xFF7088, WARM = 0xFFC870;
 
     private static final int W = 214, H = 236, CUT = 7;
-    private static final int NODE_Y = 30, NODE = 24, NOW_Y = 86, ROW = 11, GROW_Y = 166, BTN_Y = 214, BTN_W = 94, BTN_H = 16;
+    private static final int NODE_Y = 30, NODE = 24, NOW_Y = 86, ROW = 11, GROW_Y = 166, BTN_Y = 216, BTN_W = 94, BTN_H = 16;
     private static final int[] NODE_X = {30, 95, 160};
 
     private List<String> hover;
