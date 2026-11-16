@@ -380,8 +380,16 @@ public class ClientTest {
                 step = 36;
                 return;
             case 36:
-                // «Моя свита» в Гримуаре: двое при мне, один отозван
+                // «Моя свита» в Гримуаре: двое при мне, один отозван; заодно логово для окна (блок должен успеть дойти до клиента)
                 onServer((s2, w, p) -> {
+                    BlockPos lc = origin.add(-24, 0, -30);
+                    w.setBlockState(lc.down(), net.minecraft.init.Blocks.STONE.getDefaultState(), 2);
+                    w.setBlockState(lc, ModBlocks.LAIR.getDefaultState(), 3);
+                    net.minecraft.tileentity.TileEntity lte = w.getTileEntity(lc);
+                    if (lte instanceof ru.death.chaosshard.lair.TileLair) {
+                        ((ru.death.chaosshard.lair.TileLair) lte).setOwner(p);
+                        ((ru.death.chaosshard.lair.TileLair) lte).setLevel(2);
+                    }
                     BlockPos at = new BlockPos(p).add(2, 0, 2);
                     ru.death.chaosshard.servant.Servants.spawn(p, ru.death.chaosshard.servant.Servants.Kind.HUSK, at);
                     ru.death.chaosshard.servant.Servants.spawn(p, ru.death.chaosshard.servant.Servants.Kind.BONE, at.add(1, 0, 0));
@@ -406,13 +414,6 @@ public class ClientTest {
                 mc.displayGuiScreen(null);
                 onServer((s2, w, p) -> {
                     BlockPos c = origin.add(-24, 0, -30);
-                    w.setBlockState(c.down(), net.minecraft.init.Blocks.STONE.getDefaultState(), 2);
-                    w.setBlockState(c, ModBlocks.LAIR.getDefaultState(), 3);
-                    net.minecraft.tileentity.TileEntity te = w.getTileEntity(c);
-                    if (te instanceof ru.death.chaosshard.lair.TileLair) {
-                        ((ru.death.chaosshard.lair.TileLair) te).setOwner(p);
-                        ((ru.death.chaosshard.lair.TileLair) te).setLevel(2);
-                    }
                     p.openGui(ru.death.chaosshard.ChaosShard.INSTANCE, ru.death.chaosshard.heart.HeartGuiHandler.LAIR, w, c.getX(), c.getY(), c.getZ());
                 });
                 wait = 50;
