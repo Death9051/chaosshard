@@ -3878,7 +3878,25 @@ public final class AutoTest {
             sw.setItemDamage(10);
             ru.death.chaosshard.lair.TileLair.mend(sw);
             check(sw.getItemDamage() == 8, "починка снаряжения: " + sw.getItemDamage());
+            // перестановка: Сердце падает Цитаделью и встаёт Цитаделью
+            net.minecraft.util.NonNullList<net.minecraft.item.ItemStack> drops = net.minecraft.util.NonNullList.create();
+            ru.death.chaosshard.init.ModBlocks.LAIR.getDrops(drops, ow, lp, ow.getBlockState(lp), 0);
+            int lv = drops.isEmpty() ? 0 : ru.death.chaosshard.lair.BlockLair.levelOf(drops.get(0));
+            check(lv == 3, "снятое Сердце помнит уровень: " + lv);
             ow.setBlockToAir(lp);
+            check(ru.death.chaosshard.lair.LairData.get(ow).citadelOf(me.getUniqueID()) == null, "снятая Цитадель больше не держит тварей");
+            if (!drops.isEmpty()) {
+                BlockPos np = lp.add(3, 0, 0);
+                ru.death.chaosshard.lair.LairData.get(ow).set(me.getUniqueID(), 0, null);
+                ow.setBlockState(np, ru.death.chaosshard.init.ModBlocks.LAIR.getDefaultState(), 3);
+                ru.death.chaosshard.init.ModBlocks.LAIR.onBlockPlacedBy(ow, np, ow.getBlockState(np), me, drops.get(0));
+                net.minecraft.tileentity.TileEntity nt = ow.getTileEntity(np);
+                check(nt instanceof ru.death.chaosshard.lair.TileLair && ((ru.death.chaosshard.lair.TileLair) nt).getLevel() == 3,
+                        "переставленное логово снова Цитадель");
+                Object[] c2 = ru.death.chaosshard.lair.LairData.get(ow).citadelOf(me.getUniqueID());
+                check(c2 != null && np.equals(c2[1]), "Цитадель записана на новом месте");
+                ow.setBlockToAir(np);
+            }
         });
 
         section("Малые планы: Незер, Край, карманы");

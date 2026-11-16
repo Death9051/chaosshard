@@ -2365,3 +2365,5 @@ chaosshard.retinue.btn.unstash_all=Вернуть всех
 chaosshard.retinue.btn.unstash_all.desc=Все отозванные возвращаются: попутчики ко мне, остальные на свои места.
 chaosshard.retinue.lost=%s не найден там, где был: вычеркнут из свиты.
 chaosshard.retinue.not_here=Сюда свита не ходит.
+chaosshard.lair.item_level_2=Выращено до Башни
+chaosshard.lair.item_level_3=Выращено до Цитадели

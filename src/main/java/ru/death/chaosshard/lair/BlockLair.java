@@ -73,6 +73,43 @@ public class BlockLair extends Block {
         return 0;
     }
 
+    /** Уровень логова, который помнит предмет (снятое Сердце не теряет выращенного). */
+    public static final String TAG_LEVEL = "LairLevel";
+
+    public static ItemStack withLevel(Block b, int level) {
+        ItemStack s = new ItemStack(b);
+        if (level > 1) {
+            net.minecraft.nbt.NBTTagCompound t = new net.minecraft.nbt.NBTTagCompound();
+            t.setInteger(TAG_LEVEL, level);
+            s.setTagCompound(t);
+        }
+        return s;
+    }
+
+    public static int levelOf(ItemStack s) {
+        return s.hasTagCompound() ? Math.max(1, Math.min(3, s.getTagCompound().getInteger(TAG_LEVEL))) : 1;
+    }
+
+    /** Сердце падает со своим уровнем: переставить логово можно без потери Башни или Цитадели. */
+    @Override
+    public void getDrops(net.minecraft.util.NonNullList<ItemStack> drops, IBlockAccess world, BlockPos pos, IBlockState state, int fortune) {
+        drops.add(withLevel(this, state.getValue(LEVEL)));
+    }
+
+    @Override
+    public ItemStack getPickBlock(IBlockState state, net.minecraft.util.math.RayTraceResult target, World world, BlockPos pos, EntityPlayer player) {
+        return withLevel(this, state.getValue(LEVEL));
+    }
+
+    @Override
+    public void addInformation(ItemStack stack, @Nullable World world, java.util.List<String> tooltip, net.minecraft.client.util.ITooltipFlag flag) {
+        int lv = levelOf(stack);
+        if (lv > 1) {
+            tooltip.add(net.minecraft.util.text.TextFormatting.LIGHT_PURPLE
+                    + net.minecraft.util.text.translation.I18n.translateToLocal("chaosshard.lair.item_level_" + lv));
+        }
+    }
+
     @Override
     public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ,
                                             int meta, EntityLivingBase placer) {
@@ -107,15 +144,22 @@ public class BlockLair extends Block {
             p.sendMessage(Breach.grimoire("chaosshard.lair.one", old.getX(), old.getY(), old.getZ()));
             world.setBlockToAir(pos);
             if (!p.isCreative()) {
-                net.minecraftforge.items.ItemHandlerHelper.giveItemToPlayer(p, new ItemStack(this));
+                net.minecraftforge.items.ItemHandlerHelper.giveItemToPlayer(p, withLevel(this, levelOf(stack)));
             }
             return;
         }
         TileEntity te = world.getTileEntity(pos);
+        int lv = levelOf(stack);
         if (te instanceof TileLair) {
             ((TileLair) te).setOwner(p);
+            if (lv > 1) {
+                ((TileLair) te).setLevel(lv);
+            }
         }
         data.set(p.getUniqueID(), world.provider.getDimension(), pos.toImmutable());
+        if (lv >= 3) {
+            data.setCitadel(p.getUniqueID(), world.provider.getDimension(), pos.toImmutable());
+        }
         p.sendMessage(Breach.grimoire("chaosshard.lair.placed"));
         ru.death.chaosshard.quest.Milestones.grant(p, "lair_1");
     }
@@ -128,6 +172,11 @@ public class BlockLair extends Block {
                 LairData d = LairData.get(world);
                 if (pos.equals(d.lairOf(((TileLair) te).getOwner(), world.provider.getDimension()))) {
                     d.set(((TileLair) te).getOwner(), world.provider.getDimension(), null);
+                }
+                // снятая Цитадель больше не держит тварей
+                Object[] c = d.citadelOf(((TileLair) te).getOwner());
+                if (c != null && ((Integer) c[0]) == world.provider.getDimension() && pos.equals(c[1])) {
+                    d.setCitadel(((TileLair) te).getOwner(), world.provider.getDimension(), null);
                 }
             }
         }

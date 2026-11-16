@@ -165,7 +165,7 @@ public final class ChaosConfig {
 
         @Config.Comment("Акт 4: Гаррот приходит на дуэль, когда падёт столько Опор")
         @Config.RangeInt(min = 0, max = 5)
-        public int duelAfterPillars = 3;
+        public int duelAfterPillars = 2;
 
         @Config.Comment("Акт 4: радиус круга дуэли (блоки)")
         @Config.RangeInt(min = 8, max = 48)

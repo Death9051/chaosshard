@@ -2262,3 +2262,5 @@ chaosshard.retinue.btn.unstash_all=Return all
 chaosshard.retinue.btn.unstash_all.desc=Everyone returns: followers to me, the rest to their places.
 chaosshard.retinue.lost=%s was not found where it was: removed from the retinue.
 chaosshard.retinue.not_here=The retinue does not come here.
+chaosshard.lair.item_level_2=Grown into a Tower
+chaosshard.lair.item_level_3=Grown into a Citadel
