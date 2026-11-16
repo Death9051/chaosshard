@@ -90,10 +90,36 @@ public class BlockLair extends Block {
         return s.hasTagCompound() ? Math.max(1, Math.min(3, s.getTagCompound().getInteger(TAG_LEVEL))) : 1;
     }
 
-    /** Сердце падает со своим уровнем: переставить логово можно без потери Башни или Цитадели. */
+    public static final String TAG_ENERGY = "LairEnergy";
+    /** Запас батареи снимаемого Сердца: harvestBlock видит блок-сущность, getDrops — уже нет. */
+    private static final ThreadLocal<Integer> DROP_ENERGY = new ThreadLocal<>();
+
+    @Override
+    public void harvestBlock(World world, EntityPlayer player, BlockPos pos, IBlockState state, @Nullable TileEntity te, ItemStack tool) {
+        DROP_ENERGY.set(te instanceof TileLair ? ((TileLair) te).energy() : 0);
+        try {
+            super.harvestBlock(world, player, pos, state, te, tool);
+        } finally {
+            DROP_ENERGY.remove();
+        }
+    }
+
+    public static int energyOf(ItemStack s) {
+        return s.hasTagCompound() ? s.getTagCompound().getInteger(TAG_ENERGY) : 0;
+    }
+
+    /** Сердце падает со своим уровнем и запасом батареи: переставить логово можно без потерь. */
     @Override
     public void getDrops(net.minecraft.util.NonNullList<ItemStack> drops, IBlockAccess world, BlockPos pos, IBlockState state, int fortune) {
-        drops.add(withLevel(this, state.getValue(LEVEL)));
+        ItemStack s = withLevel(this, state.getValue(LEVEL));
+        Integer e = DROP_ENERGY.get();
+        if (e != null && e > 0) {
+            if (!s.hasTagCompound()) {
+                s.setTagCompound(new net.minecraft.nbt.NBTTagCompound());
+            }
+            s.getTagCompound().setInteger(TAG_ENERGY, e);
+        }
+        drops.add(s);
     }
 
     @Override
@@ -107,6 +133,10 @@ public class BlockLair extends Block {
         if (lv > 1) {
             tooltip.add(net.minecraft.util.text.TextFormatting.LIGHT_PURPLE
                     + net.minecraft.util.text.translation.I18n.translateToLocal("chaosshard.lair.item_level_" + lv));
+        }
+        if (energyOf(stack) > 0) {
+            tooltip.add(net.minecraft.util.text.TextFormatting.AQUA
+                    + net.minecraft.util.text.translation.I18n.translateToLocalFormatted("chaosshard.lair.item_energy", energyOf(stack)));
         }
     }
 
@@ -144,7 +174,9 @@ public class BlockLair extends Block {
             p.sendMessage(Breach.grimoire("chaosshard.lair.one", old.getX(), old.getY(), old.getZ()));
             world.setBlockToAir(pos);
             if (!p.isCreative()) {
-                net.minecraftforge.items.ItemHandlerHelper.giveItemToPlayer(p, withLevel(this, levelOf(stack)));
+                ItemStack back = stack.copy();
+                back.setCount(1);
+                net.minecraftforge.items.ItemHandlerHelper.giveItemToPlayer(p, back);
             }
             return;
         }
@@ -155,6 +187,7 @@ public class BlockLair extends Block {
             if (lv > 1) {
                 ((TileLair) te).setLevel(lv);
             }
+            ((TileLair) te).setEnergy(energyOf(stack));
         }
         data.set(p.getUniqueID(), world.provider.getDimension(), pos.toImmutable());
         if (lv >= 3) {
@@ -251,6 +284,12 @@ public class BlockLair extends Block {
         v.setInteger("radius", lair.radius());
         v.setInteger("power", lair.power());
         v.setInteger("base", TileLair.POWER[lair.getLevel() - 1]);
+        v.setInteger("energy", lair.energy());
+        v.setInteger("capacity", lair.capacity());
+        v.setInteger("output", lair.output());
+        v.setInteger("inflow", lair.inflow());
+        v.setInteger("forges", lair.forges());
+        v.setInteger("generators", lair.generators());
         v.setBoolean("spawn", spawnHere(world, pos, p));
         int next = lair.getLevel() + 1;
         if (next <= 3) {

@@ -30,11 +30,46 @@ public class TileLair extends TileEntity implements ITickable {
     private String ownerName = "";
     private int level = 1;
     private int timer;
-    /** Сколько энергии ещё можно отдать в этом тике. */
-    private int budget;
+    /** Внутренняя батарея (FE). */
+    private int energy;
+    /** Сколько пришло с земли за последнюю секунду (FE/т в среднем) и от скольких источников. */
+    private int inflow, forges, generators;
+    private int inflowAcc;
 
     public static final int[] RADIUS = {8, 16, 24};
     public static final int[] POWER = {40, 160, 640};
+    /** Ёмкость батареи и предел отдачи соседям за тик по уровню. */
+    public static final int[] CAPACITY = {100000, 500000, 2000000};
+    public static final int[] OUTPUT = {2000, 8000, 32000};
+
+    public int energy() {
+        return energy;
+    }
+
+    public void setEnergy(int e) {
+        energy = Math.max(0, Math.min(capacity(), e));
+        markDirty();
+    }
+
+    public int capacity() {
+        return CAPACITY[level - 1];
+    }
+
+    public int output() {
+        return OUTPUT[level - 1];
+    }
+
+    public int inflow() {
+        return inflow;
+    }
+
+    public int forges() {
+        return forges;
+    }
+
+    public int generators() {
+        return generators;
+    }
 
     public void setOwner(EntityPlayerMP p) {
         owner = p.getUniqueID();
@@ -91,23 +126,29 @@ public class TileLair extends TileEntity implements ITickable {
         if (world.isRemote) {
             return;
         }
-        // энергия машинам вокруг — каждый тик
-        budget = power();
-        int left = budget;
+        // своя выработка — в батарею, из батареи — машинам вокруг
+        energy = Math.min(capacity(), energy + power());
+        int left = Math.min(energy, output());
         for (EnumFacing f : EnumFacing.VALUES) {
             if (left <= 0) {
                 break;
             }
             TileEntity te = world.getTileEntity(pos.offset(f));
-            if (te != null && te.hasCapability(CapabilityEnergy.ENERGY, f.getOpposite())) {
+            if (te != null && !(te instanceof ru.death.chaosshard.anchor.TileAnchor) && !(te instanceof ru.death.chaosshard.tech.TileDefiledGenerator)
+                    && te.hasCapability(CapabilityEnergy.ENERGY, f.getOpposite())) {
                 IEnergyStorage es = te.getCapability(CapabilityEnergy.ENERGY, f.getOpposite());
                 if (es != null && es.canReceive()) {
-                    left -= es.receiveEnergy(left, false);
-                    budget = left;
+                    int sent = es.receiveEnergy(left, false);
+                    left -= sent;
+                    energy -= sent;
                 }
             }
         }
         ++timer;
+        if (timer % 20 == 0) {
+            drawFromLand();
+            markDirty();
+        }
         if (level >= 3 && timer % 40 == 0) {
             citadelGuard();
         }
@@ -127,6 +168,53 @@ public class TileLair extends TileEntity implements ITickable {
                 }
             }
         }
+    }
+
+    /**
+     * Приток с земли: раз в секунду логово забирает запас у Горнов (Якоря с путём Горн) своего хозяина и у Скверных
+     * генераторов на его захваченной земле в этом мире — без проводов, сколько влезет в батарею.
+     */
+    public void drawFromLand() {
+        if (owner == null) {
+            return;
+        }
+        int got = 0, f = 0, g = 0;
+        for (TileEntity te : new java.util.ArrayList<>(world.loadedTileEntityList)) {
+            int room = capacity() - energy;
+            if (room <= 0) {
+                break;
+            }
+            if (te.isInvalid()) {
+                continue;
+            }
+            if (te instanceof ru.death.chaosshard.anchor.TileAnchor) {
+                ru.death.chaosshard.anchor.TileAnchor a = (ru.death.chaosshard.anchor.TileAnchor) te;
+                if (a.getSpec() == ru.death.chaosshard.anchor.AnchorSpec.FORGE && owner.equals(a.getOwner()) && a.isCaptured()) {
+                    f++;
+                    int e = Math.min(room, a.forgeEnergy);
+                    if (e > 0) {
+                        a.forgeEnergy -= e;
+                        a.markDirty();
+                        energy += e;
+                        got += e;
+                    }
+                }
+            } else if (te instanceof ru.death.chaosshard.tech.TileDefiledGenerator) {
+                ru.death.chaosshard.anchor.TileAnchor cov = ru.death.chaosshard.anchor.TileAnchor.covering(world, te.getPos());
+                if (cov != null && owner.equals(cov.getOwner())) {
+                    g++;
+                    IEnergyStorage es = te.getCapability(CapabilityEnergy.ENERGY, null);
+                    if (es != null && es.canExtract()) {
+                        int e = es.extractEnergy(room, false);
+                        energy += e;
+                        got += e;
+                    }
+                }
+            }
+        }
+        inflow = got / 20;
+        forges = f;
+        generators = g;
     }
 
     /** Дыхание Цитадели: до трёх врагов в стенах логова раз в две секунды обжигает драконьим дыханием. */
@@ -174,30 +262,34 @@ public class TileLair extends TileEntity implements ITickable {
         return 0;
     }
 
-    /** Отдаёт энергию и кабелям, которые сами её тянут. */
+    /** Батарея наружу: принимает от любых кабелей и отдаёт тем, что сами тянут (не больше предела за тик). */
     private final IEnergyStorage out = new IEnergyStorage() {
         @Override
         public int receiveEnergy(int maxReceive, boolean simulate) {
-            return 0;
+            int n = Math.max(0, Math.min(maxReceive, capacity() - energy));
+            if (!simulate) {
+                energy += n;
+            }
+            return n;
         }
 
         @Override
         public int extractEnergy(int maxExtract, boolean simulate) {
-            int n = Math.min(maxExtract, budget);
+            int n = Math.max(0, Math.min(Math.min(maxExtract, output()), energy));
             if (!simulate) {
-                budget -= n;
+                energy -= n;
             }
             return n;
         }
 
         @Override
         public int getEnergyStored() {
-            return budget;
+            return energy;
         }
 
         @Override
         public int getMaxEnergyStored() {
-            return power();
+            return capacity();
         }
 
         @Override
@@ -207,7 +299,7 @@ public class TileLair extends TileEntity implements ITickable {
 
         @Override
         public boolean canReceive() {
-            return false;
+            return true;
         }
     };
 
@@ -229,6 +321,7 @@ public class TileLair extends TileEntity implements ITickable {
         }
         tag.setString("ownerName", ownerName);
         tag.setInteger("level", level);
+        tag.setInteger("energy", energy);
         return tag;
     }
 
@@ -238,6 +331,7 @@ public class TileLair extends TileEntity implements ITickable {
         owner = tag.hasUniqueId("owner") ? tag.getUniqueId("owner") : null;
         ownerName = tag.getString("ownerName");
         level = Math.max(1, tag.getInteger("level"));
+        energy = tag.getInteger("energy");
     }
 
     @Override

@@ -3142,6 +3142,33 @@ public final class AutoTest {
             ru.death.chaosshard.heart.TileHeart h = (ru.death.chaosshard.heart.TileHeart) ow.getTileEntity(genPos.east());
             check(h != null && h.battery.getEnergyStored() > 0, "Сердце рядом получило " + (h == null ? 0 : h.battery.getEnergyStored()) + " RF");
             ow.setBlockToAir(genPos.east());
+        });
+        sleep(10);
+        step("логово тянет ток с генератора на своей земле, батарея помнит запас", () -> {
+            BlockPos lp = anchorPos.add(-4, 0, 3);
+            ow.setBlockState(lp.down(), Blocks.STONE.getDefaultState(), 3);
+            ow.setBlockState(lp, ModBlocks.LAIR.getDefaultState(), 3);
+            ru.death.chaosshard.lair.TileLair tl = (ru.death.chaosshard.lair.TileLair) ow.getTileEntity(lp);
+            TileAnchor a = (TileAnchor) ow.getTileEntity(anchorPos);
+            if (tl == null || a == null) { check(false, "нет логова или Якоря"); return; }
+            tl.setOwner(me);
+            check(me.getUniqueID().equals(a.getOwner()), "Якорь мой");
+            tl.drawFromLand();
+            check(tl.generators() >= 1 && tl.energy() > 0, "генераторов на земле " + tl.generators() + ", в батарее " + tl.energy() + " FE");
+            int got = tl.getCapability(net.minecraftforge.energy.CapabilityEnergy.ENERGY, EnumFacing.UP).receiveEnergy(5000, false);
+            check(got == 5000, "батарея принимает с кабеля: " + got);
+            int e = tl.energy();
+            net.minecraft.util.NonNullList<net.minecraft.item.ItemStack> drops = net.minecraft.util.NonNullList.create();
+            ModBlocks.LAIR.harvestBlock(ow, me, lp, ow.getBlockState(lp), tl, net.minecraft.item.ItemStack.EMPTY);
+            for (net.minecraft.entity.item.EntityItem ei : ow.getEntitiesWithinAABB(net.minecraft.entity.item.EntityItem.class, new AxisAlignedBB(lp).grow(2))) {
+                if (ei.getItem().getItem() == net.minecraft.item.Item.getItemFromBlock(ModBlocks.LAIR)) {
+                    drops.add(ei.getItem());
+                    ei.setDead();
+                }
+            }
+            check(!drops.isEmpty() && ru.death.chaosshard.lair.BlockLair.energyOf(drops.get(0)) == e,
+                    "снятое Сердце хранит запас: " + (drops.isEmpty() ? -1 : ru.death.chaosshard.lair.BlockLair.energyOf(drops.get(0))) + " из " + e);
+            ow.setBlockToAir(lp);
             ow.setBlockToAir(genPos);
         });
         step("гул машин: провода не машины, замер не падает", () -> {

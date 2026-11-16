@@ -37,8 +37,9 @@ public class GuiLair extends GuiContainer {
     private static final int CYAN = 0xFF7DEBFF, CYAN_LOW = 0x337DEBFF;
     private static final int TXT = 0xEDE7FF, LABEL = 0xA89CC8, MUTED = 0x6A6088, OK = 0x7DF0B4, BAD = 0xFF7088, WARM = 0xFFC870;
 
-    private static final int W = 214, H = 236, CUT = 7;
-    private static final int NODE_Y = 30, NODE = 24, NOW_Y = 86, ROW = 11, GROW_Y = 166, BTN_Y = 216, BTN_W = 94, BTN_H = 16;
+    private static final int W = 214, H = 290, CUT = 7;
+    private static final int NODE_Y = 30, NODE = 24, BAT_Y = 84, NOW_Y = 124, ROW = 11, NOW_ROWS = 6, GROW_Y = 216, BTN_Y = 268, BTN_W = 94,
+            BTN_H = 16;
     private static final int[] NODE_X = {30, 95, 160};
 
     private List<String> hover;
@@ -109,14 +110,78 @@ public class GuiLair extends GuiContainer {
 
     /** Заголовок раздела: шеврон, подпись капителью и линия до края с засечкой. */
     private void section(String title, int y) {
+        section(title, null, 0, y);
+    }
+
+    /** То же, со значением справа (линия идёт между ними). */
+    private void section(String title, String right, int rightColor, int y) {
         int x = 12;
         drawRect(x, y + 2, x + 1, y + 5, CYAN);
         drawRect(x + 1, y + 3, x + 2, y + 4, CYAN);
         String t = up(title);
         fontRenderer.drawString(t, x + 5, y, CYAN & 0xFFFFFF);
         int lx = x + 9 + fontRenderer.getStringWidth(t);
-        drawRect(lx, y + 4, W - 12, y + 5, NEON_LOW);
-        drawRect(W - 16, y + 3, W - 12, y + 6, NEON_MID);
+        int rx = W - 12;
+        if (right != null) {
+            int rw = fontRenderer.getStringWidth(right);
+            fontRenderer.drawString(right, rx - rw, y, rightColor);
+            rx -= rw + 4;
+        } else {
+            drawRect(W - 16, y + 3, W - 12, y + 6, NEON_MID);
+        }
+        drawRect(lx, y + 4, rx, y + 5, NEON_LOW);
+    }
+
+    /** Коротко: 1234567 → «1,23M», 45000 → «45k». */
+    private static String num(int v) {
+        if (v >= 1000000) {
+            return String.format(Locale.ROOT, "%.2fM", v / 1000000.0);
+        }
+        if (v >= 10000) {
+            return (v / 1000) + "k";
+        }
+        return String.valueOf(v);
+    }
+
+    /** Батарея: сегментная шкала, запас и откуда приходит энергия. */
+    private void drawBattery(int mx, int my) {
+        int e = view.getInteger("energy"), cap = Math.max(1, view.getInteger("capacity"));
+        section(tr("chaosshard.lair.hud.battery"), num(e) + " / " + num(cap) + " FE", TXT, BAT_Y - 12);
+        int x0 = 12, segs = 38, sw = 4, gap = 1, y = BAT_Y;
+        drawRect(x0 - 1, y - 1, x0 + segs * (sw + gap), y + 10, 0x60140C24);
+        double part = Math.min(1.0, (double) e / cap);
+        int full = (int) Math.floor(part * segs);
+        float pulse = 0.5F + 0.5F * (float) Math.sin(time * 0.2F);
+        for (int i = 0; i < segs; i++) {
+            int sx = x0 + i * (sw + gap);
+            int c;
+            if (i < full) {
+                // от фиолетового к голубому по мере заполнения
+                float k = (float) i / segs;
+                int r = (int) (0xC7 + (0x7D - 0xC7) * k), g = (int) (0x7D + (0xEB - 0x7D) * k), b = 0xFF;
+                c = 0xFF000000 | (r << 16) | (g << 8) | b;
+            } else if (i == full && part > 0 && part < 1) {
+                c = ((int) (0x50 + 0x80 * pulse) << 24) | 0x7DEBFF;
+            } else {
+                c = 0xFF1C1430;
+            }
+            drawRect(sx, y, sx + sw, y + 9, c);
+            if (i < full) {
+                drawRect(sx, y, sx + sw, y + 1, 0x60FFFFFF);
+            }
+        }
+        int in = view.getInteger("inflow");
+        String left = tr("chaosshard.lair.hud.inflow", in > 0 ? "+" + num(in) : "0");
+        fontRenderer.drawString(left, 14, y + 13, in > 0 ? OK : MUTED);
+        String right = tr("chaosshard.lair.hud.sources", view.getInteger("forges"), view.getInteger("generators"));
+        fontRenderer.drawString(right, W - 14 - fontRenderer.getStringWidth(right), y + 13, LABEL);
+        if (ChaosUi.in(mx, my, x0, y - 1, segs * (sw + gap), 24)) {
+            hover = new ArrayList<>();
+            hover.add(tr("chaosshard.lair.hud.battery") + ": " + e + " / " + cap + " FE");
+            for (String l : fontRenderer.listFormattedStringToWidth(tr("chaosshard.lair.hud.battery.desc"), 200)) {
+                hover.add("\u00A77" + l);
+            }
+        }
     }
 
     // ------------------------------------------------------------------ фон
@@ -174,6 +239,7 @@ public class GuiLair extends GuiContainer {
             drawRect(W - 19 - lw, 10, W - 16 - lw, 13, 0xFF7DF0B4);
         }
         drawSteps(lv, mx, my);
+        drawBattery(mx, my);
         drawNow(lv);
         drawGrow(mx, my);
         drawButtons(mx, my);
@@ -241,8 +307,8 @@ public class GuiLair extends GuiContainer {
 
     private void drawNow(int lv) {
         section(tr("chaosshard.lair.hud.now"), NOW_Y - 12);
-        chamferFill(10, NOW_Y - 2, W - 20, ROW * 5 + 6, 3, 0x60140C24);
-        chamferLine(10, NOW_Y - 2, W - 20, ROW * 5 + 6, 3, NEON_LOW);
+        chamferFill(10, NOW_Y - 2, W - 20, ROW * NOW_ROWS + 6, 3, 0x60140C24);
+        chamferLine(10, NOW_Y - 2, W - 20, ROW * NOW_ROWS + 6, 3, NEON_LOW);
         int y = NOW_Y + 2;
         dataRow(y, tr("chaosshard.lair.hud.radius"), tr("chaosshard.lair.hud.blocks", view.getInteger("radius")), CYAN & 0xFFFFFF, false);
         y += ROW;
@@ -252,6 +318,8 @@ public class GuiLair extends GuiContainer {
             pw = "+" + Math.round(100.0 * (power - base) / base) + "%  " + pw;
         }
         dataRow(y, tr("chaosshard.lair.hud.power"), pw, CYAN & 0xFFFFFF, false);
+        y += ROW;
+        dataRow(y, tr("chaosshard.lair.hud.output"), tr("chaosshard.lair.hud.fe", num(view.getInteger("output"))), CYAN & 0xFFFFFF, false);
         y += ROW;
         dataRow(y, tr("chaosshard.lair.hud.rest"), tr(lv >= 3 ? "chaosshard.lair.hud.regen_2" : "chaosshard.lair.hud.regen_1"), CYAN & 0xFFFFFF, false);
         y += ROW;
