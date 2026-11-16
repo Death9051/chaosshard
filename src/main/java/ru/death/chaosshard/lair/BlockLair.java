@@ -202,42 +202,101 @@ public class BlockLair extends Block {
             p.sendMessage(Breach.grimoire("chaosshard.lair.foreign", lair.getOwnerName()));
             return true;
         }
-        if (p.isSneaking()) {
-            tryUpgrade(world, pos, lair, p);
-            return true;
-        }
-        // Возрождаться здесь
-        int dim = world.provider.getDimension();
-        p.setSpawnChunk(pos.up(), true, dim);
-        p.setSpawnDimension(dim);
-        p.sendMessage(Breach.grimoire("chaosshard.lair.info", lair.getLevel(), lair.radius(), lair.power()));
+        // окно логова: точка возрождения и рост
+        p.openGui(ru.death.chaosshard.ChaosShard.INSTANCE, ru.death.chaosshard.heart.HeartGuiHandler.LAIR, world, pos.getX(), pos.getY(), pos.getZ());
         return true;
     }
 
-    private void tryUpgrade(World world, BlockPos pos, TileLair lair, EntityPlayerMP p) {
+    /** Возрождаться у этого логова. */
+    public static void setSpawn(World world, BlockPos pos, EntityPlayerMP p) {
+        int dim = world.provider.getDimension();
+        p.setSpawnChunk(pos.up(), true, dim);
+        p.setSpawnDimension(dim);
+        world.playSound(null, pos, net.minecraft.init.SoundEvents.BLOCK_PORTAL_TRIGGER, net.minecraft.util.SoundCategory.BLOCKS, 0.3F, 1.6F);
+    }
+
+    /** Возрождаюсь ли я здесь. */
+    public static boolean spawnHere(World world, BlockPos pos, EntityPlayer p) {
+        BlockPos b = p.getBedLocation(world.provider.getDimension());
+        return b != null && b.equals(pos.up()) && p.isSpawnForced(world.provider.getDimension()) && p.getSpawnDimension() == world.provider.getDimension();
+    }
+
+    /** Что стоит рост до следующего уровня. */
+    public static Object[][] cost(int next) {
+        return next == 2
+                ? new Object[][]{{ModItems.DISTORTED_STARMETAL, 8}, {ModItems.WORLD_SHARD, 4}, {Item.getItemFromBlock(net.minecraft.init.Blocks.OBSIDIAN), 8}}
+                : new Object[][]{{Items.NETHER_STAR, 1}, {Items.DRAGON_BREATH, 4}, {ModItems.DISTORTED_STARMETAL, 16}};
+    }
+
+    /** Нить, нужная для роста до next. */
+    public static int needNit(int next) {
+        return next == 2 ? 3 : 4;
+    }
+
+    /** Подходит ли земля под логово уровня next. */
+    public static boolean landOk(World world, BlockPos pos, int next) {
+        TileAnchor a = anchorAt(world, pos);
+        if (AntechamberDimension.is(world) || a == null || !a.isCaptured()) {
+            return false;
+        }
+        return next < 3 || a.level() >= TileAnchor.maxLevel();
+    }
+
+    /**
+     * Окно логова: что даёт сейчас и что нужно для роста (считается на сервере, окно только рисует).
+     */
+    public static net.minecraft.nbt.NBTTagCompound view(World world, BlockPos pos, TileLair lair, EntityPlayerMP p) {
+        net.minecraft.nbt.NBTTagCompound v = new net.minecraft.nbt.NBTTagCompound();
+        v.setInteger("level", lair.getLevel());
+        v.setInteger("radius", lair.radius());
+        v.setInteger("power", lair.power());
+        v.setInteger("base", TileLair.POWER[lair.getLevel() - 1]);
+        v.setBoolean("spawn", spawnHere(world, pos, p));
+        int next = lair.getLevel() + 1;
+        if (next <= 3) {
+            v.setInteger("next", next);
+            TileAnchor a = anchorAt(world, pos);
+            boolean captured = !AntechamberDimension.is(world) && a != null && a.isCaptured();
+            v.setBoolean("land", captured);
+            v.setBoolean("pillar", next < 3 || captured && a.level() >= TileAnchor.maxLevel());
+            v.setInteger("pillarLevel", TileAnchor.maxLevel());
+            v.setInteger("nit", ThreadBonus.level(p));
+            v.setInteger("nitNeed", needNit(next));
+            net.minecraft.nbt.NBTTagList items = new net.minecraft.nbt.NBTTagList();
+            for (Object[] c : cost(next)) {
+                net.minecraft.nbt.NBTTagCompound t = new ItemStack((Item) c[0]).writeToNBT(new net.minecraft.nbt.NBTTagCompound());
+                t.setInteger("need", (Integer) c[1]);
+                t.setInteger("have", count(p, (Item) c[0]));
+                items.appendTag(t);
+            }
+            v.setTag("cost", items);
+            v.setBoolean("creative", p.isCreative());
+        }
+        return v;
+    }
+
+    /** Вырастить логово (из окна). */
+    public static void tryUpgrade(World world, BlockPos pos, TileLair lair, EntityPlayerMP p) {
         int next = lair.getLevel() + 1;
         if (next > 3) {
             p.sendMessage(Breach.grimoire("chaosshard.lair.max"));
             return;
         }
-        TileAnchor a = anchorAt(world, pos);
         int nit = ThreadBonus.level(p);
-        if (AntechamberDimension.is(world) || a == null || !a.isCaptured()) {
+        if (!landOk(world, pos, 2)) {
             p.sendMessage(Breach.grimoire("chaosshard.lair.need_land"));
             return;
         }
-        if (next == 3 && a.level() < TileAnchor.maxLevel()) {
+        if (!landOk(world, pos, next)) {
             p.sendMessage(Breach.grimoire("chaosshard.lair.need_pillar"));
             return;
         }
-        int needNit = next == 2 ? 3 : 4;
+        int needNit = needNit(next);
         if (nit < needNit && !p.isCreative()) {
             p.sendMessage(Breach.grimoire("chaosshard.lair.thin", needNit));
             return;
         }
-        Object[][] cost = next == 2
-                ? new Object[][]{{ModItems.DISTORTED_STARMETAL, 8}, {ModItems.WORLD_SHARD, 4}, {Item.getItemFromBlock(net.minecraft.init.Blocks.OBSIDIAN), 8}}
-                : new Object[][]{{Items.NETHER_STAR, 1}, {Items.DRAGON_BREATH, 4}, {ModItems.DISTORTED_STARMETAL, 16}};
+        Object[][] cost = cost(next);
         if (!p.isCreative()) {
             for (Object[] c : cost) {
                 if (count(p, (Item) c[0]) < (Integer) c[1]) {

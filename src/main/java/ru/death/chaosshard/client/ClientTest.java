@@ -399,6 +399,28 @@ public class ClientTest {
             case 37:
                 shot = "18_retinue";
                 wait = 5;
+                step = 38;
+                return;
+            case 38:
+                // окно логова: Башня, рост до Цитадели
+                mc.displayGuiScreen(null);
+                onServer((s2, w, p) -> {
+                    BlockPos c = origin.add(-24, 0, -30);
+                    w.setBlockState(c.down(), net.minecraft.init.Blocks.STONE.getDefaultState(), 2);
+                    w.setBlockState(c, ModBlocks.LAIR.getDefaultState(), 3);
+                    net.minecraft.tileentity.TileEntity te = w.getTileEntity(c);
+                    if (te instanceof ru.death.chaosshard.lair.TileLair) {
+                        ((ru.death.chaosshard.lair.TileLair) te).setOwner(p);
+                        ((ru.death.chaosshard.lair.TileLair) te).setLevel(2);
+                    }
+                    p.openGui(ru.death.chaosshard.ChaosShard.INSTANCE, ru.death.chaosshard.heart.HeartGuiHandler.LAIR, w, c.getX(), c.getY(), c.getZ());
+                });
+                wait = 50;
+                step++;
+                return;
+            case 39:
+                shot = "19_lair";
+                wait = 5;
                 step = 40;
                 return;
             case 40: {

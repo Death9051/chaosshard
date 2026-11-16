@@ -14,6 +14,7 @@ public class HeartGuiHandler implements IGuiHandler {
     public static final int HARVESTER = 1;
     public static final int ANCHOR = 2;
     public static final int ENCHANTER = 3;
+    public static final int LAIR = 4;
 
     @Nullable
     @Override
@@ -27,6 +28,9 @@ public class HeartGuiHandler implements IGuiHandler {
         }
         if (id == ENCHANTER && te instanceof ru.death.chaosshard.enchant.TileChaosEnchanter) {
             return new ru.death.chaosshard.enchant.ContainerChaosEnchanter(player, (ru.death.chaosshard.enchant.TileChaosEnchanter) te);
+        }
+        if (id == LAIR && te instanceof ru.death.chaosshard.lair.TileLair) {
+            return new ru.death.chaosshard.lair.ContainerLair(player, (ru.death.chaosshard.lair.TileLair) te);
         }
         return id == HEART && te instanceof TileHeart ? new ContainerHeart(player.inventory, (TileHeart) te) : null;
     }
@@ -45,6 +49,9 @@ public class HeartGuiHandler implements IGuiHandler {
         if (id == ENCHANTER && te instanceof ru.death.chaosshard.enchant.TileChaosEnchanter) {
             return new ru.death.chaosshard.enchant.client.GuiChaosEnchanter(new ru.death.chaosshard.enchant.ContainerChaosEnchanter(
                     player, (ru.death.chaosshard.enchant.TileChaosEnchanter) te));
+        }
+        if (id == LAIR && te instanceof ru.death.chaosshard.lair.TileLair) {
+            return new ru.death.chaosshard.lair.client.GuiLair(new ru.death.chaosshard.lair.ContainerLair(player, (ru.death.chaosshard.lair.TileLair) te));
         }
         return id == HEART && te instanceof TileHeart
                 ? new ru.death.chaosshard.heart.client.GuiHeart(new ContainerHeart(player.inventory, (TileHeart) te)) : null;

@@ -33,6 +33,8 @@ public final class ChaosNetwork {
         CHANNEL.registerMessage(PacketEnchantKnown.Handler.class, PacketEnchantKnown.class, 19, Side.CLIENT);
         CHANNEL.registerMessage(PacketRetinueAction.Handler.class, PacketRetinueAction.class, 20, Side.SERVER);
         CHANNEL.registerMessage(PacketRetinueView.Handler.class, PacketRetinueView.class, 21, Side.CLIENT);
+        CHANNEL.registerMessage(PacketLairView.Handler.class, PacketLairView.class, 22, Side.CLIENT);
+        CHANNEL.registerMessage(PacketLairAction.Handler.class, PacketLairAction.class, 23, Side.SERVER);
     }
 
     private ChaosNetwork() {
