@@ -257,8 +257,8 @@ public class BlockLair extends Block {
     /** Что стоит рост до следующего уровня. */
     public static Object[][] cost(int next) {
         return next == 2
-                ? new Object[][]{{ModItems.DISTORTED_STARMETAL, 8}, {ModItems.WORLD_SHARD, 4}, {Item.getItemFromBlock(net.minecraft.init.Blocks.OBSIDIAN), 8}}
-                : new Object[][]{{Items.NETHER_STAR, 1}, {Items.DRAGON_BREATH, 4}, {ModItems.DISTORTED_STARMETAL, 16}};
+                ? new Object[][]{{ModItems.DISTORTED_STARMETAL, 4}, {ModItems.WORLD_SHARD, 2}, {Item.getItemFromBlock(net.minecraft.init.Blocks.OBSIDIAN), 4}}
+                : new Object[][]{{ModItems.DISTORTED_STARMETAL, 8}, {ModItems.WORLD_SHARD, 4}};
     }
 
     /** Нить, нужная для роста до next. */
