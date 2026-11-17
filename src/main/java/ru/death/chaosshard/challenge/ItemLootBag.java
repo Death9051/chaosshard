@@ -31,7 +31,7 @@ import java.util.List;
  */
 public class ItemLootBag extends Item {
 
-    private static final String ITEMS = "Items", FACTION = "Faction", WAVE = "Wave", TIER = "Tier", FINAL = "Final";
+    private static final String ITEMS = "Items", FACTION = "Faction", WAVE = "Wave", TIER = "Tier", FINAL = "Final", RUN = "Run";
 
     public ItemLootBag() {
         setMaxStackSize(1);
@@ -53,6 +53,37 @@ public class ItemLootBag extends Item {
         t.setTag(ITEMS, l);
         bag.setTagCompound(t);
         return bag;
+    }
+
+    /**
+     * Отдать добычу Вызова: всё одного Вызова (run) копится в одном мешке. Если такой мешок уже лежит в инвентаре,
+     * добыча ложится в него (волны и победа — в один мешок), иначе — новый мешок.
+     */
+    public static void give(net.minecraft.entity.player.EntityPlayer p, long run, ChallengeFaction f, int wave, boolean fin, List<ItemStack> loot) {
+        for (int i = 0; i < p.inventory.getSizeInventory(); i++) {
+            ItemStack b = p.inventory.getStackInSlot(i);
+            if (b.getItem() == ru.death.chaosshard.init.ModItems.LOOT_BAG && b.hasTagCompound() && b.getTagCompound().getLong(RUN) == run) {
+                List<ItemStack> all = contents(b);
+                all.addAll(loot);
+                ItemStack nb = of(f, wave, fin, all);
+                NBTTagCompound t = nb.getTagCompound();
+                NBTTagCompound old = b.getTagCompound();
+                t.setInteger(WAVE, fin ? old.getInteger(WAVE) : wave);
+                if (!fin && old.getBoolean(FINAL)) {
+                    t.setBoolean(FINAL, true);
+                    t.setInteger(TIER, old.getInteger(TIER));
+                }
+                t.setLong(RUN, run);
+                p.inventory.setInventorySlotContents(i, nb);
+                return;
+            }
+        }
+        ItemStack nb = of(f, wave, fin, loot);
+        nb.getTagCompound().setLong(RUN, run);
+        if (fin) {
+            nb.getTagCompound().setInteger(WAVE, wave);
+        }
+        ItemHandlerHelper.giveItemToPlayer(p, nb);
     }
 
     /** Одинаковое — в одну строку (сколько угодно штук; в инвентарь всё равно ляжет стопками). */

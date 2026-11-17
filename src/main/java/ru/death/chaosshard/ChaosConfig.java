@@ -401,6 +401,11 @@ public final class ChaosConfig {
         public int bloodTicksPerBucket = 600;
         @Config.Comment("Каждая Кровавая печать ускоряет переработку крови на эту долю")
         public double bloodSealSpeed = 0.5;
+        @Config.Comment({"Мерзошип (шипы Скверны): шанс, что осквернённая трава станет им, а не пропадёт, и что флора выберет его.",
+                "И доля его попыток роста, которые проходят (1 — как в Defiled Lands, 0.25 — вчетверо медленнее)."})
+        public double vilespineChance = 0.25;
+        public double vilespineGrowth = 0.25;
+
         @Config.Comment("Скверная флора: шанс посадить растение при осквернении поверхности захваченной земли и что сажать (чего нет — пропускается)")
         public double floraChance = 0.02;
         public String[] flora = {"defiledlands:vilespine", "defiledlands:scuronotte", "defiledlands:blastem",

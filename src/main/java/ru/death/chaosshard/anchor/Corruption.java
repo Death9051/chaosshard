@@ -82,12 +82,20 @@ public final class Corruption {
         return b == null || (b == Blocks.AIR && !id.endsWith("air")) ? null : b;
     }
 
-    /** Осквернить блок; true — если что-то изменилось. */
+    /** Мерзошип (шипы Скверны). */
+    public static boolean isVilespine(Block b) {
+        return b != null && b.getRegistryName() != null && "defiledlands:vilespine".equals(b.getRegistryName().toString());
+    }
+
+    /** Осквернить блок; true — если что-то изменилось. Трава становится мерзошипом не всегда, а с шансом из конфига. */
     public static boolean corrupt(World world, BlockPos pos) {
         IBlockState s = world.getBlockState(pos);
         IBlockState to = rules().get(s.getBlock());
         if (to == null || world.getTileEntity(pos) != null) {
             return false;
+        }
+        if (isVilespine(to.getBlock()) && world.rand.nextDouble() >= ChaosConfig.anchor.vilespineChance) {
+            to = Blocks.AIR.getDefaultState();
         }
         world.setBlockState(pos, to, 2);
         return true;
@@ -213,6 +221,9 @@ public final class Corruption {
             return false;
         }
         Block b = list.get(rand.nextInt(list.size()));
+        if (isVilespine(b) && rand.nextDouble() >= ChaosConfig.anchor.vilespineChance) {
+            return false;
+        }
         if (!b.canPlaceBlockAt(world, at)) {
             return false;
         }

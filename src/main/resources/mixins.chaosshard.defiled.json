@@ -1,0 +1,17 @@
+{
+  "package": "ru.death.chaosshard.mixin.defiled",
+  "required": false,
+  "refmap": "mixins.chaosshard.refmap.json",
+  "target": "@env(DEFAULT)",
+  "minVersion": "0.8",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "MixinDefiledSoil",
+    "MixinVilespine"
+  ],
+  "client": [],
+  "server": [],
+  "injectors": {
+    "defaultRequire": 0
+  }
+}

@@ -451,7 +451,7 @@ public class TileAnchor extends TileEntity implements ITickable {
     /** Сколько тиков отряд должен простоять у Якоря, чтобы Якорь потерял силу. */
     public static final int SIEGE = 1200;
     /** Пауза между набегами по уровню сети (доля от raidInterval). */
-    private static final double[] INTERVAL = {1.0, 1.0, 0.85, 0.67, 0.33};
+    private static final double[] INTERVAL = {1.0, 1.0, 0.9, 0.8, 0.67};
 
     private boolean raidWarned;
     private double raidAngle;

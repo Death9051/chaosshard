@@ -1259,6 +1259,80 @@ public final class AutoTest {
             if (main != null) { main.setBorrow(0, null); main.refreshNet(); }
         });
 
+        section("Скверная земля: пашня, саженцы, мерзошип");
+        step("на скверной земле пашется пашня и приживаются саженцы", () -> {
+            net.minecraft.block.Block grass = net.minecraft.block.Block.getBlockFromName("defiledlands:grass_defiled");
+            net.minecraft.block.Block dirt = net.minecraft.block.Block.getBlockFromName("defiledlands:dirt_defiled");
+            if (grass == null || dirt == null) {
+                line("    Defiled Lands нет — не проверяется");
+                return;
+            }
+            BlockPos g = ow.getTopSolidOrLiquidBlock(ow.getSpawnPoint().add(-60, 0, 60)).down();
+            ow.setBlockState(g, grass.getDefaultState(), 3);
+            ow.setBlockToAir(g.up());
+            net.minecraft.item.ItemStack hoe = new net.minecraft.item.ItemStack(net.minecraft.init.Items.IRON_HOE);
+            net.minecraftforge.event.entity.player.UseHoeEvent he = new net.minecraftforge.event.entity.player.UseHoeEvent(me, hoe, ow, g);
+            MinecraftForge.EVENT_BUS.post(he);
+            check(ow.getBlockState(g).getBlock() == Blocks.FARMLAND, "мотыга по скверной траве: " + ow.getBlockState(g).getBlock().getRegistryName());
+            BlockPos d = g.east(2);
+            ow.setBlockState(d, dirt.getDefaultState(), 3);
+            ow.setBlockToAir(d.up());
+            check(Blocks.SAPLING.canPlaceBlockAt(ow, d.up()), "дубовый саженец встаёт на скверную землю");
+            ow.setBlockState(d.up(), Blocks.SAPLING.getDefaultState(), 3);
+            check(Blocks.SAPLING.canBlockStay(ow, d.up(), ow.getBlockState(d.up())), "и держится на ней");
+            ow.setBlockToAir(d.up());
+            int vs = 0;
+            for (int i = 0; i < 200; i++) {
+                ow.setBlockState(g.up(5), Blocks.TALLGRASS.getStateFromMeta(1), 2);
+                ru.death.chaosshard.anchor.Corruption.corrupt(ow, g.up(5));
+                if (ru.death.chaosshard.anchor.Corruption.isVilespine(ow.getBlockState(g.up(5)).getBlock())) vs++;
+                ow.setBlockToAir(g.up(5));
+            }
+            check(vs < 100, "трава становится мерзошипом реже: " + vs + " из 200");
+        });
+
+        section("Лесоруб");
+        final BlockPos[] lj = new BlockPos[3];
+        final net.minecraft.entity.EntityLiving[] ljm = new net.minecraft.entity.EntityLiving[1];
+        step("лесоруб: горелое дерево за 40 блоков от сундука, рядом столб у постройки", () -> {
+            BlockPos g = ow.getTopSolidOrLiquidBlock(ow.getSpawnPoint().add(60, 0, -60));
+            lj[0] = g;
+            ow.setBlockState(g, Blocks.CHEST.getDefaultState(), 3);
+            // горелое дерево: 4 бревна без листвы на земле
+            BlockPos t0 = ow.getTopSolidOrLiquidBlock(g.add(40, 0, 0));
+            ow.setBlockState(t0.down(), Blocks.DIRT.getDefaultState(), 3);
+            for (int i = 0; i < 4; i++) ow.setBlockState(t0.up(i), Blocks.LOG.getDefaultState(), 3);
+            lj[1] = t0;
+            // столб постройки: брёвна, к которым примыкают доски, — не трогать
+            BlockPos h0 = ow.getTopSolidOrLiquidBlock(g.add(40, 0, 12));
+            ow.setBlockState(h0.down(), Blocks.DIRT.getDefaultState(), 3);
+            for (int i = 0; i < 4; i++) {
+                ow.setBlockState(h0.up(i), Blocks.LOG.getDefaultState(), 3);
+                ow.setBlockState(h0.up(i).east(), Blocks.PLANKS.getDefaultState(), 3);
+            }
+            lj[2] = h0;
+            ljm[0] = Servants.summon(me, Servants.Kind.LUMBERJACK, g.add(1, 0, 0));
+            ljm[0].getEntityData().setLong(Servants.TAG_CHEST, g.toLong());
+            ljm[0].getEntityData().removeTag(Servants.TAG_GUARD);
+            me.setPosition(g.getX() + 20.5, g.getY() + 1, g.getZ() + 0.5);
+        });
+        sleep(1500);
+        step("горелое дерево срублено, столб постройки цел", () -> {
+            int left = 0;
+            for (int i = 0; i < 4; i++) if (ow.getBlockState(lj[1].up(i)).getBlock() == Blocks.LOG) left++;
+            check(left == 0, "брёвен горелого дерева осталось: " + left + " из 4");
+            int pillar = 0;
+            for (int i = 0; i < 4; i++) if (ow.getBlockState(lj[2].up(i)).getBlock() == Blocks.LOG) pillar++;
+            check(pillar == 4, "столб постройки цел: " + pillar + " из 4");
+            if (ljm[0] != null) ljm[0].setDead();
+            for (int i = 0; i < 4; i++) {
+                ow.setBlockToAir(lj[2].up(i));
+                ow.setBlockToAir(lj[2].up(i).east());
+                ow.setBlockToAir(lj[1].up(i));
+            }
+            ow.setBlockToAir(lj[0]);
+        });
+
         section("Рудокоп");
         step("рудокоп у сундука на настоящей земле", () -> {
             BlockPos ground = ow.getTopSolidOrLiquidBlock(ow.getSpawnPoint().add(-40, 0, -40));

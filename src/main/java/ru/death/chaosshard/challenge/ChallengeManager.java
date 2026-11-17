@@ -93,6 +93,11 @@ public class ChallengeManager {
         public boolean lastWave;
         int absent;
         long hunterReady;
+        /** Метка Вызова: вся его добыча копится в одном мешке. */
+        final long run = new java.util.Random().nextLong();
+        /** У Якоря: сколько враг уже простоял у колонны (тики) и сколько раз брал её — каждый раз крепче. */
+        int siege;
+        public int empower;
 
         Challenge(UUID owner, ChallengeSpec spec, boolean arena, int dim, BlockPos center) {
             this.owner = owner;
@@ -469,17 +474,49 @@ public class ChallengeManager {
                 atAnchor = true;
             }
         }
+        // Враг у колонны копит осаду. Взял Якорь — Вызов не проигран: враг крепнет (и следующие волны тоже), осада сначала.
         if (atAnchor) {
-            int before = anchor.getCorrupted();
-            anchor.siegeTick(p);
-            if (anchor.getCorrupted() < before) {
-                fail(c, p, "chaosshard.challenge.fail.anchor");
-                return;
+            int limit = Math.max(200, anchor.siegeLimit());
+            int before = c.siege * 5 / limit;
+            c.siege += 10;
+            if (c.siege * 5 / limit != before && c.siege < limit) {
+                p.sendStatusMessage(Breach.grimoire("chaosshard.challenge.siege", c.siege * 100 / limit), true);
+            }
+            if (c.siege >= limit) {
+                c.siege = 0;
+                c.empower++;
+                p.sendMessage(Breach.grimoire("chaosshard.challenge.siege.taken", c.empower));
+                w.playSound(null, c.center, SoundEvents.ENTITY_WITHER_SPAWN, SoundCategory.HOSTILE, 0.6F, 1.4F);
+                w.spawnParticle(EnumParticleTypes.SPELL_WITCH, c.center.getX() + 0.5, c.center.getY() + 2, c.center.getZ() + 0.5, 60, 1.5, 1.5, 1.5, 0.1);
+            }
+        } else if (c.siege > 0) {
+            c.siege = Math.max(0, c.siege - 5);
+        }
+        if (c.empower > 0) {
+            for (UUID id : c.mobs) {
+                Entity e = w.getEntityFromUuid(id);
+                if (e instanceof EntityLiving && e.isEntityAlive()) {
+                    empower((EntityLiving) e, c.empower);
+                }
             }
         }
         if (c.mobs.isEmpty()) {
             waveCleared(w, c, p);
         }
+    }
+
+    /** Усиление врага за взятый Якорь: сила, стойкость и скорость, по разу на каждый захват (не чаще). */
+    static void empower(EntityLiving m, int level) {
+        String key = "chaosshard_challenge_emp";
+        if (m.getEntityData().getInteger(key) >= level) {
+            return;
+        }
+        m.getEntityData().setInteger(key, level);
+        int a = Math.min(level - 1, 4);
+        m.addPotionEffect(new PotionEffect(MobEffects.STRENGTH, 20 * 60 * 20, a, false, true));
+        m.addPotionEffect(new PotionEffect(MobEffects.RESISTANCE, 20 * 60 * 20, Math.min(a, 2), false, true));
+        m.addPotionEffect(new PotionEffect(MobEffects.SPEED, 20 * 60 * 20, Math.min(a, 1), false, true));
+        m.setHealth(m.getMaxHealth());
     }
 
     static int pause(Challenge c) {
@@ -635,7 +672,7 @@ public class ChallengeManager {
         if (c.spec.faction == ChallengeFaction.CYBER && CYBERWARE) {
             loot.addAll(ru.death.chaosshard.compat.body.CyberLoot.wave(w.rand, c.effTier(), mul));
         }
-        ItemHandlerHelper.giveItemToPlayer(p, ItemLootBag.of(c.spec.faction, c.wave, false, loot));
+        ItemLootBag.give(p, c.run, c.spec.faction, c.wave, false, loot);
         p.addExperience(8 * c.wave);
         w.playSound(null, p.getPosition(), SoundEvents.ENTITY_PLAYER_LEVELUP, SoundCategory.PLAYERS, 0.8F, 1.2F);
         p.sendMessage(Breach.grimoire("chaosshard.challenge.wave.done", c.wave, nit));
@@ -662,7 +699,7 @@ public class ChallengeManager {
         if (c.spec.faction == ChallengeFaction.CYBER && CYBERWARE) {
             loot.addAll(ru.death.chaosshard.compat.body.CyberLoot.victory(w.rand, tier, mul));
         }
-        ItemHandlerHelper.giveItemToPlayer(p, ItemLootBag.of(c.spec.faction, tier, true, loot));
+        ItemLootBag.give(p, c.run, c.spec.faction, tier, true, loot);
         if (!c.arena) {
             net.minecraft.tileentity.TileEntity te = w.getTileEntity(c.center);
             if (te instanceof TileAnchor) {

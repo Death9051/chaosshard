@@ -14,6 +14,7 @@ import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -44,6 +45,10 @@ public class WorkLumberjack extends EntityAIBase {
     private final List<BlockPos> logs = new ArrayList<>();
     private final int[] stuck = {0};
     private int t;
+    /** Найденные обходом основания деревьев и саженцы (обход идёт по чанку за тик — зона большая). */
+    private final java.util.LinkedHashSet<BlockPos> found = new java.util.LinkedHashSet<>();
+    private final java.util.LinkedHashSet<BlockPos> saplings = new java.util.LinkedHashSet<>();
+    private int scanIdx;
 
     public WorkLumberjack(EntityCreature m) {
         this.m = m;
@@ -60,8 +65,59 @@ public class WorkLumberjack extends EntityAIBase {
         return shouldExecute();
     }
 
+    /** Зона вырубки вокруг сундука: 120 блоков, с «Широкой вырубкой» — 200. */
+    public static final int RADIUS = 120, RADIUS_WIDE = 200;
+
     private int radius() {
-        return ServantUpgrade.has(m, ServantUpgrade.WOOD_WIDE) ? 24 : 12;
+        return ServantUpgrade.has(m, ServantUpgrade.WOOD_WIDE) ? RADIUS_WIDE : RADIUS;
+    }
+
+    /**
+     * Шаг обхода зоны: два чанка за вызов. По карте высот сверху вниз через листву и воздух до бревна,
+     * под которым земля, — основание дерева; саженцы на пути — в список для «Лесника». Только прогруженные чанки.
+     */
+    private void scanStep(BlockPos c, int r) {
+        World w = m.world;
+        int cr = (r >> 4) + 1, side = cr * 2 + 1, total = side * side;
+        for (int k = 0; k < 2; k++) {
+            int i = scanIdx++ % total;
+            int cx = (c.getX() >> 4) - cr + i % side, cz = (c.getZ() >> 4) - cr + i / side;
+            if (!w.isBlockLoaded(new BlockPos(cx << 4, 0, cz << 4))) {
+                continue;
+            }
+            for (int x = 0; x < 16; x++) {
+                for (int z = 0; z < 16; z++) {
+                    int bx = (cx << 4) + x, bz = (cz << 4) + z;
+                    double dx = bx - c.getX(), dz = bz - c.getZ();
+                    if (dx * dx + dz * dz > (double) r * r) {
+                        continue;
+                    }
+                    int top = w.getHeight(bx, bz);
+                    BlockPos.MutableBlockPos p = new BlockPos.MutableBlockPos(bx, top, bz);
+                    for (int y = top; y > Math.max(1, top - 40); y--) {
+                        p.setY(y);
+                        IBlockState st = w.getBlockState(p);
+                        if (isLog(w, p, st)) {
+                            if (ground(w.getBlockState(p.down()))) {
+                                found.add(p.toImmutable());
+                                break;
+                            }
+                            continue;
+                        }
+                        if (st.getBlock() instanceof BlockSapling) {
+                            saplings.add(p.toImmutable());
+                            break;
+                        }
+                        Material mat = st.getMaterial();
+                        if (mat == Material.AIR || mat == Material.LEAVES || mat == Material.VINE || mat == Material.PLANTS
+                                || mat == Material.SNOW || mat == Material.FIRE || st.getBlock().isReplaceable(w, p)) {
+                            continue;
+                        }
+                        break;
+                    }
+                }
+            }
+        }
     }
 
     @Override
@@ -70,6 +126,7 @@ public class WorkLumberjack extends EntityAIBase {
         World w = m.world;
         BlockPos c = Work.chest(m);
         int r = radius();
+        scanStep(c, r);
         if (t % 100 == 0) {
             gather(c, r);
         }
@@ -137,34 +194,44 @@ public class WorkLumberjack extends EntityAIBase {
         return !s.getPropertyKeys().contains(BlockLeaves.DECAYABLE) || s.getValue(BlockLeaves.DECAYABLE);
     }
 
+    /** Ближайшее к сундуку проверенное дерево из найденных обходом (не больше 12 проверок за раз). */
     private void findTree(BlockPos c, int r) {
         World w = m.world;
-        BlockPos best = null;
-        double bd = Double.MAX_VALUE;
-        for (BlockPos p : BlockPos.getAllInBoxMutable(c.add(-r, -3, -r), c.add(r, 6, r))) {
+        List<BlockPos> cand = new ArrayList<>(found);
+        cand.sort(Comparator.comparingDouble(m::getDistanceSq));
+        int tries = 0;
+        for (BlockPos p : cand) {
+            if (tries++ >= 12) {
+                break;
+            }
             IBlockState s = w.getBlockState(p);
-            if (isLog(w, p, s) && ground(w.getBlockState(p.down())) && !Work.taken(m, p)) {
-                double d = m.getDistanceSq(p);
-                if (d < bd) {
-                    List<BlockPos> tree = tree(w, p.toImmutable());
-                    if (!tree.isEmpty()) {
-                        bd = d;
-                        best = p.toImmutable();
-                        logs.clear();
-                        logs.addAll(tree);
-                        kind = woodKind(s);
-                        bases.clear();
-                        int minY = tree.get(0).getY();
-                        for (BlockPos q : tree) {
-                            if (q.getY() == minY && ground(w.getBlockState(q.down()))) {
-                                bases.add(q);
-                            }
-                        }
-                    }
+            if (!w.isBlockLoaded(p) || !isLog(w, p, s) || !ground(w.getBlockState(p.down())) || p.distanceSq(c) > (double) r * r) {
+                found.remove(p);
+                continue;
+            }
+            if (Work.taken(m, p)) {
+                continue;
+            }
+            List<BlockPos> tree = tree(w, p);
+            if (tree.isEmpty()) {
+                found.remove(p);
+                continue;
+            }
+            found.remove(p);
+            logs.clear();
+            logs.addAll(tree);
+            kind = woodKind(s);
+            bases.clear();
+            int minY = tree.get(0).getY();
+            for (BlockPos q : tree) {
+                if (q.getY() == minY && ground(w.getBlockState(q.down()))) {
+                    bases.add(q);
                 }
             }
+            base = p;
+            return;
         }
-        base = best;
+        base = null;
     }
 
     /** Брёвна дерева от основания; пусто, если это не дерево (нет природной листвы). */
@@ -197,12 +264,48 @@ public class WorkLumberjack extends EntityAIBase {
                 }
             }
         }
-        if (leaves < 3) {
+        if (leaves < 3 && !burnt(w, out)) {
             return new ArrayList<>();
         }
         // рубим сверху вниз (список с конца)
         out.sort(Comparator.comparingInt(BlockPos::getY));
         return out;
+    }
+
+    /**
+     * Обгоревшее дерево (листва сгорела): одиночный ствол до 40 брёвен, верх открыт небу, и ни одно бревно
+     * не примыкает к постройке — рядом только воздух, листва, растения, огонь, снег и другие брёвна.
+     */
+    private static boolean burnt(World w, List<BlockPos> logs) {
+        if (logs.size() < 2 || logs.size() > 40) {
+            return false;
+        }
+        BlockPos top = logs.get(0);
+        for (BlockPos q : logs) {
+            if (q.getY() > top.getY()) {
+                top = q;
+            }
+        }
+        if (!w.canSeeSky(top.up())) {
+            return false;
+        }
+        for (BlockPos q : logs) {
+            for (EnumFacing f : EnumFacing.HORIZONTALS) {
+                BlockPos n = q.offset(f);
+                IBlockState st = w.getBlockState(n);
+                if (isLog(w, n, st)) {
+                    continue;
+                }
+                Material mat = st.getMaterial();
+                boolean natural = mat == Material.AIR || mat == Material.LEAVES || mat == Material.PLANTS || mat == Material.VINE
+                        || mat == Material.FIRE || mat == Material.SNOW || mat == Material.CRAFTED_SNOW || st.getBlock().isReplaceable(w, n)
+                        || ground(st) && q.getY() == logs.get(0).getY();
+                if (!natural) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     private void chop(World w, BlockPos p, IBlockState s) {
@@ -320,9 +423,16 @@ public class WorkLumberjack extends EntityAIBase {
 
     private void growSapling(BlockPos c, int r) {
         World w = m.world;
-        for (BlockPos p : BlockPos.getAllInBoxMutable(c.add(-r, -3, -r), c.add(r, 6, r))) {
+        for (BlockPos p : new ArrayList<>(saplings)) {
+            if (!w.isBlockLoaded(p)) {
+                continue;
+            }
             IBlockState s = w.getBlockState(p);
-            if (s.getBlock() instanceof BlockSapling && ((IGrowable) s.getBlock()).canGrow(w, p, s, false)) {
+            if (!(s.getBlock() instanceof BlockSapling)) {
+                saplings.remove(p);
+                continue;
+            }
+            if (((IGrowable) s.getBlock()).canGrow(w, p, s, false)) {
                 ((IGrowable) s.getBlock()).grow(w, m.getRNG(), p.toImmutable(), s);
                 ((WorldServer) w).spawnParticle(EnumParticleTypes.VILLAGER_HAPPY, p.getX() + 0.5, p.getY() + 0.5, p.getZ() + 0.5, 8, 0.3, 0.3, 0.3, 0);
                 return;
