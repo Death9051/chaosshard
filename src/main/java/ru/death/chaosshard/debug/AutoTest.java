@@ -1279,7 +1279,7 @@ public final class AutoTest {
             ow.setBlockToAir(d.up());
             check(Blocks.SAPLING.canPlaceBlockAt(ow, d.up()), "дубовый саженец встаёт на скверную землю");
             ow.setBlockState(d.up(), Blocks.SAPLING.getDefaultState(), 3);
-            check(Blocks.SAPLING.canBlockStay(ow, d.up(), ow.getBlockState(d.up())), "и держится на ней");
+            check(((net.minecraft.block.BlockBush) Blocks.SAPLING).canBlockStay(ow, d.up(), ow.getBlockState(d.up())), "и держится на ней");
             ow.setBlockToAir(d.up());
             int vs = 0;
             for (int i = 0; i < 200; i++) {
