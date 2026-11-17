@@ -30,7 +30,7 @@ import java.util.Set;
 public final class ChaosSurge {
 
     private static final String TAG = "chaosshard_surge";
-    /** Не выдавать: служебные, творческие и сама Нить. */
+    /** Не выдавать: служебные, творческие и сама Нить. «Усиление (материал)» (fortify*) отсекается по префиксу. */
     private static final Set<String> BLACKLIST = new HashSet<>(Arrays.asList(
             "chaosshard_thread", "creative", "toolleveling", "harvestwidth", "harvestheight", "tconevo.artifact"));
 
@@ -58,7 +58,8 @@ public final class ChaosSurge {
         List<IModifier> pool = new ArrayList<>();
         for (IModifier m : TinkerRegistry.getAllModifiers()) {
             String id = m.getIdentifier();
-            if (m.isHidden() || !m.hasItemsToApplyWith() || BLACKLIST.contains(id) || id.startsWith("extratrait")) {
+            if (m.isHidden() || !m.hasItemsToApplyWith() || BLACKLIST.contains(id) || id.startsWith("extratrait")
+                    || id.startsWith("fortify")) {
                 continue;
             }
             if (TinkerUtil.hasModifier(original, id)) {
