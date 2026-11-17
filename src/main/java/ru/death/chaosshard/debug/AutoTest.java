@@ -1294,18 +1294,18 @@ public final class AutoTest {
         section("Лесоруб");
         step("лесоруб: горелое дерево без листвы — дерево, столб у постройки — нет", () -> {
             BlockPos g = ow.getTopSolidOrLiquidBlock(ow.getSpawnPoint().add(60, 0, -60));
-            BlockPos t0 = g.add(40, 0, 0);
-            ow.setBlockState(t0.down(), Blocks.DIRT.getDefaultState(), 3);
-            for (int i = 0; i < 6; i++) ow.setBlockToAir(t0.up(i).east());
-            for (int i = 0; i < 4; i++) ow.setBlockState(t0.up(i), Blocks.LOG.getDefaultState(), 3);
-            for (int i = 4; i < 12; i++) ow.setBlockToAir(t0.up(i));
-            BlockPos h0 = g.add(40, 0, 12);
-            ow.setBlockState(h0.down(), Blocks.DIRT.getDefaultState(), 3);
-            for (int i = 0; i < 4; i++) {
-                ow.setBlockState(h0.up(i), Blocks.LOG.getDefaultState(), 3);
-                ow.setBlockState(h0.up(i).east(), Blocks.PLANKS.getDefaultState(), 3);
+            BlockPos t0 = ow.getTopSolidOrLiquidBlock(g.add(40, 0, 0));
+            BlockPos h0 = ow.getTopSolidOrLiquidBlock(g.add(40, 0, 12));
+            for (BlockPos base : new BlockPos[]{t0, h0}) {
+                for (int dx = -1; dx <= 1; dx++) {
+                    for (int dz = -1; dz <= 1; dz++) {
+                        ow.setBlockState(base.add(dx, -1, dz), Blocks.DIRT.getDefaultState(), 3);
+                        for (int i = 0; i < 24; i++) ow.setBlockToAir(base.add(dx, i, dz));
+                    }
+                }
+                for (int i = 0; i < 4; i++) ow.setBlockState(base.up(i), Blocks.LOG.getDefaultState(), 3);
             }
-            for (int i = 4; i < 12; i++) ow.setBlockToAir(h0.up(i));
+            for (int i = 0; i < 4; i++) ow.setBlockState(h0.up(i).east(), Blocks.PLANKS.getDefaultState(), 3);
             int burnt = ru.death.chaosshard.servant.work.WorkLumberjack.tree(ow, t0).size();
             int pillar = ru.death.chaosshard.servant.work.WorkLumberjack.tree(ow, h0).size();
             check(burnt == 4, "горелое дерево узнано: брёвен " + burnt + " из 4");
