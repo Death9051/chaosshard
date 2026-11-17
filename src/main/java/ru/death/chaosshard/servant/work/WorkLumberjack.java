@@ -235,7 +235,7 @@ public class WorkLumberjack extends EntityAIBase {
     }
 
     /** Брёвна дерева от основания; пусто, если это не дерево (нет природной листвы). */
-    private static List<BlockPos> tree(World w, BlockPos start) {
+    public static List<BlockPos> tree(World w, BlockPos start) {
         List<BlockPos> out = new ArrayList<>();
         Set<BlockPos> seen = new HashSet<>();
         ArrayDeque<BlockPos> q = new ArrayDeque<>();

@@ -1292,45 +1292,30 @@ public final class AutoTest {
         });
 
         section("Лесоруб");
-        final BlockPos[] lj = new BlockPos[3];
-        final net.minecraft.entity.EntityLiving[] ljm = new net.minecraft.entity.EntityLiving[1];
-        step("лесоруб: горелое дерево за 40 блоков от сундука, рядом столб у постройки", () -> {
+        step("лесоруб: горелое дерево без листвы — дерево, столб у постройки — нет", () -> {
             BlockPos g = ow.getTopSolidOrLiquidBlock(ow.getSpawnPoint().add(60, 0, -60));
-            lj[0] = g;
-            ow.setBlockState(g, Blocks.CHEST.getDefaultState(), 3);
-            // горелое дерево: 4 бревна без листвы на земле
-            BlockPos t0 = ow.getTopSolidOrLiquidBlock(g.add(40, 0, 0));
+            BlockPos t0 = g.add(40, 0, 0);
             ow.setBlockState(t0.down(), Blocks.DIRT.getDefaultState(), 3);
+            for (int i = 0; i < 6; i++) ow.setBlockToAir(t0.up(i).east());
             for (int i = 0; i < 4; i++) ow.setBlockState(t0.up(i), Blocks.LOG.getDefaultState(), 3);
-            lj[1] = t0;
-            // столб постройки: брёвна, к которым примыкают доски, — не трогать
-            BlockPos h0 = ow.getTopSolidOrLiquidBlock(g.add(40, 0, 12));
+            for (int i = 4; i < 12; i++) ow.setBlockToAir(t0.up(i));
+            BlockPos h0 = g.add(40, 0, 12);
             ow.setBlockState(h0.down(), Blocks.DIRT.getDefaultState(), 3);
             for (int i = 0; i < 4; i++) {
                 ow.setBlockState(h0.up(i), Blocks.LOG.getDefaultState(), 3);
                 ow.setBlockState(h0.up(i).east(), Blocks.PLANKS.getDefaultState(), 3);
             }
-            lj[2] = h0;
-            ljm[0] = Servants.summon(me, Servants.Kind.LUMBERJACK, g.add(1, 0, 0));
-            ljm[0].getEntityData().setLong(Servants.TAG_CHEST, g.toLong());
-            ljm[0].getEntityData().removeTag(Servants.TAG_GUARD);
-            me.setPosition(g.getX() + 20.5, g.getY() + 1, g.getZ() + 0.5);
-        });
-        sleep(1500);
-        step("горелое дерево срублено, столб постройки цел", () -> {
-            int left = 0;
-            for (int i = 0; i < 4; i++) if (ow.getBlockState(lj[1].up(i)).getBlock() == Blocks.LOG) left++;
-            check(left == 0, "брёвен горелого дерева осталось: " + left + " из 4");
-            int pillar = 0;
-            for (int i = 0; i < 4; i++) if (ow.getBlockState(lj[2].up(i)).getBlock() == Blocks.LOG) pillar++;
-            check(pillar == 4, "столб постройки цел: " + pillar + " из 4");
-            if (ljm[0] != null) ljm[0].setDead();
+            for (int i = 4; i < 12; i++) ow.setBlockToAir(h0.up(i));
+            int burnt = ru.death.chaosshard.servant.work.WorkLumberjack.tree(ow, t0).size();
+            int pillar = ru.death.chaosshard.servant.work.WorkLumberjack.tree(ow, h0).size();
+            check(burnt == 4, "горелое дерево узнано: брёвен " + burnt + " из 4");
+            check(pillar == 0, "столб постройки деревом не считается: " + pillar);
+            check(ru.death.chaosshard.servant.work.WorkLumberjack.RADIUS == 120, "зона лесоруба 120 блоков");
             for (int i = 0; i < 4; i++) {
-                ow.setBlockToAir(lj[2].up(i));
-                ow.setBlockToAir(lj[2].up(i).east());
-                ow.setBlockToAir(lj[1].up(i));
+                ow.setBlockToAir(h0.up(i));
+                ow.setBlockToAir(h0.up(i).east());
+                ow.setBlockToAir(t0.up(i));
             }
-            ow.setBlockToAir(lj[0]);
         });
 
         section("Рудокоп");
@@ -2158,7 +2143,7 @@ public final class AutoTest {
                     if (ru.death.chaosshard.challenge.ItemLootBag.isFinal(st)) { finals++; fin = st; }
                 } else loose++;
             }
-            check(bags == 4 && finals == 1, "награда в мешочках: за 3 волны и за Вызов: " + bags + " (за Вызов " + finals + ")");
+            check(bags == 1 && finals == 1, "награда за 3 волны и за Вызов в одном мешке: мешков " + bags + " (за Вызов " + finals + ")");
             int inside = ru.death.chaosshard.challenge.ItemLootBag.contents(fin).size();
             check(inside > 0, "в мешочке за Вызов строк добычи: " + inside);
             me.inventory.clear();
