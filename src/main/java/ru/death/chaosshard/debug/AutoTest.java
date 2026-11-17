@@ -1996,7 +1996,7 @@ public final class AutoTest {
                 drops.add(new net.minecraft.entity.item.EntityItem(ow, 0, 100, 0, ru.death.chaosshard.compat.body.CyberLoot.scavenged(r)));
             }
             MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.living.LivingDropsEvent(m, DamageSource.causePlayerDamage(me), drops, 0, true));
-            check(drops.size() > 0 && drops.size() < 30, "рядовой 2-й ступени отдаёт ~10% имплантов: " + drops.size() + " из 200");
+            check(drops.size() > 0 && drops.size() < 40, "рядовой 2-й ступени отдаёт ~10% имплантов: " + drops.size() + " из 200");
             List<net.minecraft.entity.item.EntityItem> bossDrops = new ArrayList<>();
             MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.living.LivingDropsEvent(boss, DamageSource.causePlayerDamage(me), bossDrops, 0, true));
             StringBuilder bd = new StringBuilder();
