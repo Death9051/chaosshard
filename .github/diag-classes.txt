@@ -1,2 +1,7 @@
-shadows/*
-assets/apotheosis/*
+lykrast/defiledlands/common/block/BlockGrassCorrupted.class
+lykrast/defiledlands/common/block/BlockCorrupted.class
+lykrast/defiledlands/common/block/BlockVilespine.class
+lykrast/defiledlands/common/block/BlockSaplingTenebra.class
+lykrast/defiledlands/common/block/BlockScuronotte.class
+lykrast/defiledlands/common/block/BlockGeneric.class
+lykrast/defiledlands/common/init/ModBlocks.class
