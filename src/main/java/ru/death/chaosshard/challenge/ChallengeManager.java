@@ -336,12 +336,25 @@ public class ChallengeManager {
         item.velocityChanged = true;
     }
 
-    /** Кибер-зомби в Лучезарии не водятся: их приносит только Вызов «Сборщики» (естественное появление и рассадники — запрещены). */
+    /**
+     * Кибер-нежить сама не водится: кибер-зомби (Cyberware) приносит только Вызов «Сборщики», а кибер-скелетов
+     * (ReWIRED) нет вовсе. Естественное появление и рассадники им запрещены.
+     */
     @SubscribeEvent
     public void onCyberSpawn(net.minecraftforge.event.entity.living.LivingSpawnEvent.CheckSpawn event) {
-        if (CYBERWARE && "cyberware:cyberzombie".equals(String.valueOf(net.minecraft.entity.EntityList.getKey(event.getEntityLiving())))) {
+        if (isCyberUndead(event.getEntityLiving())) {
             event.setResult(net.minecraftforge.fml.common.eventhandler.Event.Result.DENY);
         }
+    }
+
+    /** Кибер-зомби Cyberware или кибер-скелет ReWIRED. */
+    public static boolean isCyberUndead(net.minecraft.entity.Entity e) {
+        net.minecraft.util.ResourceLocation id = net.minecraft.entity.EntityList.getKey(e);
+        if (id == null) {
+            return false;
+        }
+        String s = id.toString();
+        return "cyberware:cyberzombie".equals(s) || "rewired".equals(id.getNamespace()) && id.getPath().contains("skeleton");
     }
 
     @SubscribeEvent

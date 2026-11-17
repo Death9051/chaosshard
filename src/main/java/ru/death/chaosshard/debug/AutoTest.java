@@ -1962,6 +1962,17 @@ public final class AutoTest {
                     m, ow, (float) me.posX, (float) me.posY, (float) me.posZ, null);
             MinecraftForge.EVENT_BUS.post(cs);
             check(cs.getResult() == net.minecraftforge.fml.common.eventhandler.Event.Result.DENY, "сами по себе кибер-зомби в мире не появляются");
+            for (net.minecraftforge.fml.common.registry.EntityEntry en : net.minecraftforge.fml.common.registry.ForgeRegistries.ENTITIES.getValuesCollection()) {
+                if (en.getRegistryName() != null && "rewired".equals(en.getRegistryName().getNamespace()) && en.getRegistryName().getPath().contains("skeleton")) {
+                    net.minecraft.entity.Entity sk = en.newInstance(ow);
+                    if (sk instanceof net.minecraft.entity.EntityLiving) {
+                        net.minecraftforge.event.entity.living.LivingSpawnEvent.CheckSpawn cs2 = new net.minecraftforge.event.entity.living.LivingSpawnEvent.CheckSpawn(
+                                (net.minecraft.entity.EntityLiving) sk, ow, (float) me.posX, (float) me.posY, (float) me.posZ, null);
+                        MinecraftForge.EVENT_BUS.post(cs2);
+                        check(cs2.getResult() == net.minecraftforge.fml.common.eventhandler.Event.Result.DENY, "кибер-скелеты ReWIRED сами не появляются (" + en.getRegistryName() + ")");
+                    }
+                }
+            }
             int brutes = 0;
             for (int i = 0; i < 40; i++) {
                 if (ru.death.chaosshard.compat.body.CyberLoot.isBrute(ru.death.chaosshard.challenge.ChallengeFaction.CYBER.regular(ow, 4, 4, r))) brutes++;
