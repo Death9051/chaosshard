@@ -1324,6 +1324,7 @@ public final class AutoTest {
             ru.death.chaosshard.anchor.AnchorData.get(ow).recOrNew(anchorPos).owner = me.getUniqueID();
             List<net.minecraft.item.ItemStack> saved = new ArrayList<>();
             for (net.minecraft.item.ItemStack st : me.inventory.mainInventory) saved.add(st.copy());
+            final double sx = me.posX, sy = me.posY, sz = me.posZ;
             me.inventory.clear();
             ru.death.chaosshard.merchant.MerchantData md = ru.death.chaosshard.merchant.MerchantData.get(ow);
             md.balance.remove(me.getUniqueID());
@@ -1434,6 +1435,7 @@ public final class AutoTest {
             for (ru.death.chaosshard.merchant.EntityMerchant x : ow.getEntitiesWithinAABB(ru.death.chaosshard.merchant.EntityMerchant.class, near)) x.setDead();
             me.inventory.clear();
             for (int i = 0; i < saved.size(); i++) me.inventory.mainInventory.set(i, saved.get(i));
+            me.setPositionAndUpdate(sx, sy, sz);
         });
 
         section("Рудокоп");
