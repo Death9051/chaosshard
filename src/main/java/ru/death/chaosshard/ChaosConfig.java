@@ -89,24 +89,50 @@ public final class ChaosConfig {
         @Config.Comment("Стоимость монет Ancient Warfare на счёте, в медных: медная, серебряная, золотая, древняя")
         public int[] coinValues = {1, 10, 100, 250};
 
-        @Config.Comment({"Постоянные товары: предмет[@мета][*количество]=цена в медных.",
+        @Config.Comment("Самая низкая цена товара в медных (10 — серебряная монета)")
+        @Config.RangeInt(min = 1, max = 100000)
+        public int minPrice = 10;
+
+        @Config.Comment({"Постоянные товары: предмет[@мета][*количество][!чары]=цена в медных.",
                 "Предметы модов, которых нет в сборке, пропускаются."})
-        public String[] offers = {
-                "minecraft:ender_pearl*2=20", "minecraft:experience_bottle*8=30", "minecraft:golden_apple=40",
-                "minecraft:blaze_rod*4=30", "minecraft:nether_wart*8=15", "minecraft:name_tag=25",
-                "minecraft:saddle=30", "minecraft:arrow*32=10"};
+        public String[] goods = {
+                "minecraft:iron_ingot*8=20", "minecraft:gold_ingot*4=20", "minecraft:coal*16=10", "minecraft:redstone*16=15",
+                "minecraft:dye@4*16=15", "minecraft:quartz*16=15", "minecraft:glowstone_dust*16=15", "minecraft:obsidian*4=20",
+                "minecraft:leather*8=10", "minecraft:string*16=10", "minecraft:slime_ball*8=15", "minecraft:gunpowder*8=15",
+                "minecraft:bone*16=10", "minecraft:blaze_rod*4=30", "minecraft:ender_pearl*2=20", "minecraft:nether_wart*8=15",
+                "minecraft:experience_bottle*8=30", "minecraft:golden_apple=40", "minecraft:name_tag=25", "minecraft:saddle=30",
+                "minecraft:arrow*32=10"};
 
-        @Config.Comment("Сменные товары: из этого списка каждый игровой день выбирается несколько")
-        public String[] rotating = {
-                "minecraft:diamond*2=80", "minecraft:emerald*4=40", "minecraft:totem_of_undying=300",
-                "minecraft:golden_apple@1=400", "minecraft:shulker_shell*2=200", "chaosshard:world_shard=120",
-                "chaosshard:chaos_essence*2=60", "chaosshard:distorted_starmetal=200", "xreliquary:glowing_water*4=40",
-                "xreliquary:angelic_feather=150", "bountifulbaubles:trinketluckyhorseshoe=200",
-                "bountifulbaubles:potionrecall*2=40", "bountifulbaubles:trinketmagiclenses=150"};
+        @Config.Comment("Сменные товары «только сегодня»: каждый игровой день из каждой категории берётся по dailyPerCategory")
+        @Config.RangeInt(min = 0, max = 4)
+        public int dailyPerCategory = 1;
 
-        @Config.Comment("Сколько сменных товаров в день")
-        @Config.RangeInt(min = 0, max = 8)
-        public int rotatingCount = 4;
+        @Config.Comment("Сменные: реликвии")
+        public String[] dailyRelics = {
+                "xreliquary:mercy_cross=300", "xreliquary:angelheart_vial=250", "xreliquary:salamander_eye=300",
+                "xreliquary:fortune_coin=250", "xreliquary:hero_medallion=300", "xreliquary:angelic_feather=200",
+                "bountifulbaubles:trinketluckyhorseshoe=200", "bountifulbaubles:trinketobsidianskull=250",
+                "bountifulbaubles:trinketmagiclenses=150", "bountifulbaubles:shieldcobalt=250", "bountifulbaubles:amuletcross=250",
+                "bountifulbaubles:crowngold=300", "bountifulbaubles:trinketvitamins=200", "bountifulbaubles:trinketapple=200"};
+
+        @Config.Comment("Сменные: снаряжение (!N — случайные чары уровня N)")
+        public String[] dailyGear = {
+                "minecraft:diamond_sword!20=200", "minecraft:diamond_pickaxe!20=200", "minecraft:diamond_axe!20=180",
+                "minecraft:diamond_chestplate!20=300", "minecraft:diamond_helmet!20=200", "minecraft:diamond_leggings!20=260",
+                "minecraft:diamond_boots!20=180", "minecraft:bow!25=150", "minecraft:iron_chestplate!25=120",
+                "minecraft:fishing_rod!25=60", "minecraft:shield=40"};
+
+        @Config.Comment("Сменные: материалы")
+        public String[] dailyMaterials = {
+                "minecraft:diamond*2=80", "minecraft:emerald*4=40", "minecraft:shulker_shell*2=200", "minecraft:prismarine_crystals*8=40",
+                "minecraft:ghast_tear*2=50", "minecraft:magma_cream*4=30", "minecraft:rabbit_foot*2=40", "minecraft:chorus_fruit*8=30",
+                "chaosshard:world_shard=120", "chaosshard:chaos_essence*2=60", "chaosshard:distorted_starmetal=200"};
+
+        @Config.Comment("Сменные: припасы")
+        public String[] dailySupplies = {
+                "minecraft:totem_of_undying=300", "minecraft:golden_apple@1=400", "minecraft:experience_bottle*32=100",
+                "minecraft:ender_eye*4=60", "minecraft:golden_carrot*8=30", "xreliquary:glowing_water*4=40",
+                "xreliquary:holy_hand_grenade*2=60", "bountifulbaubles:potionrecall*2=40"};
 
         @Config.Comment("Скупка добычи Lycanites, в медных за штуку: заряд, сырое и жареное мясо, мех / железа / печень, часть снаряжения")
         public int[] lycanitesPrices = {1, 1, 4, 15};

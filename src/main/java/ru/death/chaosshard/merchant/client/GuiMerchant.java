@@ -35,7 +35,7 @@ public class GuiMerchant extends GuiScreen {
     private static final int LX = 10, LW = 170, RX = 188, RW = 102, TOP = 34;
     private static final int LOT_ROWS = 7;
 
-    private int left, top, lotScroll;
+    private int left, top, lotScroll, offerScroll;
     private List<String> hover;
     private float time;
 
@@ -211,43 +211,89 @@ public class GuiMerchant extends GuiScreen {
         return out;
     }
 
-    /** Строки товаров: (номер в списке сервера, y). Разделитель «на сегодня» перед первым сменным. */
-    private int offerY(List<NBTTagCompound> offers, int idx) {
-        int y = TOP + 12;
-        for (int i = 0; i < idx; i++) {
-            y += ROW;
-            if (!offers.get(i).getBoolean("daily") && offers.get(i + 1).getBoolean("daily")) {
-                y += 14;
+    /** Строки списка товаров: −1 — заголовок «только сегодня», −2 — «всегда в продаже», иначе номер товара. */
+    private List<Integer> entries(List<NBTTagCompound> offers) {
+        List<Integer> out = new ArrayList<>();
+        for (int i = 0; i < offers.size(); i++) {
+            boolean daily = offers.get(i).getBoolean("daily");
+            if (i == 0 && daily) {
+                out.add(-1);
+            }
+            if (!daily && (i == 0 || offers.get(i - 1).getBoolean("daily"))) {
+                out.add(-2);
+            }
+            out.add(i);
+        }
+        return out;
+    }
+
+    private static int entryH(int e) {
+        return e < 0 ? 14 : ROW;
+    }
+
+    private static final int LIST_BOTTOM = H - 8;
+
+    /** Видимые строки: номер товара → y (заголовки рисуются сами). Сколько строк влезло — в visibleCount. */
+    private int visibleCount;
+
+    private java.util.Map<Integer, Integer> layout(List<Integer> entries) {
+        java.util.Map<Integer, Integer> ys = new java.util.LinkedHashMap<>();
+        offerScroll = Math.max(0, Math.min(offerScroll, maxOfferScroll(entries)));
+        int y = TOP;
+        visibleCount = 0;
+        for (int k = offerScroll; k < entries.size(); k++) {
+            int e = entries.get(k);
+            if (y + entryH(e) > LIST_BOTTOM) {
+                break;
+            }
+            ys.put(e < 0 ? e * 1000 - k : e, y);
+            y += entryH(e);
+            visibleCount++;
+        }
+        return ys;
+    }
+
+    /** Насколько можно прокрутить: последняя строка доходит до низа окна. */
+    private static int maxOfferScroll(List<Integer> entries) {
+        int h = 0;
+        for (int k = entries.size() - 1; k >= 0; k--) {
+            h += entryH(entries.get(k));
+            if (h > LIST_BOTTOM - TOP) {
+                return k + 1;
             }
         }
-        return y;
+        return 0;
     }
 
     private void drawOffers(int mx, int my) {
         List<NBTTagCompound> offers = list("offers");
+        List<Integer> entries = entries(offers);
         long bal = view.getLong("balance");
-        section(tr("chaosshard.merchant.gui.goods"), LX, LW, TOP);
-        for (int i = 0; i < offers.size(); i++) {
-            NBTTagCompound o = offers.get(i);
-            if (o.getBoolean("daily") && (i == 0 || !offers.get(i - 1).getBoolean("daily"))) {
-                section(tr("chaosshard.merchant.gui.today"), LX, LW, offerY(offers, i) - 12);
+        java.util.Map<Integer, Integer> ys = layout(entries);
+        int row = 0;
+        for (java.util.Map.Entry<Integer, Integer> en : ys.entrySet()) {
+            int e = en.getKey(), y = en.getValue();
+            if (e < 0) {
+                section(tr(e > -2000 ? "chaosshard.merchant.gui.today" : "chaosshard.merchant.gui.goods"), LX, LW - 6, y + 2);
+                continue;
             }
-            int y = offerY(offers, i);
+            NBTTagCompound o = offers.get(e);
             ItemStack st = new ItemStack(o);
             int p = o.getInteger("price");
             boolean can = bal >= p;
-            boolean over = ChaosUi.in(mx, my, LX, y, LW, ROW);
+            boolean over = ChaosUi.in(mx, my, LX, y, LW - 6, ROW);
             if (over) {
-                chamferFill(LX, y, LW, ROW, 2, can ? 0x40D9A441 : 0x30FF8C80);
-            } else if (i % 2 == 0) {
-                drawRect(LX, y, LX + LW, y + ROW, 0x18D9A441);
+                chamferFill(LX, y, LW - 6, ROW, 2, can ? 0x40D9A441 : 0x30FF8C80);
+            } else if (row++ % 2 == 0) {
+                drawRect(LX, y, LX + LW - 6, y + ROW, 0x18D9A441);
             }
             GlStateManager.color(1, 1, 1, 1);
             ChaosUi.item(st, LX + 1, y);
             String name = st.getDisplayName() + (st.getCount() > 1 ? " ×" + st.getCount() : "");
             int pw = fontRenderer.getStringWidth(money(p)) + 14;
-            fontRenderer.drawString(fontRenderer.trimStringToWidth(name, LW - 22 - pw), LX + 20, y + 4, can ? TXT : MUTED);
-            price(p, LX + LW - 3, y + 4, can ? GOLD : BAD);
+            fontRenderer.drawString(fontRenderer.trimStringToWidth(name, LW - 28 - pw), LX + 20, y + 4,
+                    can ? (st.isItemEnchanted() ? 0x9FE0FF : TXT) : MUTED);
+            price(p, LX + LW - 9, y + 4, can ? GOLD : BAD);
             if (over) {
                 hover = new ArrayList<>(st.getTooltip(mc.player, ITooltipFlag.TooltipFlags.NORMAL));
                 hover.add("");
@@ -255,6 +301,7 @@ public class GuiMerchant extends GuiScreen {
                 hover.add("§7" + (can ? tr("chaosshard.merchant.gui.buy_hint") : tr("chaosshard.merchant.gui.poor", money(p - bal))));
             }
         }
+        ChaosUi.scrollbar(LX + LW - 4, TOP, LIST_BOTTOM - TOP, offerScroll, visibleCount, entries.size());
     }
 
     private void drawAccount(int mx, int my) {
@@ -362,8 +409,9 @@ public class GuiMerchant extends GuiScreen {
         }
         int mx = mouseX - left, my = mouseY - top;
         List<NBTTagCompound> offers = list("offers");
-        for (int i = 0; i < offers.size(); i++) {
-            if (ChaosUi.in(mx, my, LX, offerY(offers, i), LW, ROW)) {
+        for (java.util.Map.Entry<Integer, Integer> en : layout(entries(offers)).entrySet()) {
+            int i = en.getKey();
+            if (i >= 0 && ChaosUi.in(mx, my, LX, en.getValue(), LW - 6, ROW)) {
                 if (view.getLong("balance") >= offers.get(i).getInteger("price")) {
                     int times = isShiftKeyDown() ? 5 : 1;
                     send(PacketMerchantAction.BUY, (times << 8) | i, "");
@@ -392,7 +440,12 @@ public class GuiMerchant extends GuiScreen {
         super.handleMouseInput();
         int d = Mouse.getEventDWheel();
         if (d != 0) {
-            lotScroll += d > 0 ? -1 : 1;
+            int mx = Mouse.getEventX() * width / mc.displayWidth - left;
+            if (mx < RX - 5) {
+                offerScroll += d > 0 ? -1 : 1;
+            } else {
+                lotScroll += d > 0 ? -1 : 1;
+            }
         }
     }
 

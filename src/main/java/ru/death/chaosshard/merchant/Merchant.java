@@ -114,13 +114,21 @@ public final class Merchant {
         }
     }
 
-    /** «мод:предмет[@мета][*кол-во]=цена» → товар (null — нет такого предмета или строка кривая). */
-    static Offer parse(String line, boolean daily) {
+    /**
+     * «мод:предмет[@мета][*кол-во][!чары]=цена» → товар (null — нет такого предмета или строка кривая).
+     * «!N» — случайные чары уровня N (для снаряжения); r задаёт, какие именно (на день одни и те же).
+     */
+    static Offer parse(String line, boolean daily, Random r) {
         try {
             int eq = line.lastIndexOf('=');
-            int price = Integer.parseInt(line.substring(eq + 1).trim());
+            int price = Math.max(Integer.parseInt(line.substring(eq + 1).trim()), ChaosConfig.merchant.minPrice);
             String id = line.substring(0, eq).trim();
-            int count = 1, meta = 0;
+            int count = 1, meta = 0, ench = 0;
+            int bang = id.indexOf('!');
+            if (bang >= 0) {
+                ench = Integer.parseInt(id.substring(bang + 1));
+                id = id.substring(0, bang);
+            }
             int star = id.indexOf('*');
             if (star >= 0) {
                 count = Integer.parseInt(id.substring(star + 1));
@@ -135,7 +143,11 @@ public final class Merchant {
             if (it == null || price <= 0 || count <= 0) {
                 return null;
             }
-            return new Offer(new ItemStack(it, count, meta), price, daily);
+            ItemStack st = new ItemStack(it, count, meta);
+            if (ench > 0) {
+                st = net.minecraft.enchantment.EnchantmentHelper.addRandomEnchantment(r != null ? r : new Random(line.hashCode()), st, ench, false);
+            }
+            return new Offer(st, price, daily);
         } catch (RuntimeException e) {
             return null;
         }
@@ -147,24 +159,38 @@ public final class Merchant {
         return ow.getWorldTime() / DAY;
     }
 
+    /** Сменные товары по категориям: реликвии, снаряжение, материалы, припасы. */
+    static String[][] categories() {
+        ChaosConfig.MerchantCfg c = ChaosConfig.merchant;
+        return new String[][]{c.dailyRelics, c.dailyGear, c.dailyMaterials, c.dailySupplies};
+    }
+
+    /** Сначала сменные (из каждой категории по несколько, на день одни и те же), потом постоянные. */
     public static List<Offer> offers(World w) {
         List<Offer> out = new ArrayList<>();
-        for (String s : ChaosConfig.merchant.offers) {
-            Offer o = parse(s, false);
+        long day = day(w);
+        String[][] cats = categories();
+        for (int c = 0; c < cats.length; c++) {
+            Random r = new Random(day * 0x9E3779B97F4A7C15L + 1234567L + c * 7919L);
+            List<String> pool = new ArrayList<>(java.util.Arrays.asList(cats[c]));
+            java.util.Collections.shuffle(pool, r);
+            int taken = 0;
+            for (String line : pool) {
+                if (taken >= ChaosConfig.merchant.dailyPerCategory) {
+                    break;
+                }
+                Offer o = parse(line, true, r);
+                if (o != null) {
+                    out.add(o);
+                    taken++;
+                }
+            }
+        }
+        for (String line : ChaosConfig.merchant.goods) {
+            Offer o = parse(line, false, null);
             if (o != null) {
                 out.add(o);
             }
-        }
-        List<Offer> pool = new ArrayList<>();
-        for (String s : ChaosConfig.merchant.rotating) {
-            Offer o = parse(s, true);
-            if (o != null) {
-                pool.add(o);
-            }
-        }
-        java.util.Collections.shuffle(pool, new Random(day(w) * 0x9E3779B97F4A7C15L + 1234567L));
-        for (int i = 0; i < Math.min(ChaosConfig.merchant.rotatingCount, pool.size()); i++) {
-            out.add(pool.get(i));
         }
         return out;
     }

@@ -1368,16 +1368,25 @@ public final class AutoTest {
             // покупка
             List<ru.death.chaosshard.merchant.Merchant.Offer> offers = ru.death.chaosshard.merchant.Merchant.offers(ow);
             long daily = offers.stream().filter(o -> o.daily).count();
-            check(offers.size() >= 8 && daily == ChaosConfig.merchant.rotatingCount, "товаров " + offers.size() + ", из них на сегодня " + daily);
-            ru.death.chaosshard.merchant.Merchant.Offer first = offers.get(0);
+            check(offers.size() >= 20 && daily == 4L * ChaosConfig.merchant.dailyPerCategory, "товаров " + offers.size() + ", из них на сегодня " + daily);
+            check(offers.stream().allMatch(o -> o.price >= 10), "дешевле серебряной монеты ничего нет");
+            check(offers.stream().anyMatch(o -> o.daily && o.stack.isItemEnchanted()), "снаряжение на сегодня зачаровано");
+            List<ru.death.chaosshard.merchant.Merchant.Offer> again = ru.death.chaosshard.merchant.Merchant.offers(ow);
+            boolean same = again.size() == offers.size();
+            for (int i = 0; same && i < offers.size(); i++) same = net.minecraft.item.ItemStack.areItemStacksEqual(again.get(i).stack, offers.get(i).stack);
+            check(same, "товары и чары на сегодня одни и те же при каждом открытии");
+            int fi = 0;
+            while (fi < offers.size() && offers.get(fi).daily) fi++;
+            final int firstIdx = fi;
+            ru.death.chaosshard.merchant.Merchant.Offer first = offers.get(firstIdx);
             long before = md.balance(me.getUniqueID());
-            check(ru.death.chaosshard.merchant.Merchant.buy(me, 0), "куплено: " + first.stack.getDisplayName());
+            check(ru.death.chaosshard.merchant.Merchant.buy(me, firstIdx), "куплено: " + first.stack.getDisplayName());
             int got = 0;
             for (net.minecraft.item.ItemStack st : me.inventory.mainInventory) if (st.getItem() == first.stack.getItem()) got += st.getCount();
             check(got == first.stack.getCount() && md.balance(me.getUniqueID()) == before - first.price,
                     "товар в сумке: " + got + ", счёт " + before + " → " + md.balance(me.getUniqueID()));
             md.add(me.getUniqueID(), -md.balance(me.getUniqueID()));
-            check(!ru.death.chaosshard.merchant.Merchant.buy(me, 0), "без денег не продаёт");
+            check(!ru.death.chaosshard.merchant.Merchant.buy(me, firstIdx), "без денег не продаёт");
             // скупка Lycanites
             net.minecraft.item.Item charge = null, meat = null, part = null, organ = null;
             for (net.minecraft.item.Item it : net.minecraft.item.Item.REGISTRY) {
