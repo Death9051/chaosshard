@@ -1,0 +1,2 @@
+net/shadowmage/ancientwarfare/npc/item/ItemCoin.class
+net/shadowmage/ancientwarfare/npc/item/ItemCoin$CoinMetal.class
