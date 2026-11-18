@@ -99,6 +99,8 @@ public class ChaosShard {
         // Копьё Хаоса (Стрела Хаоса, ветка «Копьё»): снаряд, позицию шлём каждый тик
         net.minecraftforge.fml.common.registry.EntityRegistry.registerModEntity(new net.minecraft.util.ResourceLocation(Tags.MOD_ID, "chaos_spear"),
                 ru.death.chaosshard.spell.EntityChaosSpear.class, "chaosshard.chaos_spear", eid++, this, 96, 1, true);
+        net.minecraftforge.fml.common.registry.EntityRegistry.registerModEntity(new net.minecraft.util.ResourceLocation(Tags.MOD_ID, "merchant"),
+                ru.death.chaosshard.merchant.EntityMerchant.class, "chaosshard.merchant", eid++, this, 80, 3, true, 0x1c1a20, 0xb08a3a);
         MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.cutscene.CutsceneManager());
         MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.servant.Resync());
         MinecraftForge.EVENT_BUS.register(STRUCTURES);
@@ -121,6 +123,7 @@ public class ChaosShard {
         MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.servant.ServantTravel());
         MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.servant.Retinue());
         MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.anchor.DefiledFarming());
+        MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.merchant.Merchant());
         MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.servant.Beasts());
         MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.servant.AltarAscension());
         MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.ritual.AltarRituals());

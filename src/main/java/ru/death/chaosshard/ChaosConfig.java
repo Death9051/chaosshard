@@ -69,6 +69,49 @@ public final class ChaosConfig {
     @Config.LangKey("chaosshard.config.order")
     public static final OrderCfg order = new OrderCfg();
 
+    @Config.Comment("Торговец у Якоря: монеты Ancient Warfare, скупка добычи Lycanites")
+    @Config.LangKey("chaosshard.config.merchant")
+    public static final MerchantCfg merchant = new MerchantCfg();
+
+    public static final class MerchantCfg {
+        @Config.Comment("Раз во сколько игровых дней торговец сам приходит к Якорю (0 — не приходит сам)")
+        @Config.RangeDouble(min = 0, max = 100)
+        public double visitDays = 2.0;
+
+        @Config.Comment("Сколько игровых дней торговец стоит у Якоря")
+        @Config.RangeDouble(min = 0.05, max = 10)
+        public double stayDays = 1.0;
+
+        @Config.Comment("Перезарядка Колокольчика торговца, игровых дней")
+        @Config.RangeDouble(min = 0, max = 10)
+        public double bellCooldownDays = 1.0;
+
+        @Config.Comment("Стоимость монет Ancient Warfare на счёте, в медных: медная, серебряная, золотая, древняя")
+        public int[] coinValues = {1, 10, 100, 250};
+
+        @Config.Comment({"Постоянные товары: предмет[@мета][*количество]=цена в медных.",
+                "Предметы модов, которых нет в сборке, пропускаются."})
+        public String[] offers = {
+                "minecraft:ender_pearl*2=20", "minecraft:experience_bottle*8=30", "minecraft:golden_apple=40",
+                "minecraft:blaze_rod*4=30", "minecraft:nether_wart*8=15", "minecraft:name_tag=25",
+                "minecraft:saddle=30", "minecraft:arrow*32=10"};
+
+        @Config.Comment("Сменные товары: из этого списка каждый игровой день выбирается несколько")
+        public String[] rotating = {
+                "minecraft:diamond*2=80", "minecraft:emerald*4=40", "minecraft:totem_of_undying=300",
+                "minecraft:golden_apple@1=400", "minecraft:shulker_shell*2=200", "chaosshard:world_shard=120",
+                "chaosshard:chaos_essence*2=60", "chaosshard:distorted_starmetal=200", "xreliquary:glowing_water*4=40",
+                "xreliquary:angelic_feather=150", "bountifulbaubles:trinketluckyhorseshoe=200",
+                "bountifulbaubles:potionrecall*2=40", "bountifulbaubles:trinketmagiclenses=150"};
+
+        @Config.Comment("Сколько сменных товаров в день")
+        @Config.RangeInt(min = 0, max = 8)
+        public int rotatingCount = 4;
+
+        @Config.Comment("Скупка добычи Lycanites, в медных за штуку: заряд, сырое и жареное мясо, мех / железа / печень, часть снаряжения")
+        public int[] lycanitesPrices = {1, 1, 4, 15};
+    }
+
     public static final class OrderCfg {
         @Config.Comment("Шанс святыни Ордена на чанк Лучезарии (1 из N)")
         @Config.RangeInt(min = 0, max = 100000)

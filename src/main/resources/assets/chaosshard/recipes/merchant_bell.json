@@ -1,0 +1,14 @@
+{
+ "type": "minecraft:crafting_shaped",
+ "pattern": [
+  " S ",
+  " G ",
+  "GNG"
+ ],
+ "key": {
+  "S": {"item": "minecraft:string"},
+  "G": {"item": "minecraft:gold_ingot"},
+  "N": {"item": "minecraft:iron_nugget"}
+ },
+ "result": {"item": "chaosshard:merchant_bell"}
+}

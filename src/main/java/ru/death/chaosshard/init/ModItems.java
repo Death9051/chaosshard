@@ -59,6 +59,8 @@ public final class ModItems {
     public static Item LOOT_BAG;
     /** Мешочек опыта — опыт, собранный Тягой. */
     public static Item XP_POUCH;
+    /** Колокольчик торговца — зовёт торговца к своему Якорю. */
+    public static Item MERCHANT_BELL;
     /** Глиф Хаоса — модификатор заклинания (метаданные — вид). */
     public static Item SPELL_GLYPH;
 
@@ -108,6 +110,7 @@ public final class ModItems {
         CHALLENGE_SPHERE.setCreativeTab(ru.death.chaosshard.ChaosTab.TAB);
         LOOT_BAG = add(new ru.death.chaosshard.challenge.ItemLootBag(), "loot_bag");
         XP_POUCH = add(new ru.death.chaosshard.ritual.ItemXpPouch(), "xp_pouch");
+        MERCHANT_BELL = add(new ru.death.chaosshard.merchant.ItemMerchantBell(), "merchant_bell");
         SPELL_GLYPH = add(new ru.death.chaosshard.spell.ItemSpellGlyph(), "spell_glyph");
         KAEL_BLADE = add(new ru.death.chaosshard.hero.ItemKaelBlade(), "kael_blade");
         KAEL_BLADE.setCreativeTab(ru.death.chaosshard.ChaosTab.TAB);

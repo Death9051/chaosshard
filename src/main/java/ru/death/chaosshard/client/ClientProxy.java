@@ -26,6 +26,8 @@ public class ClientProxy extends CommonProxy {
                 ru.death.chaosshard.anchor.TileAnchor.class, new ru.death.chaosshard.anchor.client.AnchorRenderer());
         net.minecraftforge.fml.client.registry.RenderingRegistry.registerEntityRenderingHandler(ru.death.chaosshard.spell.EntityChaosSpear.class,
                 ru.death.chaosshard.spell.client.RenderChaosSpear::new);
+        net.minecraftforge.fml.client.registry.RenderingRegistry.registerEntityRenderingHandler(ru.death.chaosshard.merchant.EntityMerchant.class,
+                ru.death.chaosshard.merchant.client.RenderMerchant::new);
         net.minecraftforge.fml.client.registry.ClientRegistry.bindTileEntitySpecialRenderer(
                 ru.death.chaosshard.ritual.TilePullBeetle.class, new ru.death.chaosshard.ritual.client.BeetleRenderer());
         net.minecraftforge.fml.client.registry.RenderingRegistry.registerEntityRenderingHandler(ru.death.chaosshard.servant.EntityChaosBeast.Hare.class,
