@@ -593,14 +593,17 @@ public class ClientTest {
                 // торговец: спереди, со спины (рюкзак) и окно торговли
                 onServer((s2, w2, p2) -> {
                     w2.setWorldTime(6000);
-                    BlockPos at = new BlockPos(p2).add(6, 0, 0);
-                    at = w2.getTopSolidOrLiquidBlock(at);
+                    // своя площадка прямо в воздухе: в Преддверии под ногами может быть пустота
+                    BlockPos at = new BlockPos(p2).add(12, 0, 0);
                     for (int dx = -3; dx <= 3; dx++) for (int dz = -4; dz <= 4; dz++) {
                         w2.setBlockState(at.add(dx, -1, dz), net.minecraft.init.Blocks.GRASS.getDefaultState(), 2);
                         for (int dy = 0; dy < 4; dy++) w2.setBlockToAir(at.add(dx, dy, dz));
                     }
                     ru.death.chaosshard.merchant.EntityMerchant m = ru.death.chaosshard.merchant.Merchant.summon(w2, at, p2.getUniqueID());
-                    if (m == null) return;
+                    if (m == null) {
+                        mc.addScheduledTask(() -> check(false, "торговцу негде встать"));
+                        return;
+                    }
                     m.setNoAI(true);
                     m.setPositionAndUpdate(at.getX() + 0.5, at.getY(), at.getZ() + 0.5);
                     m.rotationYaw = m.renderYawOffset = m.rotationYawHead = m.prevRotationYawHead = 0F;
