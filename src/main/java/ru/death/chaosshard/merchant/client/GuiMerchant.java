@@ -265,6 +265,11 @@ public class GuiMerchant extends GuiScreen {
         return 0;
     }
 
+    private int limitOf(int cat) {
+        int[] l = view.getIntArray("limits");
+        return cat >= 0 && cat < l.length ? l[cat] : 0;
+    }
+
     private int bought(int cat) {
         int[] b = view.getIntArray("bought");
         return cat >= 0 && cat < b.length ? b[cat] : 0;
@@ -285,7 +290,7 @@ public class GuiMerchant extends GuiScreen {
             NBTTagCompound o = offers.get(e);
             ItemStack st = new ItemStack(o);
             int p = o.getInteger("price");
-            int cat = o.getInteger("cat"), done = bought(cat), limit = view.getInteger("limit");
+            int cat = o.getInteger("cat"), done = bought(cat), limit = limitOf(cat);
             boolean capped = limit > 0 && done >= limit;
             boolean can = bal >= p && !capped;
             boolean over = ChaosUi.in(mx, my, LX, y, LW - 6, ROW);
@@ -428,7 +433,7 @@ public class GuiMerchant extends GuiScreen {
         for (java.util.Map.Entry<Integer, Integer> en : layout(entries(offers)).entrySet()) {
             int i = en.getKey();
             if (i >= 0 && ChaosUi.in(mx, my, LX, en.getValue(), LW - 6, ROW)) {
-                int limit = view.getInteger("limit"), left = limit > 0 ? limit - bought(offers.get(i).getInteger("cat")) : 5;
+                int limit = limitOf(offers.get(i).getInteger("cat")), left = limit > 0 ? limit - bought(offers.get(i).getInteger("cat")) : 5;
                 if (view.getLong("balance") >= offers.get(i).getInteger("price") && left > 0) {
                     int times = isShiftKeyDown() ? Math.min(5, left) : 1;
                     send(PacketMerchantAction.BUY, (times << 8) | i, "");

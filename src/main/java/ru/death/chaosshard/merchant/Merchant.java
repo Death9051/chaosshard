@@ -247,6 +247,11 @@ public final class Merchant {
         return cat >= 0 && cat < b.length ? b[cat] : 0;
     }
 
+    /** Дневной лимит покупок категории (0 — без лимита). */
+    public static int limit(int cat) {
+        return cat == CAT_GOODS ? ChaosConfig.merchant.limitGoods : ChaosConfig.merchant.limitPerCategory;
+    }
+
     /** Купить товар номер idx. Возвращает false, если денег мало, лимит категории исчерпан или товара нет. */
     public static boolean buy(EntityPlayer p, int idx) {
         List<Offer> list = offers(p.world);
@@ -255,7 +260,7 @@ public final class Merchant {
         }
         Offer o = list.get(idx);
         MerchantData d = MerchantData.get(p.world);
-        int limit = ChaosConfig.merchant.limitPerCategory;
+        int limit = limit(o.cat);
         int[] b = d.bought(p.getUniqueID(), day(p.world));
         if (d.balance(p.getUniqueID()) < o.price || limit > 0 && b[o.cat] >= limit) {
             return false;
@@ -387,7 +392,11 @@ public final class Merchant {
             bought[c] = boughtToday(p, c);
         }
         t.setIntArray("bought", bought);
-        t.setInteger("limit", ChaosConfig.merchant.limitPerCategory);
+        int[] limits = new int[CATS];
+        for (int c = 0; c < CATS; c++) {
+            limits[c] = limit(c);
+        }
+        t.setIntArray("limits", limits);
         NBTTagList lots = new NBTTagList();
         for (Lot l : lots(p)) {
             NBTTagCompound lt = l.icon.writeToNBT(new NBTTagCompound());

@@ -1395,12 +1395,16 @@ public final class AutoTest {
             // лимит: не больше limitPerCategory покупок одной категории за день
             md.add(me.getUniqueID(), 100000);
             int bought = 1;
-            while (bought < mc.limitPerCategory && ru.death.chaosshard.merchant.Merchant.buy(me, firstIdx)) bought++;
-            check(bought == mc.limitPerCategory && !ru.death.chaosshard.merchant.Merchant.buy(me, firstIdx),
-                    "постоянных куплено " + bought + ", дальше лимит " + mc.limitPerCategory);
+            while (bought < mc.limitGoods && ru.death.chaosshard.merchant.Merchant.buy(me, firstIdx)) bought++;
+            check(bought == mc.limitGoods && !ru.death.chaosshard.merchant.Merchant.buy(me, firstIdx),
+                    "постоянных куплено " + bought + ", дальше лимит " + mc.limitGoods);
+            me.inventory.clear();
             int other = -1;
             for (int i = 0; i < offers.size(); i++) if (offers.get(i).cat == ru.death.chaosshard.merchant.Merchant.CAT_MATERIAL) other = i;
             check(other >= 0 && ru.death.chaosshard.merchant.Merchant.buy(me, other), "лимит одной категории не мешает другой");
+            int mb = 1;
+            while (mb < mc.limitPerCategory + 2 && ru.death.chaosshard.merchant.Merchant.buy(me, other)) mb++;
+            check(mb == mc.limitPerCategory, "редких материалов куплено " + mb + ", лимит " + mc.limitPerCategory);
             md.bought.remove(me.getUniqueID());
             md.boughtDay.remove(me.getUniqueID());
             md.add(me.getUniqueID(), -md.balance(me.getUniqueID()));

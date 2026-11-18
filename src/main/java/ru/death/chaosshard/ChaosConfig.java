@@ -111,9 +111,13 @@ public final class ChaosConfig {
         @Config.RangeInt(min = 0, max = 8)
         public int dailySupplyCount = 1;
 
-        @Config.Comment("Сколько покупок одной категории в игровой день (реликвии, материалы, припасы, постоянные). 0 — без лимита")
+        @Config.Comment("Сколько покупок одной сменной категории в игровой день (реликвии, материалы, припасы). 0 — без лимита")
         @Config.RangeInt(min = 0, max = 1000)
         public int limitPerCategory = 4;
+
+        @Config.Comment("Сколько покупок постоянных товаров в игровой день. 0 — без лимита")
+        @Config.RangeInt(min = 0, max = 1000)
+        public int limitGoods = 8;
 
         @Config.Comment({"Реликвии с ценой. Кроме них в реликвии сами попадают все предметы, которые надеваются в Baubles,",
                 "по цене baublePrice"})
