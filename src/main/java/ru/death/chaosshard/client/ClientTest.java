@@ -605,11 +605,11 @@ public class ClientTest {
                         return;
                     }
                     m.setNoAI(true);
-                    m.setPositionAndUpdate(at.getX() + 0.5, at.getY(), at.getZ() + 0.5);
                     m.rotationYaw = m.renderYawOffset = m.rotationYawHead = m.prevRotationYawHead = 0F;
                     merchantId = m.getEntityId();
-                    merchantAt = at;
-                    p2.connection.setPlayerLocation(at.getX() + 0.5, at.getY(), at.getZ() + 3.2, 180F, 12F);
+                    // встал там, где нашлось место у «Якоря», — камеру ставим к нему
+                    merchantAt = new BlockPos(m.posX, m.posY, m.posZ);
+                    p2.connection.setPlayerLocation(m.posX, m.posY, m.posZ + 3.2, 180F, 12F);
                 });
                 wait = 40;
                 step++;
