@@ -265,6 +265,11 @@ public class GuiMerchant extends GuiScreen {
         return 0;
     }
 
+    private int bought(int cat) {
+        int[] b = view.getIntArray("bought");
+        return cat >= 0 && cat < b.length ? b[cat] : 0;
+    }
+
     private void drawOffers(int mx, int my) {
         List<NBTTagCompound> offers = list("offers");
         List<Integer> entries = entries(offers);
@@ -280,7 +285,9 @@ public class GuiMerchant extends GuiScreen {
             NBTTagCompound o = offers.get(e);
             ItemStack st = new ItemStack(o);
             int p = o.getInteger("price");
-            boolean can = bal >= p;
+            int cat = o.getInteger("cat"), done = bought(cat), limit = view.getInteger("limit");
+            boolean capped = limit > 0 && done >= limit;
+            boolean can = bal >= p && !capped;
             boolean over = ChaosUi.in(mx, my, LX, y, LW - 6, ROW);
             if (over) {
                 chamferFill(LX, y, LW - 6, ROW, 2, can ? 0x40D9A441 : 0x30FF8C80);
@@ -293,12 +300,21 @@ public class GuiMerchant extends GuiScreen {
             int pw = fontRenderer.getStringWidth(money(p)) + 14;
             fontRenderer.drawString(fontRenderer.trimStringToWidth(name, LW - 28 - pw), LX + 20, y + 4,
                     can ? (st.isItemEnchanted() ? 0x9FE0FF : TXT) : MUTED);
-            price(p, LX + LW - 9, y + 4, can ? GOLD : BAD);
+            if (capped) {
+                String l = tr("chaosshard.merchant.gui.capped");
+                fontRenderer.drawString(l, LX + LW - 9 - fontRenderer.getStringWidth(l), y + 4, MUTED);
+            } else {
+                price(p, LX + LW - 9, y + 4, bal >= p ? GOLD : BAD);
+            }
             if (over) {
                 hover = new ArrayList<>(st.getTooltip(mc.player, ITooltipFlag.TooltipFlags.NORMAL));
                 hover.add("");
                 hover.add((can ? "§6" : "§c") + tr("chaosshard.merchant.gui.price", money(p)));
-                hover.add("§7" + (can ? tr("chaosshard.merchant.gui.buy_hint") : tr("chaosshard.merchant.gui.poor", money(p - bal))));
+                hover.add("§7" + (capped ? tr("chaosshard.merchant.gui.capped.desc")
+                        : can ? tr("chaosshard.merchant.gui.buy_hint") : tr("chaosshard.merchant.gui.poor", money(p - bal))));
+                if (limit > 0) {
+                    hover.add((capped ? "§c" : "§8") + tr("chaosshard.merchant.gui.bought", tr("chaosshard.merchant.cat." + cat), done, limit));
+                }
             }
         }
         ChaosUi.scrollbar(LX + LW - 4, TOP, LIST_BOTTOM - TOP, offerScroll, visibleCount, entries.size());
@@ -412,8 +428,9 @@ public class GuiMerchant extends GuiScreen {
         for (java.util.Map.Entry<Integer, Integer> en : layout(entries(offers)).entrySet()) {
             int i = en.getKey();
             if (i >= 0 && ChaosUi.in(mx, my, LX, en.getValue(), LW - 6, ROW)) {
-                if (view.getLong("balance") >= offers.get(i).getInteger("price")) {
-                    int times = isShiftKeyDown() ? 5 : 1;
+                int limit = view.getInteger("limit"), left = limit > 0 ? limit - bought(offers.get(i).getInteger("cat")) : 5;
+                if (view.getLong("balance") >= offers.get(i).getInteger("price") && left > 0) {
+                    int times = isShiftKeyDown() ? Math.min(5, left) : 1;
                     send(PacketMerchantAction.BUY, (times << 8) | i, "");
                 }
                 return;

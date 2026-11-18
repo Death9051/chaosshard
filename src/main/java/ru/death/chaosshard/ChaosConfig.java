@@ -89,11 +89,7 @@ public final class ChaosConfig {
         @Config.Comment("Стоимость монет Ancient Warfare на счёте, в медных: медная, серебряная, золотая, древняя")
         public int[] coinValues = {1, 10, 100, 250};
 
-        @Config.Comment("Самая низкая цена товара в медных (10 — серебряная монета)")
-        @Config.RangeInt(min = 1, max = 100000)
-        public int minPrice = 10;
-
-        @Config.Comment({"Постоянные товары: предмет[@мета][*количество][!чары]=цена в медных.",
+        @Config.Comment({"Постоянные товары: предмет[@мета][*количество]=цена в медных.",
                 "Предметы модов, которых нет в сборке, пропускаются."})
         public String[] goods = {
                 "minecraft:iron_ingot*8=20", "minecraft:gold_ingot*4=20", "minecraft:coal*16=10", "minecraft:redstone*16=15",
@@ -103,26 +99,39 @@ public final class ChaosConfig {
                 "minecraft:experience_bottle*8=30", "minecraft:golden_apple=40", "minecraft:name_tag=25", "minecraft:saddle=30",
                 "minecraft:arrow*32=10"};
 
-        @Config.Comment("Сменные товары «только сегодня»: каждый игровой день из каждой категории берётся по dailyPerCategory")
-        @Config.RangeInt(min = 0, max = 4)
-        public int dailyPerCategory = 1;
+        @Config.Comment("Сколько реликвий «только сегодня» в день")
+        @Config.RangeInt(min = 0, max = 8)
+        public int dailyRelicCount = 4;
 
-        @Config.Comment("Сменные: реликвии")
-        public String[] dailyRelics = {
+        @Config.Comment("Сколько редких материалов «только сегодня» в день")
+        @Config.RangeInt(min = 0, max = 8)
+        public int dailyMaterialCount = 1;
+
+        @Config.Comment("Сколько припасов «только сегодня» в день")
+        @Config.RangeInt(min = 0, max = 8)
+        public int dailySupplyCount = 1;
+
+        @Config.Comment("Сколько покупок одной категории в игровой день (реликвии, материалы, припасы, постоянные). 0 — без лимита")
+        @Config.RangeInt(min = 0, max = 1000)
+        public int limitPerCategory = 4;
+
+        @Config.Comment({"Реликвии с ценой. Кроме них в реликвии сами попадают все предметы, которые надеваются в Baubles,",
+                "по цене baublePrice"})
+        public String[] relics = {
                 "xreliquary:mercy_cross=300", "xreliquary:angelheart_vial=250", "xreliquary:salamander_eye=300",
                 "xreliquary:fortune_coin=250", "xreliquary:hero_medallion=300", "xreliquary:angelic_feather=200",
                 "bountifulbaubles:trinketluckyhorseshoe=200", "bountifulbaubles:trinketobsidianskull=250",
                 "bountifulbaubles:trinketmagiclenses=150", "bountifulbaubles:shieldcobalt=250", "bountifulbaubles:amuletcross=250",
                 "bountifulbaubles:crowngold=300", "bountifulbaubles:trinketvitamins=200", "bountifulbaubles:trinketapple=200"};
 
-        @Config.Comment("Сменные: снаряжение (!N — случайные чары уровня N)")
-        public String[] dailyGear = {
-                "minecraft:diamond_sword!20=200", "minecraft:diamond_pickaxe!20=200", "minecraft:diamond_axe!20=180",
-                "minecraft:diamond_chestplate!20=300", "minecraft:diamond_helmet!20=200", "minecraft:diamond_leggings!20=260",
-                "minecraft:diamond_boots!20=180", "minecraft:bow!25=150", "minecraft:iron_chestplate!25=120",
-                "minecraft:fishing_rod!25=60", "minecraft:shield=40"};
+        @Config.Comment("Цена предмета Baubles, которого нет в списке relics")
+        @Config.RangeInt(min = 1, max = 100000)
+        public int baublePrice = 200;
 
-        @Config.Comment("Сменные: материалы")
+        @Config.Comment("Не продавать как реликвии: мод:предмет или мод:* (весь мод)")
+        public String[] relicExclude = {"baubles:*", "chaosshard:*"};
+
+        @Config.Comment("Сменные: редкие материалы")
         public String[] dailyMaterials = {
                 "minecraft:diamond*2=80", "minecraft:emerald*4=40", "minecraft:shulker_shell*2=200", "minecraft:prismarine_crystals*8=40",
                 "minecraft:ghast_tear*2=50", "minecraft:magma_cream*4=30", "minecraft:rabbit_foot*2=40", "minecraft:chorus_fruit*8=30",
@@ -134,8 +143,8 @@ public final class ChaosConfig {
                 "minecraft:ender_eye*4=60", "minecraft:golden_carrot*8=30", "xreliquary:glowing_water*4=40",
                 "xreliquary:holy_hand_grenade*2=60", "bountifulbaubles:potionrecall*2=40"};
 
-        @Config.Comment("Скупка добычи Lycanites, в медных за штуку: заряд, сырое и жареное мясо, мех / железа / печень, часть снаряжения")
-        public int[] lycanitesPrices = {1, 1, 4, 15};
+        @Config.Comment("Скупка добычи Lycanites, в медных за штуку: заряд, мясо, мех / железа / печень, часть снаряжения")
+        public int[] lycanitesBuy = {10, 10, 40, 150};
     }
 
     public static final class OrderCfg {
@@ -588,6 +597,7 @@ public final class ChaosConfig {
         if (Tags.MOD_ID.equals(event.getModID())) {
             ConfigManager.sync(Tags.MOD_ID, Config.Type.INSTANCE);
             ru.death.chaosshard.anchor.Corruption.reset();
+            ru.death.chaosshard.merchant.Merchant.resetPools();
         }
     }
 

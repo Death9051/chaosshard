@@ -1369,9 +1369,15 @@ public final class AutoTest {
             // покупка
             List<ru.death.chaosshard.merchant.Merchant.Offer> offers = ru.death.chaosshard.merchant.Merchant.offers(ow);
             long daily = offers.stream().filter(o -> o.daily).count();
-            check(offers.size() >= 20 && daily == 4L * ChaosConfig.merchant.dailyPerCategory, "товаров " + offers.size() + ", из них на сегодня " + daily);
-            check(offers.stream().allMatch(o -> o.price >= 10), "дешевле серебряной монеты ничего нет");
-            check(offers.stream().anyMatch(o -> o.daily && o.stack.isItemEnchanted()), "снаряжение на сегодня зачаровано");
+            ChaosConfig.MerchantCfg mc = ChaosConfig.merchant;
+            check(offers.size() >= 20 && daily == mc.dailyRelicCount + mc.dailyMaterialCount + mc.dailySupplyCount,
+                    "товаров " + offers.size() + ", из них на сегодня " + daily);
+            long relicsToday = offers.stream().filter(o -> o.cat == ru.death.chaosshard.merchant.Merchant.CAT_RELIC).count();
+            check(relicsToday == mc.dailyRelicCount, "реликвий на сегодня: " + relicsToday);
+            List<ru.death.chaosshard.merchant.Merchant.Offer> pool = ru.death.chaosshard.merchant.Merchant.relicPool();
+            long auto = pool.stream().filter(o -> o.price == mc.baublePrice).count();
+            check(pool.size() > mc.relics.length && auto > 0, "в реликвиях и предметы Baubles: всего " + pool.size() + ", сами нашлись " + auto);
+            check(pool.stream().noneMatch(o -> "baubles".equals(o.stack.getItem().getRegistryName().getNamespace())), "кольцо самого Baubles не продаётся");
             List<ru.death.chaosshard.merchant.Merchant.Offer> again = ru.death.chaosshard.merchant.Merchant.offers(ow);
             boolean same = again.size() == offers.size();
             for (int i = 0; same && i < offers.size(); i++) same = net.minecraft.item.ItemStack.areItemStacksEqual(again.get(i).stack, offers.get(i).stack);
@@ -1386,6 +1392,17 @@ public final class AutoTest {
             for (net.minecraft.item.ItemStack st : me.inventory.mainInventory) if (st.getItem() == first.stack.getItem()) got += st.getCount();
             check(got == first.stack.getCount() && md.balance(me.getUniqueID()) == before - first.price,
                     "товар в сумке: " + got + ", счёт " + before + " → " + md.balance(me.getUniqueID()));
+            // лимит: не больше limitPerCategory покупок одной категории за день
+            md.add(me.getUniqueID(), 100000);
+            int bought = 1;
+            while (bought < mc.limitPerCategory && ru.death.chaosshard.merchant.Merchant.buy(me, firstIdx)) bought++;
+            check(bought == mc.limitPerCategory && !ru.death.chaosshard.merchant.Merchant.buy(me, firstIdx),
+                    "постоянных куплено " + bought + ", дальше лимит " + mc.limitPerCategory);
+            int other = -1;
+            for (int i = 0; i < offers.size(); i++) if (offers.get(i).cat == ru.death.chaosshard.merchant.Merchant.CAT_MATERIAL) other = i;
+            check(other >= 0 && ru.death.chaosshard.merchant.Merchant.buy(me, other), "лимит одной категории не мешает другой");
+            md.bought.remove(me.getUniqueID());
+            md.boughtDay.remove(me.getUniqueID());
             md.add(me.getUniqueID(), -md.balance(me.getUniqueID()));
             check(!ru.death.chaosshard.merchant.Merchant.buy(me, firstIdx), "без денег не продаёт");
             // скупка Lycanites
@@ -1405,7 +1422,7 @@ public final class AutoTest {
                 me.inventory.addItemStackToInventory(new net.minecraft.item.ItemStack(meat, 2));
                 me.inventory.addItemStackToInventory(new net.minecraft.item.ItemStack(part, 1));
                 me.inventory.addItemStackToInventory(new net.minecraft.item.ItemStack(net.minecraft.init.Items.BONE, 4));
-                int[] pr = ChaosConfig.merchant.lycanitesPrices;
+                int[] pr = ChaosConfig.merchant.lycanitesBuy;
                 check(ru.death.chaosshard.merchant.Merchant.lots(me).size() == 3, "в скупке строк: " + ru.death.chaosshard.merchant.Merchant.lots(me).size() + " из 3 (кость не берёт)");
                 long all = ru.death.chaosshard.merchant.Merchant.sell(me, null);
                 check(all == 3L * pr[0] + 2L * pr[1], "«продать всё» без части снаряжения: " + all);

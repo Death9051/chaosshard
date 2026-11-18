@@ -23,6 +23,25 @@ public class MerchantData extends WorldSavedData {
     /** До какого времени торговец уже стоит у Якоря игрока (чтобы не прийти второй раз). */
     public final Map<UUID, Long> busyUntil = new HashMap<>();
 
+    /** Покупки за день по категориям: день и счётчики. */
+    public final Map<UUID, Long> boughtDay = new HashMap<>();
+    public final Map<UUID, int[]> bought = new HashMap<>();
+
+    /** Счётчики покупок игрока за этот день (в новый день обнуляются). */
+    public int[] bought(UUID id, long day) {
+        if (boughtDay.getOrDefault(id, -1L) != day) {
+            boughtDay.put(id, day);
+            bought.put(id, new int[Merchant.CATS]);
+            markDirty();
+        }
+        int[] b = bought.get(id);
+        if (b == null || b.length < Merchant.CATS) {
+            b = java.util.Arrays.copyOf(b == null ? new int[0] : b, Merchant.CATS);
+            bought.put(id, b);
+        }
+        return b;
+    }
+
     public MerchantData(String name) {
         super(name);
     }
@@ -50,6 +69,8 @@ public class MerchantData extends WorldSavedData {
         balance.clear();
         nextVisit.clear();
         busyUntil.clear();
+        boughtDay.clear();
+        bought.clear();
         NBTTagList l = nbt.getTagList("Players", 10);
         for (int i = 0; i < l.tagCount(); i++) {
             NBTTagCompound t = l.getCompoundTagAt(i);
@@ -66,6 +87,10 @@ public class MerchantData extends WorldSavedData {
             if (t.hasKey("Busy")) {
                 busyUntil.put(id, t.getLong("Busy"));
             }
+            if (t.hasKey("BoughtDay")) {
+                boughtDay.put(id, t.getLong("BoughtDay"));
+                bought.put(id, t.getIntArray("Bought"));
+            }
         }
     }
 
@@ -74,6 +99,7 @@ public class MerchantData extends WorldSavedData {
         java.util.Set<UUID> ids = new java.util.HashSet<>(balance.keySet());
         ids.addAll(nextVisit.keySet());
         ids.addAll(busyUntil.keySet());
+        ids.addAll(boughtDay.keySet());
         NBTTagList l = new NBTTagList();
         for (UUID id : ids) {
             NBTTagCompound t = new NBTTagCompound();
@@ -86,6 +112,10 @@ public class MerchantData extends WorldSavedData {
             }
             if (busyUntil.containsKey(id)) {
                 t.setLong("Busy", busyUntil.get(id));
+            }
+            if (boughtDay.containsKey(id) && bought.containsKey(id)) {
+                t.setLong("BoughtDay", boughtDay.get(id));
+                t.setIntArray("Bought", bought.get(id));
             }
             l.appendTag(t);
         }

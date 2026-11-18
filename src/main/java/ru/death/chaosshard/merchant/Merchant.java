@@ -102,33 +102,30 @@ public final class Merchant {
 
     // ------------------------------------------------------------------ товары
 
+    /** Категории товаров (у каждой свой дневной лимит покупок). */
+    public static final int CAT_RELIC = 0, CAT_MATERIAL = 1, CAT_SUPPLY = 2, CAT_GOODS = 3, CATS = 4;
+
     public static final class Offer {
         public final ItemStack stack;
         public final int price;
         public final boolean daily;
+        public final int cat;
 
-        Offer(ItemStack stack, int price, boolean daily) {
+        Offer(ItemStack stack, int price, boolean daily, int cat) {
             this.stack = stack;
             this.price = price;
             this.daily = daily;
+            this.cat = cat;
         }
     }
 
-    /**
-     * «мод:предмет[@мета][*кол-во][!чары]=цена» → товар (null — нет такого предмета или строка кривая).
-     * «!N» — случайные чары уровня N (для снаряжения); r задаёт, какие именно (на день одни и те же).
-     */
-    static Offer parse(String line, boolean daily, Random r) {
+    /** «мод:предмет[@мета][*кол-во]=цена» → товар (null — нет такого предмета или строка кривая). */
+    static Offer parse(String line, boolean daily, int cat) {
         try {
             int eq = line.lastIndexOf('=');
-            int price = Math.max(Integer.parseInt(line.substring(eq + 1).trim()), ChaosConfig.merchant.minPrice);
+            int price = Integer.parseInt(line.substring(eq + 1).trim());
             String id = line.substring(0, eq).trim();
-            int count = 1, meta = 0, ench = 0;
-            int bang = id.indexOf('!');
-            if (bang >= 0) {
-                ench = Integer.parseInt(id.substring(bang + 1));
-                id = id.substring(0, bang);
-            }
+            int count = 1, meta = 0;
             int star = id.indexOf('*');
             if (star >= 0) {
                 count = Integer.parseInt(id.substring(star + 1));
@@ -143,51 +140,87 @@ public final class Merchant {
             if (it == null || price <= 0 || count <= 0) {
                 return null;
             }
-            ItemStack st = new ItemStack(it, count, meta);
-            if (ench > 0) {
-                st = net.minecraft.enchantment.EnchantmentHelper.addRandomEnchantment(r != null ? r : new Random(line.hashCode()), st, ench, false);
-            }
-            return new Offer(st, price, daily);
+            return new Offer(new ItemStack(it, count, meta), price, daily, cat);
         } catch (RuntimeException e) {
             return null;
         }
     }
 
-    /** Номер игрового дня (по верхнему миру) — от него зависят сменные товары. */
+    /** Номер игрового дня (по верхнему миру) — от него зависят сменные товары и лимиты. */
     public static long day(World w) {
         World ow = w.getMinecraftServer() != null ? w.getMinecraftServer().getWorld(0) : w;
         return ow.getWorldTime() / DAY;
     }
 
-    /** Сменные товары по категориям: реликвии, снаряжение, материалы, припасы. */
-    static String[][] categories() {
-        ChaosConfig.MerchantCfg c = ChaosConfig.merchant;
-        return new String[][]{c.dailyRelics, c.dailyGear, c.dailyMaterials, c.dailySupplies};
+    private static List<Offer> relicPool;
+
+    /** Надевается ли в слот Baubles. */
+    static boolean isBauble(ItemStack s) {
+        try {
+            return s.getItem() instanceof baubles.api.IBauble
+                    || s.hasCapability(baubles.api.cap.BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null);
+        } catch (Throwable t) {
+            return false;
+        }
     }
 
-    /** Сначала сменные (из каждой категории по несколько, на день одни и те же), потом постоянные. */
-    public static List<Offer> offers(World w) {
+    /** Реликвии: список из настроек и всё, что надевается в Baubles (по цене baublePrice), без исключённых. */
+    public static List<Offer> relicPool() {
+        if (relicPool != null) {
+            return relicPool;
+        }
         List<Offer> out = new ArrayList<>();
-        long day = day(w);
-        String[][] cats = categories();
-        for (int c = 0; c < cats.length; c++) {
-            Random r = new Random(day * 0x9E3779B97F4A7C15L + 1234567L + c * 7919L);
-            List<String> pool = new ArrayList<>(java.util.Arrays.asList(cats[c]));
-            java.util.Collections.shuffle(pool, r);
-            int taken = 0;
-            for (String line : pool) {
-                if (taken >= ChaosConfig.merchant.dailyPerCategory) {
-                    break;
-                }
-                Offer o = parse(line, true, r);
-                if (o != null) {
-                    out.add(o);
-                    taken++;
+        java.util.Set<String> seen = new java.util.HashSet<>();
+        java.util.Set<String> skip = new java.util.HashSet<>(java.util.Arrays.asList(ChaosConfig.merchant.relicExclude));
+        for (String line : ChaosConfig.merchant.relics) {
+            Offer o = parse(line, true, CAT_RELIC);
+            if (o != null) {
+                out.add(o);
+                seen.add(o.stack.getItem().getRegistryName() + "@" + o.stack.getMetadata());
+            }
+        }
+        for (Item it : Item.REGISTRY) {
+            ResourceLocation r = it.getRegistryName();
+            if (r == null || skip.contains(r.toString()) || skip.contains(r.getNamespace() + ":*")) {
+                continue;
+            }
+            net.minecraft.util.NonNullList<ItemStack> subs = net.minecraft.util.NonNullList.create();
+            try {
+                it.getSubItems(net.minecraft.creativetab.CreativeTabs.SEARCH, subs);
+            } catch (Throwable t) {
+                continue;
+            }
+            for (ItemStack st : subs) {
+                String key = r + "@" + st.getMetadata();
+                if (!st.isEmpty() && !seen.contains(key) && isBauble(st)) {
+                    seen.add(key);
+                    ItemStack one = st.copy();
+                    one.setCount(1);
+                    out.add(new Offer(one, ChaosConfig.merchant.baublePrice, true, CAT_RELIC));
                 }
             }
         }
-        for (String line : ChaosConfig.merchant.goods) {
-            Offer o = parse(line, false, null);
+        relicPool = out;
+        return out;
+    }
+
+    /** Перечитать реликвии (после смены настроек). */
+    public static void resetPools() {
+        relicPool = null;
+    }
+
+    private static void pick(List<Offer> out, List<Offer> pool, int n, long day, int salt) {
+        List<Offer> p = new ArrayList<>(pool);
+        java.util.Collections.shuffle(p, new Random(day * 0x9E3779B97F4A7C15L + 1234567L + salt * 7919L));
+        for (int i = 0; i < Math.min(n, p.size()); i++) {
+            out.add(p.get(i));
+        }
+    }
+
+    private static List<Offer> parseAll(String[] lines, boolean daily, int cat) {
+        List<Offer> out = new ArrayList<>();
+        for (String line : lines) {
+            Offer o = parse(line, daily, cat);
             if (o != null) {
                 out.add(o);
             }
@@ -195,7 +228,26 @@ public final class Merchant {
         return out;
     }
 
-    /** Купить товар номер idx. Возвращает false, если денег мало или товара нет. */
+    /** Сначала сменные (реликвии, материалы, припасы — на день одни и те же), потом постоянные. */
+    public static List<Offer> offers(World w) {
+        List<Offer> out = new ArrayList<>();
+        long day = day(w);
+        ChaosConfig.MerchantCfg c = ChaosConfig.merchant;
+        pick(out, relicPool(), c.dailyRelicCount, day, 0);
+        pick(out, parseAll(c.dailyMaterials, true, CAT_MATERIAL), c.dailyMaterialCount, day, 1);
+        pick(out, parseAll(c.dailySupplies, true, CAT_SUPPLY), c.dailySupplyCount, day, 2);
+        out.addAll(parseAll(c.goods, false, CAT_GOODS));
+        return out;
+    }
+
+    /** Сколько покупок категории cat игрок уже сделал сегодня. */
+    public static int boughtToday(EntityPlayer p, int cat) {
+        MerchantData d = MerchantData.get(p.world);
+        int[] b = d.bought(p.getUniqueID(), day(p.world));
+        return cat >= 0 && cat < b.length ? b[cat] : 0;
+    }
+
+    /** Купить товар номер idx. Возвращает false, если денег мало, лимит категории исчерпан или товара нет. */
     public static boolean buy(EntityPlayer p, int idx) {
         List<Offer> list = offers(p.world);
         if (idx < 0 || idx >= list.size()) {
@@ -203,10 +255,14 @@ public final class Merchant {
         }
         Offer o = list.get(idx);
         MerchantData d = MerchantData.get(p.world);
-        if (d.balance(p.getUniqueID()) < o.price) {
+        int limit = ChaosConfig.merchant.limitPerCategory;
+        int[] b = d.bought(p.getUniqueID(), day(p.world));
+        if (d.balance(p.getUniqueID()) < o.price || limit > 0 && b[o.cat] >= limit) {
             return false;
         }
         d.add(p.getUniqueID(), -o.price);
+        b[o.cat]++;
+        d.markDirty();
         ItemStack give = o.stack.copy();
         if (!p.inventory.addItemStackToInventory(give) && !give.isEmpty()) {
             p.dropItem(give, false);
@@ -247,7 +303,7 @@ public final class Merchant {
 
     public static int sellPrice(ItemStack s) {
         int k = lycKind(s);
-        int[] v = ChaosConfig.merchant.lycanitesPrices;
+        int[] v = ChaosConfig.merchant.lycanitesBuy;
         return k < 0 || k >= v.length ? 0 : Math.max(0, v[k]);
     }
 
@@ -322,9 +378,16 @@ public final class Merchant {
             NBTTagCompound ot = o.stack.writeToNBT(new NBTTagCompound());
             ot.setInteger("price", o.price);
             ot.setBoolean("daily", o.daily);
+            ot.setInteger("cat", o.cat);
             offers.appendTag(ot);
         }
         t.setTag("offers", offers);
+        int[] bought = new int[CATS];
+        for (int c = 0; c < CATS; c++) {
+            bought[c] = boughtToday(p, c);
+        }
+        t.setIntArray("bought", bought);
+        t.setInteger("limit", ChaosConfig.merchant.limitPerCategory);
         NBTTagList lots = new NBTTagList();
         for (Lot l : lots(p)) {
             NBTTagCompound lt = l.icon.writeToNBT(new NBTTagCompound());
