@@ -2440,7 +2440,6 @@ chaosshard.merchant.gui.price=Просит %s
 chaosshard.merchant.gui.buy_hint=ЛКМ: купить. Shift+ЛКМ: взять сразу несколько, до 5.
 chaosshard.merchant.gui.poor=На счёте не хватает %s
 chaosshard.merchant.gui.account=Ваш счёт
-chaosshard.merchant.gui.rates=Медная монета идёт за %s, серебряная за %s, золотая за %s, древняя за %s. Счёт торговец помнит у любого вашего Якоря.
 chaosshard.merchant.gui.pocket=При себе монет на %s
 chaosshard.merchant.gui.no_coins=Монет при себе нет
 chaosshard.merchant.gui.deposit=Отдать монеты

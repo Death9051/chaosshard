@@ -2337,7 +2337,6 @@ chaosshard.merchant.gui.price=Asks %s
 chaosshard.merchant.gui.buy_hint=Click: buy. Shift+click: take several at once, up to 5.
 chaosshard.merchant.gui.poor=Your account is %s short
 chaosshard.merchant.gui.account=Your account
-chaosshard.merchant.gui.rates=A copper coin counts as %s, silver %s, gold %s, ancient %s. The merchant remembers your account at any of your Anchors.
 chaosshard.merchant.gui.pocket=Coins on you: %s
 chaosshard.merchant.gui.no_coins=No coins on you
 chaosshard.merchant.gui.deposit=Hand over coins

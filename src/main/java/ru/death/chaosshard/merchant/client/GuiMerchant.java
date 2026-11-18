@@ -338,13 +338,6 @@ public class GuiMerchant extends GuiScreen {
         fontRenderer.drawString(b, -bw, 0, GOLD);
         GlStateManager.popMatrix();
         coin(RX + RW - 6 - (int) (bw * 1.5F) - 12, TOP + 19);
-        if (ChaosUi.in(mx, my, RX, TOP + 12, RW, 22)) {
-            int[] v = view.getIntArray("values");
-            hover = new ArrayList<>();
-            hover.add(tr("chaosshard.merchant.gui.account") + ": " + money(bal));
-            hover.add("§7" + tr("chaosshard.merchant.gui.rates", v.length > 0 ? v[0] : 1, v.length > 1 ? v[1] : 10, v.length > 2 ? v[2] : 100,
-                    v.length > 3 ? v[3] : 250));
-        }
         long coins = view.getLong("coins");
         int y = TOP + 40;
         String c = coins > 0 ? tr("chaosshard.merchant.gui.pocket", money(coins)) : tr("chaosshard.merchant.gui.no_coins");
