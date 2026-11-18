@@ -1,0 +1,31 @@
+== /tmp/bc/net/shadowmage/ancientwarfare/structure/registry/BiomeGroupRegistry$Parser.class
+       0: ldc           #30                 // String biome_groups
+       4: ldc           #30                 // String biome_groups
+       1: ldc           #95                 // String
+== /tmp/bc/net/shadowmage/ancientwarfare/structure/registry/BiomeGroupRegistry.class
+== /tmp/bc/net/shadowmage/ancientwarfare/structure/gui/GuiStructureBiomeSelection$1.class
+== /tmp/bc/net/shadowmage/ancientwarfare/structure/gui/GuiStructureValidationSettings$PropertyBiomeInput.class
+== /tmp/bc/net/shadowmage/ancientwarfare/structure/gui/GuiStructureBiomeSelection$2.class
+== /tmp/bc/net/shadowmage/ancientwarfare/structure/gui/GuiStructureBiomeSelection$3.class
+== /tmp/bc/net/shadowmage/ancientwarfare/structure/gui/GuiStructureBiomeSelection$4.class
+== /tmp/bc/net/shadowmage/ancientwarfare/structure/gui/GuiStructureBiomeSelection$5.class
+== /tmp/bc/net/shadowmage/ancientwarfare/structure/gui/GuiStructureBiomeSelection.class
+      16: ldc           #77                 // String guistrings.scanner.biome_groups
+      28: ldc           #91                 // String :
+      55: ldc           #104                // String
+     114: ldc           #118                // String guistrings.biome_whitelist
+     170: ldc           #141                // String guistrings.scanner.biomes
+     182: ldc           #91                 // String :
+     210: ldc           #104                // String
+     270: ldc           #148                // String guistrings.done
+== /tmp/bc/net/shadowmage/ancientwarfare/structure/gui/GuiStructureBiomeSelection$BiomeCheck.class
+      13: ldc           #18                 // String %s (%s)
+== /tmp/bc/net/shadowmage/ancientwarfare/structure/gui/GuiStructureBiomeSelection$6.class
+== /tmp/bc/net/shadowmage/ancientwarfare/core/command/CommandUtils$BiomeListCommand.class
+       0: ldc           #37                 // String Registry Name,Biome Name,Temperature Category,High Humidity,Height Variation,Top Block,Biome Types,Biome Class
+       0: ldc           #40                 // String biomelist.csv
+      21: ldc           #135                // String
+       0: ldc           #142                // String exportbiomes
+      14: ldc           #156                // String  [fileName - defaults to \"biomelist.csv\"]
+       0: ldc           #163                // String ,
+      95: ldc           #228                // String |
