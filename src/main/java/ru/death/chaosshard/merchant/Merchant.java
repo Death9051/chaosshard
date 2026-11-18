@@ -412,40 +412,44 @@ public final class Merchant {
         MerchantData d = MerchantData.get(ow);
         long every = Math.max(1200L, (long) (ChaosConfig.merchant.visitDays * DAY));
         for (EntityPlayerMP p : srv.getPlayerList().getPlayers()) {
-            UUID id = p.getUniqueID();
-            Long next = d.nextVisit.get(id);
-            if (next == null) {
-                d.nextVisit.put(id, now + every);
-                d.markDirty();
+            visit(p, d, now, every);
+        }
+    }
+
+    /** Пора ли торговцу прийти к игроку p — и если пора, привести его к ближайшему загруженному Якорю игрока. */
+    public static boolean visit(EntityPlayerMP p, MerchantData d, long now, long every) {
+        UUID id = p.getUniqueID();
+        Long next = d.nextVisit.get(id);
+        if (next == null) {
+            d.nextVisit.put(id, now + every);
+            d.markDirty();
+            return false;
+        }
+        if (now < next || now < d.busyUntil.getOrDefault(id, 0L)) {
+            return false;
+        }
+        WorldServer w = p.getServerWorld();
+        BlockPos best = null;
+        double bd = Double.MAX_VALUE;
+        AnchorData ad = AnchorData.get(w);
+        for (BlockPos a : ad.anchors) {
+            AnchorData.Rec rec = ad.rec(a);
+            if (rec == null || !id.equals(rec.owner) || !w.isBlockLoaded(a) || w.getBlockState(a).getBlock() != ModBlocks.CHAOS_ANCHOR) {
                 continue;
             }
-            if (now < next || now < d.busyUntil.getOrDefault(id, 0L)) {
-                continue;
-            }
-            WorldServer w = p.getServerWorld();
-            BlockPos best = null;
-            double bd = Double.MAX_VALUE;
-            AnchorData ad = AnchorData.get(w);
-            for (BlockPos a : ad.anchors) {
-                AnchorData.Rec rec = ad.rec(a);
-                if (rec == null || !id.equals(rec.owner) || !w.isBlockLoaded(a) || w.getBlockState(a).getBlock() != ModBlocks.CHAOS_ANCHOR) {
-                    continue;
-                }
-                double dist = a.distanceSq(p.getPosition());
-                if (dist < bd) {
-                    bd = dist;
-                    best = a;
-                }
-            }
-            if (best == null) {
-                continue;   // ни одного своего Якоря рядом — попробуем позже
-            }
-            if (summon(w, best, id) != null) {
-                d.nextVisit.put(id, now + every + w.rand.nextInt((int) Math.max(1, every / 4)));
-                d.markDirty();
-                p.sendMessage(new TextComponentTranslation("chaosshard.merchant.arrived").setStyle(
-                        new net.minecraft.util.text.Style().setColor(TextFormatting.GOLD)));
+            double dist = a.distanceSq(p.getPosition());
+            if (dist < bd) {
+                bd = dist;
+                best = a;
             }
         }
+        if (best == null || summon(w, best, id) == null) {
+            return false;   // ни одного своего Якоря рядом — попробуем позже
+        }
+        d.nextVisit.put(id, now + every + w.rand.nextInt((int) Math.max(1, every / 4)));
+        d.markDirty();
+        p.sendMessage(new TextComponentTranslation("chaosshard.merchant.arrived").setStyle(
+                new net.minecraft.util.text.Style().setColor(TextFormatting.GOLD)));
+        return true;
     }
 }

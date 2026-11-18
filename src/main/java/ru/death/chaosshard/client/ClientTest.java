@@ -590,6 +590,69 @@ public class ClientTest {
                 step++;
                 return;
             case 65:
+                // торговец: спереди, со спины (рюкзак) и окно торговли
+                onServer((s2, w2, p2) -> {
+                    w2.setWorldTime(6000);
+                    BlockPos at = new BlockPos(p2).add(6, 0, 0);
+                    at = w2.getTopSolidOrLiquidBlock(at);
+                    for (int dx = -3; dx <= 3; dx++) for (int dz = -4; dz <= 4; dz++) {
+                        w2.setBlockState(at.add(dx, -1, dz), net.minecraft.init.Blocks.GRASS.getDefaultState(), 2);
+                        for (int dy = 0; dy < 4; dy++) w2.setBlockToAir(at.add(dx, dy, dz));
+                    }
+                    ru.death.chaosshard.merchant.EntityMerchant m = ru.death.chaosshard.merchant.Merchant.summon(w2, at, p2.getUniqueID());
+                    if (m == null) return;
+                    m.setNoAI(true);
+                    m.setPositionAndUpdate(at.getX() + 0.5, at.getY(), at.getZ() + 0.5);
+                    m.rotationYaw = m.renderYawOffset = m.rotationYawHead = m.prevRotationYawHead = 0F;
+                    merchantId = m.getEntityId();
+                    merchantAt = at;
+                    p2.connection.setPlayerLocation(at.getX() + 0.5, at.getY(), at.getZ() + 3.2, 180F, 12F);
+                });
+                wait = 40;
+                step++;
+                return;
+            case 66:
+                check(merchantId >= 0 && mc.world.getEntityByID(merchantId) != null, "торговец виден клиенту");
+                shot = "46_merchant";
+                wait = 5;
+                step++;
+                return;
+            case 67:
+                onServer((s2, w2, p2) -> p2.connection.setPlayerLocation(merchantAt.getX() - 1.6, merchantAt.getY() + 0.4, merchantAt.getZ() - 2.6, -30F, 18F));
+                wait = 20;
+                step++;
+                return;
+            case 68:
+                shot = "47_merchant_back";
+                wait = 5;
+                step++;
+                return;
+            case 69:
+                onServer((s2, w2, p2) -> {
+                    p2.connection.setPlayerLocation(merchantAt.getX() + 0.5, merchantAt.getY(), merchantAt.getZ() + 2.5, 180F, 12F);
+                    ru.death.chaosshard.merchant.MerchantData.get(w2).add(p2.getUniqueID(), 137);
+                    for (net.minecraft.item.Item it : net.minecraft.item.Item.REGISTRY) {
+                        int k = ru.death.chaosshard.merchant.Merchant.lycKind(new ItemStack(it));
+                        if (k >= 0 && p2.inventory.getFirstEmptyStack() >= 0 && ru.death.chaosshard.merchant.Merchant.lots(p2).size() < 5) {
+                            p2.inventory.addItemStackToInventory(new ItemStack(it, k == 3 ? 1 : 6));
+                        }
+                    }
+                    Entity e = w2.getEntityByID(merchantId);
+                    if (e instanceof ru.death.chaosshard.merchant.EntityMerchant) {
+                        ru.death.chaosshard.merchant.Merchant.open(p2, (ru.death.chaosshard.merchant.EntityMerchant) e, true);
+                    }
+                });
+                wait = 40;
+                step++;
+                return;
+            case 70:
+                check(mc.currentScreen instanceof ru.death.chaosshard.merchant.client.GuiMerchant, "окно торговца открыто: " + name(mc.currentScreen));
+                shot = "48_merchant_gui";
+                wait = 5;
+                step++;
+                return;
+            case 71:
+                mc.displayGuiScreen(null);
                 finish();
                 step++;
                 return;
@@ -861,6 +924,8 @@ public class ClientTest {
     }
 
     private volatile int huskId = -1;
+    private volatile int merchantId = -1;
+    private volatile BlockPos merchantAt = BlockPos.ORIGIN;
 
     private void heroGone(IntegratedServer s, WorldServer w, EntityPlayerMP p) {
         net.minecraft.util.math.AxisAlignedBB box = new net.minecraft.util.math.AxisAlignedBB(heroSpot).grow(8);

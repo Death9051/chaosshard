@@ -1318,6 +1318,115 @@ public final class AutoTest {
             }
         });
 
+        section("Торговец");
+        step("торговец: колокольчик, счёт, покупка, скупка Lycanites, уход и сам приходит", () -> {
+            if (anchorPos == null || !(ow.getTileEntity(anchorPos) instanceof TileAnchor)) { check(false, "Якоря нет"); return; }
+            ru.death.chaosshard.anchor.AnchorData.get(ow).recOrNew(anchorPos).owner = me.getUniqueID();
+            List<net.minecraft.item.ItemStack> saved = new ArrayList<>();
+            for (net.minecraft.item.ItemStack st : me.inventory.mainInventory) saved.add(st.copy());
+            me.inventory.clear();
+            ru.death.chaosshard.merchant.MerchantData md = ru.death.chaosshard.merchant.MerchantData.get(ow);
+            md.balance.remove(me.getUniqueID());
+            AxisAlignedBB near = new AxisAlignedBB(anchorPos).grow(10);
+            for (ru.death.chaosshard.merchant.EntityMerchant old : ow.getEntitiesWithinAABB(ru.death.chaosshard.merchant.EntityMerchant.class, near.grow(40))) old.setDead();
+            // колокольчик
+            net.minecraft.item.ItemStack bell = new net.minecraft.item.ItemStack(ru.death.chaosshard.init.ModItems.MERCHANT_BELL);
+            me.setHeldItem(net.minecraft.util.EnumHand.MAIN_HAND, bell);
+            bell.getItem().onItemUseFirst(me, ow, anchorPos, net.minecraft.util.EnumFacing.UP, 0.5F, 1F, 0.5F, net.minecraft.util.EnumHand.MAIN_HAND);
+            List<ru.death.chaosshard.merchant.EntityMerchant> ms = ow.getEntitiesWithinAABB(ru.death.chaosshard.merchant.EntityMerchant.class, near);
+            check(ms.size() == 1 && me.getUniqueID().equals(ms.get(0).owner()), "колокольчик привёл торговца к Якорю: " + ms.size());
+            bell.getItem().onItemUseFirst(me, ow, anchorPos, net.minecraft.util.EnumFacing.UP, 0.5F, 1F, 0.5F, net.minecraft.util.EnumHand.MAIN_HAND);
+            check(ow.getEntitiesWithinAABB(ru.death.chaosshard.merchant.EntityMerchant.class, near, net.minecraft.entity.Entity::isEntityAlive).size() == 1,
+                    "второй звон до перезарядки торговца не зовёт");
+            ms = ow.getEntitiesWithinAABB(ru.death.chaosshard.merchant.EntityMerchant.class, near, net.minecraft.entity.Entity::isEntityAlive);
+            if (ms.isEmpty()) return;
+            ru.death.chaosshard.merchant.EntityMerchant m = ms.get(0);
+            m.attackEntityFrom(DamageSource.causePlayerDamage(me), 1000F);
+            check(m.isEntityAlive(), "торговец неуязвим");
+            me.setHeldItem(net.minecraft.util.EnumHand.MAIN_HAND, net.minecraft.item.ItemStack.EMPTY);
+            // монеты Ancient Warfare
+            net.minecraft.item.Item coin = null;
+            for (net.minecraft.item.Item it : net.minecraft.item.Item.REGISTRY) {
+                if (it.getRegistryName() != null && it.getRegistryName().getNamespace().startsWith("ancientwarfare") && "coin".equals(it.getRegistryName().getPath())) coin = it;
+            }
+            line("    монета Ancient Warfare: " + (coin == null ? "нет" : coin.getRegistryName()));
+            if (coin != null) {
+                String[] metals = {"copper", "silver", "gold"};
+                int[] counts = {5, 2, 1};
+                for (int i = 0; i < 3; i++) {
+                    net.minecraft.item.ItemStack c = new net.minecraft.item.ItemStack(coin, counts[i]);
+                    c.setTagInfo("metal", new net.minecraft.nbt.NBTTagString(metals[i]));
+                    me.inventory.addItemStackToInventory(c);
+                }
+                check(ru.death.chaosshard.merchant.Merchant.coinsWorth(me) == 125, "монет в сумке на " + ru.death.chaosshard.merchant.Merchant.coinsWorth(me) + " из 125");
+                long dep = ru.death.chaosshard.merchant.Merchant.deposit(me);
+                check(dep == 125 && md.balance(me.getUniqueID()) == 125 && ru.death.chaosshard.merchant.Merchant.coinsWorth(me) == 0,
+                        "монеты внесены на счёт: " + md.balance(me.getUniqueID()));
+            } else {
+                md.add(me.getUniqueID(), 125);
+            }
+            // покупка
+            List<ru.death.chaosshard.merchant.Merchant.Offer> offers = ru.death.chaosshard.merchant.Merchant.offers(ow);
+            long daily = offers.stream().filter(o -> o.daily).count();
+            check(offers.size() >= 8 && daily == ChaosConfig.merchant.rotatingCount, "товаров " + offers.size() + ", из них на сегодня " + daily);
+            ru.death.chaosshard.merchant.Merchant.Offer first = offers.get(0);
+            long before = md.balance(me.getUniqueID());
+            check(ru.death.chaosshard.merchant.Merchant.buy(me, 0), "куплено: " + first.stack.getDisplayName());
+            int got = 0;
+            for (net.minecraft.item.ItemStack st : me.inventory.mainInventory) if (st.getItem() == first.stack.getItem()) got += st.getCount();
+            check(got == first.stack.getCount() && md.balance(me.getUniqueID()) == before - first.price,
+                    "товар в сумке: " + got + ", счёт " + before + " → " + md.balance(me.getUniqueID()));
+            md.add(me.getUniqueID(), -md.balance(me.getUniqueID()));
+            check(!ru.death.chaosshard.merchant.Merchant.buy(me, 0), "без денег не продаёт");
+            // скупка Lycanites
+            net.minecraft.item.Item charge = null, meat = null, part = null, organ = null;
+            for (net.minecraft.item.Item it : net.minecraft.item.Item.REGISTRY) {
+                int k = ru.death.chaosshard.merchant.Merchant.lycKind(new net.minecraft.item.ItemStack(it));
+                if (k == 0 && charge == null) charge = it;
+                if (k == 1 && meat == null) meat = it;
+                if (k == 2 && organ == null) organ = it;
+                if (k == 3 && part == null) part = it;
+            }
+            line("    Lycanites: заряд " + (charge == null ? "-" : charge.getRegistryName()) + ", мясо " + (meat == null ? "-" : meat.getRegistryName())
+                    + ", орган " + (organ == null ? "-" : organ.getRegistryName()) + ", часть " + (part == null ? "-" : part.getRegistryName()));
+            check(charge != null && meat != null && part != null && organ != null, "добыча Lycanites распознана");
+            if (charge != null && meat != null && part != null) {
+                me.inventory.addItemStackToInventory(new net.minecraft.item.ItemStack(charge, 3));
+                me.inventory.addItemStackToInventory(new net.minecraft.item.ItemStack(meat, 2));
+                me.inventory.addItemStackToInventory(new net.minecraft.item.ItemStack(part, 1));
+                me.inventory.addItemStackToInventory(new net.minecraft.item.ItemStack(net.minecraft.init.Items.BONE, 4));
+                int[] pr = ChaosConfig.merchant.lycanitesPrices;
+                check(ru.death.chaosshard.merchant.Merchant.lots(me).size() == 3, "в скупке строк: " + ru.death.chaosshard.merchant.Merchant.lots(me).size() + " из 3 (кость не берёт)");
+                long all = ru.death.chaosshard.merchant.Merchant.sell(me, null);
+                check(all == 3L * pr[0] + 2L * pr[1], "«продать всё» без части снаряжения: " + all);
+                List<ru.death.chaosshard.merchant.Merchant.Lot> rest = ru.death.chaosshard.merchant.Merchant.lots(me);
+                check(rest.size() == 1 && rest.get(0).part, "часть снаряжения осталась");
+                long one = rest.isEmpty() ? 0 : ru.death.chaosshard.merchant.Merchant.sell(me, rest.get(0).key);
+                check(one == pr[3] && md.balance(me.getUniqueID()) == all + one, "часть продана отдельно: " + one + ", счёт " + md.balance(me.getUniqueID()));
+            }
+            // вид окна собирается
+            net.minecraft.nbt.NBTTagCompound v = ru.death.chaosshard.merchant.Merchant.view(me, m);
+            check(v.getTagList("offers", 10).tagCount() == offers.size() && v.getLong("leave") > 0, "окно: товаров " + v.getTagList("offers", 10).tagCount());
+            // уходит, когда срок вышел
+            net.minecraft.nbt.NBTTagCompound nbt = new net.minecraft.nbt.NBTTagCompound();
+            m.writeToNBT(nbt);
+            nbt.setLong("MerchantLeave", ow.getTotalWorldTime() - 1);
+            m.readFromNBT(nbt);
+            m.onLivingUpdate();
+            check(!m.isEntityAlive(), "срок вышел — торговец ушёл");
+            // сам приходит
+            md.busyUntil.remove(me.getUniqueID());
+            md.nextVisit.put(me.getUniqueID(), 0L);
+            me.setPositionAndUpdate(anchorPos.getX() + 3, anchorPos.getY() + 1, anchorPos.getZ() + 3);
+            boolean came = ru.death.chaosshard.merchant.Merchant.visit(me, md, ow.getTotalWorldTime(), 48000L);
+            check(came && ow.getEntitiesWithinAABB(ru.death.chaosshard.merchant.EntityMerchant.class, near, net.minecraft.entity.Entity::isEntityAlive).size() == 1,
+                    "в срок торговец сам пришёл к Якорю");
+            check(!ru.death.chaosshard.merchant.Merchant.visit(me, md, ow.getTotalWorldTime(), 48000L), "пока стоит, второй раз не приходит");
+            for (ru.death.chaosshard.merchant.EntityMerchant x : ow.getEntitiesWithinAABB(ru.death.chaosshard.merchant.EntityMerchant.class, near)) x.setDead();
+            me.inventory.clear();
+            for (int i = 0; i < saved.size(); i++) me.inventory.mainInventory.set(i, saved.get(i));
+        });
+
         section("Рудокоп");
         step("рудокоп у сундука на настоящей земле", () -> {
             BlockPos ground = ow.getTopSolidOrLiquidBlock(ow.getSpawnPoint().add(-40, 0, -40));
