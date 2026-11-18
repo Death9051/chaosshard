@@ -313,7 +313,7 @@ public class GuiMerchant extends GuiScreen {
                 hover.add("§7" + (capped ? tr("chaosshard.merchant.gui.capped.desc")
                         : can ? tr("chaosshard.merchant.gui.buy_hint") : tr("chaosshard.merchant.gui.poor", money(p - bal))));
                 if (limit > 0) {
-                    hover.add((capped ? "§c" : "§8") + tr("chaosshard.merchant.gui.bought", tr("chaosshard.merchant.cat." + cat), done, limit));
+                    hover.add((capped ? "§c" : "§7") + tr("chaosshard.merchant.gui.bought", tr("chaosshard.merchant.cat." + cat), done, limit));
                 }
             }
         }
