@@ -34,7 +34,7 @@ public class AltarRenderer extends TileEntitySpecialRenderer<TileBreachAltar> {
             double a = Math.toRadians(time * 1.2 + k * 360.0 / count);
             GlStateManager.pushMatrix();
             GlStateManager.translate(Math.cos(a) * 0.55, Math.sin(time * 0.08 + k) * 0.06, Math.sin(a) * 0.55);
-            GlStateManager.rotate(time * 2.5, 0, 1, 0);
+            GlStateManager.rotate(time * 2.5F, 0, 1, 0);
             GlStateManager.scale(0.35F, 0.35F, 0.35F);
             Minecraft.getMinecraft().getRenderItem().renderItem(s, ItemCameraTransforms.TransformType.FIXED);
             GlStateManager.popMatrix();
