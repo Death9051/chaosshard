@@ -87,6 +87,8 @@ public final class ModBlocks {
         net.minecraftforge.fml.common.registry.GameRegistry.registerTileEntity(ru.death.chaosshard.anchor.TileAnchor.class,
                 new net.minecraft.util.ResourceLocation(Tags.MOD_ID, "chaos_anchor"));
         BREACH_ALTAR = add(new ru.death.chaosshard.breach.BlockBreachAltar(), "breach_altar");
+        net.minecraftforge.fml.common.registry.GameRegistry.registerTileEntity(ru.death.chaosshard.breach.TileBreachAltar.class,
+                new net.minecraft.util.ResourceLocation(Tags.MOD_ID, "breach_altar"));
         RITUAL_SPIRE = add(new ru.death.chaosshard.breach.BlockRitualSpire(), "ritual_spire");
         for (ru.death.chaosshard.debug.StructureBuilder.Kind k : ru.death.chaosshard.debug.StructureBuilder.Kind.values()) {
             SEEDS.add(add(new ru.death.chaosshard.debug.BlockStructureSeed(k), "seed_" + k.name().toLowerCase()));

@@ -15,6 +15,7 @@ public class HeartGuiHandler implements IGuiHandler {
     public static final int ANCHOR = 2;
     public static final int ENCHANTER = 3;
     public static final int LAIR = 4;
+    public static final int ALTAR = 5;
 
     @Nullable
     @Override
@@ -31,6 +32,9 @@ public class HeartGuiHandler implements IGuiHandler {
         }
         if (id == LAIR && te instanceof ru.death.chaosshard.lair.TileLair) {
             return new ru.death.chaosshard.lair.ContainerLair(player, (ru.death.chaosshard.lair.TileLair) te);
+        }
+        if (id == ALTAR && te instanceof ru.death.chaosshard.breach.TileBreachAltar) {
+            return new ru.death.chaosshard.breach.ContainerBreachAltar(player, (ru.death.chaosshard.breach.TileBreachAltar) te);
         }
         return id == HEART && te instanceof TileHeart ? new ContainerHeart(player.inventory, (TileHeart) te) : null;
     }
@@ -49,6 +53,10 @@ public class HeartGuiHandler implements IGuiHandler {
         if (id == ENCHANTER && te instanceof ru.death.chaosshard.enchant.TileChaosEnchanter) {
             return new ru.death.chaosshard.enchant.client.GuiChaosEnchanter(new ru.death.chaosshard.enchant.ContainerChaosEnchanter(
                     player, (ru.death.chaosshard.enchant.TileChaosEnchanter) te));
+        }
+        if (id == ALTAR && te instanceof ru.death.chaosshard.breach.TileBreachAltar) {
+            return new ru.death.chaosshard.breach.client.GuiBreachAltar(
+                    new ru.death.chaosshard.breach.ContainerBreachAltar(player, (ru.death.chaosshard.breach.TileBreachAltar) te));
         }
         if (id == LAIR && te instanceof ru.death.chaosshard.lair.TileLair) {
             return new ru.death.chaosshard.lair.client.GuiLair(new ru.death.chaosshard.lair.ContainerLair(player, (ru.death.chaosshard.lair.TileLair) te));

@@ -21,20 +21,50 @@ public class BlockBreachAltar extends ModBlocks.SimpleBlock {
     }
 
     @Override
+    public boolean hasTileEntity(IBlockState state) {
+        return true;
+    }
+
+    @Override
+    public net.minecraft.tileentity.TileEntity createTileEntity(World world, IBlockState state) {
+        return new TileBreachAltar();
+    }
+
+    @Override
+    public void breakBlock(World world, BlockPos pos, IBlockState state) {
+        net.minecraft.tileentity.TileEntity te = world.getTileEntity(pos);
+        if (te instanceof TileBreachAltar) {
+            ((TileBreachAltar) te).dropAll();
+        }
+        super.breakBlock(world, pos, state);
+    }
+
+    @Override
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand,
                                     EnumFacing facing, float hitX, float hitY, float hitZ) {
-        if (player.getHeldItem(hand).getItem() == ModItems.GRIMOIRE) {
+        net.minecraft.item.ItemStack held = player.getHeldItem(hand);
+        if (hand == EnumHand.MAIN_HAND && held.getItem() != ModItems.GRIMOIRE && held.getItem() != ModItems.BREACH_BOOK) {
+            // пустая рука — окно Алтаря; предмет — положить подношение (Shift — всю стопку)
+            if (!world.isRemote) {
+                net.minecraft.tileentity.TileEntity te = world.getTileEntity(pos);
+                if (held.isEmpty()) {
+                    player.openGui(ru.death.chaosshard.ChaosShard.INSTANCE, ru.death.chaosshard.heart.HeartGuiHandler.ALTAR,
+                            world, pos.getX(), pos.getY(), pos.getZ());
+                    BreachHints.show((EntityPlayerMP) player, pos);   // подсветить недостающие шпили
+                } else if (te instanceof TileBreachAltar) {
+                    ((TileBreachAltar) te).insert(player, held, player.isSneaking());
+                }
+            }
+            return true;
+        }
+        if (held.getItem() == ModItems.GRIMOIRE) {
             // Старшие ритуалы (подношения брошены на Алтарь) или Вознесение зверя
             if (!world.isRemote && hand == EnumHand.MAIN_HAND) {
                 ru.death.chaosshard.ritual.AltarRituals.tryStart((EntityPlayerMP) player, pos);
             }
             return true;
         }
-        if (player.getHeldItem(hand).getItem() != ModItems.BREACH_BOOK) {
-            if (!world.isRemote && hand == EnumHand.MAIN_HAND) {
-                // Без книги — просто показать, чего не хватает в постройке
-                BreachHints.show((EntityPlayerMP) player, pos);
-            }
+        if (held.getItem() != ModItems.BREACH_BOOK) {
             return hand == EnumHand.MAIN_HAND;
         }
         if (world.isRemote) {

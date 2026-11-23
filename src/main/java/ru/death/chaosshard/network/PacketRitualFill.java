@@ -38,6 +38,24 @@ public class PacketRitualFill implements IMessage {
         buf.writeShort(ritual);
     }
 
+    /** Ближайший к игроку Алтарь Прорыва в REACH блоках или null. */
+    public static ru.death.chaosshard.breach.TileBreachAltar nearestAltar(EntityPlayer player) {
+        BlockPos p = new BlockPos(player);
+        ru.death.chaosshard.breach.TileBreachAltar best = null;
+        double bestD = Double.MAX_VALUE;
+        for (BlockPos q : BlockPos.getAllInBoxMutable(p.add(-REACH, -3, -REACH), p.add(REACH, 3, REACH))) {
+            if (player.world.getBlockState(q).getBlock() == ModBlocks.BREACH_ALTAR) {
+                TileEntity te = player.world.getTileEntity(q);
+                double d = q.distanceSq(p);
+                if (te instanceof ru.death.chaosshard.breach.TileBreachAltar && d < bestD) {
+                    best = (ru.death.chaosshard.breach.TileBreachAltar) te;
+                    bestD = d;
+                }
+            }
+        }
+        return best;
+    }
+
     /** Ближайшая к игроку Чаша в REACH блоках или null. */
     public static TileRitualBowl nearestBowl(EntityPlayer player) {
         BlockPos p = new BlockPos(player);
@@ -62,7 +80,16 @@ public class PacketRitualFill implements IMessage {
             EntityPlayerMP player = ctx.getServerHandler().player;
             player.getServerWorld().addScheduledTask(() -> {
                 Ritual r = Ritual.byIndex(msg.ritual);
-                if (r == null || r.isAltar() || !r.available()) {
+                if (r == null || !r.available() || r == Ritual.CHALLENGE) {
+                    return;
+                }
+                if (r.isAltar()) {
+                    ru.death.chaosshard.breach.TileBreachAltar altar = nearestAltar(player);
+                    if (altar == null) {
+                        player.sendStatusMessage(Breach.grimoire("chaosshard.magic.fill.no_altar"), true);
+                        return;
+                    }
+                    altar.fill(player, r);
                     return;
                 }
                 TileRitualBowl bowl = nearestBowl(player);

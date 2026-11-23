@@ -67,6 +67,7 @@ public final class Crown {
         CapitalData d = CapitalData.get(world);
         if (d.state != CapitalData.NONE) {
             p.sendMessage(Breach.grimoire("chaosshard.crown.already", d.x, d.z, (int) Math.sqrt(at.distanceSq(d.x, at.getY(), d.z))));
+            ru.death.chaosshard.hero.PillarMarks.sync(p);
             return false;
         }
         WorldServer ws = (WorldServer) world;
@@ -86,6 +87,7 @@ public final class Crown {
         d.markDirty();
         ws.addWeatherEffect(new EntityLightningBolt(world, at.getX() + 0.5, at.getY() + 1, at.getZ() + 0.5, true));
         p.sendMessage(Breach.grimoire("chaosshard.crown.found", d.x, d.z, (int) Math.sqrt(at.distanceSq(d.x, at.getY(), d.z))));
+        ru.death.chaosshard.hero.PillarMarks.syncAll();
         Milestones.grant(p, Milestones.CROWN_OMEN);
         ChaosShard.LOG.info("Знамение Короны: столица будет у {} {}", d.x, d.z);
         return true;
@@ -116,6 +118,7 @@ public final class Crown {
             d.state = CapitalData.STANDING;
         }
         d.markDirty();
+        ru.death.chaosshard.hero.PillarMarks.syncAll();
         ChaosShard.LOG.info("Столица встала у {} {} {}: маяков {}, барьер {}", d.x, d.y, d.z, d.beacons.size(), d.barrier.size());
     }
 
@@ -234,6 +237,7 @@ public final class Crown {
         CapitalData d = CapitalData.get(ws);
         d.state = CapitalData.FALLEN;
         d.markDirty();
+        ru.death.chaosshard.hero.PillarMarks.syncAll();
         EntityItem key = new EntityItem(ws, at.getX() + 0.5, at.getY() + 1, at.getZ() + 0.5, new ItemStack(ModItems.RIFT_KEY));
         key.setEntityInvulnerable(true);
         key.setNoDespawn();

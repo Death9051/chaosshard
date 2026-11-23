@@ -38,6 +38,7 @@ public final class ChaosNetwork {
         CHANNEL.registerMessage(PacketMerchantView.Handler.class, PacketMerchantView.class, 24, Side.CLIENT);
         CHANNEL.registerMessage(PacketMerchantAction.Handler.class, PacketMerchantAction.class, 25, Side.SERVER);
         CHANNEL.registerMessage(PacketPillarMarks.Handler.class, PacketPillarMarks.class, 26, Side.CLIENT);
+        CHANNEL.registerMessage(PacketAltarStart.Handler.class, PacketAltarStart.class, 27, Side.SERVER);
     }
 
     private ChaosNetwork() {

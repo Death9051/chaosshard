@@ -105,6 +105,12 @@ public class AltarRituals {
         }
         List<EntityItem> items = offered(p.world, altar);
         List<ItemStack> stacks = new ArrayList<>();
+        net.minecraft.tileentity.TileEntity ate = p.world.getTileEntity(altar);
+        ru.death.chaosshard.breach.TileBreachAltar tile = ate instanceof ru.death.chaosshard.breach.TileBreachAltar
+                ? (ru.death.chaosshard.breach.TileBreachAltar) ate : null;
+        if (tile != null) {
+            stacks.addAll(tile.contents());
+        }
         for (EntityItem ei : items) {
             stacks.add(ei.getItem());
         }
@@ -129,6 +135,12 @@ public class AltarRituals {
             return;
         }
         List<ItemStack> paid = new ArrayList<>();
+        if (tile != null) {
+            for (ItemStack s : tile.contents()) {
+                paid.add(s.copy());
+            }
+            tile.clear();
+        }
         for (EntityItem ei : items) {
             paid.add(ei.getItem().copy());
             ei.setDead();

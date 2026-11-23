@@ -470,15 +470,19 @@ public class GuiGrimoireMagic extends GuiScreen {
         }
         fill.visible = fillTarget != null;
         if (fill.visible) {
-            boolean near = nearBowl() != null;
+            boolean altar = fillTarget.isAltar();
+            boolean near = (altar ? nearAltar() : nearBowl()) != null;
             fill.enabled = near;
-            fill.hint = I18n.format(near ? "chaosshard.magic.fill.hint" : "chaosshard.magic.fill.far_short", BOWL_REACH);
+            fill.setLabel(I18n.format(altar ? "chaosshard.magic.fill.altar" : "chaosshard.magic.fill"));
+            fill.hint = I18n.format(near ? "chaosshard.magic.fill.hint" : altar ? "chaosshard.magic.fill.far_short.altar"
+                    : "chaosshard.magic.fill.far_short", BOWL_REACH);
             fill.fit();
             if (fill.x + fill.width > left + BookArt.PR - 12) {
                 fill.x = left + BookArt.PR - 12 - fill.width;
             }
             if (mx >= fill.x && mx < fill.x + fill.width && my >= fill.y && my < fill.y + fill.height) {
-                hoverText = split(I18n.format(near ? "chaosshard.magic.fill.desc" : "chaosshard.magic.fill.far", BOWL_REACH));
+                hoverText = split(I18n.format(altar ? (near ? "chaosshard.magic.fill.desc.altar" : "chaosshard.magic.fill.far.altar")
+                        : near ? "chaosshard.magic.fill.desc" : "chaosshard.magic.fill.far", BOWL_REACH));
             }
         }
         super.drawScreen(mx, my, pt);
@@ -514,6 +518,20 @@ public class GuiGrimoireMagic extends GuiScreen {
         if (I18n.hasKey(key)) {
             note(I18n.format(key), x, yMin, yMax, angle);
         }
+    }
+
+    /** Ближайший Алтарь Прорыва в BOWL_REACH блоках от игрока или null. */
+    private BlockPos nearAltar() {
+        if (mc.world == null || mc.player == null) {
+            return null;
+        }
+        BlockPos p = new BlockPos(mc.player);
+        for (BlockPos q : BlockPos.getAllInBoxMutable(p.add(-BOWL_REACH, -3, -BOWL_REACH), p.add(BOWL_REACH, 3, BOWL_REACH))) {
+            if (mc.world.getBlockState(q).getBlock() == ModBlocks.BREACH_ALTAR) {
+                return q.toImmutable();
+            }
+        }
+        return null;
     }
 
     /** Ближайшая Чаша в BOWL_REACH блоках от игрока (по загруженному миру клиента) или null. */
@@ -945,7 +963,8 @@ public class GuiGrimoireMagic extends GuiScreen {
         int noteBottom = bottom;
         if (r.isAltar()) {
             y = para(I18n.format("chaosshard.magic.altar"), x, y, pw, BookArt.ACCENT);
-        } else {
+        }
+        if (r != Ritual.CHALLENGE) {
             setFillTarget(r, x + pw, top + BookArt.PB - 42);
             noteBottom = fill.y - 3;
         }

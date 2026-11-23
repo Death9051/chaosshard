@@ -34,6 +34,15 @@ public class PillarMarks {
             m.setInteger("z", pl.z);
             l.appendTag(m);
         }
+        ru.death.chaosshard.act5.CapitalData cap = ru.death.chaosshard.act5.CapitalData.get(world);
+        if (cap.state != ru.death.chaosshard.act5.CapitalData.NONE && cap.state != ru.death.chaosshard.act5.CapitalData.FALLEN) {
+            NBTTagCompound m = new NBTTagCompound();
+            m.setString("id", "capital");
+            m.setInteger("x", cap.x);
+            m.setInteger("y", cap.y > 0 ? cap.y : 80);
+            m.setInteger("z", cap.z);
+            l.appendTag(m);
+        }
         t.setTag("marks", l);
         return t;
     }

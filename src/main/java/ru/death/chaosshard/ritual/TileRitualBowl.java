@@ -28,6 +28,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.items.ItemHandlerHelper;
@@ -105,6 +106,17 @@ public class TileRitualBowl extends TileEntity implements ITickable {
             player.sendStatusMessage(Breach.grimoire("chaosshard.ritual.busy"), true);
             return false;
         }
+        boolean ok = fillSlots(player, r, items, world, pos, "chaosshard.magic.fill.ready");
+        changed();
+        return ok;
+    }
+
+    /**
+     * Сложить подношения ритуала r в места items из сумки игрока: нужное из уже лежащего остаётся, лишнее уходит в сумку,
+     * недостающее берётся из сумки. Общая часть для Чаши и Алтаря Прорыва. readyKey — сообщение «всё на месте».
+     */
+    public static boolean fillSlots(EntityPlayer player, Ritual r, NonNullList<ItemStack> items, World world, BlockPos pos, String readyKey) {
+        final int slots = items.size();
         int n = r.offeringCount();
         int[] need = new int[n];
         for (int i = 0; i < n; i++) {
@@ -112,7 +124,7 @@ public class TileRitualBowl extends TileEntity implements ITickable {
         }
         List<ItemStack> kept = new ArrayList<>();
         // что уже лежит: нужное оставить, лишнее — хозяину
-        for (int k = 0; k < SLOTS; k++) {
+        for (int k = 0; k < slots; k++) {
             ItemStack s = items.get(k).copy();
             for (int i = 0; i < n && !s.isEmpty(); i++) {
                 if (need[i] > 0 && r.offeringMatches(i, s)) {
@@ -150,7 +162,7 @@ public class TileRitualBowl extends TileEntity implements ITickable {
         }
         // в слоты, одинаковое — в одну стопку
         for (ItemStack s : kept) {
-            for (int k = 0; k < SLOTS && !s.isEmpty(); k++) {
+            for (int k = 0; k < slots && !s.isEmpty(); k++) {
                 ItemStack in = items.get(k);
                 if (in.isEmpty()) {
                     items.set(k, s.copy());
@@ -167,7 +179,6 @@ public class TileRitualBowl extends TileEntity implements ITickable {
         }
         player.inventoryContainer.detectAndSendChanges();
         world.playSound(null, pos, SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.BLOCKS, 0.6F, 0.9F);
-        changed();
         net.minecraft.util.text.TextComponentString missing = new net.minecraft.util.text.TextComponentString("");
         boolean first = true;
         for (int i = 0; i < n; i++) {
@@ -182,7 +193,7 @@ public class TileRitualBowl extends TileEntity implements ITickable {
             }
         }
         if (first) {
-            player.sendStatusMessage(Breach.grimoire("chaosshard.magic.fill.ready",
+            player.sendStatusMessage(Breach.grimoire(readyKey,
                     new net.minecraft.util.text.TextComponentTranslation(r.key())), true);
             return true;
         }
