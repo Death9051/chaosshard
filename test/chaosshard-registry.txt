@@ -23,6 +23,7 @@ block ancientwarfare:research_station
 tile ancientwarfare:engineering_station_tile
 tile ancientwarfare:research_station_tile
 === ancientwarfareautomation
+item ancientwarfareautomation:worksite_upgrade | 0=item.worksite_upgrade.0 | 1=item.worksite_upgrade.1 | 2=item.worksite_upgrade.2 | 3=item.worksite_upgrade.3 | 4=item.worksite_upgrade.4 | 5=item.worksite_upgrade.5 | 6=item.worksite_upgrade.6 | 7=item.worksite_upgrade.7 | 8=item.worksite_upgrade.8 | 9=item.worksite_upgrade.9 | 10=item.worksite_upgrade.10
 item ancientwarfareautomation:quarry
 item ancientwarfareautomation:tree_farm
 item ancientwarfareautomation:crop_farm
@@ -49,7 +50,6 @@ item ancientwarfareautomation:windmill_blade
 item ancientwarfareautomation:windmill_generator
 item ancientwarfareautomation:chunk_loader_simple
 item ancientwarfareautomation:chunk_loader_deluxe
-item ancientwarfareautomation:worksite_upgrade | 0=item.worksite_upgrade.0 | 1=item.worksite_upgrade.1 | 2=item.worksite_upgrade.2 | 3=item.worksite_upgrade.3 | 4=item.worksite_upgrade.4 | 5=item.worksite_upgrade.5 | 6=item.worksite_upgrade.6 | 7=item.worksite_upgrade.7 | 8=item.worksite_upgrade.8 | 9=item.worksite_upgrade.9 | 10=item.worksite_upgrade.10
 block ancientwarfareautomation:quarry
 block ancientwarfareautomation:tree_farm
 block ancientwarfareautomation:crop_farm
