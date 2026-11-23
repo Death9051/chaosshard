@@ -2609,9 +2609,17 @@ public final class AutoTest {
             if (hs.isEmpty()) { check(false, "Каэля нет"); return; }
             int nit = ru.death.chaosshard.thread.ThreadManager.getPoints(me);
             overSnap = ru.death.chaosshard.thread.ThreadManager.overflowed;
+            net.minecraft.nbt.NBTTagList marks = ru.death.chaosshard.hero.PillarMarks.list(ow).getTagList("marks", 10);
+            boolean marked = false;
+            for (int i = 0; i < marks.tagCount(); i++) marked |= "kael".equals(marks.getCompoundTagAt(i).getString("id"));
+            check(marked, "пока Опора стоит, на карте её метка (меток " + marks.tagCount() + ")");
             kill(hs.get(0));
             ru.death.chaosshard.hero.HeroData.Pillar p = ru.death.chaosshard.hero.HeroData.get(ow).of(ru.death.chaosshard.hero.Lightbearer.KAEL);
             check(p.state == ru.death.chaosshard.hero.HeroData.FALLEN, "Опора пала");
+            marks = ru.death.chaosshard.hero.PillarMarks.list(ow).getTagList("marks", 10);
+            boolean still = false;
+            for (int i = 0; i < marks.tagCount(); i++) still |= "kael".equals(marks.getCompoundTagAt(i).getString("id"));
+            check(!still, "Опора пала — метка ушла");
             check(hs.get(0).dying(), "Каэль гаснет на коленях, а не исчезает сразу");
             BlockPos o = planned.origin();
             check(!ow.isAirBlock(o.up(ru.death.chaosshard.structure.bp.VeilPillar.FLOOR + ru.death.chaosshard.structure.bp.VeilPillar.COLUMN_H)),
