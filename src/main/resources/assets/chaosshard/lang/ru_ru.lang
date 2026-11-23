@@ -1903,7 +1903,7 @@ material.chaosshard_crystal.name=Кристаллизованный Хаос
 material.chaosshard_bloodplatinum.name=Кровавая платина
 material.chaosshard_starlight.name=Свет звезды
 modifier.chaosshard_crystal_store.name=Накопитель
-modifier.chaosshard_crystal_store.desc=§oДержит и копит§r\nУдары копят энергию Хаоса в оружии (20 за уровень материала), заклинания берут её первой. Полный кристалл даёт +15%% урона. На 5-м уровне заклинание, оплаченное целиком из кристалла, не уходит на перезарядку.
+modifier.chaosshard_crystal_store.desc=§oДержит и копит§r\nУдары копят энергию Хаоса в оружии (до 20 за уровень материала). Заклинание разряжает кристалл: перезарядка короче на 10%% за уровень, если кристалл полон, и меньше, если он заполнен частично.
 modifier.chaosshard_blood_price.name=Плата кровью
 modifier.chaosshard_blood_price.desc=§oКровь вместо Хаоса§r\nЕсли не хватает энергии, заклинание берёт здоровье (сердце за 10, на 5-м уровне за 15). Удары лечат на 1%% урона за уровень. На 5-м уровне заклинание на крови сильнее на четверть.
 modifier.chaosshard_star_strike.name=Созвездие владельца
@@ -2460,3 +2460,10 @@ chaosshard.merchant.cat.0=Реликвии
 chaosshard.merchant.cat.1=Редкости
 chaosshard.merchant.cat.2=Припасы
 chaosshard.merchant.cat.3=Обычный товар
+
+# Метки Опор на карте JourneyMap
+chaosshard.map.pillar.kael=Опора Каэля
+chaosshard.map.pillar.irena=Опора Ирены
+chaosshard.map.pillar.velmor=Опора Вельмора
+chaosshard.map.pillar.lian=Опора Лиана
+chaosshard.map.pillar.elis=Опора Элис

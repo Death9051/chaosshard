@@ -16,12 +16,6 @@ public final class AlloyTraits {
         }
 
         @Override
-        public float damage(ItemStack tool, EntityLivingBase player, EntityLivingBase target, float damage, float newDamage, boolean isCritical) {
-            int cap = ChaosMaterials.storeCap(tool);
-            return cap > 0 && ChaosMaterials.store(tool) >= cap ? newDamage * 1.15F : newDamage;
-        }
-
-        @Override
         public void afterHit(ItemStack tool, EntityLivingBase player, EntityLivingBase target, float damageDealt, boolean wasCritical, boolean wasHit) {
             if (wasHit && !player.world.isRemote) {
                 ChaosMaterials.setStore(tool, ChaosMaterials.store(tool) + 2);

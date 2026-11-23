@@ -1879,7 +1879,7 @@ material.chaosshard_crystal.name=Crystallized Chaos
 material.chaosshard_bloodplatinum.name=Blood Platinum
 material.chaosshard_starlight.name=Starlight
 modifier.chaosshard_crystal_store.name=Reservoir
-modifier.chaosshard_crystal_store.desc=§oHolds and stores§r\nHits store Chaos energy in the weapon (20 per material level); spells draw on it first. A full crystal gives +15%% damage. At level 5 a spell paid entirely from the crystal has no cooldown.
+modifier.chaosshard_crystal_store.desc=§oHolds and stores§r\nHits store Chaos energy in the weapon (up to 20 per material level). A spell discharges the crystal: its cooldown is 10%% shorter per level when the crystal is full, less when it is partly charged.
 modifier.chaosshard_blood_price.name=Blood Price
 modifier.chaosshard_blood_price.desc=§oBlood instead of Chaos§r\nShort on energy — the spell takes health (a heart per 10, per 15 at level 5). Hits heal 1%% of damage per level. At level 5 a spell paid in blood is a quarter stronger.
 modifier.chaosshard_star_strike.name=Owner's Constellation
@@ -2357,3 +2357,10 @@ chaosshard.merchant.cat.0=Relics
 chaosshard.merchant.cat.1=Rarities
 chaosshard.merchant.cat.2=Supplies
 chaosshard.merchant.cat.3=Regular wares
+
+# Pillar waypoints on the JourneyMap map
+chaosshard.map.pillar.kael=Kael's Pillar
+chaosshard.map.pillar.irena=Irena's Pillar
+chaosshard.map.pillar.velmor=Velmor's Pillar
+chaosshard.map.pillar.lian=Lian's Pillar
+chaosshard.map.pillar.elis=Elis's Pillar

@@ -4072,12 +4072,30 @@ public final class AutoTest {
                 net.minecraft.entity.monster.EntityZombie z = new net.minecraft.entity.monster.EntityZombie(ow);
                 z.setPosition(me.posX + 3, me.posY, me.posZ);
                 ow.spawnEntity(z);
+                // кристалл: удары копят, заклинание разряжает его в перезарядку
+                int cdFull = ru.death.chaosshard.spell.SpellCaster.cooldown(me, ru.death.chaosshard.spell.Spell.BOLT);
+                ru.death.chaosshard.compat.tinkers.ChaosMaterials.setStore(sword, 20);
+                int cdHalf = ru.death.chaosshard.spell.SpellCaster.cooldown(me, ru.death.chaosshard.spell.Spell.BOLT);
+                ru.death.chaosshard.compat.tinkers.ChaosMaterials.setStore(sword, 0);
+                int cdEmpty = ru.death.chaosshard.spell.SpellCaster.cooldown(me, ru.death.chaosshard.spell.Spell.BOLT);
+                check(Math.abs(cdFull - cdEmpty * 0.8) <= 1 && Math.abs(cdHalf - cdEmpty * 0.9) <= 1,
+                        "кристалл 2-го уровня срезает перезарядку: пустой " + cdEmpty + ", наполовину " + cdHalf + ", полный " + cdFull);
+                net.minecraft.entity.monster.EntityZombie z2 = new net.minecraft.entity.monster.EntityZombie(ow);
+                z2.setPosition(me.posX - 2, me.posY, me.posZ);
+                ow.spawnEntity(z2);
+                me.resetCooldown();
+                me.attackTargetEntityWithCurrentItem(z2);
+                z2.setDead();
+                check(ru.death.chaosshard.compat.tinkers.ChaosMaterials.store(me.getHeldItemMainhand()) == 2,
+                        "удар копит энергию в кристалле: " + ru.death.chaosshard.compat.tinkers.ChaosMaterials.store(me.getHeldItemMainhand()));
+                ru.death.chaosshard.compat.tinkers.ChaosMaterials.setStore(me.getHeldItemMainhand(), 40);
                 ru.death.chaosshard.spell.SpellCaster.clearCooldowns(me);
                 ru.death.chaosshard.spell.ChaosEnergy.set(me, 50);
                 ru.death.chaosshard.spell.SpellCaster.castAt(me, ru.death.chaosshard.spell.Spell.BOLT, null, EnumFacing.UP, z, null);
-                check(ru.death.chaosshard.compat.tinkers.ChaosMaterials.store(sword) < 40 && ru.death.chaosshard.spell.ChaosEnergy.get(me) >= 49,
-                        "заклинание взяло энергию из кристалла: " + ru.death.chaosshard.compat.tinkers.ChaosMaterials.store(sword));
-                ru.death.chaosshard.compat.tinkers.ChaosMaterials.setStore(sword, 0);
+                check(ru.death.chaosshard.compat.tinkers.ChaosMaterials.store(me.getHeldItemMainhand()) == 0 && ru.death.chaosshard.spell.ChaosEnergy.get(me) < 50,
+                        "заклинание платит своей энергией и разряжает кристалл: " + ru.death.chaosshard.compat.tinkers.ChaosMaterials.store(me.getHeldItemMainhand())
+                                + ", энергия " + ru.death.chaosshard.spell.ChaosEnergy.get(me));
+                ru.death.chaosshard.compat.tinkers.ChaosMaterials.setStore(me.getHeldItemMainhand(), 0);
                 ru.death.chaosshard.spell.SpellCaster.clearCooldowns(me);
                 ru.death.chaosshard.spell.ChaosEnergy.set(me, 0);
                 me.setHealth(me.getMaxHealth());

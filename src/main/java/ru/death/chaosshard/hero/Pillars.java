@@ -80,6 +80,7 @@ public class Pillars {
         if (pl.state != HeroData.NONE) {
             // уже указана: напомнить, сферу не тратить
             p.sendMessage(Breach.grimoire("chaosshard.omen.already", name(h), pl.x, pl.z, dist(at, pl.x, pl.z), side(at, pl.x, pl.z)));
+            PillarMarks.sync(p);   // метку на карте вернуть, если её убрали
             return false;
         }
         WorldServer ws = (WorldServer) world;
@@ -100,6 +101,7 @@ public class Pillars {
         data.markDirty();
         ws.addWeatherEffect(new net.minecraft.entity.effect.EntityLightningBolt(world, at.getX() + 0.5, at.getY() + 1, at.getZ() + 0.5, true));
         p.sendMessage(Breach.grimoire("chaosshard.omen.found", name(h), pl.x, pl.z, dist(at, pl.x, pl.z), side(at, pl.x, pl.z)));
+        PillarMarks.syncAll();
         if (h == Lightbearer.IRENA) {
             planMonasteries(ws, pl, p, at);
         } else if (h == Lightbearer.VELMOR) {
@@ -309,6 +311,7 @@ public class Pillars {
         pl.x = e.x;
         pl.y = e.y;
         pl.z = e.z;
+        PillarMarks.syncAll();
         pl.heroAt = heroAt;
         pl.lastSeen = heroAt;
         data.markDirty();
@@ -451,6 +454,7 @@ public class Pillars {
         pl.x = o.getX();
         pl.y = o.getY();
         pl.z = o.getZ();
+        PillarMarks.syncAll();
         pl.collapseAt = ws.getTotalWorldTime() + COLLAPSE_DELAY;
         data.markDirty();
         if (e != null) {

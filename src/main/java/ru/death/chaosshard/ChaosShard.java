@@ -124,6 +124,7 @@ public class ChaosShard {
         MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.servant.Retinue());
         MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.anchor.DefiledFarming());
         MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.merchant.Merchant());
+        MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.hero.PillarMarks());
         MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.servant.Beasts());
         MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.servant.AltarAscension());
         MinecraftForge.EVENT_BUS.register(new ru.death.chaosshard.ritual.AltarRituals());

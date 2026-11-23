@@ -181,15 +181,21 @@ public final class ChaosMaterials implements SpellMods.Hook {
         return m;
     }
 
+    /** Кристалл срезает перезарядку: до 10% за уровень материала, по тому, насколько он полон. */
     @Override
     public double cooldown(EntityPlayer p, Spell s) {
-        return 1.0;
+        ItemStack t = armed(p);
+        int lv = t.isEmpty() ? 0 : level(t, CRYSTAL);
+        int cap = t.isEmpty() ? 0 : storeCap(t);
+        if (lv <= 0 || cap <= 0) {
+            return 1.0;
+        }
+        return 1.0 - 0.1 * lv * Math.min(1.0, store(t) / (double) cap);
     }
 
     @Override
     public int extraEnergy(EntityPlayer p, Spell s) {
-        ItemStack t = armed(p);
-        int n = t.isEmpty() ? 0 : store(t);
+        int n = 0;
         int blood = lv(p, BLOOD);
         if (blood > 0) {
             n += (int) Math.max(0, (p.getHealth() - 2) * perHp(blood));
@@ -200,17 +206,6 @@ public final class ChaosMaterials implements SpellMods.Hook {
     /** Энергии за единицу здоровья: 1 сердце (2 ед.) — 10 энергии, на 5-м уровне — 15. */
     private static double perHp(int blood) {
         return blood >= 5 ? 7.5 : 5.0;
-    }
-
-    @Override
-    public int payFirst(EntityPlayerMP p, Spell s, int cost) {
-        ItemStack t = armed(p);
-        if (t.isEmpty() || level(t, CRYSTAL) <= 0) {
-            return 0;
-        }
-        int got = Math.min(cost, store(t));
-        setStore(t, store(t) - got);
-        return got;
     }
 
     @Override
@@ -232,15 +227,13 @@ public final class ChaosMaterials implements SpellMods.Hook {
     }
 
     @Override
-    public boolean freeCooldown(EntityPlayer p, Spell s, int fromStore, int cost) {
-        return lv(p, CRYSTAL) >= 5 && cost > 0 && fromStore >= cost;
-    }
-
-    @Override
     public void after(EntityPlayerMP p, Spell s, int energy) {
         ItemStack t = armed(p);
         if (t.isEmpty()) {
             return;
+        }
+        if (level(t, CRYSTAL) > 0) {
+            setStore(t, 0);   // кристалл разрядился в перезарядку
         }
         addXp(t, energy * (captured(p) ? 2 : 1), p);
         double aev = lv(p, STAR) * star(p, "aevitas");
