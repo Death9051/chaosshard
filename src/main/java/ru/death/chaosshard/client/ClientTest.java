@@ -655,7 +655,48 @@ public class ClientTest {
                 step++;
                 return;
             case 71:
+                // окно Алтаря Прорыва: подношения Взора Нити, четыре шпиля
                 mc.displayGuiScreen(null);
+                onServer((s2, w2, p2) -> {
+                    BlockPos alt = merchantAt.add(0, 0, -6);
+                    for (int dx = -4; dx <= 4; dx++) for (int dz = -4; dz <= 4; dz++) {
+                        w2.setBlockState(alt.add(dx, -1, dz), net.minecraft.init.Blocks.STONE.getDefaultState(), 2);
+                        for (int dy = 0; dy < 4; dy++) w2.setBlockToAir(alt.add(dx, dy, dz));
+                    }
+                    w2.setBlockState(alt, ru.death.chaosshard.init.ModBlocks.BREACH_ALTAR.getDefaultState(), 3);
+                    for (BlockPos sp : ru.death.chaosshard.breach.BreachRitual.pillars(alt)) {
+                        w2.setBlockState(sp, ru.death.chaosshard.init.ModBlocks.RITUAL_SPIRE.getDefaultState().withProperty(
+                                ru.death.chaosshard.breach.BlockRitualSpire.HALF, ru.death.chaosshard.breach.BlockRitualSpire.Half.LOWER), 3);
+                        w2.setBlockState(sp.up(), ru.death.chaosshard.init.ModBlocks.RITUAL_SPIRE.getDefaultState().withProperty(
+                                ru.death.chaosshard.breach.BlockRitualSpire.HALF, ru.death.chaosshard.breach.BlockRitualSpire.Half.UPPER), 3);
+                    }
+                    Object te = w2.getTileEntity(alt);
+                    if (te instanceof ru.death.chaosshard.breach.TileBreachAltar) {
+                        ru.death.chaosshard.breach.TileBreachAltar t = (ru.death.chaosshard.breach.TileBreachAltar) te;
+                        t.inv.setStackInSlot(0, new ItemStack(ru.death.chaosshard.init.ModItems.CHAOS_ESSENCE, 4));
+                        t.inv.setStackInSlot(1, new ItemStack(net.minecraft.init.Items.ENDER_EYE, 2));
+                        t.inv.setStackInSlot(2, new ItemStack(ru.death.chaosshard.init.ModItems.VEIL_SHARD, 2));
+                    }
+                    p2.inventory.addItemStackToInventory(new ItemStack(ru.death.chaosshard.init.ModItems.GRIMOIRE));
+                    p2.connection.setPlayerLocation(alt.getX() + 0.5, alt.getY(), alt.getZ() + 3.5, 180F, 30F);
+                    p2.openGui(ru.death.chaosshard.ChaosShard.INSTANCE, ru.death.chaosshard.heart.HeartGuiHandler.ALTAR, w2, alt.getX(), alt.getY(), alt.getZ());
+                });
+                wait = 40;
+                step++;
+                return;
+            case 72:
+                check(mc.currentScreen instanceof ru.death.chaosshard.breach.client.GuiBreachAltar, "окно Алтаря открыто: " + name(mc.currentScreen));
+                shot = "49_altar_gui";
+                wait = 5;
+                step++;
+                return;
+            case 73:
+                mc.displayGuiScreen(null);
+                shot = "50_altar_world";
+                wait = 5;
+                step++;
+                return;
+            case 74:
                 finish();
                 step++;
                 return;

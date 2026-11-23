@@ -1899,6 +1899,33 @@ public final class AutoTest {
                     "земля осталась лежать");
             ow.getEntitiesWithinAABB(net.minecraft.entity.item.EntityItem.class, new AxisAlignedBB(altarPos).grow(2)).forEach(net.minecraft.entity.Entity::setDead);
         });
+        step("подношения в местах Алтаря и кнопка «Сложить на Алтарь»", () -> {
+            net.minecraft.tileentity.TileEntity te = ow.getTileEntity(altarPos);
+            if (!(te instanceof ru.death.chaosshard.breach.TileBreachAltar)) { check(false, "у Алтаря нет мест для подношений"); return; }
+            ru.death.chaosshard.breach.TileBreachAltar alt = (ru.death.chaosshard.breach.TileBreachAltar) te;
+            net.minecraft.item.ItemStack dirt = new net.minecraft.item.ItemStack(Blocks.DIRT, 5);
+            alt.insert(me, dirt, false);
+            check(alt.contents().size() == 1 && alt.contents().get(0).getCount() == 1 && dirt.getCount() == 4, "ПКМ предметом кладёт один");
+            alt.insert(me, dirt, true);
+            check(alt.contents().get(0).getCount() == 5 && dirt.isEmpty(), "с Shift — всю стопку");
+            me.inventory.clear();
+            me.inventory.addItemStackToInventory(new net.minecraft.item.ItemStack(ru.death.chaosshard.init.ModItems.CHAOS_ESSENCE, 6));
+            me.inventory.addItemStackToInventory(new net.minecraft.item.ItemStack(net.minecraft.init.Items.ENDER_EYE, 2));
+            me.inventory.addItemStackToInventory(new net.minecraft.item.ItemStack(ru.death.chaosshard.init.ModItems.VEIL_SHARD, 2));
+            boolean ready = alt.fill(me, ru.death.chaosshard.ritual.Ritual.SIGHT);
+            int dirtBack = 0, essLeft = 0;
+            for (net.minecraft.item.ItemStack st : me.inventory.mainInventory) {
+                if (st.getItem() == net.minecraft.item.Item.getItemFromBlock(Blocks.DIRT)) dirtBack += st.getCount();
+                if (st.getItem() == ru.death.chaosshard.init.ModItems.CHAOS_ESSENCE) essLeft += st.getCount();
+            }
+            check(ready && dirtBack == 5 && essLeft == 2, "«Сложить на Алтарь»: всё нужное на месте, земля вернулась (" + dirtBack + "), эссенции осталось " + essLeft);
+            check(ru.death.chaosshard.ritual.Ritual.findAltar(alt.contents()) == ru.death.chaosshard.ritual.Ritual.SIGHT, "на Алтаре сложился Взор Нити");
+            ru.death.chaosshard.ritual.AltarRituals.tryStart(me, altarPos);
+            check(ru.death.chaosshard.ritual.AltarRituals.isRunning(me) && alt.contents().isEmpty(), "ритуал пошёл из мест Алтаря, места опустели");
+            for (int i = 0; i < ru.death.chaosshard.ritual.AltarRituals.DURATION + 2; i++) ru.death.chaosshard.ritual.AltarRituals.tick(me);
+            check(takeSphere(altarPos, ru.death.chaosshard.ritual.Ritual.SIGHT), "над Алтарём снова Сфера Взора Нити");
+            me.inventory.clear();
+        });
         step("Зов из Нити: без зверей в Нити сфера цела; со зверем — возвращает", () -> {
             // звери, павшие в прошлых шагах, ещё могут быть в Нити (зависит от скорости прогона) — отпускаем их
             StringBuilder was = new StringBuilder();
