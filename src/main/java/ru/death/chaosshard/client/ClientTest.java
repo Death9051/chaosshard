@@ -679,24 +679,31 @@ public class ClientTest {
                     }
                     p2.inventory.addItemStackToInventory(new ItemStack(ru.death.chaosshard.init.ModItems.GRIMOIRE));
                     p2.connection.setPlayerLocation(alt.getX() + 0.5, alt.getY(), alt.getZ() + 3.5, 180F, 30F);
-                    p2.openGui(ru.death.chaosshard.ChaosShard.INSTANCE, ru.death.chaosshard.heart.HeartGuiHandler.ALTAR, w2, alt.getX(), alt.getY(), alt.getZ());
+                    altarAt = alt;
                 });
                 wait = 40;
                 step++;
                 return;
             case 72:
+                // окно — когда Алтарь уже дошёл до клиента (иначе на клиенте ещё нет его плитки)
+                onServer((s2, w2, p2) -> p2.openGui(ru.death.chaosshard.ChaosShard.INSTANCE, ru.death.chaosshard.heart.HeartGuiHandler.ALTAR,
+                        w2, altarAt.getX(), altarAt.getY(), altarAt.getZ()));
+                wait = 20;
+                step++;
+                return;
+            case 73:
                 check(mc.currentScreen instanceof ru.death.chaosshard.breach.client.GuiBreachAltar, "окно Алтаря открыто: " + name(mc.currentScreen));
                 shot = "49_altar_gui";
                 wait = 5;
                 step++;
                 return;
-            case 73:
+            case 74:
                 mc.displayGuiScreen(null);
                 shot = "50_altar_world";
                 wait = 5;
                 step++;
                 return;
-            case 74:
+            case 75:
                 finish();
                 step++;
                 return;
@@ -969,6 +976,7 @@ public class ClientTest {
 
     private volatile int huskId = -1;
     private volatile int merchantId = -1;
+    private volatile BlockPos altarAt = BlockPos.ORIGIN;
     private volatile BlockPos merchantAt = BlockPos.ORIGIN;
 
     private void heroGone(IntegratedServer s, WorldServer w, EntityPlayerMP p) {
