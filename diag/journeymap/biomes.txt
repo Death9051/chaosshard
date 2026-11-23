@@ -1,9 +1,0 @@
-== /tmp/bc/journeymap/client/mod/impl/BiomesOPlenty.class
-      12: ldc           #19                 // String flower
-      17: ldc           #21                 // String mushroom
-      22: ldc           #23                 // String sapling
-      27: ldc           #25                 // String plant
-      32: ldc           #27                 // String ivy
-      37: ldc           #29                 // String waterlily
-      43: ldc           #31                 // String moss
-      53: ldc           #41                 // String turnip
