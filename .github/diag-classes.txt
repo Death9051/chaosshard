@@ -1,0 +1,7 @@
+journeymap/client/api/display/Waypoint.class
+journeymap/client/api/IClientAPI.class
+journeymap/client/api/IClientPlugin.class
+journeymap/client/api/display/Displayable.class
+journeymap/client/api/display/WaypointBase.class
+journeymap/client/api/event/ClientEvent.class
+journeymap/client/api/event/ClientEvent$Type.class
